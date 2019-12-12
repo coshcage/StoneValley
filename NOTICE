@@ -7,3 +7,5 @@ This file is used to trace bugs:
 	Some programs in directory ./Samples can't be compiled because of compilers behaved differently that triggered failures during crossing platforms.
 05-12-2019:
 	Bugs may hide in function grpShortestPathL and grpMinimalSpanningTreeL at file svgraph.h.
+12-12-2019:
+	I am sorry that I lost my original E-mail address "cyycoish#hotmail.com", I am going to publish StoneValley project under this account. You may send E-mails to "cosh.cage#hotmail.com", thanks.

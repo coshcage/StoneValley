@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cyycoish#hotmail.com
- * File ID:     0306170921Y0912191926L00463
+ * File ID:     0306170921Y1223191945L00463
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -20,7 +20,7 @@
 
 #include "svdef.h"
 
-/* The following two macros are used to addressing nodes pointers for NODE_D structures. */
+/* The following two macros are used to address nodes pointers for NODE_D structures. */
 #define PREV (0)
 #define NEXT (1)
 

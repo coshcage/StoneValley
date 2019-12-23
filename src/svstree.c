@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cyycoish#hotmail.com
- * File ID:     0809171737I0715191313L02056
+ * File ID:     0809171737I1223191945L02056
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -389,7 +389,7 @@ P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * p
  * Tip:           Usage:
  *                BOOL blc = FALSE; // A boolean variable states balance status is also required.
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
- *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
+ *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
  *                treDeleteBST(pbst); // Destory AVL-tree.
  */
 P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp, BOOL * pblc)
@@ -643,7 +643,7 @@ P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * p
  * Tip:           Usage:
  *                BOOL blc = FALSE; // A boolean variable states balance status is also required.
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
- *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
+ *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
  *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Removal.
  *                treDeleteBST(pbst); // Destory AVL-tree.
  */

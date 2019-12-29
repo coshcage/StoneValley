@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cyycoish#hotmail.com
- * File ID:     0809171737I1223191945L02056
+ * File ID:     0809171737I1229191530L02064
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -422,15 +422,17 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 					}
 					else
 					{	/* Left double rotation. */
-						pnode2 = pbstchild(pnode1)[RIGHT];
-						pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
-						pbstchild(pnode2)[LEFT]  = pnode1;
-						/* Right signle rotation. */
-						pbstchild(pnode)[LEFT]   = pbstchild(pnode2)[RIGHT];
-						pbstchild(pnode2)[RIGHT] = pnode;
-						_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-						_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-						pnode = pnode2;
+						if (NULL != (pnode2 = pbstchild(pnode1)[RIGHT]))
+						{
+							pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
+							pbstchild(pnode2)[LEFT]  = pnode1;
+							/* Right signle rotation. */
+							pbstchild(pnode)[LEFT]   = pbstchild(pnode2)[RIGHT];
+							pbstchild(pnode2)[RIGHT] = pnode;
+							_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
+							_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
+							pnode = pnode2;
+						}
 					}
 					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
 					*pblc = FALSE;
@@ -470,15 +472,17 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 					}
 					else
 					{	/* Right double rotation. */
-						pnode2 = pbstchild(pnode1)[LEFT];
-						pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
-						pbstchild(pnode2)[RIGHT] = pnode1;
-						/* Left signle rotation. */
-						pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
-						pbstchild(pnode2)[LEFT] = pnode;
-						_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-						_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-						pnode = pnode2;
+						if (NULL != (pnode2 = pbstchild(pnode1)[LEFT]))
+						{
+							pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
+							pbstchild(pnode2)[RIGHT] = pnode1;
+							/* Left signle rotation. */
+							pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
+							pbstchild(pnode2)[LEFT] = pnode;
+							_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
+							_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
+							pnode = pnode2;
+						}
 					}
 					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
 					*pblc = FALSE;
@@ -529,16 +533,18 @@ P_BSTNODE _treBSTLeftBalanceAVL(P_BSTNODE pnode, BOOL * pblc)
 			}
 			else
 			{	/* Left double rotation. */
-				pnode2 = pbstchild(pnode1)[RIGHT];
-				pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
-				pbstchild(pnode2)[LEFT]  = pnode1;
-				/* Right single rotation. */
-				pbstchild(pnode)[LEFT] = pbstchild(pnode2)[RIGHT];
-				pbstchild(pnode2)[RIGHT] = pnode;
-				_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-				_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-				pnode = pnode2;
-				_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
+				if (NULL != (pnode2 = pbstchild(pnode1)[RIGHT]))
+				{
+					pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
+					pbstchild(pnode2)[LEFT]  = pnode1;
+					/* Right single rotation. */
+					pbstchild(pnode)[LEFT] = pbstchild(pnode2)[RIGHT];
+					pbstchild(pnode2)[RIGHT] = pnode;
+					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
+					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
+					pnode = pnode2;
+					_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
+				}
 			}
 		}
 	}
@@ -584,16 +590,18 @@ P_BSTNODE _treBSTRightBalanceAVL(P_BSTNODE pnode, BOOL * pblc)
 			}
 			else
 			{	/* Right double rotation. */
-				pnode2 = pbstchild(pnode1)[LEFT];
-				pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
-				pbstchild(pnode2)[RIGHT] = pnode1;
-				/* Left single rotation. */
-				pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
-				pbstchild(pnode2)[LEFT] = pnode;
-				_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-				_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-				pnode = pnode2;
-				_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
+				if (NULL != (pnode2 = pbstchild(pnode1)[LEFT]))
+				{
+					pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
+					pbstchild(pnode2)[RIGHT] = pnode1;
+					/* Left single rotation. */
+					pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
+					pbstchild(pnode2)[LEFT] = pnode;
+					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
+					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
+					pnode = pnode2;
+					_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
+				}
 			}
 		}
 	}

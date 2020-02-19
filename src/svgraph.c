@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cyycoish#hotmail.com
- * File ID:     0905171125M0822191804L01089
+ * File ID:     0905171125M0219201400L01090
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -837,6 +837,7 @@ P_QUEUE_L grpShortestPathL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
 	setFreeT(&setv);
 	return pqr;
 Lbl_Routing_Error:
+	setFreeT(&setv);s
 	queDeleteL(pqr);
 	return NULL;
 }

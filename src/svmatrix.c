@@ -268,7 +268,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
  *       psrc Pointer to the source matrix that you want to project a part of it onto the destination.
  *        sln Number of line for the item on the left up corner of the source matrix.
  *       scol Number of column for the item on the left up corner of the source matrix.
- *       size Size of each element in both matrices.
+ *       size Size of each element in both two matrices.
  * Return value:  TRUE  Projection succeeded.
  *                FALSE Projection failed.
  * Caution:       Address of pdest and psrc Must Be Allocated first.

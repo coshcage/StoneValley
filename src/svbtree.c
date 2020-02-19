@@ -426,8 +426,8 @@ BOOL treDescendantB(P_TNODE_B proot, P_TNODE_B pnode)
 	FindingInfo fi;
 	if (proot == pnode || NULL == proot || NULL == pnode)
 		return FALSE;
-	fi.pitem  = pnode;
-	fi.size   = FALSE;
+	fi.pitem = pnode;
+	fi.size  = FALSE;
 	treTraverseBPre(proot, _treCBFNodeLocator, (size_t)&fi);
 	return (BOOL)(fi.size ? TRUE: FALSE);
 }

@@ -837,7 +837,7 @@ P_QUEUE_L grpShortestPathL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
 	setFreeT(&setv);
 	return pqr;
 Lbl_Routing_Error:
-	setFreeT(&setv);s
+	setFreeT(&setv);
 	queDeleteL(pqr);
 	return NULL;
 }

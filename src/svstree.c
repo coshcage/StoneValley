@@ -144,7 +144,7 @@ void treFreeBST(P_BST pbst)
 	/* A post-order traversal is needed here.
 	 * Because we have to free nodes from crown to root.
 	 */
-	treTraverseBPost(P2P_TNODE_B(*pbst), _treCBFFreeNodeBST, ENT_DOUBLE);
+	treTraverseBPost(P2P_TNODE_B(*pbst), _treCBFFreeNodeBST, 0);
 	*pbst = NULL;
 }
 

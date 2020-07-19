@@ -796,7 +796,7 @@ void _treFreeBPTInfo(_P_BPT_INFO pbi)
  */
 _P_BPT_INFO _treCreateBPTInfo(void)
 {
-	_P_BPT_INFO pbi = (_P_BPT_INFO) malloc(sizeof(_P_BPT_INFO));
+	_P_BPT_INFO pbi = (_P_BPT_INFO) malloc(sizeof(_BPT_INFO));
 	if (NULL != pbi)
 		_treInitBPTInfo(pbi);
 	return pbi;

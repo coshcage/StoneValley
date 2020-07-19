@@ -1,7 +1,7 @@
 /*
  * Name:        svstring.h
  * Description: Strings interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0306170921Y1223191945L00463
  *
  * The following text is copied from the source code of SQLite and padded
@@ -435,10 +435,10 @@ BOOL        strFillSparseMatrix        (P_MATRIX     pdest,    P_SPAMAT     psrc
  * Matrix bit mask:  | Matrix data:
  *         0 1 2 3 4 |         0 1 2 3 4
  * bm(0,x) 1 0 0 0 0 | bm(0,x) 2 0 0 0 0
- * bm(1,x) 0 1 0.0 0 | bm(1,x) 0 4 0.0 0
+ * bm(1,x) 0 1 0.0 0 | bm(1,x) 0 4 0 0 0
  * bm(2,x) 0 0 1 0 0 | bm(2,x) 0 0 6 0 0
- * bm(3,x) 0.0 0 1 0 | bm(3,x) 0.0 0 8 0
- *         0 0 0 0.. |         0 0 0 0..
+ * bm(3,x) 0.0 0 1 0 | bm(3,x) 0 0 0 8 0
+ *         0 0 0 0.. |
  * Matrix data list: 2->4->6->8->NULL;
  * # The above sparse matrix in memory is:
  * +_SPAMAT______________

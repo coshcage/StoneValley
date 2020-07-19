@@ -1,8 +1,8 @@
 /*
  * Name:        svtree.h
  * Description: Trees interface.
- * Author:      cyycoish#hotmail.com
- * File ID:     0809171737V0516190019L00444
+ * Author:      cosh.cage#hotmail.com
+ * File ID:     0809171737V0719201839L00445
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -155,6 +155,7 @@ void            treFreeBPT         (P_BPT           pbpt);
 P_BPT           treCreateBPT       (void);
 void            treDeleteBPT       (P_BPT           pbpt);
 int             treTraverseKeyBPT  (P_BPT           pbpt,    CBF_TRAVERSE cbftvs, size_t       param);
+void *          treSearchDataBPT   (P_BPT           pbpt,    const void * pkey,   CBF_COMPARE  cbfcmp);
 BOOL            treInsertBPT       (P_BPT           pbpt,    const size_t degree, const void * pkey,    CBF_COMPARE  cbfcmp);
 BOOL            treBulkLoadBPT     (P_BPT           pbpt,    const size_t degree, PUCHAR       pkeys[], size_t num);
 BOOL            treRemoveBPT       (P_BPT           pbpt,    const size_t degree, const void * pkey,    CBF_COMPARE  cbfcmp);

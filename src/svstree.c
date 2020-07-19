@@ -1,8 +1,8 @@
 /*
  * Name:        svstree.c
  * Description: Search trees.
- * Author:      cyycoish#hotmail.com
- * File ID:     0809171737I1229191530L02064
+ * Author:      cosh.cage#hotmail.com
+ * File ID:     0809171737I0719201838L02088
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -1100,6 +1100,30 @@ P_BPTNODE _treLocateKeyInLeafBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfc
 		}
 	}
 	return pnode;
+}
+
+/* Function name: treSearchDataBPT
+ * Description:   Search data in a B-plus tree.
+ * Parameters:
+ *       pbpt Pointer to B-plus indexing tree.
+ *       pkey Pointer to an element in the memory.
+ *     cbfcmp Pointer to a callback function that compares data size of pkey.
+ * Return value:  pkey Found pkey in the B-plus tree.
+ *                NULL Cannot find pkey.
+ * Caution:       Address of pbpt Must Be Allocated first.
+ */
+void * treSearchDataBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfcmp)
+{
+	P_BPTNODE pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
+	if (NULL != pnode)
+	{
+		REGISTER size_t i;
+		REGISTER _P_BPT_INFO pbni = (_P_BPT_INFO)pnode->pdata;
+		for (i = pbni->keyarr.num; i > 0; --i)
+			if (pkey == (i - 1)[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey)
+				return pkey;
+	}
+	return NULL;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

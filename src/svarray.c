@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cyycoish#hotmail.com
- * File ID:     0306170948B0912191926L00613
+ * File ID:     0306170948B0720200120L00613
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -15,7 +15,7 @@
  *   Hope you never need to push yourself or other people too hard.
  */
 
-#include <stdlib.h> /* Using function realloc, srand, rand. */
+#include <stdlib.h> /* Using function srand, rand. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
 
@@ -239,7 +239,7 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, BOOL bshrin
 					parrz->pdata + (index + 1) * size,
 					(strLevelArrayZ(parrz) - index) * size);
 		if (bshrink)
-			parrz->pdata = (PUCHAR) realloc(parrz->pdata, strLevelArrayZ(parrz) * size);
+			strResizeArrayZ(parrz, strLevelArrayZ(parrz), size);
 	}
 }
 
@@ -277,7 +277,7 @@ void strSortArrayZ_O(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp)
 void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_COMPARE cbfcmp)
 {
 #define _P_ARRAY_Z_ITEM(parrz, index) ((parrz)->pdata + (index) * (size))
-	if (NULL == (pdest->pdata = realloc(pdest->pdata, (pdest->num + psrc->num) * size)))
+	if (NULL == strResizeArrayZ(pdest, strLevelArrayZ(pdest) + strLevelArrayZ(psrc), size))
 		return NULL;
 	else
 	{

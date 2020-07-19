@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cyycoish#hotmail.com
- * File ID:     0306170948C0801190144L01161
+ * File ID:     0306170948C0720200119L011617
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -1069,7 +1069,7 @@ void strSwapItemLinkedListD(P_NODE_D pnodex, P_NODE_D pnodey)
 void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size_t sizey, NodeType ntp)
 {
 	REGISTER PUCHAR pdatax, pdatay;
-	REGISTER PUCHAR pbuf;
+	REGISTER PUCHAR pbuf,   pnew;
 	switch (ntp)
 	{
 	case ENT_SINGLE:
@@ -1086,10 +1086,16 @@ void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size
 	if (NULL == (pbuf = (PUCHAR) malloc(sizex)))
 		return;
 	memcpy(pbuf, pdatax, sizex);    /* t = a; */
-	pdatax = (PUCHAR) realloc(pdatax, sizey);
-	memmove(pdatax, pdatay, sizey); /* a = b; */
-	pdatay = (PUCHAR) realloc(pdatay, sizex);
-	memcpy(pdatay, pbuf, sizex);    /* b = t; */
+	if (NULL != (pnew = (PUCHAR) realloc(pdatax, sizey)))
+	{
+		pdatax = pnew;
+		memmove(pdatax, pdatay, sizey); /* a = b; */
+	}
+	if (NULL != (pnew = (PUCHAR) realloc(pdatay, sizex)))
+	{
+		pdatay = pnew;
+		memcpy(pdatay, pbuf, sizex);    /* b = t; */
+	}
 	free(pbuf);
 }
 

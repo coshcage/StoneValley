@@ -1085,7 +1085,7 @@ void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size
 	}
 	if (NULL == (pbuf = (PUCHAR) malloc(sizex)))
 		return;
-	memcpy(pbuf, pdatax, sizex);    /* t = a; */
+	memcpy(pbuf, pdatax, sizex);        /* t = a; */
 	if (NULL != (pnew = (PUCHAR) realloc(pdatax, sizey)))
 	{
 		pdatax = pnew;

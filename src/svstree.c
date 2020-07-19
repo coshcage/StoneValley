@@ -1121,7 +1121,7 @@ void * treSearchDataBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfcmp)
 		REGISTER _P_BPT_INFO pbni = (_P_BPT_INFO)pnode->pdata;
 		for (i = pbni->keyarr.num; i > 0; --i)
 			if (pkey == (i - 1)[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey)
-				return pkey;
+				return (void *)pkey;
 	}
 	return NULL;
 }
@@ -1399,11 +1399,11 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  */
 BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {
-	QUEUE_L q1, q2;
-	P_BPTNODE pnew, pnode;
-	P_QUEUE_L pqa = &q1, pqb = &q2, pqt = NULL;
 	if (num > 0 && degree > 2)
 	{
+		QUEUE_L q1, q2;
+		P_BPTNODE pnew, pnode;
+		P_QUEUE_L pqa = &q1, pqb = &q2, pqt = NULL;
 		REGISTER size_t i;
 		P_BPTNODE prev = NULL;
 		stdiv_t dr = stdiv(num, degree - 1);
@@ -1474,20 +1474,20 @@ BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 		}
 		queFreeL(&q1);
 		queFreeL(&q2);
-	}
-	return TRUE;
+		return TRUE;
 Lbl_Allocation_Failure:
-	treDeleteBPT(pbpt);
-	/* Move contents of the 2nd. queue to the 1st. queue. */
-	while (! queIsEmptyL(pqb))
-	{
-		queRemoveL(&pnode, sizeof(P_BPTNODE), pqb);
-		queInsertL(pqa, &pnode, sizeof(P_BPTNODE));
+		treDeleteBPT(pbpt);
+		/* Move contents of the 2nd. queue to the 1st. queue. */
+		while (!queIsEmptyL(pqb))
+		{
+			queRemoveL(&pnode, sizeof(P_BPTNODE), pqb);
+			queInsertL(pqa, &pnode, sizeof(P_BPTNODE));
+		}
+		/* Free tree nodes repeatedly. */
+		_treFreeBPTPuppet(pqa, pqb);
+		queFreeL(&q1);
+		queFreeL(&q2);
 	}
-	/* Free tree nodes repeatedly. */
-	_treFreeBPTPuppet(pqa, pqb);
-	queFreeL(&q1);
-	queFreeL(&q2);
 	return FALSE;
 }
 

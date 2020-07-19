@@ -1395,7 +1395,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  *                int a[5] = { 2,1,3,4,5 }; PUCHAR keys[5]; P_BPT pbpt = treCreateBPT();
  *                // Key array HAS to be sorted, while data array does not need to be sorted, so that we assign (&a[0]) to (keys[1]) and (&a[1]) to (keys[0]).
  *                keys[0] = (PUCHAR)&a[1]; keys[1] = (PUCHAR)&a[0]; keys[2] = (PUCHAR)&a[2]; keys[3] = (PUCHAR)&a[3]; keys[4] = (PUCHAR)&a[4];
- *                treBulkLoadBPT(pbpt, keys, 5, 3); treDeleteBPT(pbpt);
+ *                treBulkLoadBPT(pbpt, 3, keys, 5); treDeleteBPT(pbpt);
  */
 BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {

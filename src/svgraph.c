@@ -1,7 +1,7 @@
 /*
  * Name:        svgraph.c
  * Description: Graph.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0905171125M0219201400L01090
  *
  * The following text is copied from the source code of SQLite and padded

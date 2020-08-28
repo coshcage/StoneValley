@@ -1,7 +1,7 @@
 /*
  * Name:        svgraph.h
  * Description: Graphs interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0901171625S0531191700L00120
  *
  * The following text is copied from the source code of SQLite and padded

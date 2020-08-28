@@ -1,7 +1,7 @@
 /*
  * Name:        svatom.c
  * Description: Atomic structures.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0306170948A0720200119L00270
  *
  * The following text is copied from the source code of SQLite and padded

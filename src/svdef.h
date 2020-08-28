@@ -1,7 +1,7 @@
 /*
  * Name:        svdef.c
  * Description: Common definitions.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0306171808Z0210192133L00090
  *
  * The following text is copied from the source code of SQLite and padded

@@ -1,7 +1,7 @@
 /*
  * Name:        svstack.c
  * Description: Stacks.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0318171803E0530191456L00306
  *
  * The following text is copied from the source code of SQLite and padded

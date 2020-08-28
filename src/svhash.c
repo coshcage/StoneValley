@@ -1,7 +1,7 @@
 /*
  * Name:        svhash.c
  * Description: Hash tables.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0901171615K0619191238L00609
  *
  * The following text is copied from the source code of SQLite and padded

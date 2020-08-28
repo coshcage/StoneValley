@@ -1,7 +1,7 @@
 /*
  * Name:        svctree.c
  * Description: Huffman coding tree.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0914171200J0619191031L00494
  *
  * The following text is copied from the source code of SQLite and padded

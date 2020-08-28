@@ -1,7 +1,7 @@
 /*
  * Name:        svarray.c
  * Description: Sized array.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0306170948B0720200120L00613
  *
  * The following text is copied from the source code of SQLite and padded

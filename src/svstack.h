@@ -1,7 +1,7 @@
 /*
  * Name:        svstack.h
  * Description: Stacks interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0318170912X0728191037L00153
  *
  * The following text is copied from the source code of SQLite and padded

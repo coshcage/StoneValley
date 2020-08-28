@@ -1,7 +1,7 @@
 /*
  * Name:        svhshtbl.h
  * Description: Hash tables interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0901171615U0609191235L00112
  *
  * The following text is copied from the source code of SQLite and padded

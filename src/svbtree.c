@@ -1,7 +1,7 @@
 /*
  * Name:        svbtree.c
  * Description: Binary trees.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0809171737G0619191004L00542
  *
  * The following text is copied from the source code of SQLite and padded

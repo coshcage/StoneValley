@@ -62,7 +62,7 @@ typedef struct st_BITSTREAM {
 
 /* Definition of common matrix structure. */
 typedef struct st_MATRIX {
-	ARRAY_Z arrz; /* Data array. */
+	ARRAY_Z arrz;   /* Data array. */
 	size_t ln, col; /* Line and column number. */
 } MATRIX, * P_MATRIX;
 

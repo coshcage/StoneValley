@@ -1,7 +1,7 @@
 /*
  * Name:        svgtree.c
  * Description: Generic trees.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0809171737H0601191746L00549
  *
  * The following text is copied from the source code of SQLite and padded

@@ -1,7 +1,7 @@
 /*
  * Name:        svmatrix.c
  * Description: Matrices.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0213191430N0802591608L00861
  *
  * The following text is copied from the source code of SQLite and padded

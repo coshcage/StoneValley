@@ -1,7 +1,7 @@
 /*
  * Name:        svqueue.c
  * Description: Queues.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0417171257F1106172030L00497
  *
  * The following text is copied from the source code of SQLite and padded

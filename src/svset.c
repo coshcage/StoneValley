@@ -1,8 +1,8 @@
 /*
  * Name:        svset.c
  * Description: Sets.
- * Author:      cyycoish#hotmail.com
- * File ID:     0901171620L0530191607L00859
+ * Author:      cosh.cage#hotmail.com
+ * File ID:     0901171620L0828200820L00861
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -603,6 +603,8 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  */
 void setInsertT_O(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
+	if (setIsMemberT(pset, pitem, cbfcmp))
+		return; /* Item has already exists. */
 	*pset = treBSTInsertAA(*pset, pitem, size, cbfcmp);
 }
 

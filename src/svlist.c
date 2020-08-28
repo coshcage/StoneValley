@@ -1,7 +1,7 @@
 /*
  * Name:        svlist.c
  * Description: Linked lists.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0306170948C0720200119L011617
  *
  * The following text is copied from the source code of SQLite and padded

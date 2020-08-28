@@ -1,7 +1,7 @@
 /*
  * Name:        svset.h
  * Description: Sets interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0901171620T0619191236L00177
  *
  * The following text is copied from the source code of SQLite and padded

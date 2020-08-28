@@ -1,7 +1,7 @@
 /*
  * Name:        svqueue.h
  * Description: Queues interface.
- * Author:      cyycoish#hotmail.com
+ * Author:      cosh.cage#hotmail.com
  * File ID:     0320170743W1106172030L00177
  *
  * The following text is copied from the source code of SQLite and padded

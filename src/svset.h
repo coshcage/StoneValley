@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0619191236L00177
+ * File ID:     0901171620T0828200936L00163
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -51,8 +51,8 @@ BOOL     setIsEmptyT_O          (P_SET_T pset);
 BOOL     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
 BOOL     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
 BOOL     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-void     setInsertT_O           (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
-void     setRemoveT_O           (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+void     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+void     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
@@ -87,12 +87,6 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 #define setSizeT_M(pset_M) (NULL == (pset_M) ? 0 : treArityB(P2P_TNODE_B(*(pset_M))))
 #define setIsEmptyT_M(pset_M) (NULL == (pset_M) ? TRUE: !(*(pset_M)))
 #define setIsMemberT_M(pset_M, pitem_M, cbfcmp_M) (NULL == treBSTFindData_X(*(pset_M), (pitem_M), (cbfcmp_M)) ? FALSE : TRUE)
-#define setInsertT_M(pset_M, pitem_M, size_M, cbfcmp_M) { \
-	*(pset_M) = treBSTInsertAA(*(pset_M), (pitem_M), (size_M), (cbfcmp_M)); \
-}
-#define setRemoveT_M(pset_M, pitem_M, size_M, cbfcmp_M) { \
-	*(pset_M) = treBSTRemoveAA(*(pset_M), (pitem_M), (size_M), (cbfcmp_M)); \
-}
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
@@ -112,8 +106,6 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 	#define setSizeT     setSizeT_O
 	#define setIsEmptyT  setIsEmptyT_O
 	#define setIsMemberT setIsMemberT_O
-	#define setInsertT   setInsertT_M
-	#define setRemoveT   setRemoveT_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	/* Macros for hash table represented sets. */
 	#define setInitH     setInitH_M
@@ -131,8 +123,6 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 	#define setSizeT     setSizeT_M
 	#define setIsEmptyT  setIsEmptyT_M
 	#define setIsMemberT setIsMemberT_M
-	#define setInsertT   setInsertT_M
-	#define setRemoveT   setRemoveT_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	/* Macros for hash table represented sets. */
 	#define setInitH     setInitH_M
@@ -150,8 +140,6 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 	#define setSizeT     setSizeT_M
 	#define setIsEmptyT  setIsEmptyT_M
 	#define setIsMemberT setIsMemberT_M
-	#define setInsertT   setInsertT_M
-	#define setRemoveT   setRemoveT_M
 #else /* Optimization has been disabled. */
 	/* Macros for hash table represented sets. */
 	#define setInitH     setInitH_O
@@ -169,8 +157,6 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 	#define setSizeT     setSizeT_O
 	#define setIsEmptyT  setIsEmptyT_O
 	#define setIsMemberT setIsMemberT_O
-	#define setInsertT   setInsertT_O
-	#define setRemoveT   setRemoveT_O
 #endif
 
 #endif

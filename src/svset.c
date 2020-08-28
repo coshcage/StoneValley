@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0828200820L00861
+ * File ID:     0901171620L0828200936L00860
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -590,7 +590,7 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 	return FALSE;
 }
 
-/* Function name: setInsertT_O
+/* Function name: setInsertT
  * Description:   Insert an element into a set.
  * Parameters:
  *       pset Pointer to the set you want to operate.
@@ -599,16 +599,15 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *     cbfcmp Pointer to a comparison function.
  * Return value:  N/A.
  * Tip:           You may use function setIsMemberT to check whether insertion succeeded or not after invoking.
- *                A macro version of this function named setInsertT_M is available.
  */
-void setInsertT_O(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
 		return; /* Item has already exists. */
 	*pset = treBSTInsertAA(*pset, pitem, size, cbfcmp);
 }
 
-/* Function name: setRemoveT_O
+/* Function name: setRemoveT
  * Description:   Remove an element from a set.
  * Parameters:
  *       pset Pointer to the set you want to operate.
@@ -617,11 +616,11 @@ void setInsertT_O(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbf
  *     cbfcmp Pointer to a comparison function.
  * Return value:  N/A.
  * Tip:           You may use function setIsMemberT to check whether removal succeeded or not after calling.
- *                A macro version of this function named setRemoveT_M is available.
  */
-void setRemoveT_O(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
-	*pset = treBSTRemoveAA(*pset, pitem, size, cbfcmp);
+	if (setIsMemberT(pset, pitem, cbfcmp))
+		*pset = treBSTRemoveAA(*pset, pitem, size, cbfcmp);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

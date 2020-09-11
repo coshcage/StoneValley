@@ -2,7 +2,7 @@
  * Name:        svqueue.c
  * Description: Queues.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0417171257F1106172030L00497
+ * File ID:     0417171257F0911201706L00501
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -26,7 +26,7 @@
  * Parameters:
  *     pqueac Pointer to the circular queue you want to allocate.
  *        num Number of elements.
- *       size Size of each elements.
+ *       size Size of each element in the queue.
  * Return value:  Pointer to the new allocated buffer.
  * Caution:       Address of pqueac Must Be Allocated first.
  */
@@ -120,6 +120,7 @@ size_t queUsageAC_O(P_QUEUE_A pqueac)
  * Parameters:
  *     pqueac Pointer to the circular queue you want to operate with.
  *      pitem Pointer to the address of elements in queue.
+ *       size Size of each element in the queue.
  * Return value:  N/A.
  * Caution:       Address of pqueac Must Be Allocated first.
  * Tip:           A macro version of this function named queInsertAC_M is available.
@@ -134,6 +135,7 @@ void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
  * Description:   Dequeue an item from a circular queue.
  * Parameters:
  *      pitem Pointer to the address of element.
+ *       size Size of each element in the queue.
  *     pqueac Pointer to the circular queue you want to operate with.
  * Return value:  N/A.
  * Caution:       Address of pqueac Must Be Allocated first.
@@ -232,6 +234,7 @@ size_t queUsageL_O(P_QUEUE_L pquel)
  * Parameters:
  *      pquel Pointer to the linked-list queue you want to operate with.
  *      pitem Pointer to the address of an element.
+ *       size Size of each element in the queue.
  * Return value:  If function work succeeded, it would return a TRUE,
  *                otherwise function would return a FALSE.
  */
@@ -254,6 +257,7 @@ BOOL queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
  * Description:   Dequeue an element from linked-list queue.
  * Parameters:
  *      pitem Pointer to the address of an element.
+ *       size Size of each element in the queue.
  *      pquel Pointer to the linked-list queue you want to operate with.
  * Return value:  If function work succeeded, it would return a TRUE,
  *                otherwise function would return a FALSE.

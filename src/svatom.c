@@ -156,9 +156,9 @@ void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
 /* Function name: strCreateNodeS
  * Description:   Dynamically allocate a node which is with a single pointer.
  * Parameters:
- *       size Size of the data of a node.
  *       pval Address of the initial value.
  *            If size equaled to 0, function would return a NULL.
+ *       size Size of the data of a node.
  * Return value:  Pointer to the new allocated node.
  */
 P_NODE_S strCreateNodeS(const void * pval, size_t size)

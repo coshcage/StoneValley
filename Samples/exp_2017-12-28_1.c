@@ -1,7 +1,7 @@
 //
 //  exp_2017-12-28_1.c
 //  This file demonstrates how to use a double-ended linked list.
-//  Created by cyycoish#hotmail.com on 12/28/17.
+//  Created by cosh.cage#hotmail.com on 12/28/17.
 //  Licence:  Public domain.
 //  Platform: Windows NT.
 //

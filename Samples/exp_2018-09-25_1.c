@@ -102,7 +102,7 @@ int main(void)
 //
 //  exp_2018-09-25_1.c
 //  This file might show the usage of graphs and bit-matrices.
-//  Created by cyycoish#hotmail.com on 09/25/18.
+//  Created by cosh.cage#hotmail.com on 09/25/18.
 //  Licence: Public domain.
 //  Platform:Cross Platform.
 //

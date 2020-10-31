@@ -2,7 +2,7 @@
 //  exp_2017-12-27_1.c
 //  This file demonstrates how to use stacks, queues and binary trees.
 //  The program is used to compute or convert infix expressions.
-//  Created by cyycoish#hotmail.com on 12/27/17.
+//  Created by cosh.cage#hotmail.com on 12/27/17.
 //  Licence:  Public domain.
 //  Platform: Unix|GNU/Linux
 //

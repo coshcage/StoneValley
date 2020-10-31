@@ -10,7 +10,7 @@
  * Names of generated files are each original file name that headed with a '~' symbol.
  * Then original files will be renamed as '#'s add their file names.
  *
- * Created by cyycoish#hotmail.com on 10/03/18.
+ * Created by cosh.cage#hotmail.com on 10/03/18.
  * Licence: Public domain.
  * Platform:Unix|GNU/Linux
  *

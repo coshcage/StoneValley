@@ -1,7 +1,7 @@
 //
 //  exp_2019-01-29_1.c
 //  An example of permutation and combination.
-//  Created by cyycoish#hotmail.com on 01/29/19.
+//  Created by cosh.cage#hotmail.com on 01/29/19.
 //  Licence:  Public domain.
 //  Platform: Windows NT.
 //

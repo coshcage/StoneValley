@@ -1,7 +1,7 @@
 //
 //  exp_2019-02-14_1.c
 //  An example of matrices.
-//  Created by cyycoish#hotmail.com on 02/14/19.
+//  Created by cosh.cage#hotmail.com on 02/14/19.
 //  Licence:  Public domain.
 //  Platform: Unix|GNU/Linux.
 //

@@ -1,7 +1,7 @@
 //
 //  exp_2018-09-26_1.c
 //  External sorting for linked-lists.
-//  Created by cyycoish#hotmail.com on 09/26/18.
+//  Created by cosh.cage#hotmail.com on 09/26/18.
 //  Licence:  Public domain.
 //  Platform: Cross Platform.
 //

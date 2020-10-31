@@ -26,7 +26,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 152
 	Limitations ........................................................... 301
 	Logs .................................................................. 311
-	Appendix .............................................................. 401
+	Appendix .............................................................. 402
 
 iv  Scenario
 
@@ -197,11 +197,11 @@ viii Library Alteration Guide
 		1. Alter a function and check whether it has a macro version.
 		2. If the function you amended has an '_O' sign at the tail of its name, then both alter its macro version in the proper header file. See section [a] [Figure 4] and [Figure 5] for altering macros in detail.
 
-	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
-	$ void svInit(int * p) { $ 3.=> $ #define svInit_M(p_M) { \ $
-	$      *p = 0;           $      $     *(p_M) = 0; \         $
-	$ }                      $      $ }                         $
-	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
+	$ void svInit(int * p) { $ 3.=> $ #define svInit_M(p_M) do { \ $
+	$      *p = 0;           $      $     *(p_M) = 0; \            $
+	$ }                      $      $ } while(0)                   $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		3. If the original function has NO return value and it is simple, write its macro version and use '{}' to brace it in multiple lines.
 
@@ -232,7 +232,7 @@ viii Library Alteration Guide
 	$ int svInit_O(int * p);                               $ | + Library functions are exported here.
 	$ void svBig2(int * pa, int * pb, CBF_COMPARE cbfcmp); $ | * [c]4.
 	$                                                      $ |
-	$ #define svInit_M(p_M) (*(p_M) = 0);                  $ | + Function inline macros are written here. [c]5.
+	$ #define svInit_M(p_M) (*(p_M) = 0)                   $ | + Function inline macros are written here. [c]5.
 	$                                                      $ |
 	$ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE             $ | + Library optimization switches go here. [c]6.
 	$     #define svInit svInit_M                          $ | |
@@ -263,7 +263,7 @@ viii Library Alteration Guide
 	$   */                                                 $ | |
 	$  int svInit_O(int * p)                               $ | |
 	$  {                                                   $ | |
-	$      *p = 0;                                         $ | |
+	$      return *p = 0;                                  $ | |
 	$  }                                                   $ | *
 	$                                                      $ |
 	$  /* Comments.                                        $ | + Function declaration begin. [c]2.
@@ -396,6 +396,7 @@ x   Logs
 02-19-2020: Library refined.
 07-19-2020: Library refined. A function is added onto 'svtree.h' and 'svstree.c'.
 08-28-2020: Library refined.
+10-24-2020: Library refined.
 _______________________________________________________________________________
 
 xi  The Story of StoneValley

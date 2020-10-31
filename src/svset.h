@@ -61,29 +61,29 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svset.c. */
 #define setInitH_M(pset_M, buckets_M) (hshInitC((pset_M), (buckets_M)))
-#define setFreeH_M(pset_M) { \
+#define setFreeH_M(pset_M) do { \
 	hshFreeC(pset_M); \
-}
+} while (0)
 #define setCreateH_M(buckets_M) (hshCreateC(buckets_M))
-#define setDeleteH_M(pset_M) { \
+#define setDeleteH_M(pset_M) do { \
 	hshDeleteC(pset_M); \
-}
+} while (0)
 #define setSizeH_M(pset_M) (NULL == (pset_M) ? 0 : hshSizeC(pset_M))
 #define setIsEmptyH_M(pset_M) (!setSizeH(pset_M))
 #define setIsMemberH_M(pset_M, cbfhsh_M, pitem_M, size_M) \
 	(NULL == (pset_M) ? FALSE : \
 	(NULL != hshSearchC((pset_M), (cbfhsh_M), (pitem_M), (size_M)) ? TRUE : FALSE))
 /* Macros for binary search tree represented sets. */
-#define setInitT_M(pset_M) { \
+#define setInitT_M(pset_M) do { \
 	treInitBST(pset_M); \
-}
-#define setFreeT_M(pset_M) { \
+} while (0)
+#define setFreeT_M(pset_M) do { \
 	treFreeBST(pset_M); \
-}
+} while (0)
 #define setCreateT_M() (treCreateBST())
-#define setDeleteT_M(pset_M) { \
+#define setDeleteT_M(pset_M) do { \
 	treDeleteBST(pset_M); \
-}
+} while (0)
 #define setSizeT_M(pset_M) (NULL == (pset_M) ? 0 : treArityB(P2P_TNODE_B(*(pset_M))))
 #define setIsEmptyT_M(pset_M) (NULL == (pset_M) ? TRUE: !(*(pset_M)))
 #define setIsMemberT_M(pset_M, pitem_M, cbfcmp_M) (NULL == treBSTFindData_X(*(pset_M), (pitem_M), (cbfcmp_M)) ? FALSE : TRUE)

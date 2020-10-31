@@ -21,7 +21,7 @@
 #include <stddef.h> /* Using type size_t, ptrdiff_t. */
 
 /* Library version. */
-#define LIB_VER "1.1.7.7"
+#define LIB_VER "1.1.7.9"
 
 /* Boolean constants. */
 #define TRUE  (1)
@@ -73,7 +73,7 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 /* Disable warning C4100 for Visual C/C++ compiler.
  * As for gcc/clang, please alter the following macro as DWC4100(param) // Noting appears at tail.
  */
-#define DWC4100(param) if (param)
+#define DWC4100(param) (param = param)
 
 /* Register qualifier. */
 #define REGISTER register

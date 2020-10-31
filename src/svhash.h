@@ -55,12 +55,12 @@ size_t     hshCBFHashString (REGISTER char * pstr);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svhash.c. */
-#define hshFreeA_M(pht_M) { \
+#define hshFreeA_M(pht_M) do { \
 	strFreeArrayZ(pht_M); \
-}
-#define hshDeleteA_M(pht_M) { \
+} while (0)
+#define hshDeleteA_M(pht_M) do { \
 	strDeleteArrayZ(pht_M); \
-}
+} while (0)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

@@ -76,32 +76,32 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 #define queUsageAC_M(pqueac_M) ((pqueac_M)->front > (pqueac_M)->rear ? \
 	(pqueac_M)->arr.num - (pqueac_M)->front + (pqueac_M)->rear : \
 	(pqueac_M)->rear - (pqueac_M)->front)
-#define queInsertAC_M(pqueac_M, pitem_M, size_M) { \
+#define queInsertAC_M(pqueac_M, pitem_M, size_M) do { \
 	memcpy((pqueac_M)->arr.pdata + (pqueac_M)->rear * (size_M), (pitem_M), (size_M)); \
 	(pqueac_M)->rear = ((pqueac_M)->rear + 1) % (pqueac_M)->arr.num; \
-}
-#define queRemoveAC_M(pitem_M, size_M, pqueac_M) { \
+} while (0)
+#define queRemoveAC_M(pitem_M, size_M, pqueac_M) do { \
 	memcpy((pitem_M), (pqueac_M)->arr.pdata + (pqueac_M)->front * (size_M), (size_M)); \
 	(pqueac_M)->front = ((pqueac_M)->front + 1) % (pqueac_M)->arr.num; \
-}
+} while (0)
 /* Macros for single linked-list queues. */
-#define queInitL_M(pquel_M) { \
+#define queInitL_M(pquel_M) do { \
 	(pquel_M)->pfront = (pquel_M)->prear = NULL; \
-}
+} while (0)
 #define queIsEmptyL_M(pquel_M) (!(pquel_M)->pfront)
 #define queUsageL_M(pquel_M) (strLevelLinkedListSC((pquel_M)->pfront))
 /* Macros for doubly linked-list queues. */
-#define queInitDL_M(pdeque_M) { \
+#define queInitDL_M(pdeque_M) do { \
 	(pdeque_M)->pfirst = (pdeque_M)->plast = NULL; \
-}
+} while (0)
 #define queIsEmptyDL_M(pdeque_M) (!(pdeque_M)->pfirst)
 #define queUsageDL_M(pdeque_M) (strLevelLinkedListDC((pdeque_M)->pfirst, FALSE))
-#define queFirstDL_M(pitem_M, size_M, pdeque_M) { \
+#define queFirstDL_M(pitem_M, size_M, pdeque_M) do { \
 	memcpy((pitem_M), (pdeque_M)->pfirst->pdata, (size_M)); \
-}
-#define queLastDL_M(pitem_M, size_M, pdeque_M) { \
+} while (0)
+#define queLastDL_M(pitem_M, size_M, pdeque_M) do { \
 	memcpy((pitem_M), (pdeque_M)->plast->pdata, (size_M)); \
-}
+} while (0)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

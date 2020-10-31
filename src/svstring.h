@@ -209,77 +209,77 @@ BOOL        strFillSparseMatrix        (P_MATRIX     pdest,    P_SPAMAT     psrc
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svatom.c. */
-#define strFreeArrayZ_M(parrz_M) { \
+#define strFreeArrayZ_M(parrz_M) do { \
 	free((parrz_M)->pdata); \
 	(parrz_M)->pdata = NULL; \
 	(parrz_M)->num = 0; \
-}
-#define strDeleteArrayZ_M(parrz_M) { \
+} while (0)
+#define strDeleteArrayZ_M(parrz_M) do { \
 	strFreeArrayZ_M(parrz_M); \
 	free(parrz_M); \
-}
+} while (0)
 /* Macros for nodes. */
-#define strFreeNodeS_M(pnode_M) { \
+#define strFreeNodeS_M(pnode_M) do { \
 	free((pnode_M)->pdata); \
-}
-#define strDeleteNodeS_M(pnode_M) { \
+} while (0)
+#define strDeleteNodeS_M(pnode_M) do { \
 	strFreeNodeS_M(pnode_M); \
 	free(pnode_M); \
-}
-#define strFreeNodeD_M(pnode_M) { \
+} while (0)
+#define strFreeNodeD_M(pnode_M) do { \
 	free((pnode_M)->pdata); \
-}
-#define strDeleteNodeD_M(pnode_M) { \
+} while (0)
+#define strDeleteNodeD_M(pnode_M) do { \
 	strFreeNodeD_M(pnode_M); \
 	free(pnode_M); \
-}
+} while (0)
 /* Functions in svarray.c. */
 #define strLevelArrayZ_M(parrz_M) ((const size_t)((parrz_M)->num))
 #define strCopyArrayZ_M(pdest_M, psrc_M, size_M) (memcpy((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strMoveArrayZ_M(pdest_M, psrc_M, size_M) (memmove((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strLocateItemArrayZ_M(parrz_M, size_M, index_M) ((index_M) < strLevelArrayZ(parrz_M) ? (parrz_M)->pdata + (index_M) * (size_M) : NULL)
-#define strSortArrayZ_M(parrz_M, size_M, cbfcmp_M) { \
+#define strSortArrayZ_M(parrz_M, size_M, cbfcmp_M) do { \
 	svQuickSort((parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)); \
-}
+} while (0)
 #define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) ( \
 	svBinarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)) \
 )
 /* Functions in svlist.c */
-#define strInitLinkedListSC_M(plist_M) { \
+#define strInitLinkedListSC_M(plist_M) do { \
 	*(plist_M) = NULL; \
-}
-#define strDeleteLinkedListSC_M(plist_M) { \
+} while (0)
+#define strDeleteLinkedListSC_M(plist_M) do { \
 	strFreeLinkedListSC(plist_M); \
 	free(plist_M); \
-}
-#define strInitLinkedListDC_M(plist_M) { \
+} while (0)
+#define strInitLinkedListDC_M(plist_M) do { \
 	*(plist_M) = NULL; \
-}
-#define strDeleteLinkedListDC_M(plist_M, brev_M) { \
+} while (0)
+#define strDeleteLinkedListDC_M(plist_M, brev_M) do { \
 	strFreeLinkedListDC(plist_M, brev_M); \
 	free(plist_M); \
-}
+} while (0)
 /* Functions in svmatrix.c */
-#define strFreeMatrix_M(pmtx_M) { \
+#define strFreeMatrix_M(pmtx_M) do { \
 	strFreeArrayZ(&(pmtx_M)->arrz); \
 	(pmtx_M)->ln = (pmtx_M)->col = 0; \
-}
-#define strDeleteMatrix_M(pmtx_M) { \
+} while (0)
+#define strDeleteMatrix_M(pmtx_M) do { \
 	strFreeMatrix(pmtx_M); \
 	free(pmtx_M); \
-}
-#define strSetMatrix_M(pmtx_M, pval_M, size_M) { \
+} while (0)
+#define strSetMatrix_M(pmtx_M, pval_M, size_M) do { \
 	strSetArrayZ(&(pmtx_M)->arrz, (pval_M), (size_M)); \
-}
+} while (0)
 #define strSetValueMatrix_M(pmtx_M, ln_M, col_M, pval_M, size_M) \
 	(((ln_M) < (pmtx_M)->ln && (col_M) < (pmtx_M)->col && (size_M)) ? \
 	memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)) : NULL)
-#define strFreeBMap_M(pbm_M) { \
+#define strFreeBMap_M(pbm_M) do { \
 	strFreeMatrix(pbm_M); \
-}
-#define strDeleteBMap_M(pbm_M) { \
+} while (0)
+#define strDeleteBMap_M(pbm_M) do { \
 	strDeleteMatrix(pbm_M); \
-}
+} while (0)
 #define strCopyBMap_M(pdest_M, psrc_M) (strCopyMatrix((pdest_M), (psrc_M), sizeof(UCHART)))
 #define strBitStreamIsEmpty_M(pbstm_M) (strLevelArrayZ(&(pbstm_M)->arrz) <= 1 && 0 == (pbstm_M)->bilc)
 

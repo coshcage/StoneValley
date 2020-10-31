@@ -173,64 +173,64 @@ P_BITSTREAM     treHuffmanDecoding (P_ARRAY_Z       ptable,  P_BITSTREAM  s);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svbtree.c. */
-#define treInitB_M(ptreb_M) { \
+#define treInitB_M(ptreb_M) do { \
 	(*(ptreb_M)) = NULL; \
-}
-#define treDeleteB_M(ptreb_M) { \
+} while (0)
+#define treDeleteB_M(ptreb_M) do { \
 	treFreeB(ptreb_M); \
 	free(ptreb_M); \
-}
+} while (0)
 /* Functions in svgtree.c. */
-#define treInitG_M(ptreg_M) { \
+#define treInitG_M(ptreg_M) do { \
 	*(ptreg_M) = NULL; \
-}
+} while (0)
 /* Functions in svhtree.c. */
 #define treIsEmptyHeapA_M(pheap_M) (!(pheap_M)->irear)
 #define treIsFullHeapA_M(pheap_M) ((pheap_M)->irear == (pheap_M)->hdarr.num)
 /* Functions in svstree.c. */
-#define treFreeBSTNode_M(pnode_M) { \
+#define treFreeBSTNode_M(pnode_M) do { \
 	strFreeNodeD(&(pnode_M)->knot); \
 	(pnode_M)->knot.pdata = NULL; \
-}
-#define treDeleteBSTNode_M(pnode_M) { \
+} while (0)
+#define treDeleteBSTNode_M(pnode_M) do { \
 	treFreeBSTNode(pnode_M); \
 	free(pnode_M); \
-}
-#define treInitBST_M(pbst_M) { \
+} while (0)
+#define treInitBST_M(pbst_M) do { \
 	*(pbst_M) = NULL; \
-}
-#define treDeleteBST_M(pbst_M) { \
+} while (0)
+#define treDeleteBST_M(pbst_M) do { \
 	treFreeBST(pbst_M); \
 	free(pbst_M); \
-}
+} while (0)
 /* Macros for B-plus trees. */
-#define _treInitBPTInfo_M(pbi_M) { \
+#define _treInitBPTInfo_M(pbi_M) do { \
 	(pbi_M)->headptr = NULL; \
 	(pbi_M)->keyarr.num = 0; \
 	(pbi_M)->keyarr.pdata = NULL; \
-}
-#define _treDeleteBPTInfo_M(pbi_M) { \
+} while (0)
+#define _treDeleteBPTInfo_M(pbi_M) do { \
 	_treFreeBPTInfo(pbi_M); \
 	free(pbi_M); \
-}
+} while (0)
 #define _treGetParentBPTNode_M(pnode_M) ((pnode_M)->ppnode[PARENTPTR])
 #define _treGetNextBPTNode_M(pnode_M) ((pnode_M)->ppnode[NEXTPTR])
 #define _treIsLeafBPTNode_M(pnode_M) (!((_P_BPT_INFO)(pnode_M)->pdata)->headptr)
-#define treInitBPT_M(pbpt_M) { \
+#define treInitBPT_M(pbpt_M) do { \
 	*(pbpt_M) = NULL; \
-}
+} while (0)
 /* Macros for tries. */
-#define treInitTrieA_M(ptrie_M) { \
+#define treInitTrieA_M(ptrie_M) do { \
 	*(ptrie_M) = NULL; \
-}
-#define treFreeTrieA_M(ptrie_M, size_M) { \
+} while (0)
+#define treFreeTrieA_M(ptrie_M, size_M) do { \
 	_treFreeTrieNode(ptrie_M, size_M); \
 	*(ptrie_M) = NULL; \
-}
-#define treDeleteTrieA_M(ptrie_M, size_M) { \
+} while(0)
+#define treDeleteTrieA_M(ptrie_M, size_M) do { \
 	_treFreeTrieNode(ptrie_M, size_M); \
 	free(ptrie_M); \
-}
+} while (0)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

@@ -56,27 +56,27 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 #define stkIsEmptyA_M(pstka_M) (!(pstka_M)->top)
 #define stkIsFullA_M(pstka_M) ((pstka_M)->arr.num == (pstka_M)->top)
 #define stkPushA_M(pstka_M, pitem_M, size_M) (memcpy((pstka_M)->arr.pdata + ((pstka_M)->top++) * (size_M), (pitem_M), (size_M)))
-#define stkPopA_M(pitem_M, size_M, pstka_M) { \
+#define stkPopA_M(pitem_M, size_M, pstka_M) do { \
 	memcpy((pitem_M), (pstka_M)->arr.pdata + (--(pstka_M)->top) * (size_M), (size_M)); \
-}
-#define stkPeepA_M(pitem_M, size_M, pstka_M) { \
+} while (0)
+#define stkPeepA_M(pitem_M, size_M, pstka_M) do { \
 	memcpy((pitem_M), (pstka_M)->arr.pdata + ((pstka_M)->top - 1) * (size_M), (size_M)); \
-}
+} while (0)
 #define stkLevelA_M(pstka_M) ((pstka_M)->top)
 /* Macros for linked-list represented stacks. */
-#define stkInitL_M(pstkl_M) { \
+#define stkInitL_M(pstkl_M) do { \
 	strInitLinkedListSC(pstkl_M); \
-}
-#define stkFreeL_M(pstkl_M) { \
+} while (0)
+#define stkFreeL_M(pstkl_M) do { \
 	strFreeLinkedListSC(pstkl_M); \
-}
-#define stkDeleteL_M(pstkl_M) { \
+} while (0)
+#define stkDeleteL_M(pstkl_M) do { \
 	strDeleteLinkedListSC(pstkl_M); \
-}
+} while (0)
 #define stkIsEmptyL_M(pstkl_M) (!(*pstkl_M))
-#define stkPeepL_M(pitem_M, size_M, pstkl_M) { \
+#define stkPeepL_M(pitem_M, size_M, pstkl_M) do { \
 	memcpy((pitem_M), (*(pstkl_M))->pdata, (size_M)); \
-}
+} while (0)
 #define stkLevelL_M(pstkl_M) (strLevelLinkedListSC(*(pstkl_M)))
 
 /* Library optimal switch. */

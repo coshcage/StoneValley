@@ -61,9 +61,9 @@ BOOL       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svgraph.c. */
-#define grpInitL_M(pgrp_M) { \
+#define grpInitL_M(pgrp_M) do { \
 	treInitBST(pgrp_M); \
-}
+} while (0)
 #define grpVerticesCountL_M(pgrp_M) (setSizeT(*(pgrp_M)))
 
 /* Library optimal switch. */

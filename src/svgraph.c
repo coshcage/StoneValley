@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0219201400L01090
+ * File ID:     0905171125M1224201626L01123
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -18,6 +18,7 @@
 #include <stdlib.h> /* Using function malloc, free. */
 #include <string.h> /* Using function memcpy. */
 #include "svgraph.h"
+#include "svqueue.h"
 
 /* Finding info for edges. */
 typedef struct _st_FIEDG {
@@ -33,12 +34,6 @@ typedef struct _st_DATINF {
 	size_t       bedge; /* TRUE for edges; FALSE for vertices. */
 } _DATINF, * _P_DATINF;
 
-/* Vertex record for finding path. */
-typedef struct _st_VTXREC {
-	EDGE vertex; /* Vertex ID and distance. */
-	size_t flag; /* Values flag TRUE or FALSE to determine whether this vertex is valid or not. */
-} _VTXREC, * _P_VTXREC;
-
 /* Edge record for generating minimal spanning tree. */
 typedef struct _st_EDGEREC {
 	size_t weight;  /* Weight of this edge. */
@@ -47,23 +42,25 @@ typedef struct _st_EDGEREC {
 } _EDGEREC, * _P_EDGEREC;
 
 /* File level function declarations here. */
-extern int _strCBFNodesCounter    (void * pitem, size_t param);
-int        _grpCBFCompareInteger  (const void * px, const void * py);
-P_VERTEX_L _grpGetVertexByID      (P_GRAPH_L pgrp, size_t vid);
-int  _grpCBFFindEdgeInList        (void * pitem, size_t param);
-int  _grpCBFTraversePuppet        (void * pitem, size_t param);
-int  _grpCBFEdgesCountPuppet      (void * pitem, size_t param);
-int  _grpCBFFreePuppet            (void * pitem, size_t param);
-int  _grpCBFIndegreeVertexPuppet  (void * pitem, size_t param);
-int  _grpCBFIndegreeVertex        (void * pitem, size_t param);
-int  _grpCBFRemoveEdgePuppet      (void * pitem, size_t param);
-int  _grpCBFRemoveEdge            (void * pitem, size_t param);
+extern int _strCBFNodesCounter          (void * pitem, size_t param);
+int        _grpCBFCompareInteger        (const void * px, const void * py);
+P_VERTEX_L _grpGetVertexByID            (P_GRAPH_L pgrp, size_t vid);
+int  _grpCBFFindEdgeInList              (void * pitem, size_t param);
+int  _grpCBFTraversePuppet              (void * pitem, size_t param);
+int  _grpCBFEdgesCountPuppet            (void * pitem, size_t param);
+int  _grpCBFFreePuppet                  (void * pitem, size_t param);
+int  _grpCBFIndegreeVertexPuppet        (void * pitem, size_t param);
+int  _grpCBFIndegreeVertex              (void * pitem, size_t param);
+int  _grpCBFRemoveEdgePuppet            (void * pitem, size_t param);
+int  _grpCBFRemoveEdge                  (void * pitem, size_t param);
 int  _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset);
-int  _grpCBFQueueInsertVertex     (void * pitem, size_t param);
-int  _grpCBFSPGatherVertices      (void * pitem, size_t param);
-int  _grpCBFSPFindClosestVertex   (void * pitem, size_t param);
-int  _grpCBFMSTInsertEdges        (void * pitem, size_t param);
-int  _grpCBFMSTScanVertices       (void * pitem, size_t param);
+int  _grpCBFQueueInsertVertex           (void * pitem, size_t param);
+int  _grpCBFSPLFillVertices             (void * pitem, size_t param);
+int  _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
+BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
+int  _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
+int  _grpCBFMSTInsertEdges              (void * pitem, size_t param);
+int  _grpCBFMSTScanVertices             (void * pitem, size_t param);
 /* Function declarations for embedded disjoint set structure. */
 BOOL _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y);
 BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y);
@@ -705,67 +702,108 @@ Lbl_BFS_Clear:
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _grpCBFSPGatherVertices
- * Description:   This function is used to cooperate with function grpShortestPathL to gather
- *                connected vertices from a graph.
+ * Function name: _grpCBFSPLFillVertices
+ * Description:   This function is used to cooperate with function _grpSPLInitArray to fill
+ *                VTXREC structures with vertex IDs in an array.
  * Parameters:
- *      pitem Pointer to a EDGE structure of a vertex.
- *      param Pointer to a size_t[4] array of which
- *            a[0] Stores the pointer of variable setv of the caller function.
- *            a[1] Stores the starting vidx.
- *            a[2] Stores the end vidy.
- *            a[3] Stores a status implied whether vidx or vidy is interlinked in graph.
+ *      pitem Pointer to a VERTEX_L structure of a vertex.
+ *      param Pointer to a pointer to the start of an array.
  * Return value:  CBF_CONTINUE only.
  */
-int _grpCBFSPGatherVertices(void * pitem, size_t param)
+int _grpCBFSPLFillVertices(void * pitem, size_t param)
 {
-	_VTXREC vr;
-	vr.vertex.vid    = ((P_VERTEX_L)pitem)->vid;
-	vr.vertex.weight = 0; /* Distance equals 0. */
-	vr.flag = FALSE; /* The current vertex is not visited yet. */
-	if (vr.vertex.vid != 1[(size_t *)param]) /* vidx. */
-		vr.vertex.weight = ~0; /* Make an 'infinite' value. */
-	else
-		3[(size_t *)param] |= 1;
-	if (vr.vertex.vid == 2[(size_t *)param]) /* vidy. */
-		3[(size_t *)param] |= 2;
-	setInsertT((P_SET_T)0[(size_t *)param], &vr, sizeof(_VTXREC), _grpCBFCompareInteger);
+	(*(P_VTXREC *)param)->vid = ((P_VERTEX_L)pitem)->vid;
+	++(*(P_VTXREC *)param);
 	return CBF_CONTINUE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _grpCBFSPFindClosestVertex
- * Description:   This function is used to cooperate with function grpShortestPathL to find
- *                the closest vertex from a starting vertex.
+ * Function name: _grpCBFSPLInitVtxrecArray
+ * Description:   This function is used to cooperate with function _grpSPLInitArray to initialize
+ *                VTXREC structure in an array.
+ * Parameters:
+ *      pitem Pointer to a VTXREC structure.
+ *      param Pointer to a value to initialize the VTXREC structure.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
+{
+	((P_VTXREC)pitem)->dist = param;
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFSPLInitVtxrecArray
+ * Description:   This function is used to initialize an array of VTXREC.
+ * Parameters:
+ *       pgrp Pointer to a graph.
+ *      parrz Pointer to an array to be initialized.
+ *       vidx Vertex ID to start.
+ *      barrd TRUE to indicated initialize the distance array. FALSE to initialized queue array.
+ * Return value:  If initializing succeeded, function would return TRUE,
+ *                FALSE would return if initializing failed.
+ */
+BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd)
+{
+	P_VTXREC prec = (P_VTXREC)parrz->pdata;
+	/* Fill vertices into array and sort array. */
+	grpTraverseVerticesL(pgrp, _grpCBFSPLFillVertices, (size_t)&prec);
+	strSortArrayZ(parrz, sizeof(VTXREC), _grpCBFCompareInteger);
+	/* Fill distance into array. Pick the specific value off the array and sign it.
+	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
+	 */
+	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, barrd ? ~0U : FALSE, FALSE);
+	prec = (P_VTXREC)strBinarySearchArrayZ(parrz, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
+	if (NULL != prec)
+		prec->dist = barrd ? 0 : TRUE;
+	else
+		return FALSE;
+	return TRUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFSPLTraverseVertexEdgesPuppet
+ * Description:   This function is used to cooperate with function grpShortestPathL to relaxation.
  * Parameters:
  *      pitem Pointer to a EDGE structure of a vertex.
- *      param Pointer to a size_t[2] array of which
- *            a[0] Stores the pointer of variable edg of the caller function.
- *            a[1] Stores the pointer of variable setv of the caller function.
- * Return value:  If finding succeeded, function would return CBF_CONTINUE,
- *                CBF_TERMINATE would return if finding failed.
+ *      param Pointer to a size_t[4] array of which
+ *            a[0] Stores vertex ID.
+ *            a[1] Stores the pointer of a sized array to distance.
+ *            a[2] Stores the pointer of a sized array to check whether a vertex is in the queue.
+ *            a[3] Stores the pointer of a queue.
+ * Return value:  If relaxation succeeded, function would return CBF_CONTINUE,
+ *                CBF_TERMINATE would return if relaxation failed.
  */
-int _grpCBFSPFindClosestVertex(void * pitem, size_t param)
+int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 {
-	REGISTER P_EDGE pedgy = (P_EDGE)pitem, pedgx = (P_EDGE)0[(size_t *)param];
-	REGISTER P_BSTNODE pnodex = treBSTFindData_A(*(P_SET_T)1[(size_t *)param], &pedgx->vid, _grpCBFCompareInteger);
-	REGISTER P_BSTNODE pnodey = treBSTFindData_A(*(P_SET_T)1[(size_t *)param], &pedgy->vid, _grpCBFCompareInteger);
-	if (NULL != pnodex && NULL != pnodey)
+	P_ARRAY_Z parrd = (P_ARRAY_Z)1[(size_t *)param];;
+	P_ARRAY_Z parrq = (P_ARRAY_Z)2[(size_t *)param];
+	P_QUEUE_L pq = (P_QUEUE_L)3[(size_t *)param];
+	size_t u = 0[(size_t *)param];
+	size_t v = ((P_EDGE)pitem)->vid;
+	P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
+	P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
+
+	if (NULL != pvru && NULL != pvrv)
 	{
-		REGISTER _P_VTXREC pvry = (_P_VTXREC)pnodey->knot.pdata, pvrx = (_P_VTXREC)pnodex->knot.pdata;
-		if (FALSE == pvry->flag)
-		{	/* Do comparison while vertex Y remains unknown to
-			 * prevent searching turning back.
-			 */
-			if (pvrx->vertex.weight + pedgy->weight < pvry->vertex.weight)
+		if (pvrv->dist > pvru->dist + ((P_EDGE)pitem)->weight)
+		{
+			REGISTER P_VTXREC prec;
+			pvrv->dist = pvru->dist + ((P_EDGE)pitem)->weight;
+			prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &v, sizeof(VTXREC), _grpCBFCompareInteger);
+			if (NULL != prec)
 			{
-				pvry->vertex.weight = pvrx->vertex.weight + pedgy->weight;
-				if (pedgy->weight < pedgx->weight)
-				{	/* Find the shortest edge and turn result back to caller. */
-					pedgx->weight = pedgy->weight;
-					pedgx->vid    = pedgy->vid;
+				/* Check if vertex v is in queue or not. 
+				 * If not then push it into the queue.
+				 */
+				if (!prec->dist)
+				{
+					queInsertL(pq, &v, sizeof(size_t));
+					prec->dist = TRUE;
 				}
 			}
+			else
+				return CBF_TERMINATE;
 		}
 		return CBF_CONTINUE;
 	}
@@ -773,73 +811,68 @@ int _grpCBFSPFindClosestVertex(void * pitem, size_t param)
 }
 
 /* Function name: grpShortestPathL
- * Description:   Solve the shortest path of a graph from starting to end by Dijkstra algorithm.
+ * Description:   Solve the shortest path of a graph from starting by Shortest Path Faster algorithm.
  * Parameters:
  *       pgrp Pointer to a graph.
  *       vidx Vertex ID that you want to start searching.
- *       vidy Vertex ID that you want to end searching.
- * Return value:  Pointer of a singular list queue that contains a sequence of
- *                size_t integers that consists the shortest path from vidx to vidy.
+ * Return value:  Pointer of a sized array that contains each vertex and weight from vidx to that vertex.
+ *                Each element of the returned sized array is a VTXREC structure.
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-P_QUEUE_L grpShortestPathL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
+P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 {
-	EDGE edg; /* Stores a vertex's shortest edge. */
-	SET_T setv; /* Stores visited vertices. */
-	size_t a[4];
-	REGISTER size_t v; /* Previously visited vertex. */
-	P_QUEUE_L pqr = queCreateL(); /* Queue of routine. */
-	if (NULL == pqr)
-		return NULL; /* Allocation failure. */
-	setInitT(&setv);
-	/* Read all the vertices of a graph. */
-	a[0] = (size_t)&setv;
-	a[1] = vidx;
-	a[2] = vidy;
-	a[3] = 0;
-	grpBFSL(pgrp, vidx, _grpCBFSPGatherVertices, (size_t)a);
-	if (3 != a[3]) /* Can not find vidx or cannot reach at vertex vidy. */
+	QUEUE_L q;
+	P_ARRAY_Z parrd;
+	P_ARRAY_Z parrq;
+	size_t n = grpVerticesCountL(pgrp);
+
+	parrd = strCreateArrayZ(n, sizeof(VTXREC));
+	parrq = strCreateArrayZ(n, sizeof(VTXREC));
+
+	queInitL(&q);
+	if (NULL == parrd || NULL == parrq)
+		goto Lbl_Bad_Result;
+
+	/* Create array d to store shortest distance. */
+	if (TRUE != _grpSPLInitArray(pgrp, parrd, vidx, TRUE))
+		goto Lbl_Bad_Result;
+	/* Boolean array to check if vertex is present in queue or not. */
+	if (TRUE != _grpSPLInitArray(pgrp, parrq, vidx, FALSE))
+		goto Lbl_Bad_Result;
+
+	queInsertL(&q, &vidx, sizeof(size_t));
+
+	while (! queIsEmptyL(&q))
 	{
-		queDeleteL(pqr);
-		setFreeT(&setv);
-		return NULL;
+		REGISTER P_VTXREC prec;
+		size_t a[4];
+		a[0] = vidx;
+		a[1] = (size_t)parrd;
+		a[2] = (size_t)parrq;
+		a[3] = (size_t)&q;
+
+		/* Take the front vertex from Queue. */
+		queRemoveL(&vidx, sizeof(size_t), &q);
+		prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
+		if (NULL != prec)
+			prec->dist = FALSE; /* Out of the queue. */
+		else
+			goto Lbl_Bad_Result;
+		/* Relaxing all the adjacent edges of vertex taken from the queue. */
+		if (CBF_CONTINUE != grpTraverseVertexEdgesL(pgrp, vidx, _grpCBFSPLTraverseVertexEdgesPuppet, (size_t)a))
+			goto Lbl_Bad_Result;
 	}
-	edg.vid    = v = vidx;
-	edg.weight = ~0; /* Make an 'infinite' value. */
-	a[0] = (size_t)&edg;
-	a[1] = (size_t)&setv;
-	while (vidy != edg.vid)
+Lbl_Bad_Result:
+	if (NULL != parrd)
 	{
-		P_BSTNODE pnode = treBSTFindData_A(setv, &edg.vid, _grpCBFCompareInteger);
-		if (NULL == pnode)
-			goto Lbl_Routing_Error; /* Can not find vertex. */
-		if (FALSE == ((_P_VTXREC)pnode->knot.pdata)->flag)
-		{	/* Label the current vertex as a known one. */
-			((_P_VTXREC)pnode->knot.pdata)->flag = TRUE;
-			/* Insert the current vertex into queue. */
-			queInsertL(pqr, &edg.vid, sizeof(size_t));
-			/* Get the shortest edge for the current vertex. */
-			edg.weight = ~0;
-			if (CBF_CONTINUE != grpTraverseVertexEdgesL(pgrp, edg.vid, _grpCBFSPFindClosestVertex, (size_t)a))
-				goto Lbl_Routing_Error; /* Error occurred while traversing. */
-		}
-		if (vidy == edg.vid)
-		{	/* Insert the final point into queue. */
-			queInsertL(pqr, &edg.vid, sizeof(size_t));
-			break;
-		}
-		/* Escape from dead point. */
-		if (edg.vid == v)
-			goto Lbl_Routing_Error; /* Struck at dead point. */
-		v = edg.vid; /* Step forward. */
+		strDeleteArrayZ(parrd);
+		parrd = NULL;
 	}
-	setFreeT(&setv);
-	return pqr;
-Lbl_Routing_Error:
-	setFreeT(&setv);
-	queDeleteL(pqr);
-	return NULL;
+	if (NULL != parrq)
+		strDeleteArrayZ(parrq);
+	queFreeL(&q);
+	return parrd;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

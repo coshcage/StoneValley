@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0531191700L00120
+ * File ID:     0901171625S1224201627L00125
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -19,7 +19,6 @@
 #define _SVGRAPH_H_
 
 #include "svstring.h"
-#include "svqueue.h"
 #include "svset.h"
 
 /* Structure of a vertex for adjacency-list representation of graphs. */
@@ -33,6 +32,12 @@ typedef struct st_EDGE {
 	size_t vid;    /* Index of the adjacent vertex. */
 	size_t weight; /* Edge weight. */
 } EDGE, * P_EDGE;
+
+/* Vertex record for shortest path algorithm. */
+typedef struct st_VTXREC {
+	size_t vid;  /* Vertex ID. */
+	size_t dist; /* Distance. */
+} VTXREC, * P_VTXREC;
 
 /* Adjacency-list representation of graphs. */
 typedef SET_T GRAPH_L, * P_GRAPH_L;
@@ -56,7 +61,7 @@ BOOL       grpRemoveVertexL        (P_GRAPH_L pgrp, size_t       vid);
 BOOL       grpRemoveEdgeL          (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   size_t weight);
 int        grpDFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t param);
 int        grpBFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t param);
-P_QUEUE_L  grpShortestPathL        (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy);
+P_ARRAY_Z  grpShortestPathL        (P_GRAPH_L pgrp, size_t       vidx);
 BOOL       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
 
 /* Macros for function inline to accelerate execution speed. */

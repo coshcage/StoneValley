@@ -27,7 +27,7 @@ void EscapeFromHungary(char * pstr);
 %%
 
 " "|\t|\n { fprintf(pfout, "%s", yytext); }
-_?("grp"|"tre"|"stk"|"str"|"set"|"hsh"|"que")+[a-zA-Z0-9_]* { EscapeFromHungary(yytext); }
+_?("sv"|"grp"|"tre"|"stk"|"str"|"set"|"hsh"|"que")+[a-zA-Z0-9_]* { EscapeFromHungary(yytext); }
 . { fprintf(pfout, "%s", yytext); }
 
 %%

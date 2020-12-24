@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M1224201658L01126
+ * File ID:     0905171125M1224201820L01127
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -819,6 +819,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
  *                Each element of the returned sized array is a VTXREC structure.
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           Users may use function strDeleteArrayZ to deallocate grpShortestPathL returned arrays.
  */
 P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 {

@@ -26,7 +26,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 152
 	Limitations ........................................................... 301
 	Logs .................................................................. 311
-	Appendix .............................................................. 402
+	Appendix .............................................................. 403
 
 iv  Scenario
 
@@ -397,6 +397,7 @@ x   Logs
 07-19-2020: Library refined. A function is added onto 'svtree.h' and 'svstree.c'.
 08-28-2020: Library refined.
 10-24-2020: Library refined.
+10-24-2020: Library refined. Function grpShortestPathL altered at file 'svgraph.c' and 'svgraph.h'. Dijkstra algorithm is dismissed instead of Shortest Path Faster algorithm.
 _______________________________________________________________________________
 
 xi  The Story of StoneValley

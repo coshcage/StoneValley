@@ -847,10 +847,6 @@ P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 	{
 		REGISTER P_VTXREC prec;
 		size_t a[4];
-		a[0] = vidx;
-		a[1] = (size_t)parrd;
-		a[2] = (size_t)parrq;
-		a[3] = (size_t)&q;
 
 		/* Take the front vertex from Queue. */
 		queRemoveL(&vidx, sizeof(size_t), &q);
@@ -859,6 +855,11 @@ P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 			prec->dist = FALSE; /* Out of the queue. */
 		else
 			goto Lbl_Bad_Result;
+
+		a[0] = vidx;
+		a[1] = (size_t)parrd;
+		a[2] = (size_t)parrq;
+		a[3] = (size_t)&q;
 		/* Relaxing all the adjacent edges of vertex taken from the queue. */
 		if (CBF_CONTINUE != grpTraverseVertexEdgesL(pgrp, vidx, _grpCBFSPLTraverseVertexEdgesPuppet, (size_t)a))
 			goto Lbl_Bad_Result;

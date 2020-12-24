@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M1224201626L01123
+ * File ID:     0905171125M1224201658L01125
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -863,12 +863,14 @@ P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 		if (CBF_CONTINUE != grpTraverseVertexEdgesL(pgrp, vidx, _grpCBFSPLTraverseVertexEdgesPuppet, (size_t)a))
 			goto Lbl_Bad_Result;
 	}
+	goto Lbl_Finish;
 Lbl_Bad_Result:
 	if (NULL != parrd)
 	{
 		strDeleteArrayZ(parrd);
 		parrd = NULL;
 	}
+Lbl_Finish:
 	if (NULL != parrq)
 		strDeleteArrayZ(parrq);
 	queFreeL(&q);

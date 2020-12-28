@@ -69,7 +69,7 @@ BOOL       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
 #define grpInitL_M(pgrp_M) do { \
 	treInitBST(pgrp_M); \
 } while (0)
-#define grpVerticesCountL_M(pgrp_M) (setSizeT(*(pgrp_M)))
+#define grpVerticesCountL_M(pgrp_M) (setSizeT(pgrp_M))
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

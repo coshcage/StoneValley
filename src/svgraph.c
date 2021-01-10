@@ -776,7 +776,7 @@ BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd)
  */
 int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 {
-	P_ARRAY_Z parrd = (P_ARRAY_Z)1[(size_t *)param];;
+	P_ARRAY_Z parrd = (P_ARRAY_Z)1[(size_t *)param];
 	P_ARRAY_Z parrq = (P_ARRAY_Z)2[(size_t *)param];
 	P_QUEUE_L pq = (P_QUEUE_L)3[(size_t *)param];
 	size_t u = 0[(size_t *)param];

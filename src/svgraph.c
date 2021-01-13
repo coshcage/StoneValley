@@ -1260,13 +1260,13 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	a[2] = (size_t)prtn;
 	strTraverseArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFTSInitQ, (size_t)a, FALSE);
 
+	a[0] = (size_t)&arrvtx;
+	a[1] = (size_t)&q;
+	a[2] = (size_t)&j;
+	a[3] = (size_t)prtn;
 	while (!queIsEmptyL(&q))
 	{
 		queRemoveL(&k, sizeof(size_t), &q);
-		a[0] = (size_t)&arrvtx;
-		a[1] = (size_t)&q;
-		a[2] = (size_t)&j;
-		a[3] = (size_t)prtn;
 		grpTraverseVertexEdgesL(pgrp, k, _grpCBFTSReduceIndegree, (size_t)a);
 	}
 

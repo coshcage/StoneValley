@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0113212037L01184
+ * File ID:     0905171125M0113212100L01285
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -1220,6 +1220,7 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
  * Return value:  Pointer to a sized array which contain the sequence after running topological sort algorithm.
+ *                Each element in this array is a size_t integer that indicate the ID of a vertex.
  *                If this function returned NULL, it would indicate topological sorting failed.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);

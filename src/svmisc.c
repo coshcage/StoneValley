@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0619191003L00591
+ * File ID:     0306170948D0113211642L00533
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -433,99 +433,6 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 
 #undef _CUTOFF
 
-/* Being used by merge sort algorithm, here are function declarations of two internal items. */
-void _svMerge       (PUCHAR pbase, PUCHAR ptemp, size_t i, size_t j, size_t k,    size_t      size, CBF_COMPARE cbfcmp);
-void _svMergeSort_R (PUCHAR pbase, PUCHAR ptemp, size_t i, size_t k, size_t size, CBF_COMPARE cbfcmp);
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _svMerge
- * Description:   This function is used to merge data between two arrays.
- * Parameters:
- *      pbase Pointer to the first object of the array to be sorted and casted the pointer into (PUCHAR).
- *      ptemp Pointer to a temporary buffer that contains data to be sorted and casted into (PUCHAR).
- *          i The start of the left part to merge.
- *          j The start of the right part to merge.
- *          k The end of the right part to merge.
- *       size Size in bytes of each element in the array.
- *     cbfcmp Pointer to a function that compares two elements.
- *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  N/A.
- */
-void _svMerge(PUCHAR pbase, PUCHAR ptemp, size_t i, size_t j, size_t k, size_t size, CBF_COMPARE cbfcmp)
-{
-	REGISTER size_t l = i, m = j + 1, n = 0;
-	REGISTER PUCHAR px, py, pz;
-	while (l <= j || m <= k)
-	{
-		px = ptemp + n * size;
-		if (l > j)
-		{
-			py = pbase + m * size;
-			while (m <= k)
-			{
-				memcpy(px, py, size);
-				px += size;
-				py += size;
-				++m;
-				++n;
-			}
-			continue;
-		}
-		else if (m > k)
-		{
-			py = pbase + l * size;
-			while (l <= j)
-			{
-				memcpy(ptemp + n * size, pbase + l * size, size);
-				px += size;
-				py += size;
-				++l;
-				++n;
-			}
-			continue;
-		}
-		px = pbase + l * size;
-		py = pbase + m * size;
-		pz = ptemp + n * size;
-		if (cbfcmp(px, py) < 0)
-		{
-			memcpy(pz, px, size);
-			++l;
-		}
-		else
-		{
-			memcpy(pz, py, size);
-			++m;
-		}
-		++n;
-	}
-	memcpy(pbase + i * size, ptemp, size * (k - i + 1));
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _svMergeSort_R
- * Description:   This function is used to recursively merge sorting.
- * Parameters:
- *      pbase Pointer to the first object of the array to be sorted and casted the pointer into (PUCHAR).
- *      ptemp Pointer to a temporary buffer that contains data to be sorted and casted into (PUCHAR).
- *          i The start of the left part to merge.
- *          k The end of the right part to merge.
- *       size Size in bytes of each element in the array.
- *     cbfcmp Pointer to a function that compares two elements.
- *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  N/A.
- */
-void _svMergeSort_R(PUCHAR pbase, PUCHAR ptemp, size_t i, size_t k, size_t size, CBF_COMPARE cbfcmp)
-{
-	if (i < k)
-	{
-		REGISTER size_t j = (i + k - 1) >> 1;
-		_svMergeSort_R(pbase, ptemp,     i, j, size, cbfcmp);
-		_svMergeSort_R(pbase, ptemp, j + 1, k, size, cbfcmp);
-		_svMerge      (pbase, ptemp, i,  j, k, size, cbfcmp);
-	}
-}
-
 /* Function name: svMergeSort
  * Description:   Merge sort algorithm.
  * Parameters:
@@ -541,14 +448,49 @@ void _svMergeSort_R(PUCHAR pbase, PUCHAR ptemp, size_t i, size_t k, size_t size,
  */
 void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	PUCHAR ptemp = (PUCHAR) malloc(num * size);
-	if (NULL != ptemp)
+	REGISTER size_t i, j;
+	REGISTER PUCHAR pl = pbase;
+	REGISTER PUCHAR pr = (PUCHAR)malloc(num * size);
+
+	if (NULL == pr)
+		return NULL; /* Allocation failure. */
+
+	for (i = 1; i < num; i <<= 1)
 	{
-		_svMergeSort_R((PUCHAR)pbase, ptemp, 0, num - 1, size, cbfcmp);
-		free(ptemp);
-		return pbase;
+		for (j = 0; j < num; j += (i << 1))
+		{
+			REGISTER size_t t, k, a, b, x, y;
+
+			a = k = j;
+			t = j + i;
+			b = x = t < num ? t : num;
+			t = j + (i << 1);
+			y = t < num ? t : num;
+
+			while (a < x && b < y)
+				memcpy(pr + k++ * size, cbfcmp(pl + a * size, pl + b * size) < 0 ? pl + a++ * size : pl + b++ * size, size);
+
+			while (a < x)
+				memcpy(pr + k++ * size, pl + a++ * size, size);
+
+			while (b < y)
+				memcpy(pr + k++ * size, pl + b++ * size, size);
+		}
+		/* Swap pl and pr. */
+		{
+			REGISTER PUCHAR pt;
+			pt = pl;
+			pl = pr;
+			pr = pt;
+		}
 	}
-	return NULL; /* Allocation failure. */
+	if (pl != pbase)
+	{
+		memcpy(pbase, pl, num * size);
+		pr = pl;
+	}
+	free(pr);
+	return pbase;
 }
 
 /* Function name: svBinarySearch

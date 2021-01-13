@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S1224201627L00125
+ * File ID:     0901171625S0113212032L00126
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -63,6 +63,7 @@ int        grpDFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRA
 int        grpBFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t param);
 P_ARRAY_Z  grpShortestPathL        (P_GRAPH_L pgrp, size_t       vidx);
 BOOL       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
+P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svgraph.c. */

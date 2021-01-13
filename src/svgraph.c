@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M1224201820L01127
+ * File ID:     0905171125M0113212037L01184
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -53,18 +53,21 @@ int  _grpCBFIndegreeVertexPuppet        (void * pitem, size_t param);
 int  _grpCBFIndegreeVertex              (void * pitem, size_t param);
 int  _grpCBFRemoveEdgePuppet            (void * pitem, size_t param);
 int  _grpCBFRemoveEdge                  (void * pitem, size_t param);
-int  _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset);
+int  _grpDFSLPuppet                     (P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset);
 int  _grpCBFQueueInsertVertex           (void * pitem, size_t param);
 int  _grpCBFSPLFillVertices             (void * pitem, size_t param);
 int  _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
-BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
+BOOL _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
 int  _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
 int  _grpCBFMSTInsertEdges              (void * pitem, size_t param);
 int  _grpCBFMSTScanVertices             (void * pitem, size_t param);
 /* Function declarations for embedded disjoint set structure. */
-BOOL _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y);
-BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y);
-void _grpDisjointSetFree  (P_ARRAY_Z parrz);
+BOOL _grpDisjointSetSearch              (P_ARRAY_Z parrz, size_t x, size_t y);
+BOOL _grpDisjointSetInsert              (P_ARRAY_Z parrz, size_t x, size_t y);
+void _grpDisjointSetFree                (P_ARRAY_Z parrz);
+int  _grpCBFTSFillVertexArray           (void * pitem, size_t param);
+int  _grpCBFTSInitQ                     (void * pitem, size_t param);
+int  _grpCBFTSReduceIndegree            (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCompareInteger
@@ -1074,8 +1077,7 @@ void _grpDisjointSetFree(P_ARRAY_Z parrz)
 	strFreeArrayZ(parrz);
 }
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: grpMinimalSpanningTreeL
+/* Function name: grpMinimalSpanningTreeL
  * Description:   Generate the coressponding minimum spanning tree of a graph by Kruskal algorithm.
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
@@ -1123,4 +1125,159 @@ Lbl_Cleanup:
 	strFreeArrayZ(&vtxarr);
 	_grpDisjointSetFree(&setarr);
 	return rtn;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFTSFillVertexArray
+ * Description:   This function is used to cooperate with function grpTopologicalSortL
+ *                to fill an vertex array.
+ * Parameters:
+ *      pitem Pointer to a VERTEX_L structure.
+ *      param Pointer to a size_t[2] array.
+ *            a[0] Stores a pointer to the vertex array.
+ *            a[1] Stores a pointer to the graph you want to operate.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _grpCBFTSFillVertexArray(void * pitem, size_t param)
+{
+#define indegree dist
+	REGISTER P_VTXREC * pprec = (P_VTXREC *)0[(size_t *)param];
+	REGISTER P_GRAPH_L pgrp = (P_GRAPH_L)1[(size_t *)param];
+	(*pprec)->vid = ((P_VERTEX_L)pitem)->vid;
+	(*pprec)->indegree = grpIndegreeVertexL(pgrp, (*pprec)->vid);
+	++(*pprec);
+	return CBF_CONTINUE;
+#undef indegree
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFTSInitQ
+ * Description:   This function is used to cooperate with function grpTopologicalSortL
+ *                to initialize a queue.
+ * Parameters:
+ *      pitem Pointer to a VTXREC structure.
+ *      param Pointer to a size_t[3] array.
+ *            a[0] Stores a pointer to a size_t variable counter.
+ *            a[1] Stores a pointer to the queue.
+ *            a[2] Stores a pointer to the return value array.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _grpCBFTSInitQ(void * pitem, size_t param)
+{
+#define indegree dist
+	if (0 == ((P_VTXREC)pitem)->indegree)
+	{
+		REGISTER P_QUEUE_L pq = (P_QUEUE_L)1[(size_t *)param];
+		REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
+		/* Insert vertex ID into the queue. */
+		queInsertL(pq, &(((P_VTXREC)pitem)->vid), sizeof(size_t));
+		/* Insert vertex ID into the return value array. */
+		((*(size_t *)0[(size_t *)param])++)[(size_t *)prtn->pdata] = ((P_VTXREC)pitem)->vid;
+	}
+	return CBF_CONTINUE;
+#undef indegree
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFTSReduceIndegree
+ * Description:   This function is used to cooperate with function grpTopologicalSortL
+ *                to reduce indegrees of vertices.
+ * Parameters:
+ *      pitem Pointer to an EDGE structure.
+ *      param Pointer to a size_t[4] array.
+ *            a[0] Stores a pointer to the vertex array.
+ *            a[1] Stores a pointer to the queue.
+ *            a[2] Stores a pointer to a size_t variable counter.
+ *            a[3] Stores a pointer to the return value array.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _grpCBFTSReduceIndegree(void * pitem, size_t param)
+{
+#define indegree dist
+	REGISTER P_QUEUE_L pq = (P_QUEUE_L)1[(size_t *)param];
+	REGISTER P_VTXREC prec = (P_VTXREC)strBinarySearchArrayZ
+	(
+		(P_ARRAY_Z)0[(size_t *)param],
+		&(((P_EDGE)pitem)->vid),
+		sizeof(VTXREC),
+		_grpCBFCompareInteger
+	);
+	if (NULL != prec)
+	{
+		if (0 == --prec->indegree)
+		{
+			REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)3[(size_t *)param];
+			queInsertL(pq, &(((P_EDGE)pitem)->vid), sizeof(size_t));
+			((*(size_t *)2[(size_t *)param])++)[(size_t *)prtn->pdata] = ((P_EDGE)pitem)->vid;
+		}
+	}
+	return CBF_CONTINUE;
+#undef indegree
+}
+
+/* Function name: grpTopologicalSortL
+ * Description:   Generate the sequence after running topological sort algorithm.
+ * Parameter:
+ *      pgrp Pointer to an adjacent list formed graph.
+ * Return value:  Pointer to a sized array which contain the sequence after running topological sort algorithm.
+ *                If this function returned NULL, it would indicate topological sorting failed.
+ * Caution:       Address of pgrp Must Be Allocated and Initialized first.
+ * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);
+ *                if (NULL != prtn && grpVerticesCountL(pgrp) > strLevelArrayZ(prtn))
+ *                    printf("The graph pgrp has a cycle."); // Use these code to detect whether a graph has a cycle.
+ */
+P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
+{
+	REGISTER size_t i;
+	size_t n = grpVerticesCountL(pgrp);
+	ARRAY_Z arrvtx; /* An array stores vertices and indegrees. */
+	P_VTXREC prec; /* Pointer to each element in arrvtx. */
+	size_t j, k;
+	size_t a[4];
+	P_ARRAY_Z prtn; /* Return value array. */
+	QUEUE_L q;
+
+	if (0 == n)
+		return NULL; /* Graph is empty. */
+	if (NULL == strInitArrayZ(&arrvtx, n, sizeof(VTXREC)))
+		return NULL; /* Allocation failure. */
+	if (NULL == (prtn = strCreateArrayZ(n, sizeof(size_t))))
+		return NULL; /* Allocation failure. */
+	queInitL(&q);
+
+	prec = (P_VTXREC)arrvtx.pdata;
+	a[0] = (size_t)&prec;
+	a[1] = (size_t)pgrp;
+	/* Fill vertex array. */
+	grpTraverseVerticesL(pgrp, _grpCBFTSFillVertexArray, (size_t)a);
+	/* Sort vertex array. */
+	strSortArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFCompareInteger);
+	/* Initialize the queue. */
+	j = 0;
+	a[0] = (size_t)&j;
+	a[1] = (size_t)&q;
+	a[2] = (size_t)prtn;
+	strTraverseArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFTSInitQ, (size_t)a, FALSE);
+
+	while (!queIsEmptyL(&q))
+	{
+		queRemoveL(&k, sizeof(size_t), &q);
+		a[0] = (size_t)&arrvtx;
+		a[1] = (size_t)&q;
+		a[2] = (size_t)&j;
+		a[3] = (size_t)prtn;
+		grpTraverseVertexEdgesL(pgrp, k, _grpCBFTSReduceIndegree, (size_t)a);
+	}
+
+	if (0 == j)
+	{
+		strDeleteArrayZ(prtn);
+		prtn = NULL;
+	}
+	else if (j != prtn->num)
+		strResizeArrayZ(prtn, j, sizeof(size_t)); /* There is a cycle in the graph. */
+
+	queFreeL(&q);
+	strFreeArrayZ(&arrvtx);
+	return prtn;
 }

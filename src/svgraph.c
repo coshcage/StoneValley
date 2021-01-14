@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0114211005L01377
+ * File ID:     0905171125M0114211005L01374
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -885,7 +885,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 			prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 			if (NULL != prec)
 			{
-				/* Check if vertex v is in queue or not. 
+				/* Check if vertex v is in queue or not.
 				 * If not then push it into the queue.
 				 */
 				if (!prec->dist)
@@ -1316,16 +1316,13 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
  *                // Users may use these following codes to detect whether a graph has a cycle.
  *                if (NULL != prtn && grpVerticesCountL(pgrp) > strLevelArrayZ(prtn))
  *                    printf("The graph pgrp has a cycle.");
- *                else if (NULL == prtn && grpVerticesCountL(pgrp))
- *                    printf("The graph pgrp has a cycle.");
  */
 P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 {
-	REGISTER size_t i;
 	size_t n = grpVerticesCountL(pgrp);
 	ARRAY_Z arrvtx; /* An array stores vertices and indegrees. */
 	P_VTXREC prec; /* Pointer to each element in arrvtx. */
-	size_t j, k;
+	size_t i, j;
 	size_t a[4];
 	P_ARRAY_Z prtn; /* Return value array. */
 	QUEUE_L q;
@@ -1346,29 +1343,29 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	/* Sort vertex array. */
 	strSortArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFCompareInteger);
 	/* Initialize the queue. */
-	j = 0;
-	a[0] = (size_t)&j;
+	i = 0;
+	a[0] = (size_t)&i;
 	a[1] = (size_t)&q;
 	a[2] = (size_t)prtn;
 	strTraverseArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFTSInitQ, (size_t)a, FALSE);
 
 	a[0] = (size_t)&arrvtx;
 	a[1] = (size_t)&q;
-	a[2] = (size_t)&j;
+	a[2] = (size_t)&i;
 	a[3] = (size_t)prtn;
 	while (!queIsEmptyL(&q))
 	{
-		queRemoveL(&k, sizeof(size_t), &q);
-		grpTraverseVertexEdgesL(pgrp, k, _grpCBFTSReduceIndegree, (size_t)a);
+		queRemoveL(&j, sizeof(size_t), &q);
+		grpTraverseVertexEdgesL(pgrp, j, _grpCBFTSReduceIndegree, (size_t)a);
 	}
 
-	if (0 == j)
+	if (0 == i)
 	{
 		strDeleteArrayZ(prtn);
 		prtn = NULL;
 	}
-	else if (j != prtn->num)
-		strResizeArrayZ(prtn, j, sizeof(size_t)); /* There is a cycle in the graph. */
+	else if (i != prtn->num)
+		strResizeArrayZ(prtn, i, sizeof(size_t)); /* There is a cycle in the graph. */
 
 	queFreeL(&q);
 	strFreeArrayZ(&arrvtx);

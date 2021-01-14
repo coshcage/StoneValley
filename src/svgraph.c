@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0113212100L01285
+ * File ID:     0905171125M0114211005L01377
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -42,32 +42,35 @@ typedef struct _st_EDGEREC {
 } _EDGEREC, * _P_EDGEREC;
 
 /* File level function declarations here. */
-extern int _strCBFNodesCounter          (void * pitem, size_t param);
-int        _grpCBFCompareInteger        (const void * px, const void * py);
-P_VERTEX_L _grpGetVertexByID            (P_GRAPH_L pgrp, size_t vid);
-int  _grpCBFFindEdgeInList              (void * pitem, size_t param);
-int  _grpCBFTraversePuppet              (void * pitem, size_t param);
-int  _grpCBFEdgesCountPuppet            (void * pitem, size_t param);
-int  _grpCBFFreePuppet                  (void * pitem, size_t param);
-int  _grpCBFIndegreeVertexPuppet        (void * pitem, size_t param);
-int  _grpCBFIndegreeVertex              (void * pitem, size_t param);
-int  _grpCBFRemoveEdgePuppet            (void * pitem, size_t param);
-int  _grpCBFRemoveEdge                  (void * pitem, size_t param);
-int  _grpDFSLPuppet                     (P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset);
-int  _grpCBFQueueInsertVertex           (void * pitem, size_t param);
-int  _grpCBFSPLFillVertices             (void * pitem, size_t param);
-int  _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
-BOOL _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
-int  _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
-int  _grpCBFMSTInsertEdges              (void * pitem, size_t param);
-int  _grpCBFMSTScanVertices             (void * pitem, size_t param);
+extern int _strCBFNodesCounter                (void * pitem, size_t param);
+int        _grpCBFCompareInteger              (const void * px, const void * py);
+P_VERTEX_L _grpGetVertexByID                  (P_GRAPH_L pgrp, size_t vid);
+int        _grpCBFFindEdgeInList              (void * pitem, size_t param);
+int        _grpCBFTraversePuppet              (void * pitem, size_t param);
+int        _grpCBFEdgesCountPuppet            (void * pitem, size_t param);
+int        _grpCBFFreePuppet                  (void * pitem, size_t param);
+int        _grpCBFIndegreeVertexPuppet        (void * pitem, size_t param);
+int        _grpCBFIndegreeVertex              (void * pitem, size_t param);
+int        _grpCBFRemoveEdgePuppet            (void * pitem, size_t param);
+int        _grpCBFRemoveEdge                  (void * pitem, size_t param);
+int        _grpCBFCopyVertices                (void * pitem, size_t param);
+int        _grpCBFCopyEdgesPuppet             (void * pitem, size_t param);
+int        _grpCBFCopyEdges                   (void * pitem, size_t param);
+int        _grpDFSLPuppet                     (P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset);
+int        _grpCBFQueueInsertVertex           (void * pitem, size_t param);
+int        _grpCBFSPLFillVertices             (void * pitem, size_t param);
+int        _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
+BOOL       _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
+int        _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
+int        _grpCBFMSTInsertEdges              (void * pitem, size_t param);
+int        _grpCBFMSTScanVertices             (void * pitem, size_t param);
 /* Function declarations for embedded disjoint set structure. */
-BOOL _grpDisjointSetSearch              (P_ARRAY_Z parrz, size_t x, size_t y);
-BOOL _grpDisjointSetInsert              (P_ARRAY_Z parrz, size_t x, size_t y);
-void _grpDisjointSetFree                (P_ARRAY_Z parrz);
-int  _grpCBFTSFillVertexArray           (void * pitem, size_t param);
-int  _grpCBFTSInitQ                     (void * pitem, size_t param);
-int  _grpCBFTSReduceIndegree            (void * pitem, size_t param);
+BOOL       _grpDisjointSetSearch              (P_ARRAY_Z parrz, size_t x, size_t y);
+BOOL       _grpDisjointSetInsert              (P_ARRAY_Z parrz, size_t x, size_t y);
+void       _grpDisjointSetFree                (P_ARRAY_Z parrz);
+int        _grpCBFTSFillVertexArray           (void * pitem, size_t param);
+int        _grpCBFTSInitQ                     (void * pitem, size_t param);
+int        _grpCBFTSReduceIndegree            (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCompareInteger
@@ -578,6 +581,92 @@ BOOL grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 		}
 	}
 	return TRUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFCopyVertices
+ * Description:   This function is used to cooperate with function grpCopyL
+ *                to copy vertices of a graph.
+ * Parameters:
+ *      pitem Pointer to a VERTEX_L structure.
+ *      param Pointer to the destination graph.
+ * Return value:  CBF_CONTINUE would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if failed to handle.
+ */
+int _grpCBFCopyVertices(void * pitem, size_t param)
+{
+	if (grpInsertVertexL((P_GRAPH_L)param, ((P_VERTEX_L)pitem)->vid))
+		return CBF_CONTINUE;
+	else
+		return CBF_TERMINATE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFCopyEdgesPuppet
+ * Description:   This function is used to cooperate with function _grpCBFCopyEdges
+ *                to copy edges of a graph.
+ * Parameters:
+ *      pitem Pointer to an EDGE structure.
+ *      param Pointer to a size_t[2] array.
+ *            a[0] Stores the starter vertex ID.
+ *            a[1] Stores a pointer to the source graph.
+ * Return value:  CBF_CONTINUE would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if failed to handle.
+ */
+int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
+{
+	if (grpInsertEdgeL((P_GRAPH_L)1[(size_t *)param], 0[(size_t *)param], ((P_EDGE)pitem)->vid, ((P_EDGE)pitem)->weight))
+		return CBF_CONTINUE;
+	else
+		return CBF_TERMINATE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFCopyEdges
+ * Description:   This function is used to cooperate with function grpCopyL
+ *                to copy edges of a graph.
+ * Parameters:
+ *      pitem Pointer to a VERTEX_L structure.
+ *      param Pointer to a size_t[2] array.
+ *            a[0] Stores a pointer to the source graph.
+ *            a[1] Stores a pointer to the destination graph.
+ * Return value:  CBF_CONTINUE would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if failed to handle.
+ */
+int _grpCBFCopyEdges(void * pitem, size_t param)
+{
+	size_t a[2];
+	a[0] = ((P_VERTEX_L)pitem)->vid;
+	a[1] = 1[(size_t *)param];
+	return grpTraverseVertexEdgesL((P_GRAPH_L)0[(size_t *)param], a[0], _grpCBFCopyEdgesPuppet, (size_t)a);
+}
+
+/* Function name: grpCopyL
+ * Description:   Copy an adjacent list formed graph.
+ * Parameter:
+ *      pgrp Pointer to the source graph to be copied.
+ * Return value:  Pointer to the new graph which is equal to the source graph.
+ *                If this function returned NULL, it would indicate a duplicating failure.
+ * Caution:       Address of pgrp Must Be Allocated and Initialized first.
+ */
+P_GRAPH_L grpCopyL(P_GRAPH_L pgrp)
+{
+	size_t a[2];
+	P_GRAPH_L prtn = grpCreateL();
+	/* Copy all vertices. */
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyVertices, (size_t)prtn))
+		goto Lbl_Allocation_Failure;
+	/* Copy each edge. */
+	a[0] = (size_t)pgrp;
+	a[1] = (size_t)prtn;
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyEdges, (size_t)a))
+		goto Lbl_Allocation_Failure;
+	goto Lbl_Finish;
+Lbl_Allocation_Failure:
+	grpDeleteL(prtn);
+	prtn = NULL;
+Lbl_Finish:
+	return prtn;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1224,8 +1313,11 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
  *                If this function returned NULL, it would indicate topological sorting failed.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);
+ *                // Users may use these following codes to detect whether a graph has a cycle.
  *                if (NULL != prtn && grpVerticesCountL(pgrp) > strLevelArrayZ(prtn))
- *                    printf("The graph pgrp has a cycle."); // Use these code to detect whether a graph has a cycle.
+ *                    printf("The graph pgrp has a cycle.");
+ *                else if (NULL == prtn && grpVerticesCountL(pgrp))
+ *                    printf("The graph pgrp has a cycle.");
  */
 P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 {

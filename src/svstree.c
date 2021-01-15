@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0719201838L02088
+ * File ID:     0809171737I0115211438L02111
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -175,6 +175,29 @@ void treDeleteBST_O(P_BST pbst)
 {
 	treFreeBST(pbst);
 	free(pbst);
+}
+
+/* Function name: treCopyBST
+ * Description:   Copy a binary search tree.
+ * Parameters:
+ *      proot Pointer to the root node of the original BST.
+ *       size Size of each element in the original BST.
+ * Return value:  Pointer to the new root node.
+ * Caution:       Address of proot Must Be Allocated first.
+ */
+P_BSTNODE treCopyBST(P_BSTNODE proot, size_t size)
+{
+	REGISTER P_BSTNODE pl, pr, pp;
+	if (NULL == proot)
+		return NULL;
+	pl = treCopyBST(P2P_BSTNODE(proot->knot.ppnode[LEFT]), size);
+	pr = treCopyBST(P2P_BSTNODE(proot->knot.ppnode[RIGHT]), size);
+	if (NULL != (pp = treCreateBSTNode(proot->knot.pdata, size, proot->param)))
+	{
+		pp->knot.ppnode[LEFT] = P2P_TNODE_B(pl);
+		pp->knot.ppnode[RIGHT] = P2P_TNODE_B(pr);
+	}
+	return pp;
 }
 
 /* Function name: treBSTFindData_R

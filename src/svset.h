@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0828200936L00163
+ * File ID:     0901171620T0115211509L00164
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -46,6 +46,7 @@ void     setInitT_O             (P_SET_T pset);
 void     setFreeT_O             (P_SET_T pset);
 P_SET_T  setCreateT_O           (void);
 void     setDeleteT_O           (P_SET_T pset);
+P_SET_T  setCopyT               (P_SET_T pset,   size_t       size);
 size_t   setSizeT_O             (P_SET_T pset);
 BOOL     setIsEmptyT_O          (P_SET_T pset);
 BOOL     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);

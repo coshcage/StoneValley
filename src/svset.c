@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0828200936L00860
+ * File ID:     0901171620L0115211509L00876
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -472,6 +472,22 @@ P_SET_T setCreateT_O(void)
 void setDeleteT_O(P_SET_T pset)
 {
 	treDeleteBST(pset);
+}
+
+/* Function name: setCopyT
+ * Description:   Make a duplication of a BST set.
+ * Parameters:
+ *       pset Pointer to the set you want to copy.
+ *       size Size of each element in the original set.
+ * Return value:  Pointer to the copy set.
+ * Caution:       Address of pset Must Be Allocated first.
+ */
+P_SET_T setCopyT(P_SET_T pset, size_t size)
+{
+	P_SET_T prtn = setCreateT();
+	if (NULL != prtn)
+		*prtn = treCopyBST(*pset, size);
+	return prtn;
 }
 
 /* Function name: setSizeT_O

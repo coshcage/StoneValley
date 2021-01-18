@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0601191746L00549
+ * File ID:     0809171737H0118211520L00550
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -238,7 +238,8 @@ void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
 	pnode->pdata = (PUCHAR) malloc(size);
 	if (NULL != pitem) /* Copy data content by size. */
-		memcpy(pnode->pdata, pitem, size);
+		if (NULL != pnode->pdata)
+			memcpy(pnode->pdata, pitem, size);
 	return pnode->pdata;
 }
 

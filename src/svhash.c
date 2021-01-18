@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0619191238L00609
+ * File ID:     0901171615K0118211528L00608
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -23,7 +23,6 @@
 /* File level function declarations. */
 int _hshCBFFreeBuckets       (void * pitem, size_t param);
 int _hshCBFSizeBuckets       (void * pitem, size_t param);
-int _hshCBFCompareNodeDataS  (void * pitem, size_t param);
 int _hshCBFFetchPdataInNodeS (void * pitem, size_t param);
 int _hshCBFTraverseCPuppet   (void * pitem, size_t param);
 int _hshCBFCopyCPuppet       (void * pitem, size_t param);

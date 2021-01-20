@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0619191031L00494
+ * File ID:     0914171200J0120211630L00466
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -46,11 +46,6 @@ int       _treCBFHFMFindSymbol              (void *       pitem, size_t       pa
 int       _treCBFHFMFillSymbolTable         (void *       pitem, size_t       param);
 P_ARRAY_Z _treHFMCreateSymbolTable          (PUCHAR       s,     size_t       n);
 P_BTREE   _treHFMBuildHuffmanTree           (P_ARRAY_Z    stbl);
-BOOL      _treHFMGetBitFromStream           (P_BITSTREAM  pbsref);
-
-/* This macro detects whether the dummy bit-stream pbsref reaches at the end of it. */
-#define _treHFMAtEndOfBitStream(pbstm, pbsref) \
-	((strLevelArrayZ(&(pbsref)->arrz) == strLevelArrayZ(&(pbstm)->arrz)) && ((pbsref)->bilc == (pbstm)->bilc))
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFHFMCompareSymbolFreqInNode
@@ -399,25 +394,6 @@ Lbl_Building_Failed: /* Can not build a Huffman tree. */
 	return NULL; /* There're no symbols in table. */
 }
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treHFMGetBitFromStream
- * Description:   This function fetches a bit from a bit-stream but not modify it.
- * Parameter:
- *    pbsref Pointer to the dummy bit-stream you want to operate with.
- * Return value:  Either TRUE or FALSE would return.
- */
-BOOL _treHFMGetBitFromStream(P_BITSTREAM pbsref)
-{
-	REGISTER BOOL r = ((UCHART) 0x01 << (CHAR_BIT - pbsref->bilc)) & (*pbsref->arrz.pdata);
-	if (++pbsref->bilc > CHAR_BIT)
-	{
-		pbsref->bilc = 1; /* Reset current bit position. */
-		++pbsref->arrz.num; /* Increase integer block. */
-		pbsref->arrz.pdata += 1; /* Move integer 1 block forward. */
-	}
-	return r;
-}
-
 /* Function name: treHuffmanDecoding
  * Description:   Huffman decoding algorithm.
  * Parameters:
@@ -429,6 +405,7 @@ BOOL _treHFMGetBitFromStream(P_BITSTREAM pbsref)
  * Return value:  Pointer to a new created bit-stream. This bit-stream stores the decoded string.
  *                If any error occurred during decoding, function would be interrupted and return a NULL.
  * Caution:       ptable must NOT be value NULL.
+ *                (*) if called this function, parameter bit-stream s would be altered to empty.
  * Tip:           You could get a symbol table from invoking function treHuffmanEncoding.
  *                A symbol table will output from the parameter pptable of function treHuffmanEncoding.
  *                You may either get a bit-stream as the parameter of function treHuffmanDecoding from
@@ -442,7 +419,6 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 		NULL != (pbout = strCreateBitStream())
 		)
 	{
-		BITSTREAM bsref;
 		REGISTER size_t i;
 		REGISTER P_HFM_SYMBOL psbl;
 		REGISTER UCHART j = 0, k = 0;
@@ -454,15 +430,11 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 		pbout->arrz.pdata = NULL;
 		/* Initialize number of bits. */
 		pbout->bilc = CHAR_BIT;
-		/* Set a dummy bit-stream header. */
-		bsref.bilc = 1;
-		bsref.arrz.num = 0;
-		bsref.arrz.pdata = s->arrz.pdata;
-		while (! _treHFMAtEndOfBitStream(s, &bsref))
+		while (! strBitStreamIsEmpty(s))
 		{
 			k <<= 1; /* Left shift 1. */
 			/* Pop a bit from bit-stream and fill it into temporary char. */
-			if (_treHFMGetBitFromStream(&bsref))
+			if (strBitStreamPop(s))
 				++k; /* Padding LSB with value 1. */
 			++j; /* Increase number of bits. */
 			/* Search k as a symbol in the table. */

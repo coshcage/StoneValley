@@ -2,7 +2,7 @@
  * Name:        svhtree.c
  * Description: Heap tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737E0601191737L00218
+ * File ID:     0809171737E0130211518L00241
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -174,25 +174,43 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
  */
 void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF_COMPARE cbfcmp, BOOL bmax)
 {
-	REGISTER PUCHAR px, py;
-	REGISTER size_t i, j;
+	REGISTER size_t i, t, l, m, n;
 	REGISTER int r;
 	/* Remove the biggest one. */
 	memcpy(pitem, pheap->hdarr.pdata, size);
 	/* Put the last element onto the head of array and decrease the real size of the array. */
 	memcpy(pheap->hdarr.pdata, pheap->hdarr.pdata + (--pheap->irear) * size, size);
-	for (i = 0, j = (i << 1) + 2; i <= pheap->irear; j = (i << 1) + 2)
+	/* Heapify. */
+	for (i = 0;; )
 	{
-		px = pheap->hdarr.pdata + i * size;
-		py = pheap->hdarr.pdata + j * size;
-		r = cbfcmp(px, py);
-		if (bmax ? r < 0 : r > 0)
-		{	/* Swap when i < j in a max heap. */
-			svSwap(px, py, ptemp, size);
-			i = j;
-		}
-		else /* i >= j in max heap. */
+		t = (i << 1);
+		l = t + 1; /* Left child. */
+		n = t + 2; /* Right child. */
+		t = pheap->irear;
+		m =
+		(
+			l < t &&
+			(
+				r = cbfcmp(pheap->hdarr.pdata + l * size, pheap->hdarr.pdata + i * size),
+				bmax ? r > 0 : r < 0
+			)
+		) ? l : i;
+		if
+		(
+			n < t &&
+			(
+				r = cbfcmp(pheap->hdarr.pdata + n * size, pheap->hdarr.pdata + m * size),
+				bmax ? r > 0 : r < 0
+			)
+		)
+			m = n;
+		if (m == i)
 			break;
+		else
+		{
+			svSwap(pheap->hdarr.pdata + i * size, pheap->hdarr.pdata + m * size, ptemp, size);
+			i = m;
+		}
 	}
 }
 
@@ -210,8 +228,13 @@ void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
  */
 BOOL trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 {
-	if (treIsEmptyHeapA(pheap))
-		return FALSE; /* Heap is empty. */
-	memcpy(pitem, pheap->hdarr.pdata, size);
-	return TRUE;
+	if (! treIsEmptyHeapA(pheap))
+	{
+		if (NULL != pitem)
+		{
+			memcpy(pitem, pheap->hdarr.pdata, size);
+			return TRUE;
+		}
+	}
+	return FALSE;
 }

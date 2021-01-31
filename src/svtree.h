@@ -74,7 +74,7 @@ typedef enum en_TvsMtd {
 typedef struct st_HFM_SYMBOL {
 	UCHART name; /* Symbol name. */
 	UCHART bits; /* Number of bits in a symbol. */
-	UCHART sgnb; /* Significant bits in the symbol name. */
+	size_t sgnb; /* Significant bits in the symbol name. */
 } HFM_SYMBOL, * P_HFM_SYMBOL;
 
 /* Types for array implemented tries. */

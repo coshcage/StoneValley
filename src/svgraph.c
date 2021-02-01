@@ -15,7 +15,7 @@
  *   Hope you never need to push yourself or other people too hard.
  */
 
-#include <stdlib.h> /* Using function malloc, free. */
+#include <stdlib.h> /* Using function free. */
 #include <string.h> /* Using function memcpy. */
 #include "svgraph.h"
 #include "svqueue.h"

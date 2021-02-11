@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0115211440L00446
+ * File ID:     0809171737V0211212315L00446
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -144,8 +144,8 @@ P_BSTNODE       treBSTFindData_R   (P_BSTNODE       proot,   const void * pitem,
 P_BSTNODE       treBSTFindData_A   (P_BSTNODE       proot,   const void * pitem, CBF_COMPARE   cbfcmp);
 P_BSTNODE       treBSTInsertAA     (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTRemoveAA     (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp);
-P_BSTNODE       treBSTInsertAVL    (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp, BOOL *      pblc);
-P_BSTNODE       treBSTRemoveAVL    (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp, BOOL *      pblc);
+P_BSTNODE       treBSTInsertAVL    (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp);
+P_BSTNODE       treBSTRemoveAVL    (P_BSTNODE       pnode,   const void * pitem, size_t        size,    CBF_COMPARE  cbfcmp);
 /* Functions for B-plus trees. */
 void *          treInitBPTNode     (P_BPTNODE       pnode,   P_TNODE_B    parent, P_TNODE_B    pnext);
 void            treFreeBPTNode     (P_BPTNODE       pnode);

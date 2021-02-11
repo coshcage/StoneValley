@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0211211513L02110
+ * File ID:     0809171737I0211212315L02063
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -381,10 +381,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 	return pnode;
 }
 
-/* An impelementation for AVL-tree is listed below.
- * The following AVL-tree implementation referred to the book Data Structures Using C
- * of ISBN 0-07-066919-8 wrote by R. Krishnamoorthy and G. Indirani Kumaravel and published by McGraw-Hill.
- */
+/* An impelementation for AVL-tree is listed below. */
 
 /* An enumeration describes the balance factor for AVL-tree nodes. */
 enum _en_AVLBalanceFactor {
@@ -395,9 +392,118 @@ enum _en_AVLBalanceFactor {
 typedef ptrdiff_t _en_BalanceFactor;
 
 /* Sub-section function declarations for AVL-tree. */
-P_BSTNODE _treBSTLeftBalanceAVL     (P_BSTNODE pnode, BOOL * pblc);
-P_BSTNODE _treBSTRightBalanceAVL    (P_BSTNODE pnode, BOOL * pblc);
-P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * pblc);
+ptrdiff_t _treBSTGetBalanceFactorAVL  (P_BSTNODE pnode);
+ptrdiff_t _treBSTMaxBalanceFactorAVL  (ptrdiff_t lbf,  ptrdiff_t rbf);
+ptrdiff_t _treBSTReadBalanceFactorAVL (P_BSTNODE pnode);
+P_BSTNODE _treBSTRightRotateAVL       (P_BSTNODE pnode);
+P_BSTNODE _treBSTLeftRotateAVL        (P_BSTNODE pnode);
+ptrdiff_t _treBSTSuccessorAVL         (P_BSTNODE pnode);
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treBSTGetBalanceFactorAVL
+ * Description:   Get a node's balance factor.
+ * Parameter:
+ *     pnode Pointer to a node of an AVL-tree.
+ * Return value:  Balance factor.
+ */
+ptrdiff_t _treBSTGetBalanceFactorAVL(P_BSTNODE pnode)
+{
+	if (NULL == pnode)
+		return _ABF_BALANCED;
+	return _NODE_PARAM(pnode, const ptrdiff_t);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treBSTMaxBalanceFactorAVL
+ * Description:   Get the maximize value from two balance factors.
+ * Parameters:
+ *        lbf A balance factor.
+ *        rbf Another balance factor.
+ * Return value:  The max value.
+ */
+ptrdiff_t _treBSTMaxBalanceFactorAVL(ptrdiff_t lbf, ptrdiff_t rbf)
+{
+	return lbf > rbf ? lbf : rbf;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treBSTReadBalanceFactorAVL
+ * Description:   Read the difference of a node's children's balance factor.
+ * Parameter:
+ *     pnode Pointer to a node of an AVL-tree.
+ * Return value:  The difference between left child's and right child's balance factor.
+ */
+ptrdiff_t _treBSTReadBalanceFactorAVL(P_BSTNODE pnode)
+{
+	/* Check if node exists,
+	 * if so then it applies the difference between it's children's heights.
+	 */
+	if (NULL == pnode)
+		return _ABF_BALANCED;
+	return _treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) - _treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treBSTRightRotateAVL
+ * Description:   Right rotate pnode.
+ * Parameters:
+ *      pnode Pointer to a node of an AVL-tree.
+ * Return value:  Pointer to the rotated node in an AVL-tree.
+ */
+P_BSTNODE _treBSTRightRotateAVL(P_BSTNODE pnode)
+{
+	P_BSTNODE pnodex = pbstchild(pnode)[LEFT];
+	P_BSTNODE pnodey = pbstchild(pnodex)[RIGHT];
+
+	/* Adjust pointers. */
+	pbstchild(pbstchild(pnode)[LEFT])[RIGHT] = pnode;
+	pbstchild(pnode)[LEFT] = pnodey;
+
+	/* Recalculating Balance Factors */
+	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
+		);
+	_NODE_PARAM(pnodex, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[RIGHT])
+		);
+
+	return pnodex;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treBSTLeftRotateAVL
+ * Description:   Left rotate pnode.
+ * Parameters:
+ *      pnode Pointer to a node of an AVL-tree.
+ * Return value:  Pointer to the rotated node in an AVL-tree.
+ */
+P_BSTNODE _treBSTLeftRotateAVL(P_BSTNODE pnode)
+{
+	P_BSTNODE pnodex = pbstchild(pnode)[RIGHT];
+	P_BSTNODE pnodey = pbstchild(pnodex)[LEFT];
+
+	/* Adjust pointers. */
+	pbstchild(pbstchild(pnode)[RIGHT])[LEFT] = pnode;
+	pbstchild(pnode)[RIGHT] = pnodey;
+
+	/* Recalculating Balance Factors */
+	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
+		);
+	_NODE_PARAM(pnodex, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[RIGHT])
+		);
+
+	return pnodex;
+}
 
 /* Function name: treBSTInsertAVL
  * Description:   Insert data into an AVL-tree.
@@ -406,259 +512,90 @@ P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * p
  *      pitem Pointer to an element that contains the data you want to insert.
  *       size Size of the element.
  *     cbfcmp Pointer to a callback function.
- *       pblc Pointer to a boolean variable to store balance status during insertion.
  * Return value:  Pointer to the new root node of an AVL-tree.
  * Tip:           Usage:
- *                BOOL blc = FALSE; // A boolean variable states balance status is also required.
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
- *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
+ *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
  *                treDeleteBST(pbst); // Destory AVL-tree.
  */
-P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp, BOOL * pblc)
+P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
-	REGISTER P_BSTNODE pnode1, pnode2;
+	REGISTER int r;
+	REGISTER ptrdiff_t cb;
+
 	if (NULL == pnode)
 	{
-		if (NULL != (pnode = treCreateBSTNode(pitem, size, 0)))
-			*pblc = TRUE;
+		pnode = treCreateBSTNode(pitem, size, _ABF_BALANCED);
 		return pnode;
 	}
-	else
+
+	r = cbfcmp(pitem, pnode->knot.pdata);
+	if (r < 0)
+		pbstchild(pnode)[LEFT] = treBSTInsertAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp);
+	else if (r >= 0)
+		pbstchild(pnode)[RIGHT] = treBSTInsertAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
+
+	/* Recalculate current height. */
+	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
+		);
+
+	/* Test rotation cases. */
+	cb = _treBSTReadBalanceFactorAVL(pnode);
+
+	/* Left left case. */
+	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) <= 0)
+		return _treBSTRightRotateAVL(pnode);
+
+	/* Right right case. */
+	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) >= 0)
+		return _treBSTLeftRotateAVL(pnode);
+
+	/* Right left case. */
+	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) <= 0)
 	{
-		REGISTER int r = cbfcmp(pitem, pnode->knot.pdata);
-		if (r < 0)
-		{
-			pbstchild(pnode)[LEFT] = treBSTInsertAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp, pblc);
-			if (*pblc)
-			{
-				switch (_NODE_PARAM(pnode, const ptrdiff_t))
-				{
-				case _ABF_HEAVY_LT:
-					pnode1 = pbstchild(pnode)[LEFT];
-					if (_ABF_HEAVY_LT == _NODE_PARAM(pnode1, const ptrdiff_t))
-					{	/* Right single rotation. */
-						pbstchild(pnode)[LEFT]   = pbstchild(pnode1)[RIGHT];
-						pbstchild(pnode1)[RIGHT] = pnode;
-						_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-						pnode = pnode1;
-					}
-					else
-					{	/* Left double rotation. */
-						if (NULL != (pnode2 = pbstchild(pnode1)[RIGHT]))
-						{
-							pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
-							pbstchild(pnode2)[LEFT]  = pnode1;
-							/* Right signle rotation. */
-							pbstchild(pnode)[LEFT]   = pbstchild(pnode2)[RIGHT];
-							pbstchild(pnode2)[RIGHT] = pnode;
-							_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-							_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-							pnode = pnode2;
-						}
-					}
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-					*pblc = FALSE;
-					break;
-				case _ABF_BALANCED:
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT;
-					break;
-				case _ABF_HEAVY_RT:
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-					*pblc = FALSE;
-					break;
-				}
-			}
-		}
-		else if (r > 0)
-		{
-			pbstchild(pnode)[RIGHT] = treBSTInsertAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp, pblc);
-			if (*pblc)
-			{
-				switch (_NODE_PARAM(pnode, const ptrdiff_t))
-				{
-				case _ABF_HEAVY_LT:
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-					*pblc = FALSE;
-					break;
-				case _ABF_BALANCED:
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_RT;
-					break;
-				case _ABF_HEAVY_RT:
-					pnode1 = pbstchild(pnode)[RIGHT];
-					if (_ABF_HEAVY_LT == _NODE_PARAM(pnode1, const ptrdiff_t))
-					{	/* Left single rotation. */
-						pbstchild(pnode)[RIGHT] = pbstchild(pnode1)[LEFT];
-						pbstchild(pnode1)[LEFT] = pnode;
-						_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-						pnode = pnode1;
-					}
-					else
-					{	/* Right double rotation. */
-						if (NULL != (pnode2 = pbstchild(pnode1)[LEFT]))
-						{
-							pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
-							pbstchild(pnode2)[RIGHT] = pnode1;
-							/* Left signle rotation. */
-							pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
-							pbstchild(pnode2)[LEFT] = pnode;
-							_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-							_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-							pnode = pnode2;
-						}
-					}
-					_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-					*pblc = FALSE;
-					break;
-				}
-			}
-		}
+		pbstchild(pnode)[RIGHT] = _treBSTRightRotateAVL(pbstchild(pnode)[RIGHT]);
+		return _treBSTLeftRotateAVL(pnode);
 	}
+
+	/* Left right case. */
+	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) >= 0)
+	{
+		pbstchild(pnode)[LEFT] = _treBSTLeftRotateAVL(pbstchild(pnode)[LEFT]);
+		return _treBSTRightRotateAVL(pnode);
+	}
+
 	return pnode;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTLeftBalanceAVL
- * Description:   Left balance an AVL-tree through pnode.
- * Parameters:
- *      pnode Pointer to a node of an AVL-tree.
- *       pblc Pointer to a boolean variable to store balance status.
- * Return value:  Pointer to the balanced root node in an AVL-tree.
+ * Function name: _treBSTSuccessorAVL
+ * Description:   Delete the successor of an AVL node.
+ * Parameter:
+ *     pnode Pointer to a node of an AVL-tree.
+ * Return value:  Balance factor to the deleted AVL-tree node.
  */
-P_BSTNODE _treBSTLeftBalanceAVL(P_BSTNODE pnode, BOOL * pblc)
+ptrdiff_t _treBSTSuccessorAVL(P_BSTNODE pnode)
 {
-	P_BSTNODE pnode1, pnode2;
-	switch (_NODE_PARAM(pnode, const ptrdiff_t))
-	{
-	case _ABF_HEAVY_RT:
-		_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-		break;
-	case _ABF_BALANCED:
-		_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT;
-		*pblc = FALSE;
-		break;
-	case _ABF_HEAVY_LT:
-		if (NULL != (pnode1 = pbstchild(pnode)[LEFT]))
-		{
-			if (_NODE_PARAM(pnode1, const ptrdiff_t) >= _ABF_BALANCED)
-			{	/* Right single rotation. */
-				pbstchild(pnode)[LEFT]   = pbstchild(pnode1)[RIGHT];
-				pbstchild(pnode1)[RIGHT] = pnode;
-				if (_ABF_BALANCED == _NODE_PARAM(pnode1, const ptrdiff_t))
-				{
-					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT;
-					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT;
-					*pblc = FALSE;
-				}
-				else
-					_NODE_PARAM(pnode, ptrdiff_t) = _NODE_PARAM(pnode1, ptrdiff_t) = _ABF_BALANCED;
-				pnode = pnode1;
-			}
-			else
-			{	/* Left double rotation. */
-				if (NULL != (pnode2 = pbstchild(pnode1)[RIGHT]))
-				{
-					pbstchild(pnode1)[RIGHT] = pbstchild(pnode2)[LEFT];
-					pbstchild(pnode2)[LEFT]  = pnode1;
-					/* Right single rotation. */
-					pbstchild(pnode)[LEFT] = pbstchild(pnode2)[RIGHT];
-					pbstchild(pnode2)[RIGHT] = pnode;
-					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-					pnode = pnode2;
-					_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
-				}
-			}
-		}
-	}
-	return pnode;
-}
+	REGISTER ptrdiff_t bf;
+	REGISTER P_BSTNODE pnodex = pnode;
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTRightBalanceAVL
- * Description:   Right balance an AVL-tree through pnode.
- * Parameters:
- *      pnode Pointer to a node of an AVL-tree.
- *       pblc Pointer to a boolean variable to store balance status.
- * Return value:  Pointer to the balanced root node in an AVL-tree.
- */
-P_BSTNODE _treBSTRightBalanceAVL(P_BSTNODE pnode, BOOL * pblc)
-{
-	REGISTER P_BSTNODE pnode1, pnode2;
-	switch (_NODE_PARAM(pnode, const ptrdiff_t))
-	{
-	case _ABF_HEAVY_LT:
-		_NODE_PARAM(pnode, ptrdiff_t) = _ABF_BALANCED;
-		break;
-	case _ABF_BALANCED:
-		_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_RT;
-		*pblc = FALSE;
-		break;
-	case _ABF_HEAVY_RT:
-		if (NULL != (pnode1 = pbstchild(pnode)[RIGHT]))
-		{
-			if (_NODE_PARAM(pnode1, const ptrdiff_t) <= _ABF_BALANCED)
-			{	/* Left single rotation. */
-				pbstchild(pnode)[RIGHT] = pbstchild(pnode1)[LEFT];
-				pbstchild(pnode1)[LEFT] = pnode;
-				if (_ABF_BALANCED == _NODE_PARAM(pnode1, const ptrdiff_t))
-				{
-					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT;
-					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT;
-					*pblc = FALSE;
-				}
-				else
-					_NODE_PARAM(pnode, ptrdiff_t) = _NODE_PARAM(pnode1, ptrdiff_t) = _ABF_BALANCED;
-				pnode = pnode1;
-			}
-			else
-			{	/* Right double rotation. */
-				if (NULL != (pnode2 = pbstchild(pnode1)[LEFT]))
-				{
-					pbstchild(pnode1)[LEFT]  = pbstchild(pnode2)[RIGHT];
-					pbstchild(pnode2)[RIGHT] = pnode1;
-					/* Left single rotation. */
-					pbstchild(pnode)[RIGHT] = pbstchild(pnode2)[LEFT];
-					pbstchild(pnode2)[LEFT] = pnode;
-					_NODE_PARAM(pnode,  ptrdiff_t) = _ABF_HEAVY_RT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_LT: _ABF_BALANCED;
-					_NODE_PARAM(pnode1, ptrdiff_t) = _ABF_HEAVY_LT == _NODE_PARAM(pnode2, const ptrdiff_t) ? _ABF_HEAVY_RT: _ABF_BALANCED;
-					pnode = pnode2;
-					_NODE_PARAM(pnode2, ptrdiff_t) = _ABF_BALANCED;
-				}
-			}
-		}
-	}
-	return pnode;
-}
+	/* Check if there is a node to the left. */
+	if (NULL == pbstchild(pnodex)[LEFT])
+		return _NODE_PARAM(pnode, const ptrdiff_t);
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTDeleteAVLNodePuppet
- * Description:   Recursively balance an AVL-tree while removing a tree node.
- * Parameters:
- *      pnode Pointer to a node of an AVL-tree.
- *     parent Pointer to the parent node of the node in an AVL-tree.
- *       pblc Pointer to a boolean variable to store balance status.
- * Return value:  Pointer to the balanced root node in an AVL-tree.
- */
-P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * pblc)
-{
-	REGISTER P_BSTNODE ptemp = pnode;
-	if (NULL != pbstchild(pnode)[LEFT])
-	{
-		pbstchild(pnode)[LEFT] = _treBSTDeleteAVLNodePuppet(pbstchild(pnode)[LEFT], parent, pblc);
-		if (*pblc)
-			pnode = _treBSTRightBalanceAVL(pnode, pblc);
-	}
-	else
-	{
-		PUCHAR tptr;
-		ptemp = pnode;
-		/* Swap pointers. */
-		svSwap(&parent->knot.pdata, &pnode->knot.pdata, &tptr, sizeof(PUCHAR));
-		pnode = pbstchild(pnode)[RIGHT];
-		treDeleteBSTNode(ptemp);
-		*pblc = TRUE;
-	}
-	return pnode;
+	/* If there is a left node, we walk the tree down. */
+	while (NULL != pbstchild(pbstchild(pnodex)[LEFT])[LEFT])
+		pnodex = pbstchild(pnodex)[LEFT];
+
+	/* Find the successor's key and free the node. */
+	bf = _NODE_PARAM(pbstchild(pnodex)[LEFT], const ptrdiff_t);
+	treFreeBSTNode(pbstchild(pnodex)[LEFT]);
+	pbstchild(pnodex)[LEFT] = NULL;
+
+	return bf;
 }
 
 /* Function name: treBSTRemoveAVL
@@ -668,72 +605,88 @@ P_BSTNODE _treBSTDeleteAVLNodePuppet(P_BSTNODE pnode, P_BSTNODE parent, BOOL * p
  *      pitem Pointer to an element that contains the data you want to remove.
  *       size Size of the element.
  *     cbfcmp Pointer to a callback function.
- *       pblc Pointer to a boolean variable to store balance status during removal.
  * Return value:  Pointer to the new root node of an AVL-tree.
  * Tip:           Usage:
- *                BOOL blc = FALSE; // A boolean variable states balance status is also required.
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
- *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Insertion.
- *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp, &blc); // Removal.
+ *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
+ *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp); // Removal.
  *                treDeleteBST(pbst); // Destory AVL-tree.
  */
-P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp, BOOL * pblc)
+P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
-	if (pnode == NULL)
+	REGISTER int r;
+	REGISTER ptrdiff_t cb;
+
+	/* Check if node exists. */
+	if (NULL == pnode)
 		return NULL;
-	else if (NULL == pbstchild(pnode)[LEFT] && NULL == pbstchild(pnode)[RIGHT])
-	{
-		*pblc = TRUE;
-		treDeleteBSTNode(pnode);
-		return NULL;
+
+	r = cbfcmp(pnode->knot.pdata, pitem);
+
+	/* Check if we find the exact node. */
+	if (0 == r)
+	{	/* 2 children case or successor's case. */
+		if (NULL != pbstchild(pnode)[RIGHT])
+		{
+			_NODE_PARAM(pnode, ptrdiff_t) = _treBSTSuccessorAVL(pbstchild(pnode)[RIGHT]);
+
+			/* Adjust pointer if we leave duplicates. */
+			if (_NODE_PARAM(pnode, const ptrdiff_t) == _NODE_PARAM(pbstchild(pnode)[RIGHT], const ptrdiff_t))
+			{
+				treDeleteBSTNode(pbstchild(pnode)[RIGHT]);
+				pbstchild(pnode)[RIGHT] = NULL;
+			}
+		}
+		else if (NULL == pbstchild(pnode)[LEFT]) /* No child case. */
+		{
+			treDeleteBSTNode(pnode);
+			return NULL;
+		}
+		else /* One left child case. */
+		{
+			P_BSTNODE pdelete = pnode;
+			pnode = pbstchild(pnode)[LEFT];
+			treDeleteBSTNode(pdelete);
+		}
+
 	}
+	else if (r > 0)
+		pbstchild(pnode)[LEFT] = treBSTRemoveAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp);
 	else
+		pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
+
+	/* Recalculate current height. */
+	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
+		(
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
+			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
+		);
+
+	/* Test rotation cases. */
+	cb = _treBSTReadBalanceFactorAVL(pnode);
+
+	/* Left left case. */
+	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) >= _ABF_BALANCED)
+		return _treBSTRightRotateAVL(pnode);
+
+	/* Right right case. */
+	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) <= _ABF_BALANCED)
+		return _treBSTLeftRotateAVL(pnode);
+
+	/* Right left case. */
+	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) >= _ABF_BALANCED)
 	{
-		REGISTER int r = cbfcmp(pitem, pnode->knot.pdata);
-		if (r < 0)
-		{
-			pbstchild(pnode)[LEFT] = treBSTRemoveAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp, pblc);
-			if (*pblc)
-				pnode = _treBSTRightBalanceAVL(pnode, pblc);
-		}
-		else
-		{
-			if (r > 0)
-			{
-				pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp, pblc);
-				if (*pblc)
-					pnode = _treBSTLeftBalanceAVL(pnode, pblc);
-			}
-			else
-			{
-				P_BSTNODE pnode1 = pnode;
-				if (NULL == pbstchild(pnode1)[RIGHT] && 0 == r)
-				{
-					P_BSTNODE ptemp = pnode1;
-					pnode = pbstchild(pnode1)[LEFT];
-					pbstchild(ptemp)[LEFT] = NULL;
-					treDeleteBSTNode(ptemp);
-					*pblc = TRUE;
-					return pnode;
-				}
-				else
-				{
-					if (NULL == pbstchild(pnode1)[LEFT])
-					{
-						pnode = pbstchild(pnode1)[RIGHT];
-						*pblc = TRUE;
-						treDeleteBSTNode(pnode1);
-					}
-					else
-					{
-						pbstchild(pnode1)[RIGHT] = _treBSTDeleteAVLNodePuppet(pbstchild(pnode1)[RIGHT], pnode1, pblc);
-						if (*pblc)
-							pnode = _treBSTLeftBalanceAVL(pnode, pblc);
-					}
-				}
-			}
-		}
+		pbstchild(pnode)[RIGHT] = _treBSTRightRotateAVL(pbstchild(pnode)[RIGHT]);
+		return _treBSTLeftRotateAVL(pnode);
 	}
+
+	/* Left right case. */
+	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) <= _ABF_BALANCED)
+	{
+		pbstchild(pnode)[LEFT] = _treBSTLeftRotateAVL(pbstchild(pnode)[LEFT]);
+		return _treBSTRightRotateAVL(pnode);
+	}
+
 	return pnode;
 }
 

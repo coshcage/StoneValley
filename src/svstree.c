@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0211212315L02060
+ * File ID:     0809171737I0212211414L02040
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -397,7 +397,6 @@ ptrdiff_t _treBSTMaxBalanceFactorAVL  (ptrdiff_t lbf,  ptrdiff_t rbf);
 ptrdiff_t _treBSTReadBalanceFactorAVL (P_BSTNODE pnode);
 P_BSTNODE _treBSTRightRotateAVL       (P_BSTNODE pnode);
 P_BSTNODE _treBSTLeftRotateAVL        (P_BSTNODE pnode);
-ptrdiff_t _treBSTSuccessorAVL         (P_BSTNODE pnode);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treBSTGetBalanceFactorAVL
@@ -433,9 +432,10 @@ ptrdiff_t _treBSTMaxBalanceFactorAVL(ptrdiff_t lbf, ptrdiff_t rbf)
  */
 ptrdiff_t _treBSTReadBalanceFactorAVL(P_BSTNODE pnode)
 {
-	/* Check if node exists, if so then it applies the difference between it's children's heights. */
-	return NULL == pnode ?
-		_ABF_BALANCED :
+	/* Check if node exists,
+	 * if so then it applies the difference between it's children's heights.
+	 */
+	return NULL == pnode ? _ABF_BALANCED :
 		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) -
 		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
 }
@@ -567,34 +567,6 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 	return pnode;
 }
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTSuccessorAVL
- * Description:   Delete the successor of an AVL node.
- * Parameter:
- *     pnode Pointer to a node of an AVL-tree.
- * Return value:  Balance factor to the deleted AVL-tree node.
- */
-ptrdiff_t _treBSTSuccessorAVL(P_BSTNODE pnode)
-{
-	REGISTER ptrdiff_t bf;
-	REGISTER P_BSTNODE pnodex = pnode;
-
-	/* Check if there is a node to the left. */
-	if (NULL == pbstchild(pnodex)[LEFT])
-		return _NODE_PARAM(pnode, const ptrdiff_t);
-
-	/* If there is a left node, we walk the tree down. */
-	while (NULL != pbstchild(pbstchild(pnodex)[LEFT])[LEFT])
-		pnodex = pbstchild(pnodex)[LEFT];
-
-	/* Find the successor's key and free the node. */
-	bf = _NODE_PARAM(pbstchild(pnodex)[LEFT], const ptrdiff_t);
-	treFreeBSTNode(pbstchild(pnodex)[LEFT]);
-	pbstchild(pnodex)[LEFT] = NULL;
-
-	return bf;
-}
-
 /* Function name: treBSTRemoveAVL
  * Description:   Remove data from an AVL-tree.
  * Parameters:
@@ -622,35 +594,43 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 	/* Check if we find the exact node. */
 	if (0 == r)
-	{	/* 2 children case or successor's case. */
-		if (NULL != pbstchild(pnode)[RIGHT])
-		{
-			_NODE_PARAM(pnode, ptrdiff_t) = _treBSTSuccessorAVL(pbstchild(pnode)[RIGHT]);
-
-			/* Adjust pointer if we leave duplicates. */
-			if (_NODE_PARAM(pnode, const ptrdiff_t) == _NODE_PARAM(pbstchild(pnode)[RIGHT], const ptrdiff_t))
-			{
-				treDeleteBSTNode(pbstchild(pnode)[RIGHT]);
-				pbstchild(pnode)[RIGHT] = NULL;
-			}
-		}
-		else if (NULL == pbstchild(pnode)[LEFT]) /* No child case. */
-		{
+	{
+		REGISTER P_BSTNODE ptemp;
+		if (NULL == pbstchild(pnode)[LEFT] && NULL == pbstchild(pnode)[RIGHT])
+		{	/* No child. */
 			treDeleteBSTNode(pnode);
 			return NULL;
 		}
-		else /* One left child case. */
-		{
-			P_BSTNODE pdelete = pnode;
-			pnode = pbstchild(pnode)[LEFT];
-			treDeleteBSTNode(pdelete);
+		else if (NULL == pbstchild(pnode)[LEFT])
+		{	/* One right child. */
+			ptemp = pnode;
+			pnode = pbstchild(pnode)[RIGHT];
+			treDeleteBSTNode(ptemp);
 		}
-
+		else if (NULL == pbstchild(pnode)[RIGHT])
+		{	/* One left child. */
+			ptemp = pnode;
+			pnode = pbstchild(pnode)[LEFT];
+			treDeleteBSTNode(ptemp);
+		}
+		else /* Two children. */
+		{
+			ptemp = pbstchild(pnode)[RIGHT];
+			if (NULL != ptemp)
+				while (NULL != pbstchild(ptemp)[LEFT])
+					ptemp = pbstchild(pnode)[LEFT];
+			memcpy(pnode->knot.pdata, ptemp->knot.pdata, size);
+			pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
+		}
 	}
 	else if (r > 0)
 		pbstchild(pnode)[LEFT] = treBSTRemoveAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp);
 	else
 		pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
+
+	/* Tree had only one node. */
+	if (NULL == pnode)
+		return NULL;
 
 	/* Recalculate current height. */
 	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL

@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0211212315L02061
+ * File ID:     0809171737I0211212315L02060
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -433,12 +433,11 @@ ptrdiff_t _treBSTMaxBalanceFactorAVL(ptrdiff_t lbf, ptrdiff_t rbf)
  */
 ptrdiff_t _treBSTReadBalanceFactorAVL(P_BSTNODE pnode)
 {
-	/* Check if node exists,
-	 * if so then it applies the difference between it's children's heights.
-	 */
-	if (NULL == pnode)
-		return _ABF_BALANCED;
-	return _treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) - _treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
+	/* Check if node exists, if so then it applies the difference between it's children's heights. */
+	return NULL == pnode ?
+		_ABF_BALANCED :
+		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) -
+		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

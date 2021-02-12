@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0212211414L02040
+ * File ID:     0809171737I0212211430L02041
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -432,9 +432,7 @@ ptrdiff_t _treBSTMaxBalanceFactorAVL(ptrdiff_t lbf, ptrdiff_t rbf)
  */
 ptrdiff_t _treBSTReadBalanceFactorAVL(P_BSTNODE pnode)
 {
-	/* Check if node exists,
-	 * if so then it applies the difference between it's children's heights.
-	 */
+	/* Check if node exists, if so then it applies the difference between it's children's heights. */
 	return NULL == pnode ? _ABF_BALANCED :
 		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) -
 		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
@@ -616,11 +614,14 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 		else /* Two children. */
 		{
 			ptemp = pbstchild(pnode)[RIGHT];
-			if (NULL != ptemp)
+			if (NULL != ptemp) /* Walk down the tree to find the least one. */
 				while (NULL != pbstchild(ptemp)[LEFT])
 					ptemp = pbstchild(pnode)[LEFT];
-			memcpy(pnode->knot.pdata, ptemp->knot.pdata, size);
-			pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
+			if (NULL != ptemp)
+			{
+				memcpy(pnode->knot.pdata, ptemp->knot.pdata, size);
+				pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], ptemp->knot.pdata, size, cbfcmp);
+			}
 		}
 	}
 	else if (r > 0)
@@ -628,7 +629,7 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 	else
 		pbstchild(pnode)[RIGHT] = treBSTRemoveAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
 
-	/* Tree had only one node. */
+	/* The tree has only one node. */
 	if (NULL == pnode)
 		return NULL;
 

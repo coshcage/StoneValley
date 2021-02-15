@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0215211600L00533
+ * File ID:     0306170948D0215211600L00531
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -326,6 +326,7 @@ void strBitStreamReverse(P_BITSTREAM pbstm)
  *      pbase Pointer to the first object of the array to be sorted.
  *      ptemp Pointer to a temporary buffer whose size equals to each size of the element in the array that pbase pointed.
  *            Users shall manage this buffer manually while coping with its caller.
+ *        num Number of elements in the array.
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
@@ -333,22 +334,19 @@ void strBitStreamReverse(P_BITSTREAM pbstm)
  */
 void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	REGISTER size_t i;
-	REGISTER PUCHAR pz = (PUCHAR)pbase + num * size;
-	for (i = num >> 1; i > 0; i >>= 1)
+	REGISTER size_t g, gap;
+	/* Using Marcin Ciura's gap sequence. */
+	size_t gaps[] = { 701, 301, 132, 57, 23, 10, 4, 1 };
+	for (g = 0; g < sizeof(gaps) / sizeof(gaps[0]); ++g)
 	{
-		REGISTER PUCHAR px;
-		REGISTER size_t j = i * size;
-		for (px = (PUCHAR)pbase + j; px < pz; px += size)
+		REGISTER size_t i, j, k;
+		gap = gaps[g];
+		for (i = gap; i < num; ++i)
 		{
-			REGISTER PUCHAR py, pl;
-			memcpy(ptemp, px, size);
-			for (py = px, pl = (PUCHAR)pbase + j; py >= pl; py -= j)
-				if (cbfcmp(ptemp, py - j) < 0)
-					memcpy(py, py - j, size);
-				else
-					break;
-			memcpy(py, ptemp, size);
+			memcpy(ptemp, (PUCHAR)pbase + i * size, size);
+			for (j = i; (k = (j - gap) * size, j >= gap) && cbfcmp((PUCHAR)pbase + k, ptemp) > 0; j -= gap)
+				memcpy((PUCHAR)pbase + j * size, (PUCHAR)pbase + k, size);
+			memcpy((PUCHAR)pbase + j * size, ptemp, size);
 		}
 	}
 }

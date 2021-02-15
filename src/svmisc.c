@@ -340,7 +340,7 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
 	{
 		REGISTER size_t i, j, k;
 		gap = gaps[g];
-		for (i = gap; i < num; i += 1)
+		for (i = gap; i < num; ++i)
 		{
 			memcpy(ptemp, (PUCHAR)pbase + i * size, size);
 			for (j = i; (k = (j - gap) * size, j >= gap) && cbfcmp((PUCHAR)pbase + k, ptemp) > 0; j -= gap)

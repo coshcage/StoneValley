@@ -315,7 +315,7 @@ P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 		REGISTER int r = cbfcmp(pitem, pnode->knot.pdata);
 		if (r < 0)
 			pbstchild(pnode)[LEFT]  = treBSTInsertAA(pbstchild(pnode)[LEFT],  pitem, size, cbfcmp);
-		else if (r > 0)
+		else if (r >= 0)
 			pbstchild(pnode)[RIGHT] = treBSTInsertAA(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
 		pnode = _treBSTSkewAA(pnode);
 		pnode = _treBSTSplitAA(pnode);

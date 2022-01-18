@@ -447,7 +447,7 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
 	REGISTER size_t i, j;
-	REGISTER PUCHAR pl = pbase;
+	REGISTER PUCHAR pl = (PUCHAR)pbase;
 	REGISTER PUCHAR pr = (PUCHAR)malloc(num * size);
 
 	if (NULL == pr)

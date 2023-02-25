@@ -2,7 +2,7 @@
  * Name:        svdef.c
  * Description: Common definitions.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306171808Z0210192133L00090
+ * File ID:     0306171808Z0225230951L00090
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -73,7 +73,7 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 /* Disable warning C4100 for Visual C/C++ compiler.
  * As for gcc/clang, please alter the following macro as DWC4100(param) // Noting appears at tail.
  */
-#define DWC4100(param) (param = param)
+#define DWC4100(param) (void)(param)
 
 /* Register qualifier. */
 #define REGISTER register

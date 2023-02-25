@@ -7,3 +7,7 @@ This file is used to trace bugs:
 	Some programs in directory ./Samples can't be compiled because of compilers behaved differently that triggered failures during crossing platforms.
 05-12-2019:
 	Bugs may hide in function grpShortestPathL and grpMinimalSpanningTreeL at file svgraph.h.
+02-25-2023:
+	2 bugs.
+	1) _treFreeTrieNode at file svstree.c. Double free.
+	2) strM3Matrix at file svmatrix.c. Wrong answer. Addressing issue.

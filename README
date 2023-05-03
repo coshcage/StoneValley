@@ -2,14 +2,12 @@
 
 i   Preface
 
-	*) The author claimed that he does will refine source files and references later.
-	*) Caution that there are still some bugs hide in functions for B-plus trees at "svstree.c".
-	*) The author of this library needs time and arms to fix it.
-	*) Should you have any problems with this library, please do not hesitate to contact me via Email.
+	*) The author claimed that he does will refine source files and references later and he needs time and arms to fix it.
+	*) Should you have any problems with this library, please do not hesitate to contact the author via Email.
 
 ii  Acknowledgement
 
-	*) The whole project is published under Public Domain license.
+	*) The whole project is published under <Public Domain license>.
 	*) StoneValley is provided with NO warranty.
 	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
 
@@ -17,16 +15,16 @@ iii Table of Contents
 
 	[Contents]                                                    [Line number]
 	Preface ................................................................. 3
-	Acknowledgement ........................................................ 10
-	Table of Contents ...................................................... 16
-	Scenario ............................................................... 31
-	Naming ................................................................. 68
-	Callbacks ............................................................. 113
-	Checklist ............................................................. 117
-	Alteration Guide ...................................................... 152
-	Limitations ........................................................... 301
-	Logs .................................................................. 311
-	Appendix .............................................................. 406
+	Acknowledgement ......................................................... 8
+	Table of Contents ...................................................... 14
+	Scenario ............................................................... 29
+	Naming ................................................................. 66
+	Callbacks ............................................................. 111
+	Checklist ............................................................. 115
+	Alteration Guide ...................................................... 150
+	Limitations ........................................................... 299
+	Logs .................................................................. 309
+	Appendix .............................................................. 405
 
 iv  Scenario
 
@@ -43,8 +41,8 @@ iv  Scenario
 	[  {__}  {  hAsh  }  {__}  {{     AA
 	[        {_ table_}        {_   WW  II
 	[          {    }            {{    TT
-	[  queUE  _{    }_   grApH  _{{   EE
-	[   __   {        }   __   {{
+	[  queUE  _{    }_   grApH  _{{
+	[   __   {        }   __   {{     U
 	[__{{ }__{__    __}__{{ }__{{     UU
 	[           {__}}
 	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishes functions into parts shows the real formation of StoneValley less unpleasant. Users could always add their own appliances manque for StoneValley.
@@ -55,7 +53,7 @@ iv  Scenario
 
 	Functions for queues were exported into "svqueue.h" and simultaneously implemented in file "svqueue.c". Three types of queue implementations have been written in StoneValley. Fixed size array implementation for circular queues and single linked-list implemented queues were both collected in the library. A doubly linked-list achievement for dequeues(Double-Ended Queues) was another participant. Like stacks, users may use fix-size-array queues to strictly control memory spaces. If users need to allocate memory spaces dynamically, elastic linked-list queues are accessible to work.
 
-	Too many tree data structures appear on the world. Only a few important trees were achieved since StoneValley cannot implement them one by one. Planted in the library were binary trees used doubly pointer nodes. Generic trees benefited from arrays; Heap trees took advantage of fixed size arrays and BSTs(Binary search trees) utilized AA-trees. Other three searching/indexing trees occupied in the library were AVL tree, B-Plus tree and array-achieved trie. Finally, a Huffman-coding tree settled in StoneValley at file "svctree.c". As the same manner, functions for trees were exported into a header file named "svtree.h". Different source files implemented diverse types of trees. These source files were "svbtree.c", "svgtree.c", "svhtree.c", "svstree.c" and "svctree.c" for the reason that "b" denoted "binary", "g" meant "generic", "h" dictated "heap", "s" indicated "searching" and "c" represented "coding".
+	Too many tree data structures appear on the world. Only a few important trees were achieved since StoneValley cannot implement them one by one. Planted in the library were binary trees used doubly pointer nodes. Generic trees benefited from arrays; Heap trees took advantage of fixed size arrays and BSTs(Binary search trees) utilized AA-trees. Other three searching/indexing trees occupied in the library were AVL tree, B-Plus tree and array-achieved trie. Finally, a Huffman-coding tree settled in StoneValley at file "svctree.c". As the same manner, functions for trees were exported into a header file named "svtree.h". Different source files implemented diverse types of trees. These source files were "svbytree.c", "svgtree.c", "svhtree.c", "svstree.c" and "svctree.c" for the reason that "by" denoted "binary", "g" meant "generic", "h" dictated "heap", "s" indicated "searching" and "c" represented "coding".
 
 	Header file "svhash.h" contained function declarations for hash tables. Hash table function bodies have been outputted into "svhash.c". In detail, separate chaining hash tables used linked-lists as buckets, open addressing hash tables used fixed size arrays as grills to separate items. At file "svhash.h", type "CBF_HASH" declared the hash function prototype. When using hash tables, users need to write their own callback hash function definitions to let StoneValley library hash functions invoke them to hash items. Interiors of this header and source will inform users more precisely for hashing.
 
@@ -70,40 +68,40 @@ v  The naming of library functions and types
 	Naming functions and types for StoneValley observe guidelines. Suffixes, infixes and postfixes are used to stipulate identifiers. For functions named with suffix, such as function "stkInitA", the suffix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
 
 	+__Category__________________________Type_________Location__+ [Figure 2]
-	|strING______________________________|___________<svtring.h>|
-	|    + Fixed size array              :ARRAY_Z:    svarray.c |
-	|    + Single linked list            :LIST_S:     svlist.c  |
-	|    + Double linked list            :LIST_D:      ditto.   |
-	|    + Bit stream                    :BITSTREAM:  svmisc.c  |
-	|    + Common matrix                 :MATRIX:     svmatrix.c|
-	|    + Bit matrix                    :BITMAT:      ditto.   |
-	|    + Sparse matrix                 :SPAMAT:      ditto.   |
-	|stACk_______________________________|___________<svstack.h>|
-	|    + Array represented stack       :STACK_A:    svstack.c |
-	|    + Linked list represented stack :STACK_L:     ditto.   |
-	|treE________________________________|___________<svtree.h>_|
-	|    + Binary tree                   :BTREE:      svbtree.c |
-	|        + Binary search tree        :BST:        svstree.c |
-	|            + AA tree                ditto.       ditto.   |
-	|            + AVL tree               ditto.       ditto.   |
-	|        + Huffman coding tree        N/A.        svctree.c |
-	|    + Generic tree                  :GTREE:      svgtree.c |
-	|    + Heap tree                     :HEAP_A:     svhtree.c |
-	|    + B-plus tree                   :BPT:        svstree.c |
-	|    + Trie                          :TRIE_A:      ditto.   |
-	|set_________________________________|___________<svset.h>__|
-	|    + Hash table set                :SET_H:      svset.c   |
-	|    + Binary search tree set        :SET_T:       ditto.   |
-	|queUE_______________________________|___________<svqueue.h>|
-	|    + Array style circular queue    :QUEUE_A:    svqueue.c |
-	|    + Single linked list queue      :QUEUE_L:     ditto.   |
-	|    + Double ended queue            :DEQUE_DL:    ditto.   |
-	|hAsh TABLE__________________________|___________<svhash.h>_|
-	|    + Separate chaining hash table  :HSHTBL_C:   svhash.c  |
-	|    + Open addressing hash table    :HSHTBL_A:    ditto.   |
-	|grApH_______________________________|___________<svgraph.h>|
-	|    + Adjacency list graph          :GRAPH_L:    svgraph.c |
-	|____________________________________|______________________|
+	|strING______________________________|___________<svstring.h>|
+	|    + Fixed size array              :ARRAY_Z:    svarray.c  |
+	|    + Single linked list            :LIST_S:     svlist.c   |
+	|    + Double linked list            :LIST_D:      ditto.    |
+	|    + Bit stream                    :BITSTREAM:  svmisc.c   |
+	|    + Common matrix                 :MATRIX:     svmatrix.c |
+	|    + Bit matrix                    :BITMAT:      ditto.    |
+	|    + Sparse matrix                 :SPAMAT:      ditto.    |
+	|stACk_______________________________|___________<svstack.h>_|
+	|    + Array represented stack       :STACK_A:    svstack.c  |
+	|    + Linked list represented stack :STACK_L:     ditto.    |
+	|treE________________________________|___________<svtree.h>__|
+	|    + Binary tree                   :BTREE:      svbytree.c |
+	|        + Binary search tree        :BST:        svstree.c  |
+	|            + AA tree                ditto.       ditto.    |
+	|            + AVL tree               ditto.       ditto.    |
+	|        + Huffman coding tree        N/A.        svctree.c  |
+	|    + Generic tree                  :GTREE:      svgtree.c  |
+	|    + Heap tree                     :HEAP_A:     svhtree.c  |
+	|    + B-plus tree                   :BPT:        svstree.c  |
+	|    + Trie                          :TRIE_A:      ditto.    |
+	|set_________________________________|___________<svset.h>___|
+	|    + Hash table set                :SET_H:      svset.c    |
+	|    + Binary search tree set        :SET_T:       ditto.    |
+	|queUE_______________________________|___________<svqueue.h>_|
+	|    + Array style circular queue    :QUEUE_A:    svqueue.c  |
+	|    + Single linked list queue      :QUEUE_L:     ditto.    |
+	|    + Double ended queue            :DEQUE_DL:    ditto.    |
+	|hAsh TABLE__________________________|___________<svhash.h>__|
+	|    + Separate chaining hash table  :HSHTBL_C:   svhash.c   |
+	|    + Open addressing hash table    :HSHTBL_A:    ditto.    |
+	|grApH_______________________________|___________<svgraph.h>_|
+	|    + Adjacency list graph          :GRAPH_L:    svgraph.c  |
+	|____________________________________|_______________________|
 	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in library.
 
 	Secondarily, function name "setSizeT_O" explored that there must be a macro to inline this function and this macro is written as "setSizeT_M", because letter "O" instead of declaring the original function and letter "M" tailed declaration claimed its macro version. Inline functions by using macros would avoid conflicts during linkage between different linkers. But the drawback of macro-inline is that library maintainers have to write one function for twice. Firstly, maintainers should write an original edition for a function. Secondly, library maintainers need to write it again for its macro version. It seems to be verbose but it is a useful manner to practice in a mass of compiling environments.
@@ -401,6 +399,7 @@ x   Logs
 01-13-2021: Library refined. Function svMergeSort at file 'svmisc.c' has been altered. Add function grpTopologicalSortL at file 'svgraph.h' and 'svgraph.c'.
 01-31-2021: Library refined.
 02-11-2021: Library refined. Happy new Chinese lunar year.
+03-05-2023: Library refined.
 _______________________________________________________________________________
 
 xi  The Story of StoneValley

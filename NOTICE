@@ -11,3 +11,6 @@ This file is used to trace bugs:
 	2 bugs.
 	1) _treFreeTrieNode at file svstree.c. Double free.
 	2) strM3Matrix at file svmatrix.c. Wrong answer. Addressing issue.
+05-03-2023
+	1 bug.
+	1) strM3Matrix at file svmatrix.c. Wrong answer. Addressing issue.

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0802591608L00861
+ * File ID:     0213191430N0503232021L00874
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -401,10 +401,23 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  * Tip:           Users could use this function to multiply a matrix with another like this way:
  *                int add(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
- *                MATRIX mc, ma, mb; float a[] = { 1, 2, 3, 4, 5, 6 }, tmp; float b[] = { 3, 2, 1, 6, 5, 4 };
- *                CBF_ALGEBRA alg[2]; P_MATRIX pm[3]; alg[0] = add; alg[1] = mul; pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
- *                strInitMatrix(&ma, 2, 3, sizeof(float)); strInitMatrix(&mb, 3, 2, sizeof(float)); strInitMatrix(&mc, 2, 2, sizeof(float));
- *                strM3Matrix(pm, &tmp, sizeof(float), alg); strFreeMatrix(&mc); strFreeMatrix(&ma); strFreeMatrix(&mb);
+ *                MATRIX mc, ma, mb;
+ *                float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, tmp = 0.0f;
+ *                float b[] = { 3.0f, 2.0f, 1.0f, 6.0f, 5.0f, 4.0f };
+ *                CBF_ALGEBRA alg[2];
+ *                P_MATRIX pm[3];
+ *                alg[0] = add; alg[1] = mul;
+ *                pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
+ *                strInitMatrix(&ma, 2, 3, sizeof(float));
+ *                strInitMatrix(&mb, 3, 2, sizeof(float));
+ *                strInitMatrix(&mc, 2, 2, sizeof(float));
+ *                strSetMatrix(&mc, &tmp, sizeof(float));
+ *                memcpy(ma.arrz.pdata, a, sizeof a);
+ *                memcpy(mb.arrz.pdata, b, sizeof b);
+ *                strM3Matrix(pm, &tmp, sizeof(float), alg);
+ *                strFreeMatrix(&mc);
+ *                strFreeMatrix(&ma);
+ *                strFreeMatrix(&mb);
  *                // | 1 2 3 |   | 3 2 |   | 20 26 |
  *                // | 4 5 6 | * | 1 6 | = | 47 62 |
  *                //             | 5 4 |

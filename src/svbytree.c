@@ -1,5 +1,5 @@
 /*
- * Name:        svbitree.c
+ * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
  * File ID:     0809171737G0503231616L00542

@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0503231616L00542
+ * File ID:     0809171737G0503232227L00542
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -32,7 +32,7 @@ extern int _strCBFNodesCounter     (void * pitem, size_t param);
 extern int _strCBFCompareNodeDataD (void * pitem, size_t param);
 int        _treCBFParentRetriver   (void * pitem, size_t param);
 int        _treCBFNodeLocator      (void * pitem, size_t param);
-int        _treCBFCopyTreeNodeB    (void * pitem, size_t param);
+int        _treCBFCopyTreeNodeBY   (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFParentRetriver
@@ -80,7 +80,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treCBFCopyTreeNodeB
+ * Function name: _treCBFCopyTreeNodeBY
  * Description:   This function is used to copy nodes in binary tree.
  * Parameters:
  *      pitem Pointer to each node in the tree.
@@ -88,7 +88,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
  * Return value:  If any error occurred while copying, function would return a CBF_TERMINATE.
  *                If there were no error produced while copying, function would return a CBF_CONTINUE.
  */
-int _treCBFCopyTreeNodeB(void * pitem, size_t param)
+int _treCBFCopyTreeNodeBY(void * pitem, size_t param)
 {
 	size_t tptr;
 	_P_TreeCopy ptc = (_P_TreeCopy)param;
@@ -529,7 +529,7 @@ P_TNODE_BY treCopyBY(P_TNODE_BY proot, size_t size)
 	tp.pnroot = NULL;
 	tp.pquel = &q;
 	tp.size = size;
-	treTraverseBYLevel(proot, _treCBFCopyTreeNodeB, (size_t)&tp);
+	treTraverseBYLevel(proot, _treCBFCopyTreeNodeBY, (size_t)&tp);
 	/* As usual, queue q should be empty here.
 	 * But if there were an error occurred while new node was allocating in the
 	 * callback function, Callback function would return immediately and

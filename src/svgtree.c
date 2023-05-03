@@ -35,7 +35,7 @@ int _treCBFCompareTNodeDataG (void * pitem, size_t param);
 int _treCBFCopyTreeNodeG     (void * pitem, size_t param);
 
 /* File level function declarations. */
-P_TNODE_B _treG2BConvertPuppet(P_BTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql);
+P_TNODE_BY _treG2BConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFGNodeEnqueue
@@ -138,7 +138,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 	if (! queIsEmptyL(ptc->pquel))
 	{	/* Solve each parents' child node for the previous level. */
 		P_TNODE_G * ppnode;
-		queRemoveL(&ppnode, sizeof(P_TNODE_B), ptc->pquel);
+		queRemoveL(&ppnode, sizeof(P_TNODE_BY), ptc->pquel);
 		*ppnode = pnew;
 	}
 	/* Record the needed child for the next tree level. */
@@ -490,13 +490,13 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
  *      pnode Pointer to a node of the original generic tree.
  *       size Size of data in node.
  *        pql Pointer to a queue.
- * Return value:  Pointer to a TNODE_B.
+ * Return value:  Pointer to a TNODE_BY.
  */
-P_TNODE_B _treG2BConvertPuppet(P_BTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
+P_TNODE_BY _treG2BConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
 {
 	REGISTER size_t i;
-	P_TNODE_B pn;
-	P_TNODE_B * po;
+	P_TNODE_BY pn;
+	P_TNODE_BY * po;
 	if (NULL == pnode)
 		return 0;
 	/* pnode is an external node. */
@@ -504,13 +504,13 @@ P_TNODE_B _treG2BConvertPuppet(P_BTREE ppnil, P_TNODE_G pnode, size_t size, P_QU
 	{
 		if (NULL == (pn = strCreateNodeD(pnode->pdata, size)))
 			return (*ppnil = NULL);
-		queInsertL(pql, &pn, sizeof(P_TNODE_B));
+		queInsertL(pql, &pn, sizeof(P_TNODE_BY));
 		return pn;
 	}
 	/* Create a new node for binary tree. */
 	if (NULL == (pn = strCreateNodeD(pnode->pdata, size)))
 		return (*ppnil = NULL);
-	queInsertL(pql, &pn, sizeof(P_TNODE_B));
+	queInsertL(pql, &pn, sizeof(P_TNODE_BY));
 	/* Set root of new binary tree. */
 	if (NULL == *ppnil)
 		*ppnil = pn;
@@ -532,18 +532,18 @@ P_TNODE_B _treG2BConvertPuppet(P_BTREE ppnil, P_TNODE_G pnode, size_t size, P_QU
  * Return value:  Pointer to the new generated binary tree.
  * Caution:       Size of data of every nodes shall be in the same value.
  */
-P_TNODE_B treG2BConvert(P_TNODE_G pnode, size_t size)
+P_TNODE_BY treG2BConvert(P_TNODE_G pnode, size_t size)
 {
 	QUEUE_L q;
 	/* This queue is used to maintain new bnodes.
 	 * When allocation failed, dequeue and free each element in the queue.
 	 */
-	P_TNODE_B pb = NULL;
+	P_TNODE_BY pb = NULL;
 	queInitL(&q);
 	_treG2BConvertPuppet(&pb, pnode, size, &q);
 	if (NULL == pb) /* Allocation error in dummy function. */
 		while (! queIsEmptyL(&q)) /* Clear bnodes one by one. */
-			queRemoveL(&pb, sizeof(P_TNODE_B), &q);
+			queRemoveL(&pb, sizeof(P_TNODE_BY), &q);
 	queFreeL(&q);
 	return pb;
 }

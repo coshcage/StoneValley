@@ -2,7 +2,7 @@
  * Name:        svdef.c
  * Description: Common definitions.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306171808Z0225230951L00090
+ * File ID:     0306171808Z0503231713L00090
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -21,7 +21,7 @@
 #include <stddef.h> /* Using type size_t, ptrdiff_t. */
 
 /* Library version. */
-#define LIB_VER "1.1.9.1"
+#define LIB_VER "1.1.9.9"
 
 /* Boolean constants. */
 #define TRUE  (1)

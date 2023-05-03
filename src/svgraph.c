@@ -138,7 +138,7 @@ Lbl_Found:
  * Function name: _grpCBFTraversePuppet
  * Description:   This function is used to convert nodes to its data pointer.
  * Parameters:
- *      pitem Pointer to each NODE_S or TNODE_B structure.
+ *      pitem Pointer to each NODE_S or TNODE_BY structure.
  *      param Pointer to a _DATINF structure.
  * Return value:  The same value as callback function returns.
  */
@@ -354,7 +354,7 @@ P_GRAPH_L grpCreateL_O(void)
  *      pgrp Pointer to the graph you want to allocate.
  * Return value:  N/A.
  * Caution:       Address of ptreb Must Be Allocated first.
- * Tip:           A macro version of this function named treDeleteB_M is available.
+ * Tip:           A macro version of this function named treDeleteBY_M is available.
  */
 void grpDeleteL(P_GRAPH_L pgrp)
 {

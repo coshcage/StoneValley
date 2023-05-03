@@ -77,7 +77,7 @@ void svSwap(void * pleft, void * pright, void * ptemp, size_t size)
  *                NULL indicates that initialization failed.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-void * strInitBitStream(P_BITSTREAM pbstm)
+void * strInitBitStream(P_BYTSTREAM pbstm)
 {
 	strInitArrayZ(&pbstm->arrz, 1, sizeof(UCHART));
 	pbstm->bilc = 0;
@@ -91,7 +91,7 @@ void * strInitBitStream(P_BITSTREAM pbstm)
  * Return value:  N/A.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-void strFreeBitStream(P_BITSTREAM pbstm)
+void strFreeBitStream(P_BYTSTREAM pbstm)
 {
 	strFreeArrayZ(&pbstm->arrz);
 	pbstm->bilc = 0;
@@ -103,9 +103,9 @@ void strFreeBitStream(P_BITSTREAM pbstm)
  * Return value:  Pointer to the new created bit-stream.
  *                NULL indicates that bit-stream creation failed.
  */
-P_BITSTREAM strCreateBitStream(void)
+P_BYTSTREAM strCreateBitStream(void)
 {
-	P_BITSTREAM pbstm = (P_BITSTREAM) malloc(sizeof(BITSTREAM));
+	P_BYTSTREAM pbstm = (P_BYTSTREAM) malloc(sizeof(BYTSTREAM));
 	if (NULL != pbstm)
 	{
 		if (NULL == strInitBitStream(pbstm))
@@ -124,7 +124,7 @@ P_BITSTREAM strCreateBitStream(void)
  * Return value:  N/A.
  * Caution:       Address of pbstm Must Be Allocated by function strCreateBitStream first.
  */
-void strDeleteBitStream(P_BITSTREAM pbstm)
+void strDeleteBitStream(P_BYTSTREAM pbstm)
 {
 	strFreeBitStream(pbstm);
 	free(pbstm);
@@ -141,7 +141,7 @@ void strDeleteBitStream(P_BITSTREAM pbstm)
  *                Address of pdest and psrc Must Be Allocated first.
  *                Destination and source shall not overlap.
  */
-void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
+void * strCopyBitStream(P_BYTSTREAM pdest, P_BYTSTREAM psrc)
 {
 	if (strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART)))
 	{
@@ -161,7 +161,7 @@ void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
  * Caution:       Address of pbstm Must Be Allocated first.
  * Tip:           A macro version of this function named strBitStreamIsEmpty_M is available.
  */
-BOOL strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
+BOOL strBitStreamIsEmpty_O(P_BYTSTREAM pbstm)
 {
 	return (strLevelArrayZ(&pbstm->arrz) <= 1 && 0 == pbstm->bilc);
 }
@@ -175,7 +175,7 @@ BOOL strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
  *                FALSE indicates that error occurred while pushing bit onto the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-BOOL strBitStreamPush(P_BITSTREAM pbstm, BOOL value)
+BOOL strBitStreamPush(P_BYTSTREAM pbstm, BOOL value)
 {
 	REGISTER size_t i;
 	if (++pbstm->bilc > CHAR_BIT)
@@ -211,7 +211,7 @@ BOOL strBitStreamPush(P_BITSTREAM pbstm, BOOL value)
  * Tip:           Use function strBitStreamIsEmpty first
  *                To check whether bit-stream is empty.
  */
-BOOL strBitStreamPop(P_BITSTREAM pbstm)
+BOOL strBitStreamPop(P_BYTSTREAM pbstm)
 {
 	BOOL r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
 	REGISTER size_t i, j = strLevelArrayZ(&pbstm->arrz) - 1;
@@ -245,7 +245,7 @@ BOOL strBitStreamPop(P_BITSTREAM pbstm)
  *                FALSE indicates that error occurred while adding bit to the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
+BOOL strBitStreamAdd(P_BYTSTREAM pbstm, BOOL value)
 {
 	size_t j;
 	PUCHAR pt;
@@ -279,7 +279,7 @@ BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
  * Tip:           Use function strBitStreamIsEmpty firstly
  *                to check whether the bit-stream is empty.
  */
-BOOL strBitStreamExtract(P_BITSTREAM pbstm)
+BOOL strBitStreamExtract(P_BYTSTREAM pbstm)
 {
 	UCHART r = pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc));
 	if (--pbstm->bilc < 1)
@@ -304,7 +304,7 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
  *                to check whether bit-stream is empty.
  *                Use this function to calculate bitwise NOT pbstm.
  */
-void strBitStreamReverse(P_BITSTREAM pbstm)
+void strBitStreamReverse(P_BYTSTREAM pbstm)
 {
 	REGISTER size_t i, j = (0 == pbstm->bilc ? strLevelArrayZ(&pbstm->arrz) - 1 : strLevelArrayZ(&pbstm->arrz));
 	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = ~pbstm->arrz.pdata[i];

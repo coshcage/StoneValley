@@ -465,7 +465,7 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  * Return value:  Pointer to the buffer.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
+void * strInitBMap(P_BYTMAT pbm, size_t ln, size_t col, BOOL bval)
 {
 	stdiv_t dr = stdiv(ln * col, CHAR_BIT); /* ln bit * col bit / CHAR_BIT. */
 	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(UCHART)))
@@ -487,7 +487,7 @@ void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
  * Caution:       Address of pbm Must Be Allocated first.
  * Tip:           A macro version of this function named strFreeBMap_M is available.
  */
-void strFreeBMap_O(P_BITMAT pbm)
+void strFreeBMap_O(P_BYTMAT pbm)
 {
 	strFreeMatrix(pbm);
 }
@@ -500,9 +500,9 @@ void strFreeBMap_O(P_BITMAT pbm)
  *       bval Initialize all bits as value TRUE or FALSE.
  * Return value:  Pointer to a new created bit-matrix.
  */
-P_BITMAT strCreateBMap(size_t ln, size_t col, BOOL val)
+P_BYTMAT strCreateBMap(size_t ln, size_t col, BOOL val)
 {
-	P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
+	P_BYTMAT pbm = (P_BYTMAT) malloc(sizeof(BYTMAT));
 	if (NULL == pbm)
 		return NULL;
 	if (NULL == strInitBMap(pbm, ln, col, val))
@@ -521,7 +521,7 @@ P_BITMAT strCreateBMap(size_t ln, size_t col, BOOL val)
  * Caution:       Address of pbm Must Be Allocated first.
  * Tip:           A macro version of this function named strDeleteBMap_M is available.
  */
-void strDeleteBMap_O(P_BITMAT pbm)
+void strDeleteBMap_O(P_BYTMAT pbm)
 {
 	strDeleteMatrix(pbm);
 }
@@ -538,7 +538,7 @@ void strDeleteBMap_O(P_BITMAT pbm)
  *                Destination and source shall not overlap.
  * Tip:           A macro version of this function named strCopyBMap_M is available.
  */
-void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
+void * strCopyBMap_O(P_BYTMAT pdest, P_BYTMAT psrc)
 {
 	return strCopyMatrix(pdest, psrc, sizeof(UCHART));
 }
@@ -553,7 +553,7 @@ void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
  *                If function returned value -1, it would indicate parameter ln or col is out of range.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-BOOL strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
+BOOL strGetBitBMap(P_BYTMAT pbm, size_t ln, size_t col)
 {
 	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
 	if (ln >= pbm->ln || col >= pbm->col)
@@ -572,7 +572,7 @@ BOOL strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
  *                If function returned FALSE, it would indicate parameter ln or col is out of range.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-BOOL strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
+BOOL strSetBitBMap(P_BYTMAT pbm, size_t ln, size_t col, BOOL bval)
 {
 	REGISTER UCHART t = 0x01;
 	REGISTER size_t i;

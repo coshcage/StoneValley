@@ -500,7 +500,7 @@ P_SET_T setCopyT(P_SET_T pset, size_t size)
  */
 size_t setSizeT_O(P_SET_T pset)
 {
-	return NULL == pset ? 0 : treArityB(P2P_TNODE_B(*pset));
+	return NULL == pset ? 0 : treArityBY(P2P_TNODE_B(*pset));
 }
 
 /* Function name: setIsEmptyT_O
@@ -580,7 +580,7 @@ BOOL setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 		a[1] = (size_t)cbfcmp;
 		if (setIsEmptyT(pseta))
 			return TRUE; /* The empty set is the subset of any sets. */
-		if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*pseta), _setCBFIsSubsetTPuppet, (size_t)a))
+		if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*pseta), _setCBFIsSubsetTPuppet, (size_t)a))
 			return FALSE;
 	}
 	return TRUE; /* An empty set is a subset of any set. */
@@ -689,10 +689,10 @@ P_SET_T setCreateUnionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE c
 		a[1] = (size_t)cbfcmp;
 		a[2] = size;
 		if (! setIsEmptyT(pseta))
-			if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
+			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		if (! setIsEmptyT(psetb))
-			if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*psetb), _setCBFInsertItemTPuppet, (size_t)a))
+			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*psetb), _setCBFInsertItemTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		if (setIsEmptyT(psetr))
 		{
@@ -775,13 +775,13 @@ P_SET_T setCreateIntersectionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_CO
 		if (! setIsEmptyT(pseta))
 		{
 			a[3] = (size_t)&psetb;
-			if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*pseta), _setCBFIntersectionTPuppet, (size_t)a))
+			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*pseta), _setCBFIntersectionTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		}
 		if (! setIsEmptyT(psetb) && pseta != psetb)
 		{
 			a[3] = (size_t)&pseta;
-			if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*psetb), _setCBFIntersectionTPuppet, (size_t)a))
+			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*psetb), _setCBFIntersectionTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		}
 		if (setIsEmptyT(psetr))
@@ -823,12 +823,12 @@ P_SET_T setCreateDifferenceT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMP
 		{
 			if (setIsEmptyT(psetb)) /* R = A - 0. */
 			{
-				if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
+				if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
 					goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 			}
 			else /* R = A - B. */
 			{
-				if (CBF_CONTINUE != treTraverseBPre(P2P_TNODE_B(*pseta), _setCBFIntersectionTPuppet, (size_t)a))
+				if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_B(*pseta), _setCBFIntersectionTPuppet, (size_t)a))
 					goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 			}
 		}
@@ -865,10 +865,10 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 		int r = CBF_TERMINATE;
 		switch (tm)
 		{
-		case ETM_PREORDER:   r = treTraverseBPre  (P2P_TNODE_B(*pset), cbftvs, param); break;
-		case ETM_INORDER:    r = treTraverseBIn   (P2P_TNODE_B(*pset), cbftvs, param); break;
-		case ETM_POSTORDER:  r = treTraverseBPost (P2P_TNODE_B(*pset), cbftvs, param); break;
-		case ETM_LEVELORDER: r = treTraverseBLevel(P2P_TNODE_B(*pset), cbftvs, param); break;
+		case ETM_PREORDER:   r = treTraverseBYPre  (P2P_TNODE_B(*pset), cbftvs, param); break;
+		case ETM_INORDER:    r = treTraverseBYIn   (P2P_TNODE_B(*pset), cbftvs, param); break;
+		case ETM_POSTORDER:  r = treTraverseBYPost (P2P_TNODE_B(*pset), cbftvs, param); break;
+		case ETM_LEVELORDER: r = treTraverseBYLevel(P2P_TNODE_B(*pset), cbftvs, param); break;
 		}
 		return r;
 	}

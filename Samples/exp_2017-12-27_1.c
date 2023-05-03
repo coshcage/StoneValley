@@ -188,11 +188,11 @@ Lbl_Math_Error:
 int ConvertExecutionQueue(void * pitem, size_t param)
 {
 	P_ELEMENT pelmt = (P_ELEMENT) ((P_NODE_S) pitem)->pdata;
-	P_BTREE ptree = (P_BTREE) param;
-	P_TNODE_B pnode;
+	P_BYTREE ptree = (P_BYTREE) param;
+	P_TNODE_BY pnode;
 	if (NULL == (pnode = strCreateNodeD(pelmt, sizeof(ELEMENT))))
 	{
-		treFreeB(ptree);
+		treFreeBY(ptree);
 		return CBF_TERMINATE;
 	}
 	if (*ptree == NULL)
@@ -216,7 +216,7 @@ int ConvertExecutionQueue(void * pitem, size_t param)
 // Return:   The same value as a callback function returns.
 int PrintPostfixExpression(void * pitem, size_t param)
 {
-	P_ELEMENT pelmt = (P_ELEMENT) ((P_TNODE_B) pitem)->pdata;
+	P_ELEMENT pelmt = (P_ELEMENT) ((P_TNODE_BY) pitem)->pdata;
 	if (pelmt->bnum)
 		printf("%g ", pelmt->edata.value);
 	else
@@ -373,7 +373,7 @@ int Scanner(char * expr, char * buf)
 // Return:   N/A.
 void PhoneyParser(int mode)
 {
-	BTREE ptree[2] = { NULL };
+	BYTREE ptree[2] = { NULL };
 	switch (mode)
 	{
 		case 0:
@@ -391,8 +391,8 @@ void PhoneyParser(int mode)
 			printf("=> ");
 			if (CBF_TERMINATE != strTraverseLinkedListSC_X(queRPNExpr->pfront, NULL, ConvertExecutionQueue, (size_t)ptree))
 			{
-				treTraverseBPre(ptree[0], PrintPostfixExpression, 0);
-				treFreeB(ptree);
+				treTraverseBYPre(ptree[0], PrintPostfixExpression, 0);
+				treFreeBY(ptree);
 			}
 			puts("\n");
 			break;

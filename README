@@ -67,7 +67,7 @@ v  The naming of library functions and types
 
 	Naming functions and types for StoneValley observe guidelines. Suffixes, infixes and postfixes are used to stipulate identifiers. For functions named with suffix, such as function "stkInitA", the suffix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
 
-	+__Category__________________________Type_________Location__+ [Figure 2]
+	+__Category__________________________Type_________Location___+ [Figure 2]
 	|strING______________________________|___________<svstring.h>|
 	|    + Fixed size array              :ARRAY_Z:    svarray.c  |
 	|    + Single linked list            :LIST_S:     svlist.c   |

@@ -80,7 +80,7 @@ v  The naming of library functions and types
 	|    + Array represented stack       :STACK_A:    svstack.c  |
 	|    + Linked list represented stack :STACK_L:     ditto.    |
 	|treE________________________________|___________<svtree.h>__|
-	|    + Binary tree                   :BTREE:      svbytree.c |
+	|    + Binary tree                   :BYTREE:     svbytree.c |
 	|        + Binary search tree        :BST:        svstree.c  |
 	|            + AA tree                ditto.       ditto.    |
 	|            + AVL tree               ditto.       ditto.    |

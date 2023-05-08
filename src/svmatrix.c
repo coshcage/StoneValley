@@ -458,7 +458,7 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 #undef MAT_COL
 #undef MAT_DATA /* Undefine used macros. */
 
-/* Function name: strM3Matrix
+/* Function name: strM3BMatrix
  * Description:   Do multiplication between two matrices A and B, and store the result into matrix C.
  *                Thus, C := A * B. Notice that A * B != B * A.
  * Parameters:

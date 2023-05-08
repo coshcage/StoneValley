@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1223191945L00463
+ * File ID:     0306170921Y0508231902L00464
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -185,10 +185,11 @@ void        strSetMatrix_O             (P_MATRIX     pmtx,     const void * pval
 void *      strGetValueMatrix          (void *       pval,     P_MATRIX     pmtx,    size_t         ln,       size_t      col,    size_t      size);
 void *      strSetValueMatrix_O        (P_MATRIX     pmtx,     size_t       ln,      size_t         col,      void *      pval,   size_t      size);
 void *      strTransposeMatrix         (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE    cbfcmp);
-BOOL        strProjectMatrix           (P_MATRIX     pdest,    size_t       dln,     size_t         dcol,     P_MATRIX    psrc,   size_t      sln,   size_t scol, size_t size);
+BOOL        strProjectMatrix           (P_MATRIX     pdest,    size_t       dln,     size_t         dcol,     P_MATRIX    psrc,   size_t      sln,   size_t      scol,   size_t      size);
 int         strM1Matrix                (P_MATRIX     pmtx,     const void * pval,    size_t         size,     CBF_ALGEBRA cbfagb);
 int         strM2Matrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t         size,     CBF_ALGEBRA cbfagb);
 int         strM3Matrix                (P_MATRIX     ppmtx[3], void *       ptemp,   size_t         size,     CBF_ALGEBRA pcbfagb[2]);
+int         strM3BMatrix               (P_MATRIX     pr,       P_MATRIX     pa,      P_MATRIX       pb,       void *      ptemp,  size_t      size,  CBF_ALGEBRA cbfmul, CBF_ALGEBRA cbfadd);
 /* Functions for bit-matrices. */
 void *      strInitBMap                (P_BYTMAT     pbm,      size_t       ln,     size_t          col,      BOOL        bval);
 void        strFreeBMap_O              (P_BYTMAT     pbm);

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0508231902L00914
+ * File ID:     0213191430N0508231924L00919
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -474,6 +474,11 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depends on function cbfagb.
  * Caution:       Address of pr, pa, pb and ptemp Must Be Allocated first.
  * Tip:           This function performs faster than strM3Matrix.
+ *                  __      _n_
+ *                 /  \     \  |
+ *                |      ==  >   a  b
+ *                 \__/ij   /__|  ik kj
+ *                          k:=1
  */
 int strM3BMatrix(P_MATRIX pr, P_MATRIX pa, P_MATRIX pb, void * ptemp, size_t size, CBF_ALGEBRA cbfmul, CBF_ALGEBRA cbfadd)
 {

@@ -81,26 +81,26 @@ typedef struct st_HFM_SYMBOL {
 typedef P_ARRAY_Z TRIE_A, * P_TRIE_A;
 
 /* Functions for binary trees. */
-int             treTraverseBYPre   (P_TNODE_BY       pnode,   CBF_TRAVERSE cbftvs, size_t       param);
-int             treTraverseBYIn    (P_TNODE_BY       pnode,   CBF_TRAVERSE cbftvs, size_t       param);
-int             treTraverseBYPost  (P_TNODE_BY       pnode,   CBF_TRAVERSE cbftvs, size_t       param);
-int             treTraverseBYLevel (P_TNODE_BY       pnode,   CBF_TRAVERSE cbftvs, size_t       param);
-void            treInitBY_O        (P_BYTREE         ptreb);
-void            treFreeBY          (P_BYTREE         ptreb);
+int             treTraverseBYPre   (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
+int             treTraverseBYIn    (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
+int             treTraverseBYPost  (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
+int             treTraverseBYLevel (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
+void            treInitBY_O        (P_BYTREE        ptreb);
+void            treFreeBY          (P_BYTREE        ptreb);
 P_BYTREE        treCreateBY        (void);
-void            treDeleteBY_O      (P_BYTREE         ptreb);
-P_TNODE_BY      treInsertLeftBY    (P_TNODE_BY       pnode,   const void * pitem,  size_t       size);
-P_TNODE_BY      treInsertRightBY   (P_TNODE_BY       pnode,   const void * pitem,  size_t       size);
-void            treRemoveLeftBY    (P_TNODE_BY       pnode);
-void            treRemoveRightBY   (P_TNODE_BY       pnode);
-size_t          treArityBY         (P_TNODE_BY       pnode);
-size_t          treHeightBY        (P_TNODE_BY       pnode);
-P_TNODE_BY      treGetParentNodeBY (P_TNODE_BY       proot,   P_TNODE_BY   pchild);
-P_TNODE_BY      treSearchDataBY    (P_TNODE_BY       pnode,   const void * pitem,  size_t       size,    TvsMtd       tm);
-BOOL            treDescendantBY    (P_TNODE_BY       proot,   P_TNODE_BY   pnode);
-P_TNODE_BY      treMergeNodesBY    (P_TNODE_BY       proot,   const void * pitem,  size_t       size,    P_TNODE_BY   pleft, P_TNODE_BY  pright);
-P_TNODE_BY      treSwapNodesBY     (P_TNODE_BY       proot1,  P_TNODE_BY   pnode1, P_TNODE_BY   proot2,  P_TNODE_BY   pnode2);
-P_TNODE_BY      treCopyBY          (P_TNODE_BY       proot,   size_t       size);
+void            treDeleteBY_O      (P_BYTREE        ptreb);
+P_TNODE_BY      treInsertLeftBY    (P_TNODE_BY      pnode,    const void * pitem,  size_t       size);
+P_TNODE_BY      treInsertRightBY   (P_TNODE_BY      pnode,    const void * pitem,  size_t       size);
+void            treRemoveLeftBY    (P_TNODE_BY      pnode);
+void            treRemoveRightBY   (P_TNODE_BY      pnode);
+size_t          treArityBY         (P_TNODE_BY      pnode);
+size_t          treHeightBY        (P_TNODE_BY      pnode);
+P_TNODE_BY      treGetParentNodeBY (P_TNODE_BY      proot,    P_TNODE_BY   pchild);
+P_TNODE_BY      treSearchDataBY    (P_TNODE_BY      pnode,    const void * pitem,  size_t       size,    TvsMtd       tm);
+BOOL            treDescendantBY    (P_TNODE_BY      proot,    P_TNODE_BY   pnode);
+P_TNODE_BY      treMergeNodesBY    (P_TNODE_BY      proot,    const void * pitem,  size_t       size,    P_TNODE_BY   pleft, P_TNODE_BY  pright);
+P_TNODE_BY      treSwapNodesBY     (P_TNODE_BY      proot1,   P_TNODE_BY   pnode1, P_TNODE_BY   proot2,  P_TNODE_BY   pnode2);
+P_TNODE_BY      treCopyBY          (P_TNODE_BY      proot,    size_t       size);
 /* Functions for generic trees. */
 int             treTraverseGLevel  (P_TNODE_G       pnode,    CBF_TRAVERSE cbftvs, size_t       param);
 size_t          treArityG          (P_TNODE_G       pnode);

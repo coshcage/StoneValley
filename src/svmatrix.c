@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0508231924L00919
+ * File ID:     0213191430N0508231944L00879
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -421,6 +421,11 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *                // | 1 2 3 |   | 3 2 |   | 20 26 |
  *                // | 4 5 6 | * | 1 6 | = | 47 62 |
  *                //             | 5 4 |
+ *                  __      _n_
+ *                 /  \     \  |
+ *                |      ==  >   a  b
+ *                 \__/ij   /__|  ik kj
+ *                          k:=1
  */
 int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
@@ -457,51 +462,6 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 #undef MAT_LN
 #undef MAT_COL
 #undef MAT_DATA /* Undefine used macros. */
-
-/* Function name: strM3BMatrix
- * Description:   Do multiplication between two matrices A and B, and store the result into matrix C.
- *                Thus, C := A * B. Notice that A * B != B * A.
- * Parameters:
- *         pr Pointer to matrix C.
- *         pa Pointer to matrix A.
- *         pb Pointer to matrix B.
- *      ptemp Pointer to a buffer that can hold an element.
- *            Size of the buffer that ptemp pointed shall equal to parameter size.
- *       size Size of each element in the matrix.
- *        mul Pointer to a function that can perform multiplication.
- *        add Pointer to a function that can perform addition.
- *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depends on function cbfagb.
- * Caution:       Address of pr, pa, pb and ptemp Must Be Allocated first.
- * Tip:           This function performs faster than strM3Matrix.
- *                  __      _n_
- *                 /  \     \  |
- *                |      ==  >   a  b
- *                 \__/ij   /__|  ik kj
- *                          k:=1
- */
-int strM3BMatrix(P_MATRIX pr, P_MATRIX pa, P_MATRIX pb, void * ptemp, size_t size, CBF_ALGEBRA cbfmul, CBF_ALGEBRA cbfadd)
-{
-	if (pa->ln == pb->col && pr->ln == pa->ln && pr->col == pb->col)
-	{
-		REGISTER size_t i, j, k = 0;
-		for (i = 0; k < pr->ln; ++i)
-		{
-			for (j = 0; j < pr->col; ++j)
-			{
-				for (k = 0; k < pa->col; ++k)
-				{
-					memcpy(ptemp, strGetValueMatrix(NULL, pa, i, k, size), size);
-					if (CBF_CONTINUE != cbfmul(ptemp, strGetValueMatrix(NULL, pb, k, j, size)))
-						return CBF_TERMINATE;
-					if (CBF_CONTINUE != cbfadd(strGetValueMatrix(NULL, pr, i, j, size), ptemp))
-						return CBF_TERMINATE;
-				}
-			}
-		}
-	}
-	return CBF_TERMINATE;
-}
 
 /* Assume that we have a bit-map that contains 4 lines and 5 columns.
  *         0 1 2 3 4

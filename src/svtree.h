@@ -119,7 +119,7 @@ P_TNODE_G       treGetParentNodeG  (P_TNODE_G       proot,    P_TNODE_G    pchil
 P_TNODE_G       treSearchDataG     (P_TNODE_G       proot,    const void * pitem,  size_t       size);
 P_TNODE_G       treSwapNodesG      (P_TNODE_G       proot1,   P_TNODE_G    pnode1, P_TNODE_G    proot2,  P_TNODE_G    pnode2);
 P_TNODE_G       treCopyG           (P_TNODE_G       proot,    size_t       size);
-P_TNODE_BY      treG2BConvert      (P_TNODE_G       pnode,    size_t       size);
+P_TNODE_BY      treG2BYConvert     (P_TNODE_G       pnode,    size_t       size);
 /* Functions for heap trees. */
 void            treInitHeapA       (P_HEAP_A        pheap,    size_t       num,    size_t       size);
 void            treFreeHeapA       (P_HEAP_A        pheap);

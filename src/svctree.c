@@ -23,27 +23,27 @@
 #define _SMB_TBL_LEN (UCHAR_MAX + 1)
 
  /* Symbol information of Huffman trees. */
-typedef struct _st_SMBYNF {
+typedef struct _st_SMBINF {
 	HFM_SYMBOL Symbol; /* Symbol structure. */
 	size_t       freq; /* Symbol frequency. */
-} _SMBYNF, * _P_SMBYNF;
+} _SMBINF, * _P_SMBINF;
 
 /* Node data of Huffman trees. */
 typedef struct _st_HFMNOD {
 	P_TNODE_BY  parent;    /* Pointer to parent node. */
 	union _ut_NodeData {  /* A union used to store both internal node data and leaf data. */
 		size_t    sbfreq; /* Frequency value for internal nodes. */
-		_P_SMBYNF psbinf; /* Pointer to symbol info in symbol table for leaf nodes. */
+		_P_SMBINF psbinf; /* Pointer to symbol info in symbol table for leaf nodes. */
 		P_HFM_SYMBOL psb; /* Pointer to a HFM_SYMBOL structure in outputted symbol table. */
 	} NodeData;
 } _HFMNOD, * _P_HFMNOD;
 
 /* File-level function declarations here. */
-P_ARRAY_Z _treHFMCreateSymbolTable          (PUCHAR       s,     size_t       n);
-int       _treCBFHFMCompareSymbolFreqInNode (const void * x,     const void * y);
+P_ARRAY_Z  _treHFMCreateSymbolTable          (PUCHAR       s,     size_t       n);
+int        _treCBFHFMCompareSymbolFreqInNode (const void * x,     const void * y);
 P_TNODE_BY _treHFMBuildHuffmanTree           (P_ARRAY_Z    stbl);
-int       _treCBFHFMFillSymbolTable         (void *       pitem, size_t       param);
-int       _treCBFHFMCompareSymbolFreq       (const void * x,     const void * y);
+int        _treCBFHFMFillSymbolTable         (void *       pitem, size_t       param);
+int        _treCBFHFMCompareSymbolFreq       (const void * x,     const void * y);
 P_TNODE_BY _treHFMRebuildHuffmanTree         (P_ARRAY_Z    stbl);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -57,11 +57,11 @@ P_TNODE_BY _treHFMRebuildHuffmanTree         (P_ARRAY_Z    stbl);
  */
 P_ARRAY_Z _treHFMCreateSymbolTable(PUCHAR s, size_t n)
 {
-	REGISTER P_ARRAY_Z pt = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBYNF));
+	REGISTER P_ARRAY_Z pt = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
 	if (NULL != pt)
 	{
 		REGISTER size_t i;
-		REGISTER _P_SMBYNF psi = (_P_SMBYNF)pt->pdata;
+		REGISTER _P_SMBINF psi = (_P_SMBINF)pt->pdata;
 		/* Initialize the symbol table. */
 		for (i = 0; i < _SMB_TBL_LEN; ++i)
 		{
@@ -117,7 +117,7 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 	/* Create leaf nodes and push them into heap. */
 	for (i = 0; i < _SMB_TBL_LEN; ++i)
 	{
-		_P_SMBYNF psi = (_P_SMBYNF)strLocateItemArrayZ(stbl, sizeof(_SMBYNF), i);
+		_P_SMBINF psi = (_P_SMBINF)strLocateItemArrayZ(stbl, sizeof(_SMBINF), i);
 		if (psi->freq)
 		{
 			P_TNODE_BY ptemp;
@@ -188,7 +188,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 	if (NULL == pnode->ppnode[LEFT] && NULL == pnode->ppnode[RIGHT])
 	{	/* Node is a leaf. */
 		REGISTER P_TNODE_BY parent = ((_P_HFMNOD)pnode->pdata)->parent;
-		REGISTER _P_SMBYNF psi = (_P_SMBYNF)((_P_HFMNOD)pnode->pdata)->NodeData.psbinf;
+		REGISTER _P_SMBINF psi = (_P_SMBINF)((_P_HFMNOD)pnode->pdata)->NodeData.psbinf;
 		if (NULL != parent)
 		{	/* Clear frequency. Get ready for bits assigning. */
 			psi->Symbol.bits = 0;
@@ -226,8 +226,8 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
 {
 	/* Sort frequency from high to low. This would speed up retrieving. */
-	if (((_P_SMBYNF)x)->freq < ((_P_SMBYNF)y)->freq) return  1;
-	if (((_P_SMBYNF)x)->freq > ((_P_SMBYNF)y)->freq) return -1;
+	if (((_P_SMBINF)x)->freq < ((_P_SMBINF)y)->freq) return  1;
+	if (((_P_SMBINF)x)->freq > ((_P_SMBINF)y)->freq) return -1;
 	return 0;
 }
 
@@ -261,7 +261,7 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z * pptable, const PUCHAR s, const size_t
 		P_TNODE_BY proot;
 		if (NULL != (proot = _treHFMBuildHuffmanTree(stbl)))
 		{
-			REGISTER _P_SMBYNF psi;
+			REGISTER _P_SMBINF psi;
 			REGISTER size_t i, j;
 
 			/* Traverse the whole Huffman tree to fill symbol table. */
@@ -272,7 +272,7 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z * pptable, const PUCHAR s, const size_t
 
 			for (i = 0; i < n; ++i)
 			{
-				psi = (_P_SMBYNF)strLocateItemArrayZ(stbl, sizeof(_SMBYNF), *(s + i));
+				psi = (_P_SMBINF)strLocateItemArrayZ(stbl, sizeof(_SMBINF), *(s + i));
 				/* Fill bit-stream. */
 				for (j = 1; j <= psi->Symbol.bits; ++j)
 					strBitStreamAdd(pbstm, ((size_t)1 << (psi->Symbol.bits - j)) & psi->Symbol.sgnb);
@@ -282,11 +282,11 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z * pptable, const PUCHAR s, const size_t
 				P_HFM_SYMBOL ptbl;
 				P_ARRAY_Z otbl = NULL;
 				/* Sort symbol table by its frequency if possible, so that we can retrieve them much faster in the next decoding time. */
-				strSortArrayZ(stbl, sizeof(_SMBYNF), _treCBFHFMCompareSymbolFreq);
+				strSortArrayZ(stbl, sizeof(_SMBINF), _treCBFHFMCompareSymbolFreq);
 				/* Convert symbol table. */
 				if (NULL != (otbl = strCreateArrayZ(strLevelArrayZ(stbl), sizeof(HFM_SYMBOL))))
-					for (i = 0, ptbl = (P_HFM_SYMBOL)otbl->pdata; i[(_P_SMBYNF)stbl->pdata].freq && i < _SMB_TBL_LEN; ++i)
-						*(ptbl++) = i[(_P_SMBYNF)stbl->pdata].Symbol; /* Copy a structure once a time. */
+					for (i = 0, ptbl = (P_HFM_SYMBOL)otbl->pdata; i[(_P_SMBINF)stbl->pdata].freq && i < _SMB_TBL_LEN; ++i)
+						*(ptbl++) = i[(_P_SMBINF)stbl->pdata].Symbol; /* Copy a structure once a time. */
 				/* Resize output table. */
 				strResizeArrayZ(otbl, i, sizeof(HFM_SYMBOL));
 				/* Delete the original large table. */

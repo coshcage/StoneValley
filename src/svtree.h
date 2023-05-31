@@ -39,8 +39,8 @@ typedef struct st_BSTNODE { /* Binary node with addtional information. */
 	size_t param;  /* Parameter for a treap node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
-#define P2P_TNODE_B(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */
-#define P2P_BSTNODE(pnode) ((P_BSTNODE) (pnode)) /* Cast a pointer to P_BSTNODE. */
+#define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */
+#define P2P_BSTNODE(pnode)  ((P_BSTNODE) (pnode)) /* Cast a pointer to P_BSTNODE. */
 
 /* Generic tree. */
 typedef struct st_TNODE_G {

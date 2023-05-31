@@ -148,7 +148,7 @@ int _grpCBFTraversePuppet(void * pitem, size_t param)
 	if (psi->bedge)
 		return psi->cbftvs((P_EDGE)((P_NODE_S)pitem)->pdata, psi->param);
 	else
-		return psi->cbftvs((P_VERTEX_L)P2P_TNODE_B(pitem)->pdata, psi->param);
+		return psi->cbftvs((P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata, psi->param);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

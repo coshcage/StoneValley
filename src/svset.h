@@ -85,7 +85,7 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 #define setDeleteT_M(pset_M) do { \
 	treDeleteBST(pset_M); \
 } while (0)
-#define setSizeT_M(pset_M) (NULL == (pset_M) ? 0 : treArityBY(P2P_TNODE_B(*(pset_M))))
+#define setSizeT_M(pset_M) (NULL == (pset_M) ? 0 : treArityBY(P2P_TNODE_BY(*(pset_M))))
 #define setIsEmptyT_M(pset_M) (NULL == (pset_M) ? TRUE: !(*(pset_M)))
 #define setIsMemberT_M(pset_M, pitem_M, cbfcmp_M) (NULL == treBSTFindData_X(*(pset_M), (pitem_M), (cbfcmp_M)) ? FALSE : TRUE)
 

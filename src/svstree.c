@@ -143,7 +143,7 @@ void treFreeBST(P_BST pbst)
 	/* A post-order traversal is needed here.
 	 * Because we have to free nodes from crown to root.
 	 */
-	treTraverseBYPost(P2P_TNODE_B(*pbst), _treCBFFreeNodeBST, 0);
+	treTraverseBYPost(P2P_TNODE_BY(*pbst), _treCBFFreeNodeBST, 0);
 	*pbst = NULL;
 }
 
@@ -193,8 +193,8 @@ P_BSTNODE treCopyBST(P_BSTNODE proot, size_t size)
 	pr = treCopyBST(P2P_BSTNODE(proot->knot.ppnode[RIGHT]), size);
 	if (NULL != (pp = treCreateBSTNode(proot->knot.pdata, size, proot->param)))
 	{
-		pp->knot.ppnode[LEFT] = P2P_TNODE_B(pl);
-		pp->knot.ppnode[RIGHT] = P2P_TNODE_B(pr);
+		pp->knot.ppnode[LEFT] = P2P_TNODE_BY(pl);
+		pp->knot.ppnode[RIGHT] = P2P_TNODE_BY(pr);
 	}
 	return pp;
 }
@@ -372,7 +372,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 				pnode = _treBSTSkewAA(pnode);
 				pbstchild(pnode)[RIGHT] = _treBSTSkewAA(pbstchild(pnode)[RIGHT]);
 				if (NULL != pbstchild(pnode)[RIGHT])
-					(pbstchild(pnode)[RIGHT])->knot.ppnode[RIGHT] = P2P_TNODE_B(_treBSTSkewAA(P2P_BSTNODE((pbstchild(pnode)[RIGHT])->knot.ppnode[RIGHT])));
+					(pbstchild(pnode)[RIGHT])->knot.ppnode[RIGHT] = P2P_TNODE_BY(_treBSTSkewAA(P2P_BSTNODE((pbstchild(pnode)[RIGHT])->knot.ppnode[RIGHT])));
 				pnode = _treBSTSplitAA(pnode);
 				pbstchild(pnode)[RIGHT] = _treBSTSplitAA(pbstchild(pnode)[RIGHT]);
 			}

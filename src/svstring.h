@@ -55,10 +55,10 @@ typedef enum en_NodeType {
 } NodeType;
 
 /* Definition of bit-stream. */
-typedef struct st_BYTSTREAM {
+typedef struct st_BITSTREAM {
 	ARRAY_Z arrz; /* Array that contains the stream data. */
 	size_t  bilc; /* Number of bits in the last char. */
-} BYTSTREAM, * P_BYTSTREAM;
+} BITSTREAM, * P_BITSTREAM;
 
 /* Definition of common matrix structure. */
 typedef struct st_MATRIX {
@@ -75,11 +75,11 @@ typedef struct st_MATRIX {
 typedef CBF_COMPARE CBF_ALGEBRA;
 
 /* Definition of bit-matrix structure. */
-typedef MATRIX BYTMAT, * P_BYTMAT;
+typedef MATRIX BITMAT, * P_BITMAT;
 
 /* Definition of sparse-matrix structure. */
 typedef struct st_SPAMAT {
-	BYTMAT bmask;  /* Data bit mask. */
+	BITMAT bmask;  /* Data bit mask. */
 	LIST_S datlst; /* Data list. */
 } SPAMAT, * P_SPAMAT;
 
@@ -163,17 +163,17 @@ void        strSwapItemLinkedListD     (P_NODE_D     pnodex,   P_NODE_D     pnod
 void        strSwapContentLinkedListSD (void *       pnodex,   size_t       sizex,  void *          pnodey,   size_t      sizey,  NodeType    bnodes);
 void *      strIsCircularLinkedListSD  (void *       pfirst,   NodeType     ntp,    BOOL            brev);
 /* Functions for bit-streams. */
-void *      strInitBitStream           (P_BYTSTREAM  pbstm);
-void        strFreeBitStream           (P_BYTSTREAM  pbstm);
-P_BYTSTREAM strCreateBitStream         (void);
-void        strDeleteBitStream         (P_BYTSTREAM  pbstm);
-void *      strCopyBitStream           (P_BYTSTREAM  pdest,    P_BYTSTREAM  psrc);
-BOOL        strBitStreamIsEmpty_O      (P_BYTSTREAM  pbstm);
-BOOL        strBitStreamPush           (P_BYTSTREAM  pbstm,    BOOL         value);
-BOOL        strBitStreamPop            (P_BYTSTREAM  pbstm);
-BOOL        strBitStreamAdd            (P_BYTSTREAM  pbstm,    BOOL         value);
-BOOL        strBitStreamExtract        (P_BYTSTREAM  pbstm);
-void        strBitStreamReverse        (P_BYTSTREAM  pbstm);
+void *      strInitBitStream           (P_BITSTREAM  pbstm);
+void        strFreeBitStream           (P_BITSTREAM  pbstm);
+P_BITSTREAM strCreateBitStream         (void);
+void        strDeleteBitStream         (P_BITSTREAM  pbstm);
+void *      strCopyBitStream           (P_BITSTREAM  pdest,    P_BITSTREAM  psrc);
+BOOL        strBitStreamIsEmpty_O      (P_BITSTREAM  pbstm);
+BOOL        strBitStreamPush           (P_BITSTREAM  pbstm,    BOOL         value);
+BOOL        strBitStreamPop            (P_BITSTREAM  pbstm);
+BOOL        strBitStreamAdd            (P_BITSTREAM  pbstm,    BOOL         value);
+BOOL        strBitStreamExtract        (P_BITSTREAM  pbstm);
+void        strBitStreamReverse        (P_BITSTREAM  pbstm);
 /* Function for common matrices. */
 void *      strInitMatrix              (P_MATRIX     pmtx,     size_t       ln,      size_t         col,      size_t      size);
 void        strFreeMatrix_O            (P_MATRIX     pmtx);
@@ -190,13 +190,13 @@ int         strM1Matrix                (P_MATRIX     pmtx,     const void * pval
 int         strM2Matrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t         size,     CBF_ALGEBRA cbfagb);
 int         strM3Matrix                (P_MATRIX     ppmtx[3], void *       ptemp,   size_t         size,     CBF_ALGEBRA pcbfagb[2]);
 /* Functions for bit-matrices. */
-void *      strInitBMap                (P_BYTMAT     pbm,      size_t       ln,     size_t          col,      BOOL        bval);
-void        strFreeBMap_O              (P_BYTMAT     pbm);
-P_BYTMAT    strCreateBMap              (size_t       ln,       size_t       col,    BOOL            val);
-void        strDeleteBMap_O            (P_BYTMAT     pbm);
-void *      strCopyBMap_O              (P_BYTMAT     pdest,    P_BYTMAT     psrc);
-BOOL        strGetBitBMap              (P_BYTMAT     pbm,      size_t       ln,     size_t          col);
-BOOL        strSetBitBMap              (P_BYTMAT     pbm,      size_t       ln,     size_t          col,      BOOL        bval);
+void *      strInitBMap                (P_BITMAT     pbm,      size_t       ln,     size_t          col,      BOOL        bval);
+void        strFreeBMap_O              (P_BITMAT     pbm);
+P_BITMAT    strCreateBMap              (size_t       ln,       size_t       col,    BOOL            val);
+void        strDeleteBMap_O            (P_BITMAT     pbm);
+void *      strCopyBMap_O              (P_BITMAT     pdest,    P_BITMAT     psrc);
+BOOL        strGetBitBMap              (P_BITMAT     pbm,      size_t       ln,     size_t          col);
+BOOL        strSetBitBMap              (P_BITMAT     pbm,      size_t       ln,     size_t          col,      BOOL        bval);
 /* Functions for sparse matrices. */
 BOOL        strInitSparseMatrix        (P_SPAMAT     pmtx,     size_t       ln,     size_t          col);
 void        strFreeSparseMatrix        (P_SPAMAT     pmtx);
@@ -442,7 +442,7 @@ BOOL        strFillSparseMatrix        (P_MATRIX     pdest,    P_SPAMAT     psrc
  * Matrix data list: 2->4->6->8->NULL;
  * # The above sparse matrix in memory is:
  * +_SPAMAT______________
- * |BYTMAT               |
+ * |BITMAT               |
  * |________________bmask|
  * |size_t|size_t|ARRAY_Z|
  * |____ln|___col|size_t |

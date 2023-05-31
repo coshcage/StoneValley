@@ -169,8 +169,8 @@ size_t *        treSearchTrieA     (P_TRIE_A        ptrie,   const void * pstr, 
 BOOL            treInsertTrieA     (P_TRIE_A        ptrie,   const void * pstr,   size_t       num,      size_t       size,  size_t      vapdx,  CBF_COMPARE cbfcmp);
 BOOL            treRemoveTrieA     (P_TRIE_A        ptrie,   const void * pstr,   size_t       num,      size_t       size,  CBF_COMPARE cbfcmp);
 /* Functions for Huffman coding trees. */
-P_BYTSTREAM     treHuffmanEncoding (P_ARRAY_Z *     pptable, const PUCHAR s,      const size_t n);
-P_BYTSTREAM     treHuffmanDecoding (P_ARRAY_Z       ptable,  P_BYTSTREAM  s);
+P_BITSTREAM     treHuffmanEncoding (P_ARRAY_Z *     pptable, const PUCHAR s,      const size_t n);
+P_BITSTREAM     treHuffmanDecoding (P_ARRAY_Z       ptable,  P_BITSTREAM  s);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svbtree.c. */

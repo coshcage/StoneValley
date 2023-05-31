@@ -247,10 +247,10 @@ int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
  *                that is function would assign a NULL value into (*pptable).
  * Tip:           Symbol table is important for decoding. You may need to store the symbol table onto an external disk.
  */
-P_BYTSTREAM treHuffmanEncoding(P_ARRAY_Z * pptable, const PUCHAR s, const size_t n)
+P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z * pptable, const PUCHAR s, const size_t n)
 {
 	REGISTER P_ARRAY_Z stbl;
-	P_BYTSTREAM pbstm;
+	P_BITSTREAM pbstm;
 	if
 	(	/* Both buffer and its length are not empty. */
 		NULL != s && n != 0 &&
@@ -373,9 +373,9 @@ Lbl_Building_Failed:
  *                You may either get a bit-stream as the parameter of function treHuffmanDecoding from
  *                the return value of function treHuffmanEncoding.
  */
-P_BYTSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BYTSTREAM s)
+P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 {
-	P_BYTSTREAM pbout;
+	P_BITSTREAM pbout;
 	if
 	(
 		NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0 &&

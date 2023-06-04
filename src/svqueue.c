@@ -2,7 +2,7 @@
  * Name:        svqueue.c
  * Description: Queues.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0417171257F0911201706L00501
+ * File ID:     0417171257F0604231338L00504
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -61,10 +61,13 @@ void queFreeAC(P_QUEUE_A pqueac)
 P_QUEUE_A queCreateAC(size_t num, size_t size)
 {
 	REGISTER P_QUEUE_A pquen = (P_QUEUE_A) malloc(sizeof(QUEUE_A));
-	if (NULL == pquen || NULL == queInitAC(pquen, num, size))
-	{	/* Allocation failue. */
-		free(pquen);
-		return NULL;
+	if (NULL != pquen)
+	{
+		if (NULL == queInitAC(pquen, num, size))
+		{	/* Allocation failue. */
+			free(pquen);
+			return NULL;
+		}
 	}
 	return pquen;
 }

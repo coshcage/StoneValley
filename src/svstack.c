@@ -2,7 +2,7 @@
  * Name:        svstack.c
  * Description: Stacks.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318171803E0530191456L00306
+ * File ID:     0318171803E0604231336L00309
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -57,10 +57,13 @@ void stkFreeA(P_STACK_A pstka)
 P_STACK_A stkCreateA(size_t num, size_t size)
 {
 	P_STACK_A pstkn = (P_STACK_A) malloc(sizeof(STACK_A));
-	if (NULL == pstkn || NULL == stkInitA(pstkn, num, size))
-	{	/* Allocation failure. */
-		free(pstkn);
-		return NULL;
+	if (NULL != pstkn)
+	{
+		if (NULL == stkInitA(pstkn, num, size))
+		{	/* Allocation failure. */
+			free(pstkn);
+			return NULL;
+		}
 	}
 	return pstkn;
 }

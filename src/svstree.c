@@ -824,14 +824,14 @@ P_BPTNODE treCreateBPTNode(P_BPTNODE parent, P_BPTNODE pnext)
 	return pnew;
 }
 
-/* Function name: treDeleteBYPTNode
+/* Function name: treDeleteBPTNode
  * Description:   Deallocate a node of which is allocated by function treCreateBPTNode.
  * Parameter:
  *     pnode Pointer to the node you want to deallocate.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
-void treDeleteBYPTNode(P_BPTNODE pnode)
+void treDeleteBPTNode(P_BPTNODE pnode)
 {
 	treFreeBPTNode(pnode);
 	free(pnode);
@@ -927,7 +927,7 @@ void _treFreeBPTPuppet(P_QUEUE_L pquelx, P_QUEUE_L pquely)
 	while (! queIsEmptyL(pquely))
 	{
 		queRemoveL(&pnode, sizeof(P_BPTNODE), pquely);
-		treDeleteBYPTNode(pnode);
+		treDeleteBPTNode(pnode);
 	}
 }
 
@@ -969,14 +969,14 @@ P_BPT treCreateBPT(void)
 	return pbpt;
 }
 
-/* Function name: treDeleteBYPT
+/* Function name: treDeleteBPT
  * Description:   Deallocate a B-plus indexing tree of which is allocated by function treCreateBPT.
  * Parameter:
  *      pbpt Pointer to the tree you want to deallocate.
  * Return value:  N/A.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
-void treDeleteBYPT(P_BPT pbpt)
+void treDeleteBPT(P_BPT pbpt)
 {
 	treFreeBPT(pbpt);
 	free(pbpt);
@@ -1237,7 +1237,7 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				{
 					if (FALSE == _treSplitArrayInLeafBPT(pnew, pnode, degree))
 					{
-						treDeleteBYPTNode(pnew);
+						treDeleteBPTNode(pnew);
 						return FALSE; /* Can not split array. */
 					}
 					/* Set next pointer of pnode. */
@@ -1251,7 +1251,7 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 					_BPT_KEY_INFO bki;
 					if (FALSE == _treSplitArrayInNodeBPT(&bki, pnew, pnode, degree))
 					{
-						treDeleteBYPTNode(pnew);
+						treDeleteBPTNode(pnew);
 						return FALSE; /* Can not split array. */
 					}
 					pk = bki.pkey;
@@ -1348,7 +1348,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  *                int a[5] = { 2,1,3,4,5 }; PUCHAR keys[5]; P_BPT pbpt = treCreateBPT();
  *                // Key array HAS to be sorted, while data array does not need to be sorted, so that we assign (&a[0]) to (keys[1]) and (&a[1]) to (keys[0]).
  *                keys[0] = (PUCHAR)&a[1]; keys[1] = (PUCHAR)&a[0]; keys[2] = (PUCHAR)&a[2]; keys[3] = (PUCHAR)&a[3]; keys[4] = (PUCHAR)&a[4];
- *                treBulkLoadBPT(pbpt, 3, keys, 5); treDeleteBYPT(pbpt);
+ *                treBulkLoadBPT(pbpt, 3, keys, 5); treDeleteBPT(pbpt);
  */
 BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {
@@ -1429,7 +1429,7 @@ BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 		queFreeL(&q2);
 		return TRUE;
 Lbl_Allocation_Failure:
-		treDeleteBYPT(pbpt);
+		treDeleteBPT(pbpt);
 		/* Move contents of the 2nd. queue to the 1st. queue. */
 		while (!queIsEmptyL(pqb))
 		{
@@ -1662,7 +1662,7 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, BOOL br
 		strResizeArrayZ(parrz0, strLevelArrayZ(parrz0) - 1, sizeof(_BPT_KEY_INFO));
 	}
 	/* Delete node. */
-	treDeleteBYPTNode(pnode);
+	treDeleteBPTNode(pnode);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1688,7 +1688,7 @@ BOOL _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 		return FALSE; /* Removal failure. */
 	else if (1 == i && pnode == *pbpt)
 	{	/* Current node is the root node and it is empty.*/
-		treDeleteBYPTNode(pnode); /* Delete parent. */
+		treDeleteBPTNode(pnode); /* Delete parent. */
 		*pbpt = NULL;
 	}
 	else if (strLevelArrayZ(parrz) < hdeg)

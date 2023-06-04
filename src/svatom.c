@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0720200119L00270
+ * File ID:     0306170948A0604231344L00273
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -53,10 +53,13 @@ void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
 {
 	P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
-	if (NULL == parrz || NULL == strInitArrayZ(parrz, num, size))
+	if (NULL != parrz)
 	{
-		free(parrz);
-		return NULL;
+		if (NULL == strInitArrayZ(parrz, num, size))
+		{	/* Allocation failure. */
+			free(parrz);
+			return NULL;
+		}
 	}
 	return parrz;
 }

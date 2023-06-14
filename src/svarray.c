@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0720200120L00613
+ * File ID:     0306170948B0614232027L00791
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -15,9 +15,61 @@
  *   Hope you never need to push yourself or other people too hard.
  */
 
+#include <stdio.h>  /* Using macro BUFSIZ. */
 #include <stdlib.h> /* Using function srand, rand. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
+
+/* File level function declarations here. */
+void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size);
+
+/* Function name: strInitCharacterStringArrayZ
+ * Description:   Initialize a sized array through a string.
+ * Parameters:
+ *      parrz Pointer to the sized array you want to allocate.
+ *       pstr Pointer to the string you want to copy.
+ * Return value:  Pointer to new allocated buffer.
+ * Caution:       Address of parrz Must Be Allocated first.
+ */
+char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
+{
+	char * ps = (char *) pstr;
+	parrz->num = 0;
+	while (*ps)
+	{
+		++parrz->num;
+		++ps;
+	}
+	/* parrz->num = strlen(pstr). */
+	parrz->pdata = (PUCHAR)malloc(strLevelArrayZ(parrz));
+	if (NULL == parrz->pdata)
+		parrz->num = 0;
+	else
+		memcpy(parrz->pdata, pstr, strLevelArrayZ(parrz));
+	return (char *)parrz->pdata;
+}
+
+/* Function name: strCreateCharacterStringArrayZ
+ * Description:   Create a sized array from a string.
+ * Parameters:
+ *       pstr Pointer to the string you want to copy.
+ * Return value:  Pointer to new allocated structure.
+ *                If function returned NULL, it would indicate an allocation failure.
+ * Caution:       N/A.
+ */
+P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
+{
+	P_ARRAY_Z parrz = (P_ARRAY_Z)malloc(sizeof(ARRAY_Z));
+	if (NULL != parrz)
+	{
+		if (NULL == strInitCharacterStringArrayZ(parrz, pstr))
+		{	/* Allocation failure. */
+			free(parrz);
+			return NULL;
+		}
+	}
+	return parrz;
+}
 
 /* Function name: strLevelArrayZ
  * Description:   Return how many items there are stored in a sized array.
@@ -609,4 +661,130 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int s
 				svSwap(p, parrz->pdata + size * (rnd % j), ptemp, size);
 		}
 	}
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _strGetZArray
+ * Description:   This function is used to fill Z array for given parrz.
+ * Parameters:
+ *          Z Pointer to a size_t array named Z.
+ *      paraz Pointer to a sized array that contains the pattern and text.
+ *       size Size of each element in parrz.
+ * Return value:  N/A.
+ */
+void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size)
+{
+	REGISTER size_t n = strLevelArrayZ(parrz);
+	REGISTER size_t i, l, r, k;
+
+	/* [l,r] Make a window which matches with prefix of parrz. */
+	l = r = 0;
+	for (i = 1; i < n; ++i)
+	{
+		/* If i > r, nothing matches so we will calculate.
+		 * Z[i] using naive way.
+		 */
+		if (i > r)
+		{
+			l = r = i;
+			/* r - l == 0 in starting, so it will start checking from 0'th index.
+			 * For example, for "ababab" and i == 1, the value of r remains 0 and Z[i] becomes 0.
+			 * For string "aaaaaa" and i = 1, Z[i] and r become 5.
+			 */
+			while (r < n && 0 == memcmp(strLocateItemArrayZ(parrz, size, r - l), strLocateItemArrayZ(parrz, size, r), size))
+				++r;
+			Z[i] = r - l;
+			--r;
+		}
+		else
+		{
+			/* k = i - l, so k corresponds to number which matches in [l,r] interval. */
+			k = i - l;
+			/* If Z[k] is less than remaining interval then Z[i] will be equal to Z[k].
+			 * For example, str == "ababab", i == 3, r == 5 and l == 2.
+			 */
+			if (Z[k] < r - i + 1)
+				Z[i] = Z[k]; /* For example str == "aaaaaa" and i == 2, r is 5, l is 0. */
+			else
+			{
+				/* Start from r and check manually. */
+				l = i;
+				while (r < n && 0 == memcmp(strLocateItemArrayZ(parrz, size, r - l), strLocateItemArrayZ(parrz, size, r), size))
+					++r;
+				Z[i] = r - l;
+				--r;
+			}
+		}
+	}
+}
+
+/* Function name: strCreateZSearchArrayZ
+ * Description:   Match pattern in text by using Z algorithm.
+ * Parameters:
+ *   parrtext Pointer to the sized array you want to search.
+ *parrpattern Pointer to the sized array which contains the pattern.
+ *       size Size of each element in both parrtext and parrpattern.
+ * Return value:  Pointer to new allocated size_t sized array.
+ *                If funtion returned NULL, it would indicates no matching or matching failure.
+ * Caution:       Address of parrtext and parrpattern Must Be Allocated first.
+ *                Size shall not equal to zero.
+ * Tips:          Z algorithm references to geeksforgeeks.org.
+ *                Users may reference to the following codes:
+ *                // int cbftvs(void * pitem, size_t param)
+ *                // { printf("%zu ", *(size_t *)pitem); return CBF_CONTINUE; }
+ *                //
+ *                // P_ARRAY_Z pp   = strCreateCharactersArrayZ("GEEK");
+ *                // P_ARRAY_Z pt   = strCreateCharactersArrayZ("GEEKS FOR GEEKS");
+ *                // P_ARRAY_Z parr = strCreateZSearchArrayZ(pt, pp, 1);
+ *                // if (NULL != parr)
+ *                //     strTraverseArrayZ(parr, sizeof(size_t), cbftvs, 0, FALSE);
+ *                Return value: 0 10.
+ */
+P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtext, P_ARRAY_Z parrpattern, size_t size)
+{
+	size_t i, j = 0, l = strLevelArrayZ(parrtext) + 1 + strLevelArrayZ(parrpattern);
+	size_t * Z = (size_t *)calloc(l, sizeof(size_t));
+	P_ARRAY_Z parrstr = strCreateArrayZ(l, size);
+	P_ARRAY_Z parr;
+	if (NULL != Z)
+	{
+		if (NULL != parrstr)
+		{
+			/* Create concatenated string "P\0T". */
+			memcpy(parrstr->pdata, parrpattern->pdata, size * strLevelArrayZ(parrpattern));
+			memset(parrstr->pdata + size * strLevelArrayZ(parrpattern), 0, size);
+			memcpy(parrstr->pdata + (size * strLevelArrayZ(parrpattern) + 1), parrtext->pdata, size * strLevelArrayZ(parrtext));
+			/* Use Z algorithm to find string matching. */
+			_strGetZArray(Z, parrstr, size);
+			strDeleteArrayZ(parrstr);
+
+			parr = strCreateArrayZ(BUFSIZ, sizeof(size_t));
+			if (NULL == parr)
+				goto Lbl_End_Searching;
+
+			/* Looping through Z array for matching condition. */
+			for (i = 0; i < l; ++i)
+			{
+				/* If Z[i](matched region) is equal to pattern length then we got the pattern. */
+				if (strLevelArrayZ(parrpattern) == Z[i])
+				{
+					if (++j > strLevelArrayZ(parr))
+					{
+						if (NULL == strResizeArrayZ(parr, strLevelArrayZ(parr) + BUFSIZ, sizeof(size_t)))
+						{
+							j = 0;
+							break;
+						}
+					}
+					/* Assign found value to result array. */
+					(j - 1)[(size_t *)parr->pdata] = i - strLevelArrayZ(parrpattern) - 1;
+				}
+			}
+		Lbl_End_Searching:
+			if (NULL != strResizeArrayZ(parr, j, sizeof(size_t)))
+				return parr;
+		}
+		free(Z);
+	}
+	return NULL;
 }

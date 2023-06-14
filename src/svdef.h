@@ -21,7 +21,7 @@
 #include <stddef.h> /* Using type size_t, ptrdiff_t. */
 
 /* Library version. */
-#define LIB_VER "1.1.9.9"
+#define LIB_VER "1.2.0.0"
 
 /* Boolean constants. */
 #define TRUE  (1)

@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0614232250L00793
+ * File ID:     0306170948B0614232355L00790
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -34,14 +34,11 @@ void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size);
 char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
 {
 	char * ps = (char *) pstr;
-	parrz->num = 0;
 	while (*ps)
-	{
-		++parrz->num;
 		++ps;
-	}
+	parrz->num = (size_t)(ps - pstr);
 	/* parrz->num = strlen(pstr). */
-	parrz->pdata = (PUCHAR)malloc(strLevelArrayZ(parrz));
+	parrz->pdata = (PUCHAR) malloc(strLevelArrayZ(parrz));
 	if (NULL == parrz->pdata)
 		parrz->num = 0;
 	else
@@ -59,7 +56,7 @@ char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
  */
 P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
 {
-	P_ARRAY_Z parrz = (P_ARRAY_Z)malloc(sizeof(ARRAY_Z));
+	P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
 	if (NULL != parrz)
 	{
 		if (NULL == strInitCharacterStringArrayZ(parrz, pstr))

@@ -738,7 +738,7 @@ void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size)
  *                // P_ARRAY_Z parr = strCreateZSearchArrayZ(pt, pp, 1);
  *                // if (NULL != parr)
  *                //     strTraverseArrayZ(parr, sizeof(size_t), cbftvs, 0, FALSE);
- *                // strDeleteArray(parr); // Do not forget to delete array here.
+ *                // strDeleteArrayZ(parr); // Do not forget to delete array here.
  *                Return value: 0 10.
  */
 P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtext, P_ARRAY_Z parrpattern, size_t size)

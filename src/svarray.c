@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */
-#include <stdlib.h> /* Using function srand, rand. */
+#include <stdlib.h> /* Using function malloc, calloc, realloc, free, srand, rand. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
 

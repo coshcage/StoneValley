@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0614232135L00791
+ * File ID:     0306170948B0614232250L00793
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -733,12 +733,14 @@ void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size)
  *                // int cbftvs(void * pitem, size_t param)
  *                // { printf("%zu ", *(size_t *)pitem); return CBF_CONTINUE; }
  *                //
- *                // P_ARRAY_Z pp   = strCreateCharactersArrayZ("GEEK");
- *                // P_ARRAY_Z pt   = strCreateCharactersArrayZ("GEEKS FOR GEEKS");
+ *                // P_ARRAY_Z pp   = strCreateCharacterStringArrayZ("GEEK");
+ *                // P_ARRAY_Z pt   = strCreateCharacterStringArrayZ("GEEKS FOR GEEKS");
  *                // P_ARRAY_Z parr = strCreateZSearchArrayZ(pt, pp, 1);
  *                // if (NULL != parr)
  *                //     strTraverseArrayZ(parr, sizeof(size_t), cbftvs, 0, FALSE);
  *                // strDeleteArrayZ(parr); // Do not forget to delete array here.
+ *                // strDeleteArrayZ(pp);
+ *                // strDeleteArrayZ(pt);
  *                Return value: 0 10.
  */
 P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtext, P_ARRAY_Z parrpattern, size_t size)

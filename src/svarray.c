@@ -33,7 +33,7 @@ void _strGetZArray(size_t Z[], P_ARRAY_Z parrz, size_t size);
  */
 char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
 {
-	char * ps = (char *) pstr;
+	REGISTER char * ps = (char *) pstr;
 	while (*ps)
 		++ps;
 	parrz->num = (size_t)(ps - pstr);

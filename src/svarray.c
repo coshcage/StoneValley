@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0614232027L00791
+ * File ID:     0306170948B0614232035L00790
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -745,7 +745,7 @@ P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtext, P_ARRAY_Z parrpattern, size
 	size_t i, j = 0, l = strLevelArrayZ(parrtext) + 1 + strLevelArrayZ(parrpattern);
 	size_t * Z = (size_t *)calloc(l, sizeof(size_t));
 	P_ARRAY_Z parrstr = strCreateArrayZ(l, size);
-	P_ARRAY_Z parr;
+	P_ARRAY_Z parr = NULL;
 	if (NULL != Z)
 	{
 		if (NULL != parrstr)
@@ -781,10 +781,9 @@ P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtext, P_ARRAY_Z parrpattern, size
 				}
 			}
 		Lbl_End_Searching:
-			if (NULL != strResizeArrayZ(parr, j, sizeof(size_t)))
-				return parr;
+			strResizeArrayZ(parr, j, sizeof(size_t));
 		}
 		free(Z);
 	}
-	return NULL;
+	return parr;
 }

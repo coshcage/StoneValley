@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0614232355L00790
+ * File ID:     0306170948B0615231830L00791
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -720,11 +720,12 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
  * Parameters:
  *    parrtxt Pointer to the sized array you want to search.
  *    parrptn Pointer to the sized array which contains the pattern.
- *       size Size of each element in both parrtext and parrpattern.
+ *       size Size of each element in both parrtxt and parrptn.
  * Return value:  Pointer to new allocated size_t sized array.
- *                If funtion returned NULL, it would indicates no matching or matching failure.
- * Caution:       Address of parrtext and parrpattern Must Be Allocated first.
- *                Size shall not equal to zero.
+ *                (*) If function returned NULL, it would indicate matching failure.
+ *                (*) If function returned an empty array, it would indicate No matching.
+ * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
+ *                size shall not equal to zero.
  * Tips:          Z algorithm references to geeksforgeeks.org.
  *                Users may reference to the following codes:
  *                // int cbftvs(void * pitem, size_t param)

@@ -20,19 +20,19 @@
 #include "svtree.h"
 #include "svqueue.h"
 
-/* A structure for Binary-tree copy. */
-typedef struct _st_TreeCopy {
+/* A structure for tree nodes' copy. */
+typedef struct __st_TreeCopy {
 	void *    pnroot; /* Root of new tree.    */
 	P_QUEUE_L pquel;  /* Children node queue. */
 	size_t    size;   /* Node data size.      */
-} _TreeCopy, * _P_TreeCopy;
+} __TreeCopy, * __P_TreeCopy;
 
 /* Callback function for generic trees. */
 extern int _strCBFNodesCounter (void * pitem, size_t param);
-int _treCBFGNodeEnqueue      (void * pitem, size_t param);
-int _treCBFGTreeLocateChild  (void * pitem, size_t param);
-int _treCBFCompareTNodeDataG (void * pitem, size_t param);
-int _treCBFCopyTreeNodeG     (void * pitem, size_t param);
+int _treCBFGNodeEnqueue        (void * pitem, size_t param);
+int _treCBFGTreeLocateChild    (void * pitem, size_t param);
+int _treCBFCompareTNodeDataG   (void * pitem, size_t param);
+int _treCBFCopyTreeNodeG       (void * pitem, size_t param);
 
 /* File level function declarations. */
 P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql);
@@ -119,7 +119,7 @@ int _treCBFCompareTNodeDataG(void * pitem, size_t param)
  * Description:   This function is used to copy nodes in generic tree.
  * Parameters:
  *      pitem Pointer to each node in the tree.
- *      param Pointer to a _TreeCopy structure.
+ *      param Pointer to a __TreeCopy structure.
  * Return value:  If any error occurred while copying, function would return value CBF_TERMINATE.
  *                If there were no errors produced while copying, function would return value CBF_CONTINUE.
  */
@@ -127,7 +127,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 {
 	size_t tptr;
 	REGISTER size_t i;
-	_P_TreeCopy ptc = (_P_TreeCopy)param;
+	__P_TreeCopy ptc = (__P_TreeCopy)param;
 	P_TNODE_G pcur = (P_TNODE_G)pitem;
 	P_TNODE_G pnew = treCreateTNodeG(pcur->pdata, ptc->size);
 	if (NULL == pnew)
@@ -470,7 +470,7 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
  */
 P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 {
-	_TreeCopy tp;
+	__TreeCopy tp;
 	QUEUE_L q;
 	queInitL(&q);
 	tp.pnroot = NULL;

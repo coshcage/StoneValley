@@ -20,12 +20,12 @@
 #include "svtree.h"
 #include "svqueue.h"
 
-/* A structure for tree nodes' copy. */
-typedef struct __st_TreeCopy {
+/* A structure for generic tree nodes' copy. */
+typedef struct _st_GTreeCopy {
 	void *    pnroot; /* Root of new tree.    */
 	P_QUEUE_L pquel;  /* Children node queue. */
 	size_t    size;   /* Node data size.      */
-} __TreeCopy, * __P_TreeCopy;
+} _GTreeCopy, * _P_GTreeCopy;
 
 /* Callback function for generic trees. */
 extern int _strCBFNodesCounter (void * pitem, size_t param);
@@ -119,7 +119,7 @@ int _treCBFCompareTNodeDataG(void * pitem, size_t param)
  * Description:   This function is used to copy nodes in generic tree.
  * Parameters:
  *      pitem Pointer to each node in the tree.
- *      param Pointer to a __TreeCopy structure.
+ *      param Pointer to a _GTreeCopy structure.
  * Return value:  If any error occurred while copying, function would return value CBF_TERMINATE.
  *                If there were no errors produced while copying, function would return value CBF_CONTINUE.
  */
@@ -127,7 +127,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 {
 	size_t tptr;
 	REGISTER size_t i;
-	__P_TreeCopy ptc = (__P_TreeCopy)param;
+	_P_GTreeCopy ptc = (_P_GTreeCopy)param;
 	P_TNODE_G pcur = (P_TNODE_G)pitem;
 	P_TNODE_G pnew = treCreateTNodeG(pcur->pdata, ptc->size);
 	if (NULL == pnew)
@@ -470,7 +470,7 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
  */
 P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 {
-	__TreeCopy tp;
+	_GTreeCopy tp;
 	QUEUE_L q;
 	queInitL(&q);
 	tp.pnroot = NULL;

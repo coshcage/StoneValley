@@ -20,11 +20,11 @@
 #include "svqueue.h"
 
 /* A structure for binary tree copy. */
-typedef struct _st_TreeCopy {
+typedef struct _st_BYTreeCopy {
 	void *    pnroot; /* Root of a new tree.   */
 	P_QUEUE_L pquel;  /* Children nodes queue. */
 	size_t    size;   /* Size of node data.    */
-} _TreeCopy, * _P_TreeCopy;
+} _BYTreeCopy, * _P_BYTreeCopy;
 
 /* File-level function declarations here. */
 extern int _strCBFDeleteNode       (void * pitem, size_t param);
@@ -84,14 +84,14 @@ int _treCBFNodeLocator(void * pitem, size_t param)
  * Description:   This function is used to copy nodes in binary tree.
  * Parameters:
  *      pitem Pointer to each node in the tree.
- *      param Pointer to a _TreeCopy structure.
+ *      param Pointer to a _BYTreeCopy structure.
  * Return value:  If any error occurred while copying, function would return a CBF_TERMINATE.
  *                If there were no error produced while copying, function would return a CBF_CONTINUE.
  */
 int _treCBFCopyTreeNodeBY(void * pitem, size_t param)
 {
 	size_t tptr;
-	_P_TreeCopy ptc = (_P_TreeCopy)param;
+	_P_BYTreeCopy ptc = (_P_BYTreeCopy)param;
 	P_TNODE_BY pcur = (P_TNODE_BY)pitem;
 	P_TNODE_BY pnew = strCreateNodeD(pcur->pdata, ptc->size);
 	if (NULL == pnew)
@@ -523,7 +523,7 @@ P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot
  */
 P_TNODE_BY treCopyBY(P_TNODE_BY proot, size_t size)
 {
-	_TreeCopy tp;
+	_BYTreeCopy tp;
 	QUEUE_L q;
 	queInitL(&q);
 	tp.pnroot = NULL;

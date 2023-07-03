@@ -32,7 +32,7 @@
 #define CBF_CONTINUE FALSE
 
 /* Common data types. */
-typedef int             BOOL;
+typedef unsigned int    BOOL;
 typedef unsigned char   UCHART;
 typedef unsigned char * PUCHAR; /* Usually, sizeof(unsigned char) == 1. */
 

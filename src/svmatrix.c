@@ -151,7 +151,7 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 	{
 		REGISTER size_t i, j;
 		const size_t k = size * col;
-		for (i = ol; i != 0; --i)
+		for (i = ol; i > 1; --i)
 		{
 			j = (i - 1) * size;
 			memmove(&pmtx->arrz.pdata[j * col], &pmtx->arrz.pdata[j * oc], k);

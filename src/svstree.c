@@ -693,7 +693,7 @@ typedef struct _st_BPT_KEY_INFO {
 void             _treInitBPTInfo_O           (_P_BPT_INFO      pbi);
 void             _treFreeBPTInfo             (_P_BPT_INFO      pbi);
 _P_BPT_INFO      _treCreateBPTInfo           (void);
-void             _treDeleteBYPTInfo_O         (_P_BPT_INFO      pbi);
+void             _treDeleteBPTInfo_O         (_P_BPT_INFO      pbi);
 P_BPTNODE        _treGetParentBPTNode_O      (P_BPTNODE        pnode);
 P_BPTNODE        _treGetNextBPTNode_O        (P_BPTNODE        pnode);
 BOOL             _treIsLeafBPTNode_O         (P_BPTNODE        pnode);
@@ -756,7 +756,7 @@ _P_BPT_INFO _treCreateBPTInfo(void)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treDeleteBYPTInfo_O
+ * Function name: _treDeleteBPTInfo_O
  * Description:   Deallocate a _BPT_INFO structure of which is allocated by function _treCreateBPTInfo.
  * Parameter:
  *       pbi Pointer to the _BPT_INFO structure you want to deallocate.
@@ -764,7 +764,7 @@ _P_BPT_INFO _treCreateBPTInfo(void)
  * Caution:       Address of pbi Must Be Allocated first.
  * Tip:           A macro version of this function named _treDeleteBYPTInfo_M is available.
  */
-void _treDeleteBYPTInfo_O(_P_BPT_INFO pbi)
+void _treDeleteBPTInfo_O(_P_BPT_INFO pbi)
 {
 	_treFreeBPTInfo(pbi);
 	free(pbi);

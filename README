@@ -1,5 +1,424 @@
-About SI/SVIMRDB (SV In-memory relational database)
-This is an in-memory database that built under StoneValley.
-All files are published under GPLv2 license.
-If you want to develop this project with me, please send an email to cosh.cage at hotmail.com.
-You may download StoneValley from here: https://github.com/coshcage/StoneValley
+﻿About StoneValley Project
+
+i   Preface
+
+	*) The author claimed that he does will refine source files and references later and he needs time and arms to fix it.
+	*) Should you have any problems with this library, please do not hesitate to contact the author via Email.
+
+ii  Acknowledgement
+
+	*) The whole project is published under <Public Domain license>.
+	*) StoneValley is provided with NO warranty.
+	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
+
+iii Table of Contents
+
+	[Contents]                                                    [Line number]
+	Preface ................................................................. 3
+	Acknowledgement ......................................................... 8
+	Table of Contents ...................................................... 14
+	Scenario ............................................................... 29
+	Naming ................................................................. 66
+	Callbacks ............................................................. 111
+	Checklist ............................................................. 115
+	Alteration Guide ...................................................... 150
+	Limitations ........................................................... 299
+	Logs .................................................................. 309
+	Appendix .............................................................. 406
+
+iv  Scenario
+
+	StoneValley is a programming library that was written in plain C programming language and aimed at providing its users a set of functions with a variety of algorithms that could manipulate various data structures. This Readme file briefly introduced this library in a users' perspective. Contents in this Readme file guide users in an approach of what it is, how to use it and how to reprogram it. To advance and proficiently utilize this library need users to practice programming with it.
+
+	Divided into several parts were String, Stack, Queue, Tree, Hash table, Graph and Set laid in StoneValley.
+	 ________ ________ ________ _________
+	[ strING }        {  treE  }        {{ [Figure 1]
+	[       _}        {_      _}        {_
+	[      }    stACk   {    }     set    {{
+	[      }_          _{    }_          _{{
+	[        }   __   {        }   __   }}
+	[__    __}__{  }__{__    __}__{{ }__}}
+	[  {__}  {  hAsh  }  {__}  {{
+	[        {_ table_}        {_     AA
+	[          {    }            {{ WW  II
+	[  queUE  _{    }_   grApH  _{{    T
+	[   __   {        }   __   {{
+	[__{{ }__{__    __}__{{ }__{{     UU
+	[           {__}}
+	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishes functions into parts shows the real formation of StoneValley less unpleasant. Users could always add their own appliances manque for StoneValley.
+
+	Inquiring deeper inside this library, string is a collection of linear data structures which contain array, single linked-list, doubly linked-list, bit-stream, common matrix, bit-matrix and sparse matrix. Functions that operate on these linear data structures were distributed into file "svstring.h". Furthermore, files "svatom.c", "svarray.c", "svlist.c", "svmatrix.c" and "svmisc.c" stored definitions of these functions.
+
+	File "svstack.c" implemented stacks of which file "svstack.h" gathered their declarations. Two species of stack implementations involved in this library that they were devised as fixed size array type and single linked-list type. For users, Fix-size-array stacks are suitable to use in memory-space-concerned situations. While articulated linked-list stacks are convenient to use for circumstances that dynamic memory allocation is allowed.
+
+	Functions for queues were exported into "svqueue.h" and simultaneously implemented in file "svqueue.c". Three types of queue implementations have been written in StoneValley. Fixed size array implementation for circular queues and single linked-list implemented queues were both collected in the library. A doubly linked-list achievement for dequeues(Double-Ended Queues) was another participant. Like stacks, users may use fix-size-array queues to strictly control memory spaces. If users need to allocate memory spaces dynamically, elastic linked-list queues are accessible to work.
+
+	Too many tree data structures appear on the world. Only a few important trees were achieved since StoneValley cannot implement them one by one. Planted in the library were binary trees used doubly pointer nodes. Generic trees benefited from arrays; Heap trees took advantage of fixed size arrays and BSTs(Binary search trees) utilized AA-trees. Other three searching/indexing trees occupied in the library were AVL tree, B-Plus tree and array-achieved trie. Finally, a Huffman-coding tree settled in StoneValley at file "svctree.c". As the same manner, functions for trees were exported into a header file named "svtree.h". Different source files implemented diverse types of trees. These source files were "svbytree.c", "svgtree.c", "svhtree.c", "svstree.c" and "svctree.c" for the reason that "by" denoted "binary", "g" meant "generic", "h" dictated "heap", "s" indicated "searching" and "c" represented "coding".
+
+	Header file "svhash.h" contained function declarations for hash tables. Hash table function bodies have been outputted into "svhash.c". In detail, separate chaining hash tables used linked-lists as buckets, open addressing hash tables used fixed size arrays as grills to separate items. At file "svhash.h", type "CBF_HASH" declared the hash function prototype. When using hash tables, users need to write their own callback hash function definitions to let StoneValley library hash functions invoke them to hash items. Interiors of this header and source will inform users more precisely for hashing.
+
+	Set is another facility that provided by StoneValley. Sets exert both hash tables and Binary-search-trees to manage their elements. StoneValley interfaced set in file "svset.h". Meanwhile, implementations were written in "svset.c". Users may use these functions to insert and remove elements into sets and make unions, intersections and differences between sets.
+
+	As for graphs, file "svgraph.c" schemes graph data structures whose interface is "svgraph.h". Adjacency lists that made by single pointer nodes linked edges of vertices for a graph together rather to use a matrix to present connections of vertices. Many operations defined by functions could be use to maneuver graphs such as calculating the shortest path and generating a minimum spanning tree.
+
+	At last, file "svmisc.c" vacates a habitat for extra algorithms and structures. Besides accomplished functions for bit-streams, vastly used algorithms like quick sort and binary search were arranged at this file to treat data in consecutive memory spaces.
+
+v  The naming of library functions and types
+
+	Naming functions and types for StoneValley observe guidelines. Suffixes, infixes and postfixes are used to stipulate identifiers. For functions named with suffix, such as function "stkInitA", the suffix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
+
+	+__Category__________________________Type_________Location___+ [Figure 2]
+	|strING______________________________|___________<svstring.h>|
+	|    + Fixed size array              :ARRAY_Z:    svarray.c  |
+	|    + Single linked list            :LIST_S:     svlist.c   |
+	|    + Double linked list            :LIST_D:      ditto.    |
+	|    + Bit stream                    :BITSTREAM:  svmisc.c   |
+	|    + Common matrix                 :MATRIX:     svmatrix.c |
+	|    + Bit matrix                    :BITMAT:      ditto.    |
+	|    + Sparse matrix                 :SPAMAT:      ditto.    |
+	|stACk_______________________________|___________<svstack.h>_|
+	|    + Array represented stack       :STACK_A:    svstack.c  |
+	|    + Linked list represented stack :STACK_L:     ditto.    |
+	|treE________________________________|___________<svtree.h>__|
+	|    + Binary tree                   :BYTREE:     svbytree.c |
+	|        + Binary search tree        :BST:        svstree.c  |
+	|            + AA tree                ditto.       ditto.    |
+	|            + AVL tree               ditto.       ditto.    |
+	|        + Huffman coding tree        N/A.        svctree.c  |
+	|    + Generic tree                  :GTREE:      svgtree.c  |
+	|    + Heap tree                     :HEAP_A:     svhtree.c  |
+	|    + B-plus tree                   :BPT:        svstree.c  |
+	|    + Trie                          :TRIE_A:      ditto.    |
+	|set_________________________________|___________<svset.h>___|
+	|    + Hash table set                :SET_H:      svset.c    |
+	|    + Binary search tree set        :SET_T:       ditto.    |
+	|queUE_______________________________|___________<svqueue.h>_|
+	|    + Array style circular queue    :QUEUE_A:    svqueue.c  |
+	|    + Single linked list queue      :QUEUE_L:     ditto.    |
+	|    + Double ended queue            :DEQUE_DL:    ditto.    |
+	|hAsh TABLE__________________________|___________<svhash.h>__|
+	|    + Separate chaining hash table  :HSHTBL_C:   svhash.c   |
+	|    + Open addressing hash table    :HSHTBL_A:    ditto.    |
+	|grApH_______________________________|___________<svgraph.h>_|
+	|    + Adjacency list graph          :GRAPH_L:    svgraph.c  |
+	|____________________________________|_______________________|
+	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in library.
+
+	Secondarily, function name "setSizeT_O" explored that there must be a macro to inline this function and this macro is written as "setSizeT_M", because letter "O" instead of declaring the original function and letter "M" tailed declaration claimed its macro version. Inline functions by using macros would avoid conflicts during linkage between different linkers. But the drawback of macro-inline is that library maintainers have to write one function for twice. Firstly, maintainers should write an original edition for a function. Secondly, library maintainers need to write it again for its macro version. It seems to be verbose but it is a useful manner to practice in a mass of compiling environments.
+
+	Not until a great number of types bounced into StoneValley, did identifiers become tricky. For example, "STACK_A" is a type for stacks, and such stacks are made of arrays. Then "P_STACK_A" can define pointers to this array implemented stack. Type "SET_H" at "svset.h" derived from type "HSHTBL_C". It is not hard to imagine the implication of this kind of naming. "SET_H" implies the type of sets that consist of hash tables derived from separate chaining hash table type. Certainly, pointers to hash table implemented sets can be declared by "P_SET_H". Naming guidelines for function parameters are feasible to recognise too. For instance, "P_SET_H", the type of the first parameter of function "setInitH_O" at "svhash.h" means users should transfer a pointer to a hash table implemented set to this parameter while invoking. Suffix "CBF" explained types of callback functions. Therefore some parameters whose names are defined with "CBF_HASH" mean that users should pass the address to a hash function while invoking the callee.
+
+vi  Callback functions and their usages
+
+	Another crucial point of using StoneValley is to understand callback functions. There are two main types of callback functions. One is the type of callback function that used to traverse items in structures. The other is the type of callback function that used to compare values by pointers. The first one named as "CBF_TRAVERSE". The second one labeled as "CBF_COMPARE". Details about how to use these two types of callback functions are located at file "svdef.h". Additionally, two important values of callback function "CBF_TRAVERSE" returns are "CBF_TERMINATE" and "CBF_CONTINUE". 0, 1 and -1 will return after calling a "CBF_COMPARE" function. The callees for caller callback functions should obey their specific calling conventions.
+
+vii Here is a simple checklist. Please retrieve it before you compile this library.
+	 _________________________________________________________________
+	|o               # BEFORE COMPILING CHECK LIST #                 o|\ [Figure 3]
+	|_____[ITEM]___________[TYPE]_____[LINES]_____[FILE]_____[MARK]___|\
+	| [_] DWC4100           MACRO       76         SVDEF.H    ALTER   |\
+	| [_] REGISTER          MACRO       79         SVDEF.H    CONFIRM |\
+	| [_] SV_OPTIMIZATION   MACRO       87         SVDEF.H    ALTER   |\
+	|                                                                 |\
+	| ALTER:   Alter item if necessary.                               |\
+	| CONFIRM: Confirm item before compiling.             StoneValley |\
+	|o_____________________________________________?\________________o|\
+	 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+	Non-normal handling:
+	*) Guiding actions will use upper case letters to type and a pair of '[]' to emphasize.
+
+	StoneValley coded adhere to the Standard of C Programming language(iso9899:1990), and it has been tested. However, different compilers with different optimization criterion may lead compilers to produce different warnings and errors.
+
+	1) Errors of missing symbols.
+		In some environments, especially when users try to compile StoneValley on an embedded platform, because of the lack of supporting of the C standard library, compilers will produce errors. For instance, if there were not installed the header file "stdio.h", compilers might explain an error about missing macro 'BUFSIZ' for the library source file "svmisc.c". In this circumstance, users shall simply [IMPLEMENT] macro 'BUFSIZ' by themselves. In another way, users shall [COLLECT] missing macros in a header file that has the same name with the original header in the C standard library.
+
+		If some C standard library functions that being used by functions in StoneValley were not implemented, compilers/linkers would report errors about missing symbols while linking. There are two ways to handle a missing of C standard library functions. First, [IMPLEMENT] the C standard library functions on users' own. Second, [REMOVE] functions that use missing C standard library functions in StoneValley directly.
+
+	2) Warnings of inline function expansion.
+		Most optimizing compiler will automatically expand inline functions for a better performance. In general, library users could [NEGLECT] those warnings when compilers were attempting to expand inline functions. To [TURN] library optimization switch at file "svdef.h" into value 'SV_OPT_DISABLED' could avoid any errors which caused by inline macros.
+
+	3) Warnings of type casting and structure alignment.
+		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers warn users of precision losing and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed length while it needs padding bytes to alter the original structure, compilers may warn users either. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
+
+	4) Warnings of library function returns.
+		Some compilers installed with code analysis technics would check return values of functions in the C standard library. For example, it would check if the realloc function might return a NULL pointer to its left-hand-side expression. Library users could [IGNORE] these types of warnings.
+
+	5) Other concerns.
+		If an architecture did not support users to use too many register variables, compilers would produce warnings. Library users could comment the 'REGISTER' macro at file "svdef.h" or [IGNORE] compiler produced warnings.
+
+viii Library Alteration Guide
+
+	The next instruction will guide you fix the library. This instruction has been divided into three parts, [a] [b] and [c].
+	*) Optional procedures differ from others that optional lines titled by digits and brackets such as '0)' while digits and dot such as '0.' title other operations.
+
+	a] Macro inline an existed function in the library:
+
+	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 4]
+	$ /* Name: example       $ 1.=> $ /* Name: example_O                       $
+	$  * ...                 $      $  * ...                                   $
+	$  *                     $ 2)=> $  * Tip: Macro example_M exists at xxx.h. $
+	$ int example(int param) $ 3.=> $ int example_O(int param)                 $
+	$ {                      $      $ {                                        $
+	$      return param + 1; $      $      return param + 1;                   $
+	$ }                      $      $ }                                        $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+		1. Append an '_O' sign to the tail of the original function name in the comments above its declaration.
+		2) Write a tip in the comments above the function declaration to notice users what name the macro is and where the macro locates. (Optional)
+		3. Append an '_O' sign to the tail of the original function name in the declaration.
+
+	$BEFORE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 5]
+	$ int example(int param);                  $ 4.=> $ int example_O(int param);                  $
+	$ int example_O(int param) {               $ 5.=> $ #define example_M(param_M) ((param_M) + 1) $
+	$      return param + 1;                   $ 6.   $                                            $
+	$ }                                        $ 7.   $                                            $
+	$ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE $      $ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE   $
+	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$ #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED $      $ #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED   $
+	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$ #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM $      $ #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM   $
+	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$ #else                                    $      $ #else                                      $
+	$     #define example example_O            $      $     #define example example_O              $
+	$ #endif                                   $      $ #endif                                     $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+		4. Append an '_O' sign to the tail of the original function name in the definition at the proper header file.
+		5. Copy the entire function declaration bellow definitions block in header.
+		6. Cut types off and add "#define" in the beginning of the declaration.
+		7. Alter '_O' sign in function name into '_M'. Append an '_M' sign at each parameter in declaration to prevent arguments confuse preprocessor. Please cross reference section [b] [Figure 6] and [Figure 7] for more details about inline.
+		8) Write the original function name and its macro name into a block that used to optimize library as needed. (Optional) Notice that if function name were written in any branches of preprocessor directives, function should appear in other branches simultaneously.
+		9. Finish.
+
+	b] Altering an existed function in the library:
+		1. Alter a function and check whether it has a macro version.
+		2. If the function you amended has an '_O' sign at the tail of its name, then both alter its macro version in the proper header file. See section [a] [Figure 4] and [Figure 5] for altering macros in detail.
+
+	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
+	$ void svInit(int * p) { $ 3.=> $ #define svInit_M(p_M) do { \ $
+	$      *p = 0;           $      $     *(p_M) = 0; \            $
+	$ }                      $      $ } while(0)                   $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+		3. If the original function has NO return value and it is simple, write its macro version and use '{}' to brace it in multiple lines.
+
+	$BEFORE$$$$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 7]
+	$ int svAdd(int a, int b) { $ 4.=> $ #define svAdd_M(a_M, b_M) ((a_M) + (b_M)) $
+	$      return a + b;        $      $                                           $
+	$ }                         $      $                                           $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+		4. If the original function HAS a return value and it is brief, write its macro version in one line and use '()' to brace it.
+		5. Altering done.
+
+	c] Adding a non-exist function into library:
+
+	An example of headers:                        [Figure 8]
+	$header.h$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	$ /* Comments.                                         $ + Comment file here.
+	$  */                                                  $ *
+	$ #ifndef _HEADER_H_                                   $ + Write preprocessors directives here to include header once.
+	$ #define _HEADER_H_                                   $ |
+	$                                                      $ |
+	$ #include <svdef.h>                                   $ | + Include common headers here.
+	$                                                      $ |
+	$ #define MACRO macro                                  $ | + Macros are defined here.
+	$                                                      $ |
+	$ typedef TYPE Alias;                                  $ | + Types are defined here.
+	$                                                      $ |
+	$ int svInit_O(int * p);                               $ | + Library functions are exported here.
+	$ void svBig2(int * pa, int * pb, CBF_COMPARE cbfcmp); $ | * [c]4.
+	$                                                      $ |
+	$ #define svInit_M(p_M) (*(p_M) = 0)                   $ | + Function inline macros are written here. [c]5.
+	$                                                      $ |
+	$ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE             $ | + Library optimization switches go here. [c]6.
+	$     #define svInit svInit_M                          $ | |
+	$ #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED             $ | |
+	$     #define svInit svInit_M                          $ | |
+	$ #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM             $ | |
+	$     #define svInit svInit_M                          $ | |
+	$ #else                                                $ | |
+	$     #define svInit svInit_O                          $ | |
+	$ #endif                                               $ | *
+	$                                                      $ |
+	$ #endif                                               $ *
+	$                                                      $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	An example of source files:                   [Figure 9]
+	$source.c$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	$  /* Comments.                                        $ + Comment file here.
+	$   */                                                 $ *
+	$  #include "header.h"                                 $ + Include headers here.
+	$                                                      $
+	$  #define _MACRO _macro                               $ + File scope macros are defined here.
+	$                                                      $
+	$  typedef _TYPE _Alias;                               $ + File scope types are defined here.
+	$                                                      $
+	$  int _cbfcmp(const void * pa, const void pb);        $ + File level function definitions go here. [c]3.
+	$                                                      $ + Function declarations perch in this territory.
+	$  /* Comments.                                        $ | + Function declaration begin.
+	$   */                                                 $ | |
+	$  int svInit_O(int * p)                               $ | |
+	$  {                                                   $ | |
+	$      return *p = 0;                                  $ | |
+	$  }                                                   $ | *
+	$                                                      $ |
+	$  /* Comments.                                        $ | + Function declaration begin. [c]2.
+	$   */                                                 $ | |
+	$  int _cbfcmp(const void * pa, const void pb)         $ | |
+	$  {                                                   $ | |
+	$      if (*(int *)pa > *(int *)pb) return  1;         $ | |
+	$      if (*(int *)pa < *(int *)pb) return -1;         $ | |
+	$      return 0;                                       $ | |
+	$  }                                                   $ | *
+	$                                                      $ |
+	$  /* Comments.                                        $ | + Function declaration begin. [c]1.
+	$   */                                                 $ | |
+	$  void svBig2(int * pa, int * pb, CBF_COMPARE cbfcmp) $ | |
+	$  {                                                   $ | |
+	$      if (cbfcmp(pa, pb) < 0)                         $ | |
+	$      {                                               $ | |
+	$          int t = *pa;                                $ | |
+	$          *pa = *pb;                                  $ | |
+	$          *pb = t;                                    $ | |
+	$      }                                               $ | |
+	$  }                                                   $ | *
+	$                                                      $ *
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	 The above two figures may give users a synopsis of the arrangement of library files for StoneValley.
+
+		1. Write a definition for a new function.
+		2. If the new function you wrote needs another callback function, then write the callback function for it. Then add an underscore '_' at the beginning of the callback function to declare it as an internal function.
+		3. If you wrote a definition for a callback function, both implement its declaration at the top of the current file section.
+		4. Implement a declaration for your original new wrote function into proper header file.
+		5. If you need to inline a new wrote function, write a macro version in the appropriate header file. And plus an '_O' to end of the original one. Add '_M' signs onto its name and all parameters for the macro version at header file. See section [a] and [b] for altering macros in detail.
+		6. Put either name of the original function or its macro version into the right place at the bottom of header file to optimize the performance of library. See section [a] for altering macros in detail.
+		7. Addition done.
+
+ix  Limitations
+
+	Dependencies:
+		Despite some of the fundamental functions in StoneValley can be run without The C Standard Library, most part of this library needs dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
+
+	Addressing:
+		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.
+
+		The length of a 'size_t' integer depends on the specific machine environment that implements C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures in StoneValley.
+
+x   Logs
+
+12-26-2017: Bug fixed in Huffman coding tree.
+12-26-2017: Samples are added.
+12-27-2017: Samples are added.
+12-28-2017: Samples are added. Docs refined. I gonna be in retired this year. Happy new year! Welcome 2018!
+01-17-2018: Samples are added.
+05-04-2018: A bug is fixed in function strTraverseArrayZ at file "svarray.c".
+05-05-2018: Docs are refined.
+05-18-2018: Library is refined.
+08-31-2018: Library is refined. I hope this version of library should not be an anti-human edition for most English speakers. The idea of which impressed me was it was important to practice it when you were trying to learn a language. In a word, the lib now is readable at least.
+09-24-2018: Library is refined. File "svstree.c" is altered. AA-tree is added. Macros are fixed.
+09-25-2018: Bit-matrices were fixed. A sample is added to repository.
+09-26-2018: A sample is added to repository. Library is refined.
+10-02-2018: Library is refined.
+10-02-2018: A name converting program is added.
+10-11-2018: Library is refined. Refreshing rate will be reduced in the future, unless a new data structure has been introduced into library.
+10-14-2018: A grammatical error was fixed. A verbose comment has been deleted. A logical mishap has been corrected. Heap tree was revised.
+10-16-2018: Documents are refined.
+10-24-2018: Library is refined.
+11-05-2018: Library is refined.
+11-23-2018: Library is refined. A concise sentence usually means efficiency in C.
+11-25-2018: Documents are refined.
+11-30-2018: Function is added at "svstring.h" and "svarray.c".
+11-25-2018: Documents are refined.
+12-24-2018: Functions are added.
+12-25-2018: Documents are refined.
+12-26-2018: Library is refined.
+12-29-2018: Library is refined.
+12-30-2018: Library is refined.
+01-02-2019: Library is refined. I admit, this is a real cumbersome conduct that I printed 4 'o's at each corner of the checklist as if I would be able to use 4 screws to hang it at some where. Never mind, keep fun. Well, '?\' means checklist? checklist! checklist.
+01-03-2019: Library is refined.
+01-05-2019: Library is refined.
+01-08-2019: Function is added at "svstring.h" and "svarray.c".
+01-10-2019: Library is refined.
+01-17-2019: Library is refined.
+01-18-2019: Trie is added.
+01-22-2019: A samples is added.
+01-24-2019: Library is refined.
+01-29-2019: Function is added at "svstring.h" and "svarray.c" and a samples is added.
+01-30-2019: Library is refined.
+02-01-2019: Library is refined.
+02-02-2019: Library is refined.
+02-03-2019: Library is refined.
+02-10-2019: Function is added at "svtree.h" and "svstree.c".
+02-11-2019: Library is refined.
+02-12-2019: Library is refined.
+02-14-2019: A samples is added.
+02-15-2019: Library is refined.
+02-17-2019: Library is refined.
+02-25-2019: Library is refined.
+03-01-2019: Library is refined.
+03-12-2019: Library is refined.
+03-14-2019: Library is refined.
+05-04-2019: Library refined.
+05-08-2019: Library refined.
+05-09-2019: Library refined.
+05-10-2019: Library refined.
+05-12-2019: Library refined.
+05-14-2019: Library refined.
+05-16-2019: Library refined.
+05-20-2019: Library refined. If no part of a publication may be reproduced or distributed by any means, or stored in a database or retrieval system without the prior written permission of the publisher, how could I write the word "Hello" to the "World"?
+05-22-2019: Library refined.
+05-25-2019: Library refined.
+05-26-2019: Library refined.
+05-30-2019: Library refined.
+05-31-2019: Library refined.
+06-02-2019: Library refined.
+06-12-2019: Library refined.
+06-17-2019: Library refined.
+06-19-2019: Library refined.
+06-21-2019: A samples is added.
+07-15-2019: Library refined.
+07-23-2019: Library refined.
+07-28-2019: Library refined.
+07-31-2019: Library refined.
+08-01-2019: Library refined.
+08-05-2019: Library refined.
+08-20-2019: Library refined.
+08-23-2019: Library refined.
+08-25-2019: Library refined.
+09-04-2019: Library refined.
+09-12-2019: Library refined. A function is added onto 'svstring.h' and 'svarray.c'.
+12-23-2019: Library refined.
+12-29-2019: Library refined.
+02-19-2020: Library refined.
+07-19-2020: Library refined. A function is added onto 'svtree.h' and 'svstree.c'.
+08-28-2020: Library refined.
+10-24-2020: Library refined.
+10-24-2020: Library refined. Function grpShortestPathL altered at file 'svgraph.c' and 'svgraph.h'. Dijkstra algorithm is dismissed instead of Shortest Path Faster algorithm.
+01-13-2021: Library refined. Function svMergeSort at file 'svmisc.c' has been altered. Add function grpTopologicalSortL at file 'svgraph.h' and 'svgraph.c'.
+01-31-2021: Library refined.
+02-11-2021: Library refined. Happy new Chinese lunar year.
+03-05-2023: Library refined.
+06-14-2023: Add new functions strCreateZSearchArrayZ etc. to the library. Version 1.2.0.0.
+_______________________________________________________________________________
+
+xi  The Story of StoneValley
+
+Part I The name of StoneValley
+
+	When I finished my first hand-writing lexer in plain C, I decided to name it into BlueStone. After that, I planned to write my parser. And I have already named my unfinished parser into RedStone. However I didn't finish that, because I've learned to use Yacc. its much faster and better than the hand-write one. My third project in C was going to be a term rewriting system. But at that time I realized that I need a library in C just like the STL template provided by C++. STL in C++ is a good stuff, but I want a new one in plain C. And I think this library will be tremendously large than I ever write. It will contain a massive number of functions. And users can cut them into their own project. Each function is like a color of a stone. So I decided to name my new library into StoneValley. That's the story of the name StoneValley. After wrote the project GILIB. I realized a robust library is more important than a library with innovation. A library is that kind of software for programmers using. Not as the same as applications. So they must be robust and more bugless. After thinking about these ideas, I was starting to write StoneValley.
+
+Part II Tui and Qiao
+
+	Tang dynasty, ancient China. There was a bard named JiaDao(贾岛). One day, he was sitting on a donkey and conceiving his poem. "鸟宿池边树，僧敲月下门。"Which can be roughly translated into "Beside the pond, birds were sleeping in the tree. There was a monk knocking at the door in the moonlight."
+
+	Then he was stuck at the word Tui(推) or Qiao(敲). He could not determine that whether he should use Tui means to push or Qiao means to knock. But even though was excising pushing and knocking again and again on the donkey's back, he couldn't make a decision.
+
+	About 1300 years after. I am sitting in front of the computer and thinking about the StoneValley library. Time passing by, issues are accumulated. I can't determine whether I should divide these abstract data type apart into any files, and whether I should use a hash table or a binary search tree to construct the set. Even I can't determine whether I should use str or lnr as the prefix of functions of linear structures.
+
+	StoneValley is really hard to control. If I want a super-fast running speed for functions in this library. I can't get a super small library size. To be or not to be, this is still a question. Like the bard, I'm stuck at the library's pivot. But like the bard, I don't forget what I really want. It is a robust and reusable data structure library.
+
+	So nearly one year, I was trying my best to write StoneValley. I tuiqiao every function in the library again and again. There is a word wrote on essay The Cathedral and The Bazaar "A good design is not have nothing to add. It should be nothing to reduce from the design." That inspired me to finish StoneValley better. But the best is not reachable. The best can only be a forever target. StoneValley is not the best library now. And It can't be the best library forever. I'm willing to make StoneValley better and better in the next days.
+
+Enjoy!

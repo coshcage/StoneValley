@@ -454,7 +454,7 @@ P_BSTNODE _treBSTRightRotateAVL(P_BSTNODE pnode)
 	pbstchild(pbstchild(pnode)[LEFT])[RIGHT] = pnode;
 	pbstchild(pnode)[LEFT] = pnodey;
 
-	/* Recalculating Balance Factors */
+	/* Recalculating Balance Factors. */
 	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
 		(
 			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),

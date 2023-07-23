@@ -30,7 +30,7 @@ typedef struct _st_SMBINF {
 
 /* Node data of Huffman trees. */
 typedef struct _st_HFMNOD {
-	P_TNODE_BY  parent;    /* Pointer to parent node. */
+	P_TNODE_BY  parent;   /* Pointer to parent node. */
 	union _ut_NodeData {  /* A union used to store both internal node data and leaf data. */
 		size_t    sbfreq; /* Frequency value for internal nodes. */
 		_P_SMBINF psbinf; /* Pointer to symbol info in symbol table for leaf nodes. */

@@ -213,7 +213,7 @@ BOOL setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 BOOL setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
 {
 	if (NULL != hshSearchC(pset, cbfhsh, pitem, size))
-		return FALSE; /* Item has already exists. */
+		return FALSE; /* Item has already existed. */
 	return hshInsertC(pset, cbfhsh, pitem, size);
 }
 
@@ -619,7 +619,7 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
-		return; /* Item has already exists. */
+		return; /* Item has already existed. */
 	*pset = treBSTInsertAA(*pset, pitem, size, cbfcmp);
 }
 

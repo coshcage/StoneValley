@@ -527,7 +527,7 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 	r = cbfcmp(pitem, pnode->knot.pdata);
 	if (r < 0)
 		pbstchild(pnode)[LEFT] = treBSTInsertAVL(pbstchild(pnode)[LEFT], pitem, size, cbfcmp);
-	else if (r >= 0)
+	else /* r >= 0. */
 		pbstchild(pnode)[RIGHT] = treBSTInsertAVL(pbstchild(pnode)[RIGHT], pitem, size, cbfcmp);
 
 	/* Recalculate current height. */

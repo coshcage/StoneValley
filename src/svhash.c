@@ -301,7 +301,7 @@ BOOL hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 
 /* Functions for open addressing hash table using double hashing function. */
 
-#define _FLAG UCHART    /* Flag used to sign whether a slot is empty or not. */
+#define _FLAG size_t    /* Flag used to sign whether a slot is empty or not. */
 #define _P_FLAG _FLAG * /* Pointer to flag. */
 #define _FLAG_SIZE sizeof(_FLAG) /* Size of a flag. */
 

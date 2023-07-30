@@ -24,8 +24,8 @@
 #define LIB_VER "1.2.0.0"
 
 /* Boolean constants. */
-#define TRUE  (1)
-#define FALSE (0)
+#define TRUE  1
+#define FALSE 0
 
 /* Callback function returning values. */
 #define CBF_TERMINATE TRUE

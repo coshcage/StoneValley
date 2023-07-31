@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0118211528L00608
+ * File ID:     0901171615K0731231530L00610
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -490,7 +490,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether slot is empty or not. */
+		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
@@ -521,7 +521,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether slot is empty or not. */
+		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
 		{
 			*pflag = TRUE;
 			return memcpy(pflag + _FLAG_SIZE, pkey, size);
@@ -551,7 +551,7 @@ BOOL hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether slot is empty or not. */
+		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
 			return FALSE;
 		else if (0 == memcmp(pflag + _FLAG_SIZE, pkey, size))
 		{
@@ -597,11 +597,13 @@ BOOL hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
  *      pstr Pointer to a char array.
  * Return value:  Hash result.
  * Notice:        This function comes from book Data Structures and Algorithm Analysis in C.
- *                The Author of this book is Mark Allen Weiss. (I altered this function for performance.)
+ *                The Author of this book is Mark Allen Weiss.
  */
-size_t hshCBFHashString(REGISTER char * pstr)
+size_t hshCBFHashString(const void * pkey)
 {
+	REGISTER char * pstr = (char *) pkey;
 	REGISTER size_t hrtn = 0;
-	while ('\0' != *pstr) hrtn = (hrtn << 5) + *pstr++;
+	while ('\0' != *pstr)
+		hrtn = (hrtn << 5) + *pstr++;
 	return hrtn;
 }

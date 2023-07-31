@@ -29,29 +29,29 @@ typedef struct st_ARRAY_Z HSHTBL_C, * P_HSHTBL_C;
 typedef struct st_ARRAY_Z HSHTBL_A, * P_HSHTBL_A;
 
 /* Functions for separate chaining hash table. */
-BOOL       hshInitC         (P_HSHTBL_C pht,   size_t       buckets);
-void       hshFreeC         (P_HSHTBL_C pht);
-P_HSHTBL_C hshCreateC       (size_t     buckets);
-void       hshDeleteC       (P_HSHTBL_C pht);
-size_t     hshSizeC         (P_HSHTBL_C pht);
-int        hshTraverseC     (P_HSHTBL_C pht,   CBF_TRAVERSE cbftvs,  size_t       param);
-P_NODE_S   hshSearchC       (P_HSHTBL_C pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t  size);
-BOOL       hshInsertC       (P_HSHTBL_C pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t  size);
-BOOL       hshRemoveC       (P_HSHTBL_C pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t  size);
-BOOL       hshCopyC         (P_HSHTBL_C pdest, CBF_HASH     cbfhsh,  P_HSHTBL_C   psrc,    size_t  size);
+BOOL       hshInitC         (P_HSHTBL_C   pht,   size_t       buckets);
+void       hshFreeC         (P_HSHTBL_C   pht);
+P_HSHTBL_C hshCreateC       (size_t       buckets);
+void       hshDeleteC       (P_HSHTBL_C   pht);
+size_t     hshSizeC         (P_HSHTBL_C   pht);
+int        hshTraverseC     (P_HSHTBL_C   pht,   CBF_TRAVERSE cbftvs,  size_t       param);
+P_NODE_S   hshSearchC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
+BOOL       hshInsertC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
+BOOL       hshRemoveC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
+BOOL       hshCopyC         (P_HSHTBL_C   pdest, CBF_HASH     cbfhsh,  P_HSHTBL_C   psrc,    size_t       size);
 /* Functions for open addressing hash table using double hashing. */
-BOOL       hshInitA         (P_HSHTBL_A pht,   size_t       buckets, size_t size);
-void       hshFreeA_O       (P_HSHTBL_A pht);
-P_HSHTBL_A hshCreateA       (size_t     slots, size_t       size);
-void       hshDeleteA_O     (P_HSHTBL_A pht);
-size_t     hshSizeA         (P_HSHTBL_A pht,   size_t       size);
-int        hshTraverseA     (P_HSHTBL_A pht,   size_t       size,    CBF_TRAVERSE cbftvs,  size_t       param);
-void *     hshSearchA       (P_HSHTBL_A pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
-void *     hshInsertA       (P_HSHTBL_A pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
-BOOL       hshRemoveA       (P_HSHTBL_A pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
-BOOL       hshCopyA         (P_HSHTBL_A pdest, CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, P_HSHTBL_A   psrc, size_t size);
+BOOL       hshInitA         (P_HSHTBL_A   pht,   size_t       buckets, size_t size);
+void       hshFreeA_O       (P_HSHTBL_A   pht);
+P_HSHTBL_A hshCreateA       (size_t       slots, size_t       size);
+void       hshDeleteA_O     (P_HSHTBL_A   pht);
+size_t     hshSizeA         (P_HSHTBL_A   pht,   size_t       size);
+int        hshTraverseA     (P_HSHTBL_A   pht,   size_t       size,    CBF_TRAVERSE cbftvs,  size_t       param);
+void *     hshSearchA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
+void *     hshInsertA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
+BOOL       hshRemoveA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
+BOOL       hshCopyA         (P_HSHTBL_A   pdest, CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, P_HSHTBL_A   psrc, size_t size);
 /* Some built-in hash functions are declared below. */
-size_t     hshCBFHashString (REGISTER char * pstr);
+size_t     hshCBFHashString (const void * pstr);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svhash.c. */

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0508231944L00879
+ * File ID:     0213191430N0809230137L00900
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -128,12 +128,11 @@ void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
  * Description:   Resize a matrix.
  * Parameters:
  *       pbmx Pointer to a matrix you want to resize.
- *         ln Number of lines of the matrix.
- *        col Number of columns of the matrix.
+ *         ln New number of rows of the matrix.
+ *        col New number of columns of the matrix.
  *       size Size of each element in the matrix.
  * Return value:  pmtx->arrz.pdata
- * Caution:       After calling, the matrix was assigned with data of the original matrix.
- *                That was, function assigned lines which was from the original matrix to the matrix with new dimension.
+ * Caution:       (*) Function altered row and column number after calling.
  *                If the new column were shorter than the elder one, lines in the matrix would be truncated.
  *                If the new column were larger than the elder one, lines in the matrix would be appended to new position,
  *                (*) and the rest of the data in the matrix would be invalid random values, thus(of which '#' represents random value):
@@ -147,19 +146,41 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 {
 	const size_t ol = pmtx->ln;
 	REGISTER size_t oc = pmtx->col;
-	if (strResizeArrayZ(&pmtx->arrz, ln * col, size))
+	REGISTER size_t i, j;
+	const size_t k = size * col;
+	if (ln * col > ol * oc) /* Matrix becomes bigger. */
 	{
-		REGISTER size_t i, j;
-		const size_t k = size * col;
-		for (i = ol; i > 1; --i)
+		if (strResizeArrayZ(&pmtx->arrz, ln * col, size))
+		{
+			for (i = ol; i > 1; --i)
+			{
+				j = (i - 1) * size;
+				memmove(&pmtx->arrz.pdata[j * col], &pmtx->arrz.pdata[j * oc], k);
+			}
+			pmtx->ln = ln;
+			pmtx->col = col;
+			return pmtx->arrz.pdata;
+		}
+		pmtx->ln = pmtx->col = 0;
+		return NULL;
+	}
+	else if (ln * col < ol * oc) /* Matrix becomes smaller. */
+	{
+		for (i = 2; i <= ol; ++i)
 		{
 			j = (i - 1) * size;
 			memmove(&pmtx->arrz.pdata[j * col], &pmtx->arrz.pdata[j * oc], k);
 		}
-		return pmtx->arrz.pdata;
+		if (strResizeArrayZ(&pmtx->arrz, ln * col, size))
+		{
+			pmtx->ln = ln;
+			pmtx->col = col;
+			return pmtx->arrz.pdata;
+		}
+		pmtx->ln = pmtx->col = 0;
+		return NULL;
 	}
-	pmtx->ln = pmtx->col = 0;
-	return NULL;
+	return pmtx->arrz.pdata;
 }
 
 /* Function name: strSetMatrix_O

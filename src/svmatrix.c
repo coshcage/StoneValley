@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0809230137L00900
+ * File ID:     0213191430N0809230203L00902
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -180,6 +180,8 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 		pmtx->ln = pmtx->col = 0;
 		return NULL;
 	}
+	pmtx->ln = ln;
+	pmtx->col = col;
 	return pmtx->arrz.pdata;
 }
 

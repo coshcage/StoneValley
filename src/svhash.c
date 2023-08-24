@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0731231530L00610
+ * File ID:     0901171615K0824232030L00610
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -494,8 +494,8 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 			return NULL;
 		else
 		{
-			if (0 == memcmp(pflag + _FLAG_SIZE, pkey, size))
-				return pflag + _FLAG_SIZE;
+			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
+				return (PUCHAR)pflag + _FLAG_SIZE;
 		}
 	}
 	return NULL;
@@ -524,7 +524,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
 		{
 			*pflag = TRUE;
-			return memcpy(pflag + _FLAG_SIZE, pkey, size);
+			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, size);
 		}
 	}
 	return NULL;
@@ -553,7 +553,7 @@ BOOL hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
 		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
 			return FALSE;
-		else if (0 == memcmp(pflag + _FLAG_SIZE, pkey, size))
+		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
 		{
 			*pflag = FALSE;
 			return TRUE;

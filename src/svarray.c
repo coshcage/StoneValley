@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0615231830L00791
+ * File ID:     0306170948B0827231930L00800
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -326,19 +326,27 @@ void strSortArrayZ_O(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp)
 void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_COMPARE cbfcmp)
 {
 #define _P_ARRAY_Z_ITEM(parrz, index) ((parrz)->pdata + (index) * (size))
-	if (NULL == strResizeArrayZ(pdest, strLevelArrayZ(pdest) + strLevelArrayZ(psrc), size))
-		return NULL;
+
+	REGISTER size_t di = 0, si = 0, sj = 0, t;
+	REGISTER int r0, r1;
+	REGISTER BOOL binc =
+	(
+		cbfcmp(pdest->pdata, _P_ARRAY_Z_ITEM(pdest, strLevelArrayZ(pdest) - 1)) <= 0 &&
+		cbfcmp(psrc->pdata,  _P_ARRAY_Z_ITEM(psrc,  strLevelArrayZ(psrc)  - 1)) <= 0
+	) ?
+	TRUE : /* Both destination and source are in increasing order. */
+	FALSE; /* Both destination and source are in decreasing order. */
+
+	PUCHAR pnew = (PUCHAR) realloc(pdest->pdata, (strLevelArrayZ(pdest) + strLevelArrayZ(psrc)) * size);
+	if (NULL == pnew)
+	{
+		pdest->num = 0;
+		pdest->pdata = NULL;
+	}
 	else
 	{
-		REGISTER size_t di = 0, si = 0, sj = 0, t;
-		REGISTER int r0, r1;
-		REGISTER BOOL binc =
-		(
-			cbfcmp(pdest->pdata, _P_ARRAY_Z_ITEM(pdest, strLevelArrayZ(pdest) - 1)) <= 0 &&
-			cbfcmp(psrc->pdata,  _P_ARRAY_Z_ITEM(psrc,  strLevelArrayZ(psrc) - 1))  <= 0
-		) ?
-		TRUE : /* Both destination and source are in increasing order. */
-		FALSE; /* Both destination and source are in decreasing order. */
+		pdest->pdata = pnew;
+
 		/* Assume we have two arrays to merge,
 		 *   di (di + 1)
 		 *    \   /
@@ -351,6 +359,7 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 		 * When merging, the separator scan through the destination to find a place to hold a collection that
 		 * numbers in this collection of source array can be inserted into destination.
 		 */
+
 		while
 		(
 			(r0 = cbfcmp(_P_ARRAY_Z_ITEM(psrc, sj), pdest->pdata)),

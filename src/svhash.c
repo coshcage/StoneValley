@@ -58,7 +58,7 @@ int _hshCBFSizeBuckets(void * pitem, size_t param)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _hshCBFFetchNodeSPdata
+ * Function name: _hshCBFFetchPdataInNodeS
  * Description:   This function is used to fetch pdata in a NODE_S.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in array.

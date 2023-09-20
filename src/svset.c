@@ -107,7 +107,7 @@ void setDeleteH_O(P_SET_H pset)
 }
 
 /* Function name: setSizeH_O
- * Description:   Determin how many elements there are in the set.
+ * Description:   Determine how many elements there are in the set.
  * Parameter:
  *      pset Pointer to the set you want to test.
  * Return value:  Number of elements.

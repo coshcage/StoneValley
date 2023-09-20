@@ -825,7 +825,7 @@ int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _grpCBFSPLInitVtxrecArray
+ * Function name: _grpSPLInitArray
  * Description:   This function is used to initialize an array of VTXREC.
  * Parameters:
  *       pgrp Pointer to a graph.
@@ -1167,7 +1167,7 @@ void _grpDisjointSetFree(P_ARRAY_Z parrz)
 }
 
 /* Function name: grpMinimalSpanningTreeL
- * Description:   Generate the coressponding minimum spanning tree of a graph by Kruskal algorithm.
+ * Description:   Generate the corresponding minimum spanning tree of a graph by Kruskal algorithm.
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
  * Return value:  TRUE  Generation succeeded.

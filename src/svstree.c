@@ -239,7 +239,7 @@ P_BSTNODE treBSTFindData_A(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 	return NULL;
 }
 
-/* AA-tree impelementation achieved in the following section. */
+/* AA-tree implementation achieved in the following section. */
 
 /* Function declarations for AA-trees. */
 P_BSTNODE _treBSTSkewAA (P_BSTNODE pnode);
@@ -381,7 +381,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 	return pnode;
 }
 
-/* An impelementation for AVL-tree is listed below. */
+/* An implementation for AVL-tree is listed below. */
 
 /* An enumeration describes the balance factor for AVL-tree nodes. */
 enum _en_AVLBalanceFactor {

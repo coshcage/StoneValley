@@ -570,11 +570,11 @@ LIST_S strSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 		return phead;
 	else
 	{
-		P_NODE_S pivot = phead;
-		P_NODE_S pleft = NULL;
-		P_NODE_S pright = NULL;
-		P_NODE_S pnode = phead->pnode;
-		P_NODE_S ptemp;
+		REGISTER P_NODE_S pivot = phead;
+		REGISTER P_NODE_S pleft = NULL;
+		REGISTER P_NODE_S pright = NULL;
+		REGISTER P_NODE_S pnode = phead->pnode;
+		REGISTER P_NODE_S ptemp;
 
 		while (NULL != pnode)
 		{

@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0503232227L00542
+ * File ID:     0809171737G0926230000L00641
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -212,6 +212,105 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 	return CBF_CONTINUE == r1 ? r2 : r1;
 }
 
+/* Function name: treMorrisTraverseBYPre
+ * Description:   Traverse a binary tree by pre-order using Morris traversal algorithm.
+ * Parameters:
+ *      pnode Pointer to the node that you want to start traversal in a tree.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transfer into the callback function.
+ * Return value:  The same value as callback function returns.
+ * Tip:           You can not break traversal when you return CBF_TERMINATE in callback function.
+ */
+int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
+{
+	REGISTER int r, or = CBF_CONTINUE;
+	if (NULL == pnode)
+		return CBF_CONTINUE;
+	else
+	{
+		REGISTER P_TNODE_BY pcur = pnode;
+		REGISTER P_TNODE_BY pright = NULL;
+
+		while (NULL != pcur)
+		{
+			pright = pcur->ppnode[LEFT];
+
+			if (NULL != pright)
+			{
+				while (NULL != pright->ppnode[RIGHT] && pright->ppnode[RIGHT] != pcur)
+					pright = pright->ppnode[RIGHT];
+
+				if (NULL == pright->ppnode[RIGHT])
+				{
+					pright->ppnode[RIGHT] = pcur;
+					r = cbftvs(pcur, param);
+					if (r != or)
+						or = r;
+					pcur = pcur->ppnode[LEFT];
+					continue;
+				}
+				else
+					pright->ppnode[RIGHT] = NULL;
+			}
+			else
+			{
+				r = cbftvs(pcur, param);
+				if (r != or)
+					or = r;
+			}
+
+			pcur = pcur->ppnode[RIGHT];
+		}
+	}
+	return or;
+}
+
+/* Function name: treMorrisTraverseBYIn
+ * Description:   Traverse a binary tree by in-order using Morris traversal algorithm.
+ * Parameters:
+ *      pnode Pointer to the node that you want to start traversal in a tree.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transfer into the callback function.
+ * Return value:  The same value as callback function returns.
+ * Tip:           You can not break traversal when you return CBF_TERMINATE in callback function.
+ */
+int treMorrisTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
+{
+	REGISTER int r, or = CBF_CONTINUE;
+	if (NULL == pnode)
+		return CBF_CONTINUE;
+	else
+	{
+		REGISTER P_TNODE_BY pcur = pnode;
+		REGISTER P_TNODE_BY pright = NULL;
+
+		while (NULL != pcur)
+		{
+			pright = pcur->ppnode[LEFT];
+
+			if (NULL != pright)
+			{
+				while (NULL != pright->ppnode[RIGHT] && pright->ppnode[RIGHT] != pcur)
+					pright = pright->ppnode[RIGHT];
+
+				if (NULL == pright->ppnode[RIGHT])
+				{
+					pright->ppnode[RIGHT] = pcur;
+					pcur = pcur->ppnode[LEFT];
+					continue;
+				}
+				else
+					pright->ppnode[RIGHT] = NULL;
+			}
+			r = cbftvs(pcur, param);
+			if (r != or)
+				or = r;
+			pcur = pcur->ppnode[RIGHT];
+		}
+	}
+	return or;
+}
+
 /* Function name: treInitBY_O
  * Description:   Initialize a binary tree.
  * Parameter:
@@ -343,7 +442,7 @@ size_t treArityBY(P_TNODE_BY pnode)
 {
 	size_t s = 0;
 	/* No matter what order we use here, it is not a question. */
-	treTraverseBYIn(pnode, _strCBFNodesCounter, (size_t)&s);
+	treMorrisTraverseBYIn(pnode, _strCBFNodesCounter, (size_t)&s);
 	return s;
 }
 

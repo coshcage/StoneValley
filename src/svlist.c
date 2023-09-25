@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0720200119L01167
+ * File ID:     0306170948C0925232219L01224
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -551,6 +551,63 @@ void strSwapItemLinkedListS(P_NODE_S pnodex, P_NODE_S pnodey)
 	{	/* Worth swapping. */
 		PUCHAR pbuf;
 		svSwap(&pnodex->pdata, &pnodey->pdata, &pbuf, sizeof(PUCHAR));
+	}
+}
+
+/* Function name: strSortLinkedListS
+ * Description:   Quickly sort a single pointer linked-list.
+ * Parameters:
+ *      phead Pointer to the first node of the single linked-list to be sorted.
+ *     cbfcmp Pointer to a function that compares two elements in nodes.
+ *            Please refer to the type definition CBF_COMPARE in svdef.h.
+ * Return value:  This function would return a new header for sorted single linked-list. 
+ * Tip:           This function can not sort circular single linked-list.
+ *                Quick sort algorithm is used for this function.
+ */
+LIST_S strSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
+{
+	if (NULL == phead || NULL == phead->pnode)
+		return phead;
+	else
+	{
+		P_NODE_S pivot = phead;
+		P_NODE_S pleft = NULL;
+		P_NODE_S pright = NULL;
+		P_NODE_S pnode = phead->pnode;
+		P_NODE_S ptemp;
+
+		while (NULL != pnode)
+		{
+			P_NODE_S pcur = pnode;
+			pnode = pnode->pnode;
+
+			if (cbfcmp(pcur->pdata, pivot->pdata) < 0)
+			{
+				pcur->pnode = pleft;
+				pleft = pcur;
+			}
+			else
+			{
+				pcur->pnode = pright;
+				pright = pcur;
+			}
+		}
+
+		pleft = strSortLinkedListS(pleft, cbfcmp);
+		pright = strSortLinkedListS(pright, cbfcmp);
+
+		pivot->pnode = pright;
+		if (NULL == pleft)
+			return pivot;
+
+		ptemp = pleft;
+		while (NULL != ptemp->pnode)
+		{
+			ptemp = ptemp->pnode;
+		}
+		ptemp->pnode = pivot;
+
+		return pleft;
 	}
 }
 

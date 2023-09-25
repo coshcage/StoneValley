@@ -24,7 +24,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 150
 	Limitations ........................................................... 299
 	Logs .................................................................. 309
-	Appendix .............................................................. 406
+	Appendix .............................................................. 407
 
 iv  Scenario
 
@@ -401,6 +401,7 @@ x   Logs
 02-11-2021: Library refined. Happy new Chinese lunar year.
 03-05-2023: Library refined.
 06-14-2023: Add new functions strCreateZSearchArrayZ etc. to the library. Version 1.2.0.0.
+06-14-2023: Add new function strSortLinkedListS to the library. Version 1.2.0.1.
 _______________________________________________________________________________
 
 xi  The Story of StoneValley

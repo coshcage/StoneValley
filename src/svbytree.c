@@ -574,7 +574,7 @@ P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot
 {
 	if (NULL == proot1 || NULL == proot2 ||
 		NULL == pnode1 || NULL == pnode2 ||
-		treDescendantBY(pnode1, pnode2)   ||
+		treDescendantBY(pnode1, pnode2)  ||
 		treDescendantBY(pnode2, pnode1)
 		) return NULL; /* T1 contains T2, or T2 contains T1. */
 	else

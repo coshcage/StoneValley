@@ -404,22 +404,4 @@ x   Logs
 09-26-2023: Add new functions strSortLinkedListS etc. to the library. Version 1.2.0.1.
 _______________________________________________________________________________
 
-xi  The Story of StoneValley
-
-Part I The name of StoneValley
-
-	When I finished my first hand-writing lexer in plain C, I decided to name it into BlueStone. After that, I planned to write my parser. And I have already named my unfinished parser into RedStone. However I didn't finish that, because I've learned to use Yacc. its much faster and better than the hand-write one. My third project in C was going to be a term rewriting system. But at that time I realized that I need a library in C just like the STL template provided by C++. STL in C++ is a good stuff, but I want a new one in plain C. And I think this library will be tremendously large than I ever write. It will contain a massive number of functions. And users can cut them into their own project. Each function is like a color of a stone. So I decided to name my new library into StoneValley. That's the story of the name StoneValley. After wrote the project GILIB. I realized a robust library is more important than a library with innovation. A library is that kind of software for programmers using. Not as the same as applications. So they must be robust and more bugless. After thinking about these ideas, I was starting to write StoneValley.
-
-Part II Tui and Qiao
-
-	Tang dynasty, ancient China. There was a bard named JiaDao(贾岛). One day, he was sitting on a donkey and conceiving his poem. "鸟宿池边树，僧敲月下门。"Which can be roughly translated into "Beside the pond, birds were sleeping in the tree. There was a monk knocking at the door in the moonlight."
-
-	Then he was stuck at the word Tui(推) or Qiao(敲). He could not determine that whether he should use Tui means to push or Qiao means to knock. But even though was excising pushing and knocking again and again on the donkey's back, he couldn't make a decision.
-
-	About 1300 years after. I am sitting in front of the computer and thinking about the StoneValley library. Time passing by, issues are accumulated. I can't determine whether I should divide these abstract data type apart into any files, and whether I should use a hash table or a binary search tree to construct the set. Even I can't determine whether I should use str or lnr as the prefix of functions of linear structures.
-
-	StoneValley is really hard to control. If I want a super-fast running speed for functions in this library. I can't get a super small library size. To be or not to be, this is still a question. Like the bard, I'm stuck at the library's pivot. But like the bard, I don't forget what I really want. It is a robust and reusable data structure library.
-
-	So nearly one year, I was trying my best to write StoneValley. I tuiqiao every function in the library again and again. There is a word wrote on essay The Cathedral and The Bazaar "A good design is not have nothing to add. It should be nothing to reduce from the design." That inspired me to finish StoneValley better. But the best is not reachable. The best can only be a forever target. StoneValley is not the best library now. And It can't be the best library forever. I'm willing to make StoneValley better and better in the next days.
-
-Enjoy!
+xi  Boycott Chinese government from building the Great Fire Wall!

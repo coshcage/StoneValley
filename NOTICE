@@ -15,3 +15,28 @@ This file is used to trace bugs:
 07-31-2023:
 	1 bug.
 	1) grpShortestPathL can not produce correct answer.
+11-10-2023:
+	1 bug:
+	Code:
+	#include "svtree.h"
+	int main()
+	{
+		size_t i;
+		P_BST p;
+
+		p = treCreateBST();
+
+		i = 1; *p = treBSTInsertAA(*p, &i, sizeof(size_t), _grpCBFCompareInteger);
+		i = 2; *p = treBSTInsertAA(*p, &i, sizeof(size_t), _grpCBFCompareInteger);
+		i = 3; *p = treBSTInsertAA(*p, &i, sizeof(size_t), _grpCBFCompareInteger);
+
+		i = 2;
+
+		*p = treBSTRemoveAA(*p, &i, sizeof(size_t), _grpCBFCompareInteger);
+		/* Wrong answer goes here. */
+
+		treDeleteBST(p);
+
+		return 0;
+	}
+	Users should use AVL tree instead of AA tree.

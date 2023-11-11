@@ -598,7 +598,7 @@ BOOL strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
 {
 	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
 	if (ln >= pbm->ln || col >= pbm->col)
-		return -1; /* Over size. */
+		return FALSE; /* Over size. */
 	/* Right shift a UCHART block to compare its LSBit with 1. */
 	return 0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0));
 }

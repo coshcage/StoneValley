@@ -40,3 +40,4 @@ This file is used to trace bugs:
 		return 0;
 	}
 	Users should use AVL tree instead of AA tree.
+	Fixed.

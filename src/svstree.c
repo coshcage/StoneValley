@@ -361,7 +361,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 				pdelete = NULL;
 				if (NULL != temp && NULL != pbstchild(pnode)[LEFT])
 				{	/* Search down to the bottom. */
-					while (NULL != temp && NULL != pbstchild(temp)[LEFT])
+					while (NULL != pbstchild(temp)[LEFT])
 						temp = pbstchild(temp)[LEFT];
 					pbstchild(temp)[LEFT] = pbstchild(pnode)[LEFT];
 				}

@@ -620,7 +620,7 @@ void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
 		return; /* Item has already existed. */
-	*pset = treBSTInsertAVL(*pset, pitem, size, cbfcmp);
+	*pset = treBSTInsertAA(*pset, pitem, size, cbfcmp);
 }
 
 /* Function name: setRemoveT
@@ -636,7 +636,7 @@ void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
-		*pset = treBSTRemoveAVL(*pset, pitem, size, cbfcmp);
+		*pset = treBSTRemoveAA(*pset, pitem, size, cbfcmp);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

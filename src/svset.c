@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0115211509L00876
+ * File ID:     0901171620L1110230735L00880
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -16,6 +16,10 @@
  */
 
 #include "svset.h"
+
+/* These above two macros are used to switch between BSTs. */
+#define _setInsertBST treBSTInsertAVL
+#define _setRemoveBST treBSTRemoveAVL
 
 /* Callback function declarations for sets using hash table. */
 int _setCBFIsSubsetHPuppet     (void * pitem, size_t param);
@@ -620,7 +624,7 @@ void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
 		return; /* Item has already existed. */
-	*pset = treBSTInsertAA(*pset, pitem, size, cbfcmp);
+	*pset = _setInsertBST(*pset, pitem, size, cbfcmp);
 }
 
 /* Function name: setRemoveT
@@ -636,7 +640,7 @@ void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
-		*pset = treBSTRemoveAA(*pset, pitem, size, cbfcmp);
+		*pset = _setRemoveBST(*pset, pitem, size, cbfcmp);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -654,7 +658,7 @@ void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 {
 	P_BSTNODE pnode =
-		treBSTInsertAA
+		_setInsertBST
 		(
 			**(P_SET_T *)0[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
@@ -736,7 +740,7 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 	if (r == (BOOL)4[(size_t *)param])
 	{
 		P_BSTNODE pnode =
-		treBSTInsertAA
+		_setInsertBST
 		(
 			**(P_SET_T *)0[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,

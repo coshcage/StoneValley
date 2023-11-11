@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1110230202L02044
+ * File ID:     0809171737I1110230535L02049
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -356,10 +356,15 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 		{
 			if (NULL != pdelete && 0 == cbfcmp(pitem, pdelete->knot.pdata))
 			{
+				REGISTER P_BSTNODE temp = pbstchild(pnode)[RIGHT];
 				memcpy(pdelete->knot.pdata, pnode->knot.pdata, size);
 				pdelete = NULL;
 				if (NULL != pbstchild(pnode)[LEFT])
-					pbstchild(pnode)[RIGHT]->ppnode[LEFT] = pbstchild(pnode)[LEFT];
+				{	/* Search down to the bottom. */
+					while (NULL != pbstchild(temp)[LEFT])
+						temp = pbstchild(temp)[LEFT];
+					pbstchild(temp)[LEFT] = pbstchild(pnode)[LEFT];
+				}
 				pnode = pbstchild(pnode)[RIGHT];
 				treDeleteBSTNode(plast);
 			}

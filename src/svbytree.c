@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0926230000L00641
+ * File ID:     0809171737G1120230440L00644
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -201,7 +201,10 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 	{
 		queRemoveL(&pnode, sizeof(P_TNODE_BY), &q);
 		if (CBF_CONTINUE != cbftvs(pnode, param))
+		{	/* Do NOT forget to clean the queue. */
+			queFreeL(&q);
 			return CBF_TERMINATE;
+		}
 		if (NULL != pnode->ppnode[LEFT])
 			r1 = queInsertL(&q, &(pnode->ppnode[LEFT]),  sizeof(P_TNODE_BY));
 		if (NULL != pnode->ppnode[RIGHT])

@@ -304,7 +304,7 @@ P_BSTNODE _treBSTSplitAA(P_BSTNODE pnode)
  * Tip:           Usage:
  *                P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
  *                *pbst = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp);
- *                treDeleteBST(pbst); // Destory AA-tree.
+ *                treDeleteBST(pbst); // Destroy AA-tree.
  */
 P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -336,7 +336,7 @@ P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
  *                P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
  *                *pbst = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
  *                *pbst = treBSTRemoveAA(*pbst, &a, sizeof(a), cbfcmp); // Removal.
- *                treDeleteBST(pbst); // Destory AA-tree.
+ *                treDeleteBST(pbst); // Destroy AA-tree.
  */
 P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -518,7 +518,7 @@ P_BSTNODE _treBSTLeftRotateAVL(P_BSTNODE pnode)
  * Tip:           Usage:
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
  *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
- *                treDeleteBST(pbst); // Destory AVL-tree.
+ *                treDeleteBST(pbst); // Destroy AVL-tree.
  */
 P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -584,7 +584,7 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
  *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
  *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
  *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp); // Removal.
- *                treDeleteBST(pbst); // Destory AVL-tree.
+ *                treDeleteBST(pbst); // Destroy AVL-tree.
  */
 P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {

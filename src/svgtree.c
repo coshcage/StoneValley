@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0118211520L00550
+ * File ID:     0809171737H1130230706L00553
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -180,7 +180,10 @@ int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 			r = strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, FALSE);
 		/* Visit the current node. */
 		if (CBF_CONTINUE != cbftvs(pnode, param))
+		{	/* Do not forget to free queue here. */
+			queFreeL(&q);
 			return CBF_TERMINATE;
+		}
 	}
 	queFreeL(&q);
 	return r;

@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L1110230735L00880
+ * File ID:     0901171620L1204230301L00880
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -729,7 +729,7 @@ Lbl_Empty_Set:
  */
 int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 {
-	int r = (NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
+	BOOL r = (NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
 		treBSTFindData_X
 		(
 			**(P_SET_T *)3[(size_t *)param],

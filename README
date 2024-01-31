@@ -24,7 +24,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 150
 	Limitations ........................................................... 299
 	Logs .................................................................. 309
-	Appendix .............................................................. 407
+	Appendix .............................................................. 408
 
 iv  Scenario
 
@@ -402,6 +402,7 @@ x   Logs
 03-05-2023: Library refined.
 06-14-2023: Add new functions strCreateZSearchArrayZ etc. to the library. Version 1.2.0.0.
 09-26-2023: Add new functions strSortLinkedListS etc. to the library. Version 1.2.0.1.
+01-30-2024: Stable release. Version 1.2.0.2.
 _______________________________________________________________________________
 
-xi  Boycott Chinese government from building the Great Fire Wall!
+xi  Star me to support an open network and boycott Chinese government from building the Great Fire Wall!

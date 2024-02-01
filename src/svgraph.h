@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0114211004L00127
+ * File ID:     0901171625S0201240440L00128
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -52,7 +52,8 @@ P_GRAPH_L  grpCreateL_O            (void);
 void       grpDeleteL              (P_GRAPH_L pgrp);
 size_t     grpVerticesCountL_O     (P_GRAPH_L pgrp);
 size_t     grpEdgesCountL          (P_GRAPH_L pgrp);
-BOOL       grpAreAdjacentVerticesL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy);
+BOOL       grpAreAdjacentVerticesL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   BOOL   bweight, size_t weight);
+size_t *   grpGetWeightL           (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy);
 size_t     grpIndegreeVertexL      (P_GRAPH_L pgrp, size_t       vid);
 size_t     grpOutdegreeVertexL     (P_GRAPH_L pgrp, size_t       vid);
 BOOL       grpInsertVertexL        (P_GRAPH_L pgrp, size_t       vid);

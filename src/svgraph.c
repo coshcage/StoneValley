@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0201240440L01423
+ * File ID:     0905171125M0201241523L01430
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -22,9 +22,11 @@
 
 /* Finding info for edges. */
 typedef struct _st_FIEDG {
-	EDGE     vertex;
-	P_NODE_S pnode;
-	BOOL     bweight; /* TRUE for weighted graph; FALSE for unweighted graph. */
+	EDGE         vertex;
+	P_NODE_S     pnode;
+	BOOL         bweight; /* TRUE for weighted graph; FALSE for unweighted graph. */
+	CBF_TRAVERSE cbftvs;
+	size_t       param;
 } _FIEDG, * _P_FIEDG;
 
 /* Second level info for traversal. */
@@ -46,7 +48,7 @@ extern int _strCBFNodesCounter                (void * pitem, size_t param);
 int        _grpCBFCompareInteger              (const void * px, const void * py);
 P_VERTEX_L _grpGetVertexByID                  (P_GRAPH_L pgrp, size_t vid);
 int        _grpCBFFindEdgeInList              (void * pitem, size_t param);
-int        _grpCBFFindEdgeInListReturnPNode   (void * pitem, size_t param);
+int        _grpCBFFindEdgeInListReturnsWeight (void * pitem, size_t param);
 int        _grpCBFTraversePuppet              (void * pitem, size_t param);
 int        _grpCBFEdgesCountPuppet            (void * pitem, size_t param);
 int        _grpCBFFreePuppet                  (void * pitem, size_t param);
@@ -136,7 +138,7 @@ Lbl_Found:
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _grpCBFFindEdgeInListReturnPNode
+ * Function name: _grpCBFFindEdgeInListReturnsWeight
  * Description:   This function is used to find edges in a list and return weight in pnode.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the list.
@@ -144,13 +146,13 @@ Lbl_Found:
  * Return value:  If the specific edge were found, function would return value CBF_TERMINATE,
  *                otherwise function would return value CBF_CONTINUE.
  */
-int _grpCBFFindEdgeInListReturnPNode(void * pitem, size_t param)
+int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
 {
 	_P_FIEDG pd = (_P_FIEDG)param;
 	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
 	{
 		pd->pnode = (P_NODE_S)pitem;
-		return CBF_TERMINATE;
+		return pd->cbftvs(&((P_EDGE)pd->pnode->pdata)->weight, param);
 	}
 	return CBF_CONTINUE;
 }
@@ -428,38 +430,43 @@ BOOL grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, BOOL bwei
 	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
 	{
 		_FIEDG fd;
-		fd.bweight = bweight;
-		fd.pnode   = NULL;
+		fd.bweight       = bweight;
+		fd.pnode         = NULL;
 		fd.vertex.vid    = vidy;
 		fd.vertex.weight = weight;
+		fd.cbftvs        = NULL;
+		fd.param         = 0;
 		if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return TRUE; /* Edge already exists. */
 	}
 	return FALSE; /* Can not find vertex vidx. */
 }
 
-/* Function name: grpGetWeightL
+/* Function name: grpTraverseEdgesWeightL
  * Description:   Fetch weight between vertices.
  * Parameters:
  *        pgrp Pointer to a graph.
  *        vidx 1st Vertex ID.
  *        vidy 2nd Vertex ID.
- * Return value:  NULL Vertices are not adjacent.
- *                Otherwise, an address to size_t weight in the node of the graph.
+ *      cbftvs Pointer to callback function.
+ *             In the callback function, parameter pitem points to weight.
+ *       param Parameter to be transferred into callback function.
+ * Return value:  Same as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-size_t * grpGetWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
+int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVERSE cbftvs, size_t param)
 {
 	REGISTER P_VERTEX_L pvtx;
 	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
 	{
 		_FIEDG fd;
-		fd.bweight = TRUE;
-		fd.pnode = NULL;
-		fd.vertex.vid = vidy;
+		fd.bweight       = TRUE;
+		fd.pnode         = NULL;
+		fd.vertex.vid    = vidy;
 		fd.vertex.weight = 0;
-		if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInListReturnPNode, (size_t)&fd))
-			return &((P_EDGE)fd.pnode->pdata)->weight; /* Edge already exists. */
+		fd.cbftvs        = cbftvs;
+		fd.param         = param;
+		return strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInListReturnsWeight, (size_t)&fd);
 	}
 	return NULL; /* Can not find vertex vidx. */
 }

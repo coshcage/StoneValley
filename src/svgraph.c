@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0201241523L01434
+ * File ID:     0905171125M0201241730L01434
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -468,7 +468,7 @@ int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVER
 		fd.param         = param;
 		return strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInListReturnsWeight, (size_t)&fd);
 	}
-	return NULL; /* Can not find vertex vidx. */
+	return CBF_CONTINUE; /* Can not find vertex vidx. */
 }
 
 /* Function name: grpIndegreeVertexL

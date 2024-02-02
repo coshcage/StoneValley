@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0201241523L01430
+ * File ID:     0905171125M0201241523L01434
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -560,6 +560,8 @@ BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 			fd.bweight = TRUE;
 			fd.pnode   = NULL;
 			fd.vertex  = nedg; /* Fill the new edge. */
+			fd.cbftvs  = NULL;
+			fd.param   = 0;
 			if (NULL != pvtx->adjlist)
 			{
 				if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
@@ -621,10 +623,12 @@ BOOL grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 	else
 	{
 		_FIEDG fd;
-		fd.bweight = TRUE;
-		fd.pnode   = NULL;
+		fd.bweight       = TRUE;
+		fd.pnode         = NULL;
 		fd.vertex.vid    = vidy;
 		fd.vertex.weight = weight;
+		fd.cbftvs        = NULL;
+		fd.param         = 0;
 		if (CBF_TERMINATE != strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return FALSE; /* Edge doesn't exist. */
 		else

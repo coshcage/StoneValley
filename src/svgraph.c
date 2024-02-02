@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0201241730L01434
+ * File ID:     0905171125M0201241730L01430
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -139,21 +139,17 @@ Lbl_Found:
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFFindEdgeInListReturnsWeight
- * Description:   This function is used to find edges in a list and return weight in pnode.
+ * Description:   This function is used to find weights of edges in a list.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the list.
  *      param Pointer to a _FIEDG structure.
- * Return value:  If the specific edge were found, function would return value CBF_TERMINATE,
- *                otherwise function would return value CBF_CONTINUE.
+ * Return value:  The same as callback function returns.
  */
 int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
 {
 	_P_FIEDG pd = (_P_FIEDG)param;
 	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
-	{
-		pd->pnode = (P_NODE_S)pitem;
 		return pd->cbftvs(&((P_EDGE)pd->pnode->pdata)->weight, param);
-	}
 	return CBF_CONTINUE;
 }
 

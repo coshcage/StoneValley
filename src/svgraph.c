@@ -120,7 +120,7 @@ P_VERTEX_L _grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
  */
 int _grpCBFFindEdgeInList(void * pitem, size_t param)
 {
-	_P_FIEDG pd = (_P_FIEDG)param;
+	REGISTER _P_FIEDG pd = (_P_FIEDG)param;
 	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
 	{
 		if (pd->bweight) /* Weighted edge. */
@@ -143,13 +143,13 @@ Lbl_Found:
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the list.
  *      param Pointer to a _FIEDG structure.
- * Return value:  The same as callback function returns.
+ * Return value:  The same value as callback function returns.
  */
 int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
 {
-	_P_FIEDG pd = (_P_FIEDG)param;
+	REGISTER _P_FIEDG pd = (_P_FIEDG)param;
 	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
-		return pd->cbftvs(&((P_EDGE)pd->pnode->pdata)->weight, param);
+		return pd->cbftvs(&((P_EDGE)((P_NODE_S)pitem)->pdata)->weight, param);
 	return CBF_CONTINUE;
 }
 

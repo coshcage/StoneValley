@@ -281,7 +281,7 @@ BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
  */
 BOOL strBitStreamExtract(P_BITSTREAM pbstm)
 {
-	UCHART r = pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc));
+	UCHART r = (UCHART)(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc)));
 	if (--pbstm->bilc < 1)
 	{	/* Need to reallocate. */
 		if (strLevelArrayZ(&pbstm->arrz) > 1)
@@ -307,7 +307,7 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
 void strBitStreamReverse(P_BITSTREAM pbstm)
 {
 	REGISTER size_t i, j = (0 == pbstm->bilc ? strLevelArrayZ(&pbstm->arrz) - 1 : strLevelArrayZ(&pbstm->arrz));
-	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = ~pbstm->arrz.pdata[i];
+	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = (UCHART)(~pbstm->arrz.pdata[i]);
 }
 
 /* Due to some reasons that this library could

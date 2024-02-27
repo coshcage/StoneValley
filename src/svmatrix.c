@@ -859,12 +859,12 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 					pnode->pnode = pnew;
 				}
 				/* Sign a bit on bit mask. */
-				pmtx->bmask.arrz.pdata[l] = (pmtx->bmask.arrz.pdata[l] | t);
+				pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] | t);
 				return pnew->pdata;
 			}
 		}
 		/* Clear bit mask. */
-		pmtx->bmask.arrz.pdata[l] = (pmtx->bmask.arrz.pdata[l] & ~t);
+		pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] & ~t);
 	}
 	return NULL;
 }

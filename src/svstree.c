@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1110230535L02049
+ * File ID:     0809171737I0227240922L02047
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -186,15 +186,13 @@ void treDeleteBST_O(P_BST pbst)
  */
 P_BSTNODE treCopyBST(P_BSTNODE proot, size_t size)
 {
-	REGISTER P_BSTNODE pl, pr, pp;
+	REGISTER P_BSTNODE pp;
 	if (NULL == proot)
 		return NULL;
-	pl = treCopyBST(P2P_BSTNODE(proot->knot.ppnode[LEFT]), size);
-	pr = treCopyBST(P2P_BSTNODE(proot->knot.ppnode[RIGHT]), size);
 	if (NULL != (pp = treCreateBSTNode(proot->knot.pdata, size, proot->param)))
 	{
-		pp->knot.ppnode[LEFT] = P2P_TNODE_BY(pl);
-		pp->knot.ppnode[RIGHT] = P2P_TNODE_BY(pr);
+		pp->knot.ppnode[LEFT]  = P2P_TNODE_BY(treCopyBST(P2P_BSTNODE(proot->knot.ppnode[LEFT]),  size));
+		pp->knot.ppnode[RIGHT] = P2P_TNODE_BY(treCopyBST(P2P_BSTNODE(proot->knot.ppnode[RIGHT]), size));
 	}
 	return pp;
 }

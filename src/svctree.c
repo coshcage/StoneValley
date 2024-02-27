@@ -197,7 +197,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 			{
 				/* Padding bit one onto value. */
 				if (parent->ppnode[RIGHT] == pnode)
-					psi->Symbol.sgnb |= (1 << psi->Symbol.bits);
+					psi->Symbol.sgnb |= (size_t)(1 << psi->Symbol.bits);
 				/* Increase number of bits. */
 				++psi->Symbol.bits;
 				/* Propagate upward to root. */

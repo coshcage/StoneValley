@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G1120230440L00644
+ * File ID:     0809171737G0227240935L00586
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -19,20 +19,12 @@
 #include "svtree.h"
 #include "svqueue.h"
 
-/* A structure for binary tree copy. */
-typedef struct _st_BYTreeCopy {
-	void *    pnroot; /* Root of a new tree.   */
-	P_QUEUE_L pquel;  /* Children nodes queue. */
-	size_t    size;   /* Size of node data.    */
-} _BYTreeCopy, * _P_BYTreeCopy;
-
 /* File-level function declarations here. */
 extern int _strCBFDeleteNode       (void * pitem, size_t param);
 extern int _strCBFNodesCounter     (void * pitem, size_t param);
 extern int _strCBFCompareNodeDataD (void * pitem, size_t param);
 int        _treCBFParentRetriver   (void * pitem, size_t param);
 int        _treCBFNodeLocator      (void * pitem, size_t param);
-int        _treCBFCopyTreeNodeBY   (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFParentRetriver
@@ -75,50 +67,6 @@ int _treCBFNodeLocator(void * pitem, size_t param)
 	{
 		pfi->size = TRUE;
 		return CBF_TERMINATE;
-	}
-	return CBF_CONTINUE;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treCBFCopyTreeNodeBY
- * Description:   This function is used to copy nodes in binary tree.
- * Parameters:
- *      pitem Pointer to each node in the tree.
- *      param Pointer to a _BYTreeCopy structure.
- * Return value:  If any error occurred while copying, function would return a CBF_TERMINATE.
- *                If there were no error produced while copying, function would return a CBF_CONTINUE.
- */
-int _treCBFCopyTreeNodeBY(void * pitem, size_t param)
-{
-	size_t tptr;
-	_P_BYTreeCopy ptc = (_P_BYTreeCopy)param;
-	P_TNODE_BY pcur = (P_TNODE_BY)pitem;
-	P_TNODE_BY pnew = strCreateNodeD(pcur->pdata, ptc->size);
-	if (NULL == pnew)
-	{	/* Allocation failure. */
-		treFreeBY((P_BYTREE)&ptc->pnroot);
-		ptc->pnroot = NULL;
-		return CBF_TERMINATE;
-	}
-	/* Set new root. */
-	if (NULL == ptc->pnroot)
-		ptc->pnroot = pnew;
-	if (! queIsEmptyL(ptc->pquel))
-	{	/* Solve every parents' child nodes for the previous level. */
-		P_TNODE_BY * ppnode;
-		queRemoveL(&ppnode, sizeof(P_TNODE_BY), ptc->pquel);
-		*ppnode = pnew;
-	}
-	/* Record the needed child for the next tree level. */
-	if (NULL != pcur->ppnode[LEFT])
-	{
-		tptr = (size_t)&(pnew->ppnode[LEFT]);
-		queInsertL(ptc->pquel, &tptr, sizeof(P_TNODE_BY));
-	}
-	if (NULL != pcur->ppnode[RIGHT])
-	{
-		tptr = (size_t)&(pnew->ppnode[RIGHT]);
-		queInsertL(ptc->pquel, &tptr, sizeof(P_TNODE_BY));
 	}
 	return CBF_CONTINUE;
 }
@@ -625,19 +573,13 @@ P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot
  */
 P_TNODE_BY treCopyBY(P_TNODE_BY proot, size_t size)
 {
-	_BYTreeCopy tp;
-	QUEUE_L q;
-	queInitL(&q);
-	tp.pnroot = NULL;
-	tp.pquel = &q;
-	tp.size = size;
-	treTraverseBYLevel(proot, _treCBFCopyTreeNodeBY, (size_t)&tp);
-	/* As usual, queue q should be empty here.
-	 * But if there were an error occurred while new node was allocating in the
-	 * callback function, Callback function would return immediately and
-	 * quit with a non-empty queue. Be sure to deallocate the queue while
-	 * exiting function treCopyBY to prevent a potential memory leak.
-	 */
-	queFreeL(&q);
-	return (P_TNODE_BY)tp.pnroot;
+	REGISTER P_TNODE_BY pp;
+	if (NULL == proot)
+		return NULL;
+	if (NULL != (pp = strCreateNodeD(proot->pdata, size)))
+	{
+		pp->ppnode[LEFT]  = treCopyBY(proot->ppnode[LEFT],  size);
+		pp->ppnode[RIGHT] = treCopyBY(proot->ppnode[RIGHT], size);
+	}
+	return pp;
 }

@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0227240150L00283
+ * File ID:     0306170948A0614231904L00272
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -93,26 +93,16 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
  */
 void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 {
-	REGISTER size_t k = num * size;
-	if (0 == k)
-	{	/* Shrink array's size to zero. */
-		parrz->num = num;
-		free(parrz->pdata);
+	PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, num * size);
+	if (NULL == pnew)
+	{	/* Reallocation failure. */
+		parrz->num = 0;
 		parrz->pdata = NULL;
 	}
 	else
 	{
-		PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, k);
-		if (NULL == pnew)
-		{	/* Reallocation failure. */
-			parrz->num = 0;
-			parrz->pdata = NULL;
-		}
-		else
-		{
-			parrz->num = num;
-			parrz->pdata = pnew;
-		}
+		parrz->num = num;
+		parrz->pdata = pnew;
 	}
 	return parrz->pdata;
 }
@@ -127,8 +117,7 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
  */
 void strFreeArrayZ_O(P_ARRAY_Z parrz)
 {
-	if (NULL != parrz->pdata)
-		free(parrz->pdata);
+	free(parrz->pdata);
 	parrz->pdata = NULL;
 	parrz->num = 0;
 }

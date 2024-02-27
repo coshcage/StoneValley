@@ -621,7 +621,7 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 			ptemp = pbstchild(pnode)[RIGHT];
 			if (NULL != ptemp) /* Walk down the tree to find the least one. */
 				while (NULL != pbstchild(ptemp)[LEFT])
-					ptemp = pbstchild(pnode)[LEFT];
+					ptemp = pbstchild(ptemp)[LEFT];
 			if (NULL != ptemp)
 			{
 				memcpy(pnode->knot.pdata, ptemp->knot.pdata, size);

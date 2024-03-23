@@ -17,7 +17,7 @@
 
 #include "svset.h"
 
-/* These above two macros are used to switch between BSTs. */
+/* These following two macros are used to switch between BSTs. */
 #define _setInsertBST treBSTInsertAVL
 #define _setRemoveBST treBSTRemoveAVL
 

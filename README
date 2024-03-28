@@ -24,7 +24,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 150
 	Limitations ........................................................... 299
 	Logs .................................................................. 309
-	Appendix .............................................................. 409
+	Appendix .............................................................. 410
 
 iv  Scenario
 
@@ -404,6 +404,7 @@ x   Logs
 09-26-2023: Add new functions strSortLinkedListS etc. to the library. Version 1.2.0.1.
 01-30-2024: Stable release. Version 1.2.0.2.
 02-01-2024: New release. Version 1.2.0.3.
+03-28-2024: Library refined. Version 1.2.0.4.
 _______________________________________________________________________________
 
 xi  Star me to support an open network and boycott Chinese government from building the Great Fire Wall!

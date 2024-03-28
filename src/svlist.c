@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0925232219L01224
+ * File ID:     0306170948C0328240605L01253
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -609,6 +609,35 @@ LIST_S strSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 
 		return pleft;
 	}
+}
+
+/* Function name: strReverseLinkedListS
+ * Description:   Reverse a single pointer linked-list.
+ * Parameter:
+ *     phead Pointer to the first node of the single linked-list.
+ * Return value:  Pointer to the new header of the single linked-list.
+ * Tip:           This function can not sort circular single linked-list.
+ */
+P_NODE_S strReverseLinkedListS(P_NODE_S phead)
+{
+	REGISTER P_NODE_S prev = NULL;
+	REGISTER P_NODE_S pcur = phead;
+	REGISTER P_NODE_S pnxt = NULL;
+
+	while (NULL != pcur)
+	{
+		/* Store the next node. */
+		pnxt = pcur->pnode;
+
+		/* Reverse the pointer of current node. */
+		pcur->pnode = prev;
+
+		/* Move pointers one node forward. */
+		prev = pcur;
+		pcur = pnxt;
+	}
+
+	return prev;
 }
 
 /* Section for doubly-pointer-node linked-list started bellow.  */

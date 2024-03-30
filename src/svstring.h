@@ -144,7 +144,7 @@ P_NODE_S    strLocateItemSC_R              (P_NODE_S     pnode,    size_t       
 P_NODE_S    strLocateItemSC_N              (P_NODE_S     pnode,    size_t       incmtl);
 P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     pdest,   P_NODE_S     pnode,   BOOL         bafter);
 P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     pnode);
-P_NODE_S    strReverseLinkedListSC         (P_NODE_S     phead);
+P_NODE_S    strReverseLinkedListSC         (LIST_S       phead);
 void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
 LIST_S      strSortLinkedListS             (LIST_S       phead,    CBF_COMPARE  cbfcmp);
 /* Functions for doubly linked-lists. */

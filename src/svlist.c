@@ -543,7 +543,7 @@ P_NODE_S strRemoveItemLinkedListSC(LIST_S list, P_NODE_S pnode)
  * Tip:           This function can not reverse a single linked-list that:
  *                A->B->C->B.
  */
-P_NODE_S strReverseLinkedListSC(P_NODE_S phead)
+P_NODE_S strReverseLinkedListSC(LIST_S phead)
 {
 	REGISTER P_NODE_S prev = NULL;
 	REGISTER P_NODE_S pcur = phead;

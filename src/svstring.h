@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0328240604L00468
+ * File ID:     0306170921Y0330241300L00468
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -144,9 +144,9 @@ P_NODE_S    strLocateItemSC_R              (P_NODE_S     pnode,    size_t       
 P_NODE_S    strLocateItemSC_N              (P_NODE_S     pnode,    size_t       incmtl);
 P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     pdest,   P_NODE_S     pnode,   BOOL         bafter);
 P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     pnode);
+P_NODE_S    strReverseLinkedListSC         (P_NODE_S     phead);
 void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
 LIST_S      strSortLinkedListS             (LIST_S       phead,    CBF_COMPARE  cbfcmp);
-P_NODE_S    strReverseLinkedListS          (P_NODE_S     phead);
 /* Functions for doubly linked-lists. */
 int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
 int         strTraverseLinkedListDC_A      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);

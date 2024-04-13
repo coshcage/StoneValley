@@ -34,9 +34,9 @@ typedef P_NODE_D * P_BYTREE;   /* Pointer to a binary tree. */
  * then put the rest of node's information such as parent and param after NODE_D structure,
  * so that we are able to traverse a binary tree and cope with a BSTNODE structure simultaneously.
  */
-typedef struct st_BSTNODE { /* Binary node with addtional information. */
+typedef struct st_BSTNODE { /* Binary node with additional information. */
 	TNODE_BY knot; /* Left and right children and data pointer. */
-	size_t param;  /* Parameter for a treap node. */
+	size_t param;  /* Parameter for a Treap node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
 #define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0417240532L00892
+ * File ID:     0213191430N0417240603L00900
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -308,13 +308,21 @@ BOOL strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 {
 	if (dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col)
 	{
-		REGISTER size_t i, j, k, l;
+		REGISTER size_t i, j, k, l, o, p;
 		const size_t m = sln - dln, n = scol - dcol;
-		for (i = sln; i < psrc->ln; ++i)
+		if (psrc->ln - sln < pdest->ln - dln)
+			o = psrc->ln;
+		else
+			o = pdest->ln;
+		if (psrc->col - scol < pdest->col - dcol)
+			p = psrc->col;
+		else
+			p = pdest->col;
+		for (i = sln; i < o; ++i)
 		{
 			k = (i - m) * pdest->col - n;
 			l = i * psrc->col;
-			for (j = scol; j < psrc->col; ++j)
+			for (j = scol; j < p; ++j)
 			{
 				memmove
 				(

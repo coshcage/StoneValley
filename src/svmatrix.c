@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0809230203L00902
+ * File ID:     0213191430N0417240532L00892
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -308,28 +308,18 @@ BOOL strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 {
 	if (dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col)
 	{
-		const size_t x = pdest->col * dln + size * dcol;
-		const size_t y = psrc->col  * sln + size * scol;
-		REGISTER size_t i, j, k, l, m, n, z;
-		i = pdest->ln - dln;
-		j = pdest->col - dcol;
-		k = psrc->ln - sln;
-		l = psrc->col - scol;
-		if (i < k)
-			k = i;
-		if (j < l)
-			l = j;
-		for (i = 0; i < k; ++i)
+		REGISTER size_t i, j, k, l;
+		const size_t m = sln - dln, n = scol - dcol;
+		for (i = sln; i < psrc->ln; ++i)
 		{
-			m = pdest->col * i + x;
-			n = psrc->col  * i + y;
-			for (j = 0; j < l; ++j)
+			k = (i - m) * pdest->col - n;
+			l = i * psrc->col;
+			for (j = scol; j < psrc->col; ++j)
 			{
-				z = size * j;
-				memcpy
+				memmove
 				(
-					&pdest->arrz.pdata[m + z],
-					&psrc->arrz.pdata [n + z],
+					&pdest->arrz.pdata[(k + j) * size],
+					&psrc->arrz.pdata[(l + j) * size],
 					size
 				);
 			}

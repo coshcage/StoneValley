@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0422241448L00553
+ * File ID:     0306170948D0422241647L00550
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -233,7 +233,7 @@ BOOL strBitStreamPop(P_BITSTREAM pbstm)
 			pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return r;
+	return FALSE != r;
 }
 
 /* Function name: strBitStreamAdd
@@ -290,10 +290,8 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
 				pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return 0x00 != r;
+	return FALSE != r;
 }
-
-#define _CHAR_SIGN ((UCHART)1 << (CHAR_BIT - 1)) /* Make a byte whose value equals to 0x80. */
 
 /* Function name: strBitStreamLocate
  * Description:   Locate a bit in the stream by index.
@@ -302,18 +300,17 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
  *      index Index value to be evaluated. Starts from 0.
  * Return value:  TRUE or FALSE.
  * Caution:       Address of pbstm Must Be Allocated first.
+ *                If index exceeded the range, function would return FALSE.
  */
 BOOL strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
 	if (index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc)
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
-		return FALSE != (pbstm->arrz.pdata[st.quot] & (_CHAR_SIGN >> st.rem));
+		return FALSE != (pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
 	}
 	return FALSE;
 }
-
-#undef _CHAR_SIGN /* Undefine used macro. */
 
 /* Function name: strBitStreamReverse
  * Description:   Reverse bits in bit-stream.

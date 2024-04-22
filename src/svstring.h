@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0422241447L00469
+ * File ID:     0306170921Y0422241647L00469
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -178,8 +178,8 @@ BOOL        strBitStreamPush               (P_BITSTREAM  pbstm,    BOOL         
 BOOL        strBitStreamPop                (P_BITSTREAM  pbstm);
 BOOL        strBitStreamAdd                (P_BITSTREAM  pbstm,    BOOL         value);
 BOOL        strBitStreamExtract            (P_BITSTREAM  pbstm);
-void        strBitStreamReverse            (P_BITSTREAM  pbstm);
 BOOL        strBitStreamLocate             (P_BITSTREAM  pbstm,    size_t       index);
+void        strBitStreamReverse            (P_BITSTREAM  pbstm);
 /* Function for common matrices. */
 void *      strInitMatrix                  (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void        strFreeMatrix_O                (P_MATRIX     pmtx);

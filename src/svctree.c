@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0131211902L00426
+ * File ID:     0914171200J0422241449L00426
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */
-#include <limits.h> /* Using macro UCHAR_MAX. */
+#include <limits.h> /* Using macro UCHAR_MAX, CHAR_BIT. */
 #include "svtree.h"
 
 /* A macro that defines symbol table length. */
@@ -382,7 +382,7 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 		NULL != (pbout = strCreateBitStream())
 	)
 	{
-		size_t i = 0;
+		size_t i = 0, j = 0;
 		P_TNODE_BY proot, pnode;
 		if (NULL == (pnode = proot = _treHFMRebuildHuffmanTree(ptable)))
 			goto Lbl_Decoding_Failure;
@@ -403,9 +403,9 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 					++i;
 					continue;
 				}
-				if (strBitStreamIsEmpty(s))
+				if (j >= (s->arrz.num - 1) * CHAR_BIT + s->bilc)
 					break;
-				if (strBitStreamPop(s))
+				if (strBitStreamLocate(s, j++))
 					pnode = pnode->ppnode[RIGHT];
 				else
 					pnode = pnode->ppnode[LEFT];

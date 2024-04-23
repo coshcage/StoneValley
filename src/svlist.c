@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0330241300L01258
+ * File ID:     0306170948C0422241700L01258
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -858,7 +858,7 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, BOOL brev)
 	{
 		if (NULL == (pnew = strCreateNodeD(pcur->pdata, size)))
 		{
-			strDeleteLinkedListDC(&prtn, brev);
+			strFreeLinkedListDC(&prtn, brev);
 			return NULL;
 		}
 		if (NULL == prtn)

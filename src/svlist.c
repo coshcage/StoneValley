@@ -284,7 +284,7 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
 	{
 		if (NULL == (pnew = strCreateNodeS(pcur->pdata, size)))
 		{
-			strDeleteLinkedListSC(&prtn);
+			strFreeLinkedListSC(&prtn);
 			return NULL;
 		}
 		if (NULL == prtn)

@@ -28,7 +28,7 @@
  */
 void svPrintVersion(void)
 {
-	printf("StoneValley %s", LIB_VER);
+	printf("StoneValley %s", SV_LIB_VER);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

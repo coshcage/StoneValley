@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0227240935L00586
+ * File ID:     0809171737G0716241632L00625
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -81,7 +81,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
  */
 int treTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
+	REGISTER int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
 	if (NULL == pnode)
 		return CBF_CONTINUE;
 	if (CBF_CONTINUE != cbftvs(pnode, param))
@@ -101,7 +101,7 @@ int treTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
+	REGISTER int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
 	if (NULL == pnode)
 		return CBF_CONTINUE;
 	r1 = treTraverseBYIn(pnode->ppnode[LEFT],  cbftvs, param);
@@ -121,7 +121,7 @@ int treTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
+	REGISTER int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
 	if (NULL == pnode)
 		return CBF_CONTINUE;
 	r1 = treTraverseBYPost(pnode->ppnode[LEFT],  cbftvs, param);
@@ -141,7 +141,7 @@ int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
+	REGISTER int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE;
 	QUEUE_L q;
 	queInitL(&q);
 	queInsertL(&q, &pnode, sizeof(P_TNODE_BY));
@@ -161,6 +161,45 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 	/* Do NOT forget to clean the queue. */
 	queFreeL(&q);
 	return CBF_CONTINUE == r1 ? r2 : r1;
+}
+
+/* Function name: treTraverseBYArray
+ * Description:   Traverse a binary tree by user defined order.
+ * Parameters:
+ *      order Three characters that can be any combination of L/l,
+ *            D/d and R/r represent left node, current node and right node.
+ *      pnode Pointer to the node that you want to start traversal in a tree.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transfer into the callback function.
+ * Return value:  The same value as callback function returns.
+ */
+int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
+{
+	if (NULL != pnode)
+	{
+		REGISTER size_t i;
+		REGISTER int r1 = CBF_CONTINUE, r2 = CBF_CONTINUE, r3 = CBF_CONTINUE;
+		for (i = 0; i < 3; ++i)
+		{
+			switch (order[i])
+			{
+			case 'L':
+			case 'l':
+				r1 = treTraverseBYArray(order, pnode->ppnode[LEFT], cbftvs, param);
+				break;
+			case 'R':
+			case 'r':
+				r2 = treTraverseBYArray(order, pnode->ppnode[RIGHT], cbftvs, param);
+				break;
+			case 'D':
+			case 'd':
+				r3 = cbftvs(pnode, param);
+				break;
+			}
+		}
+		return CBF_CONTINUE == r1 ? (CBF_CONTINUE == r2 ? r3 : r2) : r1;
+	}
+	return CBF_CONTINUE;
 }
 
 /* Function name: treMorrisTraverseBYPre

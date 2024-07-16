@@ -24,7 +24,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 150
 	Limitations ........................................................... 299
 	Logs .................................................................. 309
-	Appendix .............................................................. 413
+	Appendix .............................................................. 414
 
 iv  Scenario
 
@@ -408,6 +408,7 @@ x   Logs
 04-17-2024: Library refined. Bug fixed in strProjectMatrix at "svmatrix.c". Version 1.2.0.5.
 04-22-2024: Library refined. Version 1.2.0.6.
 04-22-2024: Bug fixed. Version 1.2.0.7.
+07-16-2024: Library refined. Version 1.2.0.9.
 _______________________________________________________________________________
 
 xi  Star me to support an open network and boycott Chinese government from building the Great Fire Wall!

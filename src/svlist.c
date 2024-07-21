@@ -445,7 +445,7 @@ P_NODE_S strLocateLastItemSC(LIST_S list)
 }
 
 /* Function name: strLocateItemSC_R
- * Description:   Locate a node in a single linked-pnode recursively.
+ * Description:   Locate a node in a single linked-list recursively.
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.
@@ -461,7 +461,7 @@ P_NODE_S strLocateItemSC_R(P_NODE_S pnode, size_t incmtl)
 }
 
 /* Function name: strLocateItemSC_N
- * Description:   Locate a node in a single linked-pnode by using a loop.
+ * Description:   Locate a node in a single linked-list by using a loop.
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.
@@ -991,7 +991,7 @@ P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, BOO
 }
 
 /* Function name: strLocateItemDC_R
- * Description:   Locate a node in a doubly linked-pnode recursively.
+ * Description:   Locate a node in a doubly linked-list recursively.
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.
@@ -1019,7 +1019,7 @@ P_NODE_D strLocateItemDC_R(P_NODE_D pnode, ptrdiff_t incmtl)
 }
 
 /* Function name: strLocateItemDC_N
- * Description:   Locate a node in a doubly linked-pnode by using a loop.
+ * Description:   Locate a node in a doubly linked-list by using a loop.
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.

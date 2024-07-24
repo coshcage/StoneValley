@@ -23,11 +23,11 @@
 extern int _strCBFDeleteNode       (void * pitem, size_t param);
 extern int _strCBFNodesCounter     (void * pitem, size_t param);
 extern int _strCBFCompareNodeDataD (void * pitem, size_t param);
-int        _treCBFParentRetriver   (void * pitem, size_t param);
+int        _treCBFParentRetriever  (void * pitem, size_t param);
 int        _treCBFNodeLocator      (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treCBFParentRetriver
+ * Function name: _treCBFParentRetriever
  * Description:   This function is used to find parent in binary tree.
  * Parameters:
  *      pitem Pointer to each node in the tree.
@@ -35,7 +35,7 @@ int        _treCBFNodeLocator      (void * pitem, size_t param);
  * Return value:  If parent node had been found, function would return a CBF_TERMINATE.
  *                If parent node could not find in a tree, function would return a CBF_CONTINUE.
  */
-int _treCBFParentRetriver(void * pitem, size_t param)
+int _treCBFParentRetriever(void * pitem, size_t param)
 {
 	/* The current node is the parent node of a searching target. */
 	if (*(P_TNODE_BY *)param == ((P_TNODE_BY)pitem)->ppnode[LEFT])
@@ -471,7 +471,7 @@ P_TNODE_BY treGetParentNodeBY(P_TNODE_BY proot, P_TNODE_BY pchild)
 	 */
 	if (proot == pchild)
 		return NULL; /* Parent of the root node is NULL. */
-	treTraverseBYPre(proot, _treCBFParentRetriver, (size_t)&pchild);
+	treTraverseBYPre(proot, _treCBFParentRetriever, (size_t)&pchild);
 	return pchild;
 }
 

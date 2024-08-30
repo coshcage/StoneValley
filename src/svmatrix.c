@@ -217,7 +217,7 @@ void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size
 {
 	if (ln < pmtx->ln && col < pmtx->col && size)
 	{
-		void * ptr = &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
+		REGISTER void * ptr = &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
 		if (NULL != pval)
 			memcpy(pval, ptr, size);
 		return ptr;

@@ -528,8 +528,8 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {	
 	REGISTER size_t i, k, n = num, m = n >> 1;
-	REGISTER size_t l, r, p, q;
 	REGISTER PUCHAR px = (PUCHAR)pbase, py;
+	REGISTER size_t l, r, p;
 
 	PUCHAR ptemp = NULL;
 	UCHART tmpbuf[BUFSIZ];

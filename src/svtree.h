@@ -150,7 +150,7 @@ P_BSTNODE       treBSTRemoveAA         (P_BSTNODE       pnode,   const void * pi
 P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTRemoveAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for B-plus trees. */
-void *          treInitBPTNode         (P_BPTNODE       pnode,   P_TNODE_BY   parent,  P_TNODE_BY   pnext);
+void *          treInitBPTNode         (P_BPTNODE       pnode,   P_TNODE_BY    parent, P_TNODE_BY   pnext);
 void            treFreeBPTNode         (P_BPTNODE       pnode);
 P_BPTNODE       treCreateBPTNode       (P_BPTNODE       parent,  P_BPTNODE    pnext);
 void            treDeleteBPTNode       (P_BPTNODE       pnode);

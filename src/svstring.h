@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0422241647L00469
+ * File ID:     0306170921Y0907241355L00470
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -88,6 +88,7 @@ void        svSwap                         (void *       pleft,    void *       
 void        svShellSort                    (void *       pbase,    void *       ptemp,   size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 void *      svQuickSort                    (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svMergeSort                    (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
+void *      svHeapSort                     (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svBinarySearch                 (const void * pkey,     const void * pbase,   size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,     size_t       size);

@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0422241647L00550
+ * File ID:     0306170948D0907241353L00634
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -507,6 +507,90 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 		pr = pl;
 	}
 	free(pr);
+	return pbase;
+}
+
+/* Function name: svHeapSort
+ * Description:   Heap sort algorithm.
+ * Parameters:
+ *      pbase Pointer to the first object of the array to be sorted.
+ *        num Number of elements in the array.
+ *       size Size in bytes of each element in the array.
+ *     cbfcmp Pointer to a function that compares two elements.
+ *            Please refer to the type definition CBF_COMPARE in svdef.h.
+ * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
+ *                otherwise, this function would return value NULL.
+ * Tip:           Alter macro strSortArrayZ_M at file svstring.h,
+ *                and replace qsort with svMergeSort to make this function in charge.
+ *                This algorithm takes O(1) space and O(n log n) time complexity.
+ *                Notice that heap sort is not stable.
+ */
+void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
+{	
+	REGISTER size_t i, k, n = num, m = n >> 1;
+	REGISTER size_t l, r, p, q;
+	REGISTER PUCHAR px = (PUCHAR)pbase, py;
+
+	PUCHAR ptemp = NULL;
+	UCHART tmpbuf[BUFSIZ];
+	ptemp = size <= BUFSIZ ? tmpbuf : (PUCHAR) malloc(size);
+
+	if (NULL == ptemp)
+		return NULL; /* Allocation failure. */
+
+	/* Heapify. */
+	for (i = m; i > 0; --i)
+	{
+		k = i - 1;
+		while (k < m)
+		{
+			l = (k << 1) + 1;
+			r = l + 1;
+
+			p = size * l;
+			if (r < n && cbfcmp(px + size * r, px + p) > 0)
+			{
+				l = r;
+				p = size * l;
+			}
+
+			py = px + size * k;
+			if (cbfcmp(py, px + p) >= 0)
+				break;
+
+			svSwap(py, px + size * l, ptemp, size);
+			k = l;
+		}
+	}
+
+	for (i = n - 1; i > 0; --i)
+	{
+		svSwap(px, px + size * i, ptemp, size);
+		m = i >> 1;
+		k = 0;
+		while (k < m)
+		{
+			l = (k << 1) + 1;
+			r = l + 1;
+
+			p = size * l;
+			if (r < i && cbfcmp(px + size * r, px + p) > 0)
+			{
+				l = r;
+				p = size * l;
+			}
+
+			py = px + size * k;
+			if (cbfcmp(py, px + p) >= 0)
+				break;
+
+			svSwap(py, px + size * l, ptemp, size);
+			k = l;
+		}
+	}
+
+	if (tmpbuf != ptemp)
+		free(ptemp);
 	return pbase;
 }
 

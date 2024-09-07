@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0907241353L00634
+ * File ID:     0306170948D0907241900L00634
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -528,8 +528,8 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {	
 	REGISTER size_t i, k, n = num, m = n >> 1;
-	REGISTER PUCHAR px = (PUCHAR)pbase, py;
-	REGISTER size_t l, r, p;
+	REGISTER PUCHAR px = (PUCHAR)pbase, py, p;
+	REGISTER size_t l, r;
 
 	PUCHAR ptemp = NULL;
 	UCHART tmpbuf[BUFSIZ];
@@ -547,18 +547,18 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			l = (k << 1) + 1;
 			r = l + 1;
 
-			p = size * l;
-			if (r < n && cbfcmp(px + size * r, px + p) > 0)
+			p = px + size * l;
+			if (r < n && cbfcmp(px + size * r, p) > 0)
 			{
 				l = r;
-				p = size * l;
+				p = px + size * l;
 			}
 
 			py = px + size * k;
-			if (cbfcmp(py, px + p) >= 0)
+			if (cbfcmp(py, p) >= 0)
 				break;
 
-			svSwap(py, px + size * l, ptemp, size);
+			svSwap(py, p, ptemp, size);
 			k = l;
 		}
 	}
@@ -573,18 +573,18 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			l = (k << 1) + 1;
 			r = l + 1;
 
-			p = size * l;
-			if (r < i && cbfcmp(px + size * r, px + p) > 0)
+			p = px + size * l;
+			if (r < i && cbfcmp(px + size * r, p) > 0)
 			{
 				l = r;
-				p = size * l;
+				p = px + size * l;
 			}
 
 			py = px + size * k;
-			if (cbfcmp(py, px + p) >= 0)
+			if (cbfcmp(py, p) >= 0)
 				break;
 
-			svSwap(py, px + size * l, ptemp, size);
+			svSwap(py, p, ptemp, size);
 			k = l;
 		}
 	}

@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0827231930L00800
+ * File ID:     0306170948B0908240640L00800
  *
  * The following text is copied from the source code of SQLite and padded
  * with a little bit addition to fit the goals for StoneValley project:
@@ -651,20 +651,20 @@ Lbl_End_Combination:
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
+ * Tips:          This function uses Fisher-Yates algorithm.
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int seed)
 {
+	REGISTER size_t i, j;
 	srand(seed);
 	switch (strLevelArrayZ(parrz))
 	{
 	case 0: case 1: return; /* Why should I shuffle nothing or one thing? */
-	case 2: svSwap(parrz->pdata, parrz->pdata + size * (rand() & 1), ptemp, size); return;
 	default:
+		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
 		{
-			REGISTER PUCHAR p;
-			REGISTER size_t i, j, rnd;
-			for (i = 0, j = strLevelArrayZ(parrz) - 1, p = parrz->pdata; rnd = rand() * rand(), i <= j; ++i, p += size)
-				svSwap(p, parrz->pdata + size * (rnd % j), ptemp, size);
+			j = rand() * rand() % i;
+			svSwap(parrz->pdata + size * i, parrz->pdata + size * j, ptemp, size);
 		}
 	}
 }

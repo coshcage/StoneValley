@@ -663,7 +663,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int s
 	default:
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
 		{
-			j = rand() * rand() % i;
+			j = rand() * rand() % (i + 1);
 			svSwap(parrz->pdata + size * i, parrz->pdata + size * j, ptemp, size);
 		}
 	}

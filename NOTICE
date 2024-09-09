@@ -1,4 +1,46 @@
-This file is used to trace bugs:
+The whole project is published under <Public Domain license>.
+It means that the following files are published with Public Domain license:
+./NOTICE
+./README
+./svlogo.png
+./Samples/exp_2017-12-26_1.c
+./Samples/exp_2017-12-27_1.c
+./Samples/exp_2017-12-27_2.c
+./Samples/exp_2017-12-28_1.c
+./Samples/exp_2018-01-17_1.c
+./Samples/exp_2018-09-25_1.c
+./Samples/exp_2018-09-26_1.c
+./Samples/exp_2019-01-22_1.c
+./Samples/exp_2019-01-29_1.c
+./Samples/exp_2019-02-14_1.c
+./Samples/exp_2019-06-20_1.c
+./Samples/name_conv.l
+./Samples/README
+./src/svarray.c
+./src/svatom.c
+./src/svbytree.c
+./src/svctree.c
+./src/svdef.h
+./src/svgraph.c
+./src/svgraph.h
+./src/svgtree.c
+./src/svhash.c
+./src/svhash.h
+./src/svhtree.c
+./src/svlist.c
+./src/svmatrix.c
+./src/svmisc.c
+./src/svqueue.c
+./src/svqueue.h
+./src/svset.c
+./src/svset.h
+./src/svstack.c
+./src/svstack.h
+./src/svstree.c
+./src/svstring.h
+./src/svtree.h
+
+This part of file is used to trace bugs:
 09-24-2018:
 	Red-black tree has been cut off instead of an AA-tree. No apparent bugs. B-plus tree may hide bugs. B-plus tree is too big to invite bugs.
 10-14-2018:

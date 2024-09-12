@@ -2,9 +2,23 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0422241449L00418
+ * File ID:     0914171200J0422241449L00432
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
+ *
+ * This file is part of StoneValley.
+ *
+ * StoneValley is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * StoneValley is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with StoneValley.
+ * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */

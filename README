@@ -3,7 +3,7 @@
 i   Preface
 
 	*) The author claimed that he does will refine source files and references later and he needs time and arms to fix it.
-	*) Should you have any problems with this library, please do not hesitate to contact the author via Email.
+	*) Should you have any problems with this library, please do not hesitate to contact the author via Email(Email appears in each .C or .H file.).
 
 ii  Acknowledgement
 
@@ -116,9 +116,9 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	 _________________________________________________________________
 	|o               # BEFORE COMPILING CHECK LIST #                 o|\ [Figure 3]
 	|_____[ITEM]___________[TYPE]_____[LINES]_____[FILE]_____[MARK]___|\
-	| [_] DWC4100           MACRO       76         SVDEF.H    ALTER   |\
-	| [_] REGISTER          MACRO       79         SVDEF.H    CONFIRM |\
-	| [_] SV_OPTIMIZATION   MACRO       87         SVDEF.H    ALTER   |\
+	| [_] DWC4100           MACRO       82         SVDEF.H    ALTER   |\
+	| [_] REGISTER          MACRO       85         SVDEF.H    CONFIRM |\
+	| [_] SV_OPTIMIZATION   MACRO       93         SVDEF.H    ALTER   |\
 	|                                                                 |\
 	| ALTER:   Alter item if necessary.                               |\
 	| CONFIRM: Confirm item before compiling.             StoneValley |\

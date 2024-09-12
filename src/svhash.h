@@ -2,9 +2,23 @@
  * Name:        svhshtbl.h
  * Description: Hash tables interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615U0609191235L00104
+ * File ID:     0901171615U0609191235L00118
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
+ *
+ * This file is part of StoneValley.
+ *
+ * StoneValley is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * StoneValley is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with StoneValley.
+ * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef _SVHSHTBL_H_

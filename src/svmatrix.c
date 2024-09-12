@@ -2,9 +2,23 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0417240603L00892
+ * File ID:     0213191430N0417240603L00906
  * License:     LGPLv3
  * Copyright (C) 2019-2024 John Cage
+ *
+ * This file is part of StoneValley.
+ *
+ * StoneValley is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * StoneValley is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with StoneValley.
+ * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 #include <stdlib.h> /* Using function malloc, free. */

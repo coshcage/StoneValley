@@ -2,17 +2,9 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0908240640L00800
- *
- * The following text is copied from the source code of SQLite and padded
- * with a little bit addition to fit the goals for StoneValley project:
- *
- * The author disclaims copyright to this source code. In place of
- * a legal notice, here is a blessing:
- *   May you do good and not evil.
- *   May you find forgiveness for yourself and forgive others.
- *   May you share freely, never taking more than you give.
- *   Hope you never need to push yourself or other people too hard.
+ * File ID:     0306170948B0908240640L00792
+ * License:     LGPLv3
+ * Copyright (C) 2017-2024 John Cage
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */

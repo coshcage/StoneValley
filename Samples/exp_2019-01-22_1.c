@@ -2,7 +2,8 @@
 //  exp_2019-01-22_1.c
 //  A doubly-pointer linked-list solution to Josephus's ring.
 //  Created by cosh.cage#hotmail.com on 01/22/19.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2019-2024 John Cage
 //  Platform: Cross Platform.
 //
 #include <stdio.h>

@@ -2,7 +2,8 @@
 //  exp_2017-12-26_1.c
 //  This file demonstrates how to use Huffman coding tree.
 //  Created by cosh.cage#hotmail.com on 12/24/17.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2017-2024 John Cage
 //  Platform: Unix|GNU/Linux
 //
 

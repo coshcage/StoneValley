@@ -2,7 +2,8 @@
 //  exp_2019-06-20_1.c
 //  This file demonstrates usage of matrix by a puzzle game.
 //  Created by cosh.cage#hotmail.com on 06/20/19.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2019-2024 John Cage
 //  Platform: Unix|GNU/Linux
 //
 

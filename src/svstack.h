@@ -2,17 +2,9 @@
  * Name:        svstack.h
  * Description: Stacks interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318170912X0728191037L00153
- *
- * The following text is copied from the source code of SQLite and padded
- * with a little bit addition to fit the goals for StoneValley project:
- *
- * The author disclaims copyright to this source code. In place of
- * a legal notice, here is a blessing:
- *   May you do good and not evil.
- *   May you find forgiveness for yourself and forgive others.
- *   May you share freely, never taking more than you give.
- *   Hope you never need to push yourself or other people too hard.
+ * File ID:     0318170912X0728191037L00145
+ * License:     LGPLv3
+ * Copyright (C) 2017-2024 John Cage
  */
 
 #ifndef _SVSTACK_H_

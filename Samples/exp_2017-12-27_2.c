@@ -2,7 +2,8 @@
 //  exp_2017-12-27_2.c
 //  This file demonstrates how to use array represented circular queues.
 //  Created by cosh.cage#hotmail.com on 12/27/17.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2017-2024 John Cage
 //  Platform: Unix|GNU/Linux
 //
 

@@ -2,8 +2,9 @@
 //  exp_2019-02-14_1.c
 //  An example of matrices.
 //  Created by cosh.cage#hotmail.com on 02/14/19.
-//  Licence:  Public domain.
-//  Platform: Unix|GNU/Linux.
+//  License:  LGPLv3
+//  Copyright (C) 2019-2024 John Cage
+//  Platform: Unix|GNU/Linux
 //
 #include <stdio.h>
 #include <string.h>

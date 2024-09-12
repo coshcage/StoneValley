@@ -2,7 +2,8 @@
 //  exp_2018-01-17_1.c
 //  This file demonstrates how to use a chaining hash table represented set.
 //  Created by cosh.cage#hotmail.com on 01/17/18.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2018-2024 John Cage
 //  Platform: Unix|GNU/Linux
 //
 

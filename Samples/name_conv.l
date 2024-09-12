@@ -11,8 +11,9 @@
  * Then original files will be renamed as '#'s add their file names.
  *
  * Created by cosh.cage#hotmail.com on 10/03/18.
- * Licence: Public domain.
- * Platform:Unix|GNU/Linux
+ * License:  LGPLv3
+ * Copyright (C) 2018-2024 John Cage
+ * Platform: Unix|GNU/Linux
  *
  */
 %option noyywrap

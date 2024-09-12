@@ -3,7 +3,8 @@
 //  This file demonstrates how to use stacks, queues and binary trees.
 //  The program is used to compute or convert infix expressions.
 //  Created by cosh.cage#hotmail.com on 12/27/17.
-//  Licence:  Public domain.
+//  License:  LGPLv3
+//  Copyright (C) 2017-2024 John Cage
 //  Platform: Unix|GNU/Linux
 //
 

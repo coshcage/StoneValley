@@ -4,7 +4,7 @@ This file is used to trace bugs:
 10-14-2018:
 	Renaming existed functions in a published library is not a good conduct. I am sorry for the inconvenience that may caused by inconsistent naming. But I rather to eliminate those eyesores in function names.
 02-01-2018:
-	Some programs in directory ./Samples can't be compiled because of compilers behaved differently that triggered failures during crossing platforms.
+	Some programs in directory ./Examples can't be compiled because of compilers behaved differently that triggered failures during crossing platforms.
 05-12-2019:
 	Bugs may hide in function grpShortestPathL and grpMinimalSpanningTreeL at file svgraph.h.
 02-25-2023:

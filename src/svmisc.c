@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0907241900L00640
+ * File ID:     0306170948D0907241900L00643
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -34,7 +34,10 @@
  */
 void svPrintVersion(void)
 {
-	printf("StoneValley %s", SV_LIB_VER);
+	printf("StoneValley %s\n", SV_LIB_VER);
+	printf("%s\n", "Copyright (C) 2024 John Cage.");
+	printf("%s\n", "This is free software; see the source for copying conditions.  There is NO");
+	printf("%s\n", "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

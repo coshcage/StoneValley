@@ -1,16 +1,31 @@
+Copyright (C) 2017-2024 John Cage.
+
+All the files that this file listed and this file itself are parts of StoneValley.
+
+StoneValley is free software: you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
+
+StoneValley is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with StoneValley.
+If not, see <https://www.gnu.org/licenses/>.
+
 Example list:
 Example             Author  Platform        Description
-exp_2017-12-26_1.c  JCC     Unix|GNU/Linux  An example demonstrates how to use Huffman coding tree.
-exp_2017-12-27_1.c  JCC     Unix|GNU/Linux  An Expression tool that can convert infix expressions. Stacks, queues and binary trees are used.
-exp_2017-12-27_2.c  JCC     Unix|GNU/Linux  An example illustrates how to use array represented circular queues.
-exp_2017-12-28_1.c  JCC     Windows NT      This simple example shows how to use a double-ended linked list.
-exp_2018-01-17_1.c  JCC     Unix|GNU/Linux  A program shows how to use a chaining hash table represented set.
-exp_2018-09-26_1.c  JCC     Cross Platform  Two functions are involved in this file to demonstrate how to sort data in linked-lists.
-name_conv.l         JCC     Unix|GNU/Linux  A lex program that used to convert exported function names to Linux style.
-exp_2019-01-22_1.c  JCC     Cross Platform  A doubly-pointer linked-list solution to Josephus's ring.
-exp_2019-01-29_1.c  JCC     Windows NT      An example of permutation and combination.
-exp_2019-02-14_1.c  JCC     Unix|GNU/Linux  An example of matrices.
-exp_2019-06-20_1.c  JCC     Unix|GNU/Linux  A puzzle game example of a matrix.
+exp_2017-12-26_1.c  J.C.    Unix|GNU/Linux  An example demonstrates how to use Huffman coding tree.
+exp_2017-12-27_1.c  J.C.    Unix|GNU/Linux  An Expression tool that can convert infix expressions. Stacks, queues and binary trees are used.
+exp_2017-12-27_2.c  J.C.    Unix|GNU/Linux  An example illustrates how to use array represented circular queues.
+exp_2017-12-28_1.c  J.C.    Windows NT      This simple example shows how to use a double-ended linked list.
+exp_2018-01-17_1.c  J.C.    Unix|GNU/Linux  A program shows how to use a chaining hash table represented set.
+exp_2018-09-26_1.c  J.C.    Cross Platform  Two functions are involved in this file to demonstrate how to sort data in linked-lists.
+name_conv.l         J.C.     Unix|GNU/Linux  A lex program that used to convert exported function names to Linux style.
+exp_2019-01-22_1.c  J.C.     Cross Platform  A doubly-pointer linked-list solution to Josephus's ring.
+exp_2019-01-29_1.c  J.C.     Windows NT      An example of permutation and combination.
+exp_2019-02-14_1.c  J.C.     Unix|GNU/Linux  An example of matrices.
+exp_2019-06-20_1.c  J.C.     Unix|GNU/Linux  A puzzle game example of a matrix.
   _______________
  / /   __----__  \
  | |  ///--/  \\  |

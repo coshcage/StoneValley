@@ -7,6 +7,7 @@ i   Preface
 
 ii  Acknowledgement
 
+	*) Copyright (C) 2017-2024 John Cage. This copyright notice applies to each file in StoneValley, include ./svlogo.png. Other authors would claim copyright in each file respectively.
 	*) The whole project is published with GNU Lesser General Public License version 3.
 	*) StoneValley is provided with NO warranty.
 	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
@@ -16,15 +17,15 @@ iii Table of Contents
 	[Contents]                                                    [Line number]
 	Preface ................................................................. 3
 	Acknowledgement ......................................................... 8
-	Table of Contents ...................................................... 14
-	Scenario ............................................................... 29
-	Naming ................................................................. 66
-	Callbacks ............................................................. 111
-	Checklist ............................................................. 115
-	Alteration Guide ...................................................... 150
-	Limitations ........................................................... 299
-	Logs .................................................................. 309
-	Appendix .............................................................. 416
+	Table of Contents ...................................................... 15
+	Scenario ............................................................... 30
+	Naming ................................................................. 67
+	Callbacks ............................................................. 112
+	Checklist ............................................................. 116
+	Alteration Guide ...................................................... 151
+	Limitations ........................................................... 300
+	Logs .................................................................. 310
+	Appendix .............................................................. 417
 
 iv  Scenario
 

@@ -3,8 +3,8 @@
 //  External sorting for linked-lists.
 //  Created by cosh.cage#hotmail.com on 09/26/18.
 //  License:  LGPLv3
-//  Copyright (C) 2018-2024 John Cage
 //  Platform: Cross Platform.
+//  Copyright (C) 2018-2024 John Cage
 //
 // This file is part of StoneValley.
 //

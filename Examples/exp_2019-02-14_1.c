@@ -3,8 +3,8 @@
 //  An example of matrices.
 //  Created by cosh.cage#hotmail.com on 02/14/19.
 //  License:  LGPLv3
-//  Copyright (C) 2019-2024 John Cage
 //  Platform: Unix|GNU/Linux
+//  Copyright (C) 2019-2024 John Cage
 //
 // This file is part of StoneValley.
 //

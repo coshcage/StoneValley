@@ -1,3 +1,18 @@
+Copyright (C) 2017-2024 John Cage.
+
+All the files that this file listed and this file itself are parts of StoneValley.
+
+StoneValley is free software: you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
+
+StoneValley is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with StoneValley.
+If not, see <https://www.gnu.org/licenses/>.
+
 ﻿About StoneValley Project
 
 i   Preface
@@ -7,7 +22,6 @@ i   Preface
 
 ii  Acknowledgement
 
-	*) Copyright (C) 2017-2024 John Cage. This copyright notice applies to each file in StoneValley, include ./svlogo.png. Other authors would claim copyright in each file respectively.
 	*) The whole project is published with GNU Lesser General Public License version 3.
 	*) StoneValley is provided with NO warranty.
 	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
@@ -15,17 +29,17 @@ ii  Acknowledgement
 iii Table of Contents
 
 	[Contents]                                                    [Line number]
-	Preface ................................................................. 3
-	Acknowledgement ......................................................... 8
-	Table of Contents ...................................................... 15
-	Scenario ............................................................... 30
-	Naming ................................................................. 67
-	Callbacks ............................................................. 112
-	Checklist ............................................................. 116
-	Alteration Guide ...................................................... 151
-	Limitations ........................................................... 300
-	Logs .................................................................. 310
-	Appendix .............................................................. 417
+	Preface ................................................................ 18
+	Acknowledgement ........................................................ 23
+	Table of Contents ...................................................... 29
+	Scenario ............................................................... 44
+	Naming ................................................................. 81
+	Callbacks ............................................................. 126
+	Checklist ............................................................. 130
+	Alteration Guide ...................................................... 165
+	Limitations ........................................................... 314
+	Logs .................................................................. 324
+	Appendix .............................................................. 431
 
 iv  Scenario
 

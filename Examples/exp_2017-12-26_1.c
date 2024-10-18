@@ -3,8 +3,8 @@
 //  This file demonstrates how to use Huffman coding tree.
 //  Created by cosh.cage#hotmail.com on 12/24/17.
 //  License:  LGPLv3
-//  Copyright (C) 2017-2024 John Cage
 //  Platform: Unix|GNU/Linux
+//  Copyright (C) 2017-2024 John Cage
 //
 // This file is part of StoneValley.
 //
@@ -19,7 +19,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with StoneValley.
 // If not, see <https://www.gnu.org/licenses/>.
 //
-
 #include <stdio.h>
 #include "../src/svstring.h"
 #include "../src/svtree.h"

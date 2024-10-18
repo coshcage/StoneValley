@@ -3,8 +3,8 @@
 //  An example of permutation and combination.
 //  Created by cosh.cage#hotmail.com on 01/29/19.
 //  License:  LGPLv3
-//  Copyright (C) 2019-2024 John Cage
 //  Platform: Windows NT.
+//  Copyright (C) 2019-2024 John Cage
 //
 // This file is part of StoneValley.
 //

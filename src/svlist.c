@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0504240137L01264
+ * File ID:     0306170948C1028241140L01264
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -594,7 +594,7 @@ void strSwapItemLinkedListS(P_NODE_S pnodex, P_NODE_S pnodey)
 	}
 }
 
-/* Function name: strSortLinkedListS
+/* Function name: strQuickSortLinkedListS
  * Description:   Quickly sort a single pointer linked-list.
  * Parameters:
  *      phead Pointer to the first node of the single linked-list to be sorted.
@@ -604,7 +604,7 @@ void strSwapItemLinkedListS(P_NODE_S pnodex, P_NODE_S pnodey)
  * Tip:           This function can not sort circular single linked-list.
  *                Quick sort algorithm is used for this function.
  */
-LIST_S strSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
+LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 {
 	if (NULL == phead || NULL == phead->pnode)
 		return phead;
@@ -633,8 +633,8 @@ LIST_S strSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 			}
 		}
 
-		pleft = strSortLinkedListS(pleft, cbfcmp);
-		pright = strSortLinkedListS(pright, cbfcmp);
+		pleft = strQuickSortLinkedListS(pleft, cbfcmp);
+		pright = strQuickSortLinkedListS(pright, cbfcmp);
 
 		pivot->pnode = pright;
 		if (NULL == pleft)

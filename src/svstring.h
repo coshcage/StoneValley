@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0907241355L00476
+ * File ID:     0306170921Y1028241140L00476
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -153,7 +153,7 @@ P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     
 P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     pnode);
 P_NODE_S    strReverseLinkedListSC         (LIST_S       phead);
 void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
-LIST_S      strSortLinkedListS             (LIST_S       phead,    CBF_COMPARE  cbfcmp);
+LIST_S      strQuickSortLinkedListS        (LIST_S       phead,    CBF_COMPARE  cbfcmp);
 /* Functions for doubly linked-lists. */
 int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
 int         strTraverseLinkedListDC_A      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);

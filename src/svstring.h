@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1028241140L00476
+ * File ID:     0306170921Y1029240730L00477
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -90,24 +90,24 @@ typedef struct st_SPAMAT {
 } SPAMAT, * P_SPAMAT;
 
 /* Miscellaneous functions for linear data structures. */
-void        svSwap                         (void *       pleft,    void *       pright,  void *       ptemp,   size_t       size);
-void        svShellSort                    (void *       pbase,    void *       ptemp,   size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
-void *      svQuickSort                    (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
-void *      svMergeSort                    (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
-void *      svHeapSort                     (void *       pbase,    size_t       num,     size_t       size,    CBF_COMPARE  cbfcmp);
-void *      svBinarySearch                 (const void * pkey,     const void * pbase,   size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
+void        svSwap                         (void *       pleft,    void *       pright,    void *       ptemp,   size_t       size);
+void        svShellSort                    (void *       pbase,    void *       ptemp,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
+void *      svQuickSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
+void *      svMergeSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
+void *      svHeapSort                     (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
+void *      svBinarySearch                 (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 /* Atomic element function declarations here. */
-void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,     size_t       size);
+void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
-void        strSetArrayZ                   (P_ARRAY_Z    parrz,    const void * pval,    size_t       size);
-void *      strResizeArrayZ                (P_ARRAY_Z    parrz,    size_t       num,     size_t       size);
+void        strSetArrayZ                   (P_ARRAY_Z    parrz,    const void * pval,      size_t       size);
+void *      strResizeArrayZ                (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 void        strFreeArrayZ_O                (P_ARRAY_Z    parrz);
 void        strDeleteArrayZ_O              (P_ARRAY_Z    parrz);
-void *      strInitNodeS                   (P_NODE_S     pnode,    const void * pval,    size_t       size);
+void *      strInitNodeS                   (P_NODE_S     pnode,    const void * pval,      size_t       size);
 P_NODE_S    strCreateNodeS                 (const void * pval,     size_t       size);
 void        strFreeNodeS_O                 (P_NODE_S     pnode);
 void        strDeleteNodeS_O               (P_NODE_S     pnode);
-void *      strInitNodeD                   (P_NODE_D     pnode,    const void * pval,    size_t       size);
+void *      strInitNodeD                   (P_NODE_D     pnode,    const void * pval,      size_t       size);
 P_NODE_D    strCreateNodeD                 (const void * pval,     size_t       size);
 void        strFreeNodeD_O                 (P_NODE_D     pnode);
 void        strDeleteNodeD_O               (P_NODE_D     pnode);
@@ -115,65 +115,66 @@ void        strDeleteNodeD_O               (P_NODE_D     pnode);
 char *      strInitCharacterStringArrayZ   (P_ARRAY_Z    parrz,    const char * pstr);
 P_ARRAY_Z   strCreateCharacterStringArrayZ (const char * pstr);
 size_t      strLevelArrayZ_O               (P_ARRAY_Z    parrz);
-int         strTraverseArrayZ              (P_ARRAY_Z    parrz,    size_t       size,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
-void *      strCopyArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,    size_t       size);
-void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,    size_t       size);
-void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,    size_t       index);
-size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,   size_t       size,    BOOL         brev);
-size_t      strBinaryLocateArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
-void *      strInsertItemArrayZ            (P_ARRAY_Z    parrz,    const void * pitem,   size_t       size,    size_t       index);
-void        strRemoveItemArrayZ            (P_ARRAY_Z    parrz,    size_t       size,    size_t       index,   BOOL         bshrink);
-void        strSortArrayZ_O                (P_ARRAY_Z    parrz,    size_t       size,    CBF_COMPARE  cbfcmp);
-void *      strMergeSortedArrayZ           (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,    size_t       size,    CBF_COMPARE  cbfcmp);
-void *      strBinarySearchArrayZ_O        (P_ARRAY_Z    parrz,    const void * pkey,    size_t       size,    CBF_COMPARE  cbfcmp);
-void        strReverseArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,   size_t       size);
-void *      strGetLimitationArrayZ         (P_ARRAY_Z    parrz,    void *       ptemp,   size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bmax);
-void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       ptemp,   size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bshrink);
-BOOL        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,   size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bnext);
-BOOL        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,  size_t       size,    CBF_COMPARE  cbfcmp);
-void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,   size_t       size,    unsigned int seed);
-P_ARRAY_Z   strCreateZSearchArrayZ         (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn, size_t       size);
+int         strTraverseArrayZ              (P_ARRAY_Z    parrz,    size_t       size,      CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
+void *      strCopyArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
+void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
+void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,      size_t       index);
+size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    BOOL         brev);
+size_t      strBinaryLocateArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    CBF_COMPARE  cbfcmp);
+void *      strInsertItemArrayZ            (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    size_t       index);
+void        strRemoveItemArrayZ            (P_ARRAY_Z    parrz,    size_t       size,      size_t       index,   BOOL         bshrink);
+void        strSortArrayZ_O                (P_ARRAY_Z    parrz,    size_t       size,      CBF_COMPARE  cbfcmp);
+void *      strMergeSortedArrayZ           (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size,    CBF_COMPARE  cbfcmp);
+void *      strBinarySearchArrayZ_O        (P_ARRAY_Z    parrz,    const void * pkey,      size_t       size,    CBF_COMPARE  cbfcmp);
+void        strReverseArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size);
+void *      strGetLimitationArrayZ         (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bmax);
+void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bshrink);
+BOOL        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bnext);
+BOOL        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);
+void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    unsigned int seed);
+P_ARRAY_Z   strCreateZSearchArrayZ         (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size);
 /* Functions for single pointer linked-lists. */
-int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,    CBF_TRAVERSE cbftvs,  size_t       param);
-int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,    CBF_TRAVERSE cbftvs,  size_t       param);
-int         strTraverseLinkedListSC_N      (LIST_S       list,     P_NODE_S     pnil,    CBF_TRAVERSE cbftvs,  size_t       param);
+int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
+int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
+int         strTraverseLinkedListSC_N      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 void        strInitLinkedListSC_O          (P_LIST_S     plist);
 void        strFreeLinkedListSC            (P_LIST_S     plist);
 P_LIST_S    strCreateLinkedListSC          (void);
 void        strDeleteLinkedListSC_O        (P_LIST_S     plist);
 size_t      strLevelLinkedListSC           (LIST_S       list);
 P_NODE_S    strCopyLinkedListSC            (LIST_S       psrc,     size_t       size);
-int         strCompareLinkedListSC         (LIST_S       listx,    LIST_S       listy,   CBF_COMPARE  cbfcmp);
-P_NODE_S    strSearchLinkedListSC          (LIST_S       list,     const void * pitem,   size_t       size);
+int         strCompareLinkedListSC         (LIST_S       listx,    LIST_S       listy,     CBF_COMPARE  cbfcmp);
+P_NODE_S    strSearchLinkedListSC          (LIST_S       list,     const void * pitem,     size_t       size);
 P_NODE_S    strLocatePreviousItemSC        (LIST_S       list,     P_NODE_S     pnode);
 P_NODE_S    strLocateLastItemSC            (LIST_S       list);
 P_NODE_S    strLocateItemSC_R              (P_NODE_S     pnode,    size_t       incmtl);
 P_NODE_S    strLocateItemSC_N              (P_NODE_S     pnode,    size_t       incmtl);
-P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     pdest,   P_NODE_S     pnode,   BOOL         bafter);
+P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     pdest,     P_NODE_S     pnode,   BOOL         bafter);
 P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     pnode);
 P_NODE_S    strReverseLinkedListSC         (LIST_S       phead);
 void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
 LIST_S      strQuickSortLinkedListS        (LIST_S       phead,    CBF_COMPARE  cbfcmp);
 /* Functions for doubly linked-lists. */
-int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
-int         strTraverseLinkedListDC_A      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
-int         strTraverseLinkedListDC_N      (LIST_D       list,     P_NODE_D     pnil,    CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
+int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
+int         strTraverseLinkedListDC_A      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
+int         strTraverseLinkedListDC_N      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  BOOL        brev);
 void        strInitLinkedListDC_O          (P_LIST_D     plist);
 void        strFreeLinkedListDC            (P_LIST_D     plist,    BOOL         brev);
 P_LIST_D    strCreateLinkedListDC          (void);
 void        strDeleteLinkedListDC_O        (P_LIST_D     plist,    BOOL         brev);
 size_t      strLevelLinkedListDC           (LIST_D       list,     BOOL         brev);
-P_NODE_D    strCopyLinkedListDC            (LIST_D       psrc,     size_t       size,    BOOL brev);
-int         strCompareLinkedListDC         (LIST_D       listx,    LIST_D       listy,   CBF_COMPARE  cbfcmp,  BOOL         brev);
-P_NODE_D    strSearchLinkedListDC          (LIST_D       list,     const void * pitem,   size_t       size,    BOOL         brev);
+P_NODE_D    strCopyLinkedListDC            (LIST_D       psrc,     size_t       size,      BOOL brev);
+int         strCompareLinkedListDC         (LIST_D       listx,    LIST_D       listy,     CBF_COMPARE  cbfcmp,  BOOL         brev);
+P_NODE_D    strSearchLinkedListDC          (LIST_D       list,     const void * pitem,     size_t       size,    BOOL         brev);
 P_NODE_D    strLocateItemDC_R              (P_NODE_D     pnode,    ptrdiff_t    incmtl);
 P_NODE_D    strLocateItemDC_N              (P_NODE_D     pnode,    ptrdiff_t    incmtl);
-P_NODE_D    strInsertItemLinkedListDC      (P_NODE_D     pdest,    P_NODE_D     pnode,   BOOL         bafter);
+P_NODE_D    strInsertItemLinkedListDC      (P_NODE_D     pdest,    P_NODE_D     pnode,     BOOL         bafter);
 P_NODE_D    strRemoveItemLinkedListDC      (P_NODE_D     pnode);
 void        strSwapItemLinkedListD         (P_NODE_D     pnodex,   P_NODE_D     pnodey);
 /* Functions for both linked-list_S and linked-list_D. */
-void        strSwapContentLinkedListSD     (void *       pnodex,   size_t       sizex,   void *       pnodey,  size_t       sizey,  NodeType    bnodes);
-void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,     BOOL         brev);
+void        strSwapContentLinkedListSD     (void *       pnodex,   size_t       sizex,     void *       pnodey,  size_t       sizey,  NodeType    bnodes);
+void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       BOOL         brev);
+void *      strMergeSortLinkedListSDC      (void *       list,     BOOL         bCircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
 /* Functions for bit-streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
 void        strFreeBitStream               (P_BITSTREAM  pbstm);

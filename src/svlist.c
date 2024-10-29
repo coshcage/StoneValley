@@ -1279,7 +1279,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, BOOL brev)
  */
 void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_COMPARE cbfcmp)
 {
-	REGISTER void * p, * q, * e, * tail, * oldhead, * t;
+	REGISTER void * p, * q, * e, * tail, * oldhead;
 	REGISTER size_t insize, nmerges, psize, qsize, i;
 	REGISTER P_NODE_S pa, pb;
 	REGISTER P_NODE_D px, py;
@@ -1299,9 +1299,9 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 			if (e == p)
 				break;
 			{
-				t = *(void **)p;
+				p1 = *(void **)p;
 				*(void **)p = *((void **)p + NEXT);
-				*((void **)p + NEXT) = t;
+				*((void **)p + NEXT) = p1;
 			}
 			e = p;
 			p = *(void **)p;
@@ -1442,9 +1442,9 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 					if (e == p)
 						break;
 					{
-						t = *(void **)p;
+						p2 = *(void **)p;
 						*(void **)p = *((void **)p + NEXT);
-						*((void **)p + NEXT) = t;
+						*((void **)p + NEXT) = p2;
 					}
 					e = p;
 					p = *((void **)p + NEXT);

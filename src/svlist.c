@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C1029240730L01460
+ * File ID:     0306170948C1029240730L01456
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -1313,7 +1313,7 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 
 	insize = 1;
 
-	for (;; )
+	for ( ;; )
 	{
 		p = list;
 		oldhead = list; /* Used for circular linkage. */
@@ -1327,7 +1327,7 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 		{
 			/* There exists a merge to be done. */
 			++nmerges;
-			/* Step `insize' places along from p. */
+			/* Step 'insize' places along from p. */
 			q = p;
 			psize = 0;
 			for (i = 0; i < insize; ++i)
@@ -1397,22 +1397,18 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 
 				/* Add the next element to the merged list. */
 				if (NULL != tail)
-				{
 					*(void **)tail = e;
-				}
 				else
-				{
 					list = e;
-				}
+				
+				/* Maintain reverse pointers in a doubly linked list. */
 				if (ENT_DOUBLE == ntp)
-				{
-					/* Maintain reverse pointers in a doubly linked list. */
 					*((void **)e + NEXT) = tail;
-				}
+				
 				tail = e;
 			}
 
-			/* Now p has stepped `insize' places along, and q has too. */
+			/* Now p has stepped 'insize' places along, and q has too. */
 			p = q;
 		}
 

@@ -70,7 +70,7 @@ P_QUEUE_A queCreateAC(size_t num, size_t size)
 	if (NULL != pquen)
 	{
 		if (NULL == queInitAC(pquen, num, size))
-		{	/* Allocation failue. */
+		{	/* Allocation failure. */
 			free(pquen);
 			return NULL;
 		}

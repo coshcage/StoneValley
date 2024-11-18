@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C1118240255L01409
+ * File ID:     0306170948C1118240255L01408
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -1324,7 +1324,6 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 			/* Now we have two lists; Merge them. */
 			while (psize > 0 || (qsize > 0 && NULL != q))
 			{
-
 				/* Decide whether the next element of merge comes from p or q. */
 				if (0 == psize)
 				{

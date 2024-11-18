@@ -27,8 +27,8 @@
 #include "svdef.h"
 
 /* The following two macros are used to address nodes pointers for NODE_D structures. */
-#define PREV 0
-#define NEXT 1
+#define PREV 1
+#define NEXT 0
 
 /* Sized array. */
 typedef struct st_ARRAY_Z {

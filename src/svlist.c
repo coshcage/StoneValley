@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C1029240730L01456
+ * File ID:     0306170948C1118240255L01409
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -260,7 +260,7 @@ void strDeleteLinkedListSC_O(P_LIST_S plist)
  * Parameter:
  *      list Pointer to the first NODE_S element while traversal.
  * Return value:  The number of nodes in a single-pointer linked-list.
- * Tip:           An element of a circular linked-lists is suitable to be a parameter of this function.
+ * Tip:           An element of a circular linked-list is suitable to be a parameter of this function.
  */
 size_t strLevelLinkedListSC(LIST_S list)
 {
@@ -1203,8 +1203,8 @@ void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size
  *        ntp Node type.
  *            Input ENT_DOUBLE for doubly linked-list nodes. Cast P_NODE_D to (void *) as parameters.
  *            Input ENT_SINGLE for single linked-list nodes. Cast P_NODE_S to (void *) as parameters.
- *       brev Input TRUE to search linked-lists reversely.
- *            Input FASLE to search linked-list in order.
+ *       brev Input TRUE to search a linked-list reversely.
+ *            Input FASLE to search a linked-list in order.
  * Return value:  Pointer of the last item of the linked-list will be casted into (void *) and returned.
  */
 void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, BOOL brev)
@@ -1284,29 +1284,6 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 	REGISTER P_NODE_S pa, pb;
 	REGISTER P_NODE_D px, py;
 	REGISTER void * p1, * p2;
-
-	/* Firstly, we need to swap NEXT and PREV pointer in a double linked list. */
-	if (ntp == ENT_DOUBLE)
-	{
-		p = list;
-		e = NULL;
-		while (NULL != p)
-		{
-			/* Break at the header of a circular list. */
-			if (NULL != e && p == list)
-				break;
-			/* Dead loop appears only if A->B and B->B. We have to prevent it from occurring. */
-			if (e == p)
-				break;
-			{
-				p1 = *(void **)p;
-				*(void **)p = *((void **)p + NEXT);
-				*((void **)p + NEXT) = p1;
-			}
-			e = p;
-			p = *(void **)p;
-		}
-	}
 
 	if (NULL == list)
 		return NULL;
@@ -1403,7 +1380,7 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 				
 				/* Maintain reverse pointers in a doubly linked list. */
 				if (ENT_DOUBLE == ntp)
-					*((void **)e + NEXT) = tail;
+					*((void **)e + PREV) = tail;
 				
 				tail = e;
 			}
@@ -1416,38 +1393,14 @@ void * strMergeSortLinkedListSDC(void * list, BOOL bCircular, NodeType ntp, CBF_
 		{
 			*(void **)tail = list;
 			if (ENT_DOUBLE == ntp)
-				*((void **)list + NEXT) = tail;
+				*((void **)list + PREV) = tail;
 		}
 		else
 			*(void **)tail = NULL;
 
 		/* If we have done only one merge, we're finished. */
 		if (nmerges <= 1) /* Allow for nmerges == 0, the empty list case. */
-		{
-			/* Finally before quit, we need to swap NEXT and PREV pointer in a double linked list. */
-			if (ntp == ENT_DOUBLE)
-			{
-				p = list;
-				e = NULL;
-				while (NULL != p)
-				{
-					/* Break at the header of a circular list. */
-					if (NULL != e && p == list)
-						break;
-					/* Dead loop appears only if A->B and B->B. We have to prevent it from occurring. */
-					if (e == p)
-						break;
-					{
-						p2 = *(void **)p;
-						*(void **)p = *((void **)p + NEXT);
-						*((void **)p + NEXT) = p2;
-					}
-					e = p;
-					p = *((void **)p + NEXT);
-				}
-			}
 			return list;
-		}
 
 		/* Otherwise repeat, merging lists twice the size. */
 		insize <<= 1;

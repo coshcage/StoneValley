@@ -27,8 +27,8 @@
 #include "svstring.h"
 
 /* The following two macros are used to direct nodes for TNODE_BY structures in binary trees. */
-#define LEFT  PREV
-#define RIGHT NEXT
+#define LEFT  0
+#define RIGHT 1
 
 /* Types for binary trees. */
 typedef NODE_D     TNODE_BY;   /* Node for binary trees. */

@@ -84,7 +84,7 @@ void treDeleteHeapA(P_HEAP_A pheap)
 }
 
 /* Function name: treIsEmptyHeapA_O
- * Description:   Make a judgement whether an array implemented heap is empty or not.
+ * Description:   Make a judgment whether an array implemented heap is empty or not.
  * Parameter:
  *     pheap Pointer to the heap you want to check.
  * Return value:
@@ -98,7 +98,7 @@ BOOL treIsEmptyHeapA_O(P_HEAP_A pheap)
 }
 
 /* Function name: treIsFullHeapA_O
- * Description:   Make a judgement for whether an array implemented heap is full or not.
+ * Description:   Make a judgment for whether an array implemented heap is full or not.
  * Parameter:
  *     pstka Pointer to the heap you want to check.
  * Return value:

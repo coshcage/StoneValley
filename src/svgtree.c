@@ -198,8 +198,8 @@ int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 /* Function name: treArityG
  * Description:   Returns how many nodes in a generic tree.
  * Parameter:
- *     pnode Pointer to a node of a binary tree. It is usually the root node of a tree.
- * Return value:  Nodes number in a binary tree.
+ *     pnode Pointer to a node of a generic tree. It is usually the root node of a tree.
+ * Return value:  Nodes number in a generic tree.
  */
 size_t treArityG(P_TNODE_G pnode)
 {

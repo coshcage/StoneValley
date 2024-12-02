@@ -538,8 +538,8 @@ BOOL treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
  *     pright Pointer to the right sub node.
  * Return value:  proot will return.
  *                NULL would return if function could not create a new node.
- * Caution:       Both pnode1 and pnode2 shall not appear in the same sub-tree.
- *                pnode1 shall not equal to pnode2.
+ * Caution:       Both pleft and pright shall not appear in the same sub-tree.
+ *                pleft shall not equal to pright.
  */
 P_TNODE_BY treMergeNodesBY(P_TNODE_BY proot, const void * pitem, size_t size, P_TNODE_BY pleft, P_TNODE_BY pright)
 {

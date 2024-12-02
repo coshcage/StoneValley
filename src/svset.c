@@ -130,7 +130,7 @@ size_t setSizeH_O(P_SET_H pset)
 }
 
 /* Function name: setIsEmptyH_O
- * Description:   Make a judgement whether a set is empty or not.
+ * Description:   Make a judgment whether a set is empty or not.
  * Parameter:
  *      pset Pointer to the stack you want to check.
  * Return value:

@@ -296,7 +296,7 @@ BOOL grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
  * Parameters:
  *       pgrp Pointer to a graph.
  *     cbftvs Pointer to a callback function.
- *            The first parameter of cbftvs pointes to each VERTEX_L structure.
+ *            The first parameter of cbftvs points to each VERTEX_L structure.
  *      param Additional information for each vertex.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.

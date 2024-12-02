@@ -88,7 +88,7 @@ void stkDeleteA(P_STACK_A pstka)
 }
 
 /* Function name: stkIsEmptyA_O
- * Description:   Make a judgement whether a stack is empty or not.
+ * Description:   Make a judgment whether a stack is empty or not.
  * Parameter:
  *     pstka Pointer to the stack you want to check.
  * Return value:
@@ -102,7 +102,7 @@ BOOL stkIsEmptyA_O(P_STACK_A pstka)
 }
 
 /* Function name: stkIsFullA_O
- * Description:   Make a judgement whether a stack is full or not.
+ * Description:   Make a judgment whether a stack is full or not.
  * Parameter:
  *     pstka Pointer to the stack you want to check.
  * Return value:
@@ -226,7 +226,7 @@ void stkDeleteL_O(P_STACK_L pstkl)
 }
 
 /* Function name: stkIsEmptyL
- * Description:   Make a judgement whether a stack is empty or not.
+ * Description:   Make a judgment whether a stack is empty or not.
  * Parameter:
  *     pstkl Pointer to the stack you want to check.
  * Return value:

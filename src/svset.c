@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L1204230301L00886
+ * File ID:     0901171620L1217240707L00907
  * License:     LGPLv3
  * Copyright (C) 2017-2024 John Cage
  *
@@ -113,7 +113,8 @@ P_SET_H setCreateH_O(size_t buckets)
  */
 void setDeleteH_O(P_SET_H pset)
 {
-	hshDeleteC(pset);
+	if (NULL != pset)
+		hshDeleteC(pset);
 }
 
 /* Function name: setSizeH_O
@@ -291,9 +292,9 @@ P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t si
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
-		if (NULL == psetb)
+		if (NULL != pseta)
 			hshTraverseC(pseta, _setCBFUnionHPuppet, (size_t)a);
-		if (NULL == pseta)
+		if (NULL != psetb)
 			hshTraverseC(psetb, _setCBFUnionHPuppet, (size_t)a);
 		if (setIsEmptyH(psetr))
 		{
@@ -370,12 +371,12 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
 		a[4] = TRUE;
-		if (NULL == psetb)
+		if (NULL != psetb)
 		{
 			a[3] = (size_t)psetb;
 			hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a);
 		}
-		if (NULL == pseta && pseta != psetb)
+		if (NULL != pseta && pseta != psetb)
 		{
 			a[3] = (size_t)pseta;
 			hshTraverseC(psetb, _setCBFIntersectionHPuppet, (size_t)a);
@@ -663,17 +664,27 @@ void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  */
 int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 {
-	P_BSTNODE pnode =
-		_setInsertBST
+	if
+	(! setIsMemberT
 		(
-			**(P_SET_T *)0[(size_t *)param],
+			*(P_SET_T *)0[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
-			2[(size_t *)param],
-			(CBF_COMPARE) 1[(size_t *)param]
-		);
-	if (NULL == pnode)
-		return CBF_TERMINATE; /* Allocation failure. */
-	**(P_SET_T *)0[(size_t *)param] = pnode;  /* Alter the root of tree. */
+			(CBF_COMPARE)1[(size_t *)param]
+		)
+	)
+	{
+		P_BSTNODE pnode =
+			_setInsertBST
+			(
+				**(P_SET_T *)0[(size_t *)param],
+				((P_BSTNODE)pitem)->knot.pdata,
+				2[(size_t *)param],
+				(CBF_COMPARE)1[(size_t *)param]
+			);
+		if (NULL == pnode)
+			return CBF_TERMINATE; /* Allocation failure. */
+		**(P_SET_T *)0[(size_t *)param] = pnode;  /* Alter the root of tree. */
+	}
 	return CBF_CONTINUE;
 }
 
@@ -740,22 +751,32 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 		(
 			**(P_SET_T *)3[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
-			(CBF_COMPARE) 1[(size_t *)param]
+			(CBF_COMPARE)1[(size_t *)param]
 		)
 		? FALSE : TRUE);
 	if (r == (BOOL)4[(size_t *)param])
 	{
-		P_BSTNODE pnode =
-		_setInsertBST
-		(
-			**(P_SET_T *)0[(size_t *)param],
-			((P_BSTNODE)pitem)->knot.pdata,
-			2[(size_t *)param],
-			(CBF_COMPARE) 1[(size_t *)param]
-		);
-		if (NULL == pnode)
-			return CBF_TERMINATE; /* Allocation failure. */
-		**(P_SET_T *)0[(size_t *)param] = pnode; /* Alter the root of tree. */
+		if
+		(! setIsMemberT
+			(
+				*(P_SET_T *)0[(size_t *)param],
+				((P_BSTNODE)pitem)->knot.pdata,
+				(CBF_COMPARE)1[(size_t *)param]
+			)
+		)
+		{
+			P_BSTNODE pnode =
+			_setInsertBST
+			(
+				**(P_SET_T *)0[(size_t *)param],
+				((P_BSTNODE)pitem)->knot.pdata,
+				2[(size_t *)param],
+				(CBF_COMPARE)1[(size_t *)param]
+			);
+			if (NULL == pnode)
+				return CBF_TERMINATE; /* Allocation failure. */
+			**(P_SET_T *)0[(size_t *)param] = pnode; /* Alter the root of tree. */
+		}
 	}
 	return CBF_CONTINUE;
 }
@@ -883,3 +904,4 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 		return r;
 	}
 }
+

@@ -115,6 +115,7 @@ Logs:
 09-07-2024: Library refined. Version 1.2.1.0. svHeapSort added.
 09-12-2024: Migrate to new license. Version 1.2.1.1.
 10-29-2024: Library refined. Version 1.2.1.2.
+12-17-2024: Bugs of set are fixed. Version 1.2.1.3.
 _______________________________________________________________________________
 
 09-24-2018:
@@ -159,6 +160,8 @@ _______________________________________________________________________________
 	}
 	Users should use AVL tree instead of AA tree.
 	Fixed.
+12-17-2024:
+	Bugs at svset.c, SET_T and SET_H are both fixed.
 _______________________________________________________________________________
                 GNU Free Documentation License
                  Version 1.3, 3 November 2008

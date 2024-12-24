@@ -115,3 +115,4 @@ size_t     hshCBFHashString (const void * pstr);
  *     replace its content with zero in a slot rather than put the flag of this slot into FALSE.
  *     So that a removal could be fast.
  */
+

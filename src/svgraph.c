@@ -1433,3 +1433,4 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	strFreeArrayZ(&arrvtx);
 	return prtn;
 }
+

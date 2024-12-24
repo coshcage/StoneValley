@@ -640,3 +640,4 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
 	}
 	return NULL; /* No match. */
 }
+

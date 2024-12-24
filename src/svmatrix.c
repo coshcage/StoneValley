@@ -903,3 +903,4 @@ BOOL strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 	}
 	return FALSE;
 }
+

@@ -429,3 +429,4 @@ Lbl_Decoding_Failure:
 	}
 	return NULL; /* No symbol table. */
 }
+

@@ -803,3 +803,4 @@ P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t si
 	}
 	return parr;
 }
+

@@ -59,7 +59,7 @@ void       grpDeleteL              (P_GRAPH_L pgrp);
 size_t     grpVerticesCountL_O     (P_GRAPH_L pgrp);
 size_t     grpEdgesCountL          (P_GRAPH_L pgrp);
 BOOL       grpAreAdjacentVerticesL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   BOOL         bweight, size_t weight);
-int        grpTraverseEdgesWeightL (P_GRAPH_L pgrp, size_t       vidx, size_t         vidy,   CBF_TRAVERSE cbftvs,  size_t param);
+int        grpTraverseEdgesWeightL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   CBF_TRAVERSE cbftvs,  size_t param);
 size_t     grpIndegreeVertexL      (P_GRAPH_L pgrp, size_t       vid);
 size_t     grpOutdegreeVertexL     (P_GRAPH_L pgrp, size_t       vid);
 BOOL       grpInsertVertexL        (P_GRAPH_L pgrp, size_t       vid);
@@ -131,3 +131,4 @@ P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
  *  |/_      6    _\|
  * (Vertex 2)->(Vertex 3)
  */
+

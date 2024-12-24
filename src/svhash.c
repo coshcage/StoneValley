@@ -613,3 +613,4 @@ size_t hshCBFHashString(const void * pkey)
 		hrtn = (hrtn << 5) + *pstr++;
 	return hrtn;
 }
+

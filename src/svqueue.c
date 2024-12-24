@@ -507,3 +507,4 @@ P_NODE_D queEjectDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
 	}
 	return ptmp;
 }
+

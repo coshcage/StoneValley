@@ -244,3 +244,4 @@ BOOL trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 	}
 	return FALSE;
 }
+

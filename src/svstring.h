@@ -474,3 +474,4 @@ BOOL        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
  *  |___pdata|   |___pdata|   |___pdata|   |___pdata|
  *  |_______*-[2]|_______*-[4]|_______*-[6]|_______*-[8]
  */
+

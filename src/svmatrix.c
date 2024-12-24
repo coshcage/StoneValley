@@ -398,7 +398,7 @@ int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 	return CBF_TERMINATE;
 }
 
-/* Enumeration describes index of matrices and algebric operations on matrices. */
+/* Enumeration describes index of matrices and algebraic operations on matrices. */
 typedef enum _en_M3Matrix  { _M3M_C, _M3M_A, _M3M_B } _M3Matrix;
 typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
 

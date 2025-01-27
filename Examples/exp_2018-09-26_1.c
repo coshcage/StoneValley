@@ -4,7 +4,7 @@
 //  Created by cosh.cage#hotmail.com on 09/26/18.
 //  License:  LGPLv3
 //  Platform: Cross Platform.
-//  Copyright (C) 2018-2024 John Cage
+//  Copyright (C) 2018-2025 John Cage
 //
 // This file is part of StoneValley.
 //
@@ -198,3 +198,4 @@ int main(void)
 	strFreeLinkedListDC(&list2, FALSE);
 	return 0;
 }
+

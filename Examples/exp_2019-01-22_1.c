@@ -4,7 +4,7 @@
 //  Created by cosh.cage#hotmail.com on 01/22/19.
 //  License:  LGPLv3
 //  Platform: Cross Platform.
-//  Copyright (C) 2019-2024 John Cage
+//  Copyright (C) 2019-2025 John Cage
 //
 // This file is part of StoneValley.
 //
@@ -116,3 +116,4 @@ to choose to delete ite%s sequentially? ", sfx[(j > 1) + 2], j, sfx[j > 1], sfx[
 	while (c != 'Y' && c != 'y' && c != 'N' && c != 'n');
 	return 0;
 }
+

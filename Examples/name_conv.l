@@ -13,7 +13,7 @@
  * Created by cosh.cage#hotmail.com on 10/03/18.
  * License:  LGPLv3
  * Platform: Unix|GNU/Linux
- * Copyright (C) 2018-2024 John Cage
+ * Copyright (C) 2018-2025 John Cage
  *
  * This file is part of StoneValley.
  *
@@ -116,3 +116,4 @@ int main(int argc, char * argv[])
 	}
 	return 0;
 }
+

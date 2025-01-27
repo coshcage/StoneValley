@@ -4,7 +4,7 @@
 //  Created by cosh.cage#hotmail.com on 12/27/17.
 //  License:  LGPLv3
 //  Platform: Unix|GNU/Linux
-//  Copyright (C) 2017-2024 John Cage
+//  Copyright (C) 2017-2025 John Cage
 //
 // This file is part of StoneValley.
 //
@@ -97,3 +97,4 @@ Lbl_Exit:
 	queDeleteAC(pque);
 	return 0;
 }
+

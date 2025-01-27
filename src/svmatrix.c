@@ -4,7 +4,7 @@
  * Author:      cosh.cage#hotmail.com
  * File ID:     0213191430N0417240603L00906
  * License:     LGPLv3
- * Copyright (C) 2019-2024 John Cage
+ * Copyright (C) 2019-2025 John Cage
  *
  * This file is part of StoneValley.
  *

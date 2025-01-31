@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1029240730L00477
+ * File ID:     0306170921Y0131251421L00478
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -133,6 +133,7 @@ BOOL        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       
 BOOL        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    unsigned int seed);
 P_ARRAY_Z   strCreateZSearchArrayZ         (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size);
+void *      strResizeBufferedArrayZ        (P_ARRAY_Z    parrz,    size_t       size,      ptrdiff_t    incl);
 /* Functions for single pointer linked-lists. */
 int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);

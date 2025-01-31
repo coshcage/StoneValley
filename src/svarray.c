@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0908240640L00806
+ * File ID:     0306170948B0131251420L00834
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -802,5 +802,33 @@ P_ARRAY_Z strCreateZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t si
 		free(z);
 	}
 	return parr;
+}
+
+/* Function name: strResizeBufferedArrayZ
+ * Description:   Increase or decrease the size of a sized array.
+ * Parameters:
+ *      parrz Pointer to a sized array.
+ *       size Size of each element in the array.
+ *       incl Incremental of size which you want to change to the array.
+ *            Input a positive number to increase size.
+ *            Input a negative number to decrease size.
+ * Return value:  The address of the buffer of array.
+ * Caution:       Address of parrz Must Be Allocated first.
+ * Tip:           // strResizeBufferedArrayZ(parr, sizeof(int), +BUFSIZ);
+ *                // strResizeBufferedArrayZ(parr, sizeof(int), -BUFSIZ);
+ */
+void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
+{
+	if (0 == incl)
+		return parrz->pdata;
+	if (incl > 0)
+		return strResizeArrayZ(parrz, strLevelArrayZ(parrz) + (size_t)incl, size);
+	else
+	{
+		incl = -incl;
+		if (strLevelArrayZ(parrz) <= incl)
+			return NULL;
+		return strResizeArrayZ(parrz, strLevelArrayZ(parrz) - (size_t)incl, size);
+	}
 }
 

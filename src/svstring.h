@@ -101,6 +101,7 @@ void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
 void        strSetArrayZ                   (P_ARRAY_Z    parrz,    const void * pval,      size_t       size);
 void *      strResizeArrayZ                (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
+void *      strResizeBufferedArrayZ        (P_ARRAY_Z    parrz,    size_t       size,      ptrdiff_t    incl);
 void        strFreeArrayZ_O                (P_ARRAY_Z    parrz);
 void        strDeleteArrayZ_O              (P_ARRAY_Z    parrz);
 void *      strInitNodeS                   (P_NODE_S     pnode,    const void * pval,      size_t       size);
@@ -133,7 +134,6 @@ BOOL        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       
 BOOL        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    unsigned int seed);
 P_ARRAY_Z   strCreateZSearchArrayZ         (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size);
-void *      strResizeBufferedArrayZ        (P_ARRAY_Z    parrz,    size_t       size,      ptrdiff_t    incl);
 /* Functions for single pointer linked-lists. */
 int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0220251750L00986
+ * File ID:     0213191430N0220251850L00986
  * License:     LGPLv3
  * Copyright (C) 2019-2025 John Cage
  *
@@ -832,7 +832,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 		if (FALSE != (0x01 & (pmtx->bmask.arrz.pdata[l] >> j)))
 		{	/* Item exists. */
 			REGISTER size_t s = 0;
-			P_NODE_S pnode;
+			REGISTER P_NODE_S pnode;
 			/* Count items. */
 			/* This isn't good, because we spent too much time during checking.
 			for (i = 0; i < l; ++i)
@@ -878,9 +878,9 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		return FALSE; /* Over size. */
 	else
 	{
-		REGISTER size_t i, j, l, m, s = 0, z = 0;
-		P_NODE_S pnode;
-		UCHART t, u;
+		REGISTER size_t i, j, l, m, s = 0;
+		REGISTER P_NODE_S pnode;
+		REGISTER UCHART t, u;
 		/* Initialize variables. */
 		if (dr.rem)
 		{
@@ -908,7 +908,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		/* Count the rest of items. */
 		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
-				++s, ++z;
+				++s;
 		if (FALSE != (0x01 & u))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))

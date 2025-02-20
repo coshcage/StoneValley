@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0131251421L00478
+ * File ID:     0306170921Y0220251750L00479
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -85,6 +85,7 @@ typedef MATRIX BITMAT, * P_BITMAT;
 
 /* Definition of sparse-matrix structure. */
 typedef struct st_SPAMAT {
+	ARRAY_Z bita;  /* Fenwick tree/Binary indexed tree array. */
 	BITMAT bmask;  /* Data bit mask. */
 	LIST_S datlst; /* Data list. */
 } SPAMAT, * P_SPAMAT;

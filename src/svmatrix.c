@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0417240603L00906
+ * File ID:     0213191430N0220251750L00986
  * License:     LGPLv3
  * Copyright (C) 2019-2025 John Cage
  *
@@ -637,6 +637,69 @@ BOOL strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
 }
 
 /* Functions for sparse matrices are implemented bellow. */
+/* Sectional function declarations. */
+void   _strBITUpdateItem(size_t    idx,  size_t    val,  P_ARRAY_Z parrz);
+size_t _strBITLocateItem(size_t    idx,  P_ARRAY_Z parrz);
+void   _strBITConstruct (P_ARRAY_Z parrz);
+
+/* This macro is used to get lowest bit of an integer and is for Fenwick trees. */
+#define _LOWBIT(x) ((x) & (~(x) + 1))
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _strBITUpdateItem
+ * Description:   Update array item.
+ * Parameters:
+ *        idx Index of the bit indexed tree array.
+ *        val Incremental value which shall be added to array item.
+ *      parrz Pointer to Fenwick tree which is an array of size_t integers.
+ * Return value:  N/A.
+ */
+void _strBITUpdateItem(size_t idx, size_t val, P_ARRAY_Z parrz)
+{
+	while (idx < strLevelArrayZ(parrz))
+	{
+		*(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), idx) += val;
+		idx += _LOWBIT(idx);
+	}
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _strBITLocateItem
+ * Description:   Locate an item in a Fenwick tree.
+ *                Count the summary of [0, index].
+ * Parameters:
+ *        idx Index of the bit indexed tree array.
+ *      parrz Pointer to Fenwick tree which is an array of size_t integers.
+ * Return value:  Summary value.
+ */
+size_t _strBITLocateItem(size_t idx, P_ARRAY_Z parrz)
+{
+	REGISTER size_t r = 0;
+	while (idx)
+	{
+		r += *(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), idx);
+		idx -= _LOWBIT(idx);
+	}
+	return r;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _strBITConstruct
+ * Description:   Construct a Fenwick tree through a sized-array.
+ * Parameter:
+ *     parrz Pointer an array of size_t integers.
+ * Return value:  N/A.
+ */
+void _strBITConstruct(P_ARRAY_Z parrz)
+{
+	REGISTER size_t i, p;
+	for (i = 1; i <= strLevelArrayZ(parrz); ++i)
+	{
+		p = i + _LOWBIT(i);
+		if (p <= strLevelArrayZ(parrz))
+			*(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), p - 1) += *(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), i - 1);
+	}
+}
 
 /* Function name: strInitSparseMatrix
  * Description:   Initialize a sparse matrix.
@@ -650,8 +713,10 @@ BOOL strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
  */
 BOOL strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
 {
+	if (NULL != strInitArrayZ(&pmtx->bita, ln, sizeof(size_t)))
+		memset(pmtx->bita.pdata, 0, sizeof(size_t) * strLevelArrayZ(&pmtx->bita));
 	strInitLinkedListSC(&pmtx->datlst);
-	return (NULL == strInitBMap(&pmtx->bmask, ln, col, FALSE) ? FALSE : TRUE);
+	return (NULL != strInitBMap(&pmtx->bmask, ln, col, FALSE));
 }
 
 /* Function name: strFreeSparseMatrix
@@ -663,6 +728,7 @@ BOOL strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
  */
 void strFreeSparseMatrix(P_SPAMAT pmtx)
 {
+	strFreeArrayZ(&pmtx->bita);
 	strFreeBMap(&pmtx->bmask);
 	strFreeLinkedListSC(&pmtx->datlst);
 }
@@ -708,13 +774,19 @@ void strDeleteSparseMatrix(P_SPAMAT pmtx)
  */
 P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 {
-	if (NULL != strCopyBMap(&pdest->bmask, &psrc->bmask))
+	if (NULL != strResizeArrayZ(&pdest->bita, strLevelArrayZ(&psrc->bita), sizeof(size_t)))
 	{
-		if (NULL != pdest->datlst)
-			strFreeLinkedListSC(&pdest->datlst); /* Free old data chain first. */
-		if (NULL != psrc->datlst)
-			pdest->datlst = strCopyLinkedListSC(psrc->datlst, size);
-		return pdest;
+		if (NULL != strCopyArrayZ(&pdest->bita, &psrc->bita, size))
+		{
+			if (NULL != strCopyBMap(&pdest->bmask, &psrc->bmask))
+			{
+				if (NULL != pdest->datlst)
+					strFreeLinkedListSC(&pdest->datlst); /* Free old data chain first. */
+				if (NULL != psrc->datlst)
+					pdest->datlst = strCopyLinkedListSC(psrc->datlst, size);
+				return pdest;
+			}
+		}
 	}
 	return NULL;
 }
@@ -762,13 +834,16 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 			REGISTER size_t s = 0;
 			P_NODE_S pnode;
 			/* Count items. */
+			/* This isn't good, because we spent too much time during checking.
 			for (i = 0; i < l; ++i)
 				if (pmtx->bmask.arrz.pdata[i])
 					for (j = 0; j < CHAR_BIT; ++j)
 						if ((pmtx->bmask.arrz.pdata[i] >> j) & 0x01)
 							++s;
+			*/
+			s = _strBITLocateItem(l, &pmtx->bita);
 			/* Count the rest of items. */
-			for (j = 0; j < m; ++j)
+			for (i = l, j = 0; j < m; ++j)
 				if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
 					++s;
 			/* Fetch item's data. */
@@ -803,7 +878,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		return FALSE; /* Over size. */
 	else
 	{
-		REGISTER size_t i, j, l, m, s = 0;
+		REGISTER size_t i, j, l, m, s = 0, z = 0;
 		P_NODE_S pnode;
 		UCHART t, u;
 		/* Initialize variables. */
@@ -822,15 +897,18 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		t = (UCHART)(0x01 << j);
 		u = (UCHART)(pmtx->bmask.arrz.pdata[l] >> j);
 		/* Count items. */
+		/* This isn't good, because we spent too much time during checking.
 		for (i = 0; i < l; ++i)
 			if (pmtx->bmask.arrz.pdata[i])
 				for (j = 0; j < CHAR_BIT; ++j)
 					if ((pmtx->bmask.arrz.pdata[i] >> j) & 0x01)
 						++s;
+		*/
+		s = _strBITLocateItem(l, &pmtx->bita);
 		/* Count the rest of items. */
-		for (j = 0; j < m; ++j)
+		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
-				++s;
+				++s, ++z;
 		if (FALSE != (0x01 & u))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))
@@ -848,7 +926,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		}
 		else if (NULL != pval && 0 != size) /* Insert new item. */
 		{
-			P_NODE_S pnew;
+			REGISTER P_NODE_S pnew;
 			if (NULL != (pnew = strCreateNodeS(pval, size)))
 			{
 				if (0 == s || NULL == pmtx->datlst) /* Assign new header. */
@@ -864,6 +942,8 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 				}
 				/* Sign a bit on bit mask. */
 				pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] | t);
+				/* Update Fenwick tree. */
+				_strBITUpdateItem(l + 1, 1, &pmtx->bita);
 				return pnew->pdata;
 			}
 		}

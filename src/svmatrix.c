@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0220251850L00986
+ * File ID:     0213191430N0221250535L00955
  * License:     LGPLv3
  * Copyright (C) 2019-2025 John Cage
  *
@@ -638,41 +638,40 @@ BOOL strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
 
 /* Functions for sparse matrices are implemented bellow. */
 /* Sectional function declarations. */
-void   _strBITUpdateItem(size_t    idx,  size_t    val,  P_ARRAY_Z parrz);
-size_t _strBITLocateItem(size_t    idx,  P_ARRAY_Z parrz);
-void   _strBITConstruct (P_ARRAY_Z parrz);
+void   _strBITAdd  (size_t    idx,  ptrdiff_t val,  P_ARRAY_Z parrz);
+size_t _strBITSum  (size_t    idx,  P_ARRAY_Z parrz);
 
 /* This macro is used to get lowest bit of an integer and is for Fenwick trees. */
 #define _LOWBIT(x) ((x) & (~(x) + 1))
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strBITUpdateItem
- * Description:   Update array item.
+ * Function name: _strBITAdd
+ * Description:   Update array item and add new value.
  * Parameters:
- *        idx Index of the bit indexed tree array.
+ *        idx Index of the binary indexed tree array.
  *        val Incremental value which shall be added to array item.
  *      parrz Pointer to Fenwick tree which is an array of size_t integers.
  * Return value:  N/A.
  */
-void _strBITUpdateItem(size_t idx, size_t val, P_ARRAY_Z parrz)
+void _strBITAdd(size_t idx, ptrdiff_t val, P_ARRAY_Z parrz)
 {
 	while (idx < strLevelArrayZ(parrz))
 	{
-		*(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), idx) += val;
+		*(ptrdiff_t *)strLocateItemArrayZ(parrz, sizeof(ptrdiff_t), idx) += val;
 		idx += _LOWBIT(idx);
 	}
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strBITLocateItem
+ * Function name: _strBITSum
  * Description:   Locate an item in a Fenwick tree.
- *                Count the summary of [0, index].
+ *                Count the summary of [0, idx].
  * Parameters:
- *        idx Index of the bit indexed tree array.
+ *        idx Index of the binary indexed tree array.
  *      parrz Pointer to Fenwick tree which is an array of size_t integers.
  * Return value:  Summary value.
  */
-size_t _strBITLocateItem(size_t idx, P_ARRAY_Z parrz)
+size_t _strBITSum(size_t idx, P_ARRAY_Z parrz)
 {
 	REGISTER size_t r = 0;
 	while (idx)
@@ -681,24 +680,6 @@ size_t _strBITLocateItem(size_t idx, P_ARRAY_Z parrz)
 		idx -= _LOWBIT(idx);
 	}
 	return r;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strBITConstruct
- * Description:   Construct a Fenwick tree through a sized-array.
- * Parameter:
- *     parrz Pointer an array of size_t integers.
- * Return value:  N/A.
- */
-void _strBITConstruct(P_ARRAY_Z parrz)
-{
-	REGISTER size_t i, p;
-	for (i = 1; i <= strLevelArrayZ(parrz); ++i)
-	{
-		p = i + _LOWBIT(i);
-		if (p <= strLevelArrayZ(parrz))
-			*(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), p - 1) += *(size_t *)strLocateItemArrayZ(parrz, sizeof(size_t), i - 1);
-	}
 }
 
 /* Function name: strInitSparseMatrix
@@ -834,14 +815,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 			REGISTER size_t s = 0;
 			REGISTER P_NODE_S pnode;
 			/* Count items. */
-			/* This isn't good, because we spent too much time during checking.
-			for (i = 0; i < l; ++i)
-				if (pmtx->bmask.arrz.pdata[i])
-					for (j = 0; j < CHAR_BIT; ++j)
-						if ((pmtx->bmask.arrz.pdata[i] >> j) & 0x01)
-							++s;
-			*/
-			s = _strBITLocateItem(l, &pmtx->bita);
+			s = _strBITSum(l, &pmtx->bita);
 			/* Count the rest of items. */
 			for (i = l, j = 0; j < m; ++j)
 				if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
@@ -897,14 +871,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		t = (UCHART)(0x01 << j);
 		u = (UCHART)(pmtx->bmask.arrz.pdata[l] >> j);
 		/* Count items. */
-		/* This isn't good, because we spent too much time during checking.
-		for (i = 0; i < l; ++i)
-			if (pmtx->bmask.arrz.pdata[i])
-				for (j = 0; j < CHAR_BIT; ++j)
-					if ((pmtx->bmask.arrz.pdata[i] >> j) & 0x01)
-						++s;
-		*/
-		s = _strBITLocateItem(l, &pmtx->bita);
+		s = _strBITSum(l, &pmtx->bita);
 		/* Count the rest of items. */
 		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
@@ -943,12 +910,14 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 				/* Sign a bit on bit mask. */
 				pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] | t);
 				/* Update Fenwick tree. */
-				_strBITUpdateItem(l + 1, 1, &pmtx->bita);
+				_strBITAdd(l + 1, +1, &pmtx->bita);
 				return pnew->pdata;
 			}
 		}
 		/* Clear bit mask. */
 		pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] & ~t);
+		/* Update Fenwick tree. */
+		_strBITAdd(l + 1, -1, &pmtx->bita);
 	}
 	return NULL;
 }

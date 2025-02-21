@@ -890,6 +890,8 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 						strDeleteNodeS(strRemoveItemLinkedListSC(pmtx->datlst, pnode));
 					/* Update Fenwick tree. */
 					_strBITAdd(l + 1, -1, &pmtx->bita);
+					/* Clear bit mask. */
+					pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] & ~t);
 				}
 			}
 		}
@@ -916,8 +918,6 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 				return pnew->pdata;
 			}
 		}
-		/* Clear bit mask. */
-		pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] & ~t);
 	}
 	return NULL;
 }

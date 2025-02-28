@@ -35,7 +35,7 @@
 void svPrintVersion(void)
 {
 	printf("StoneValley %s\n", SV_LIB_VER);
-	printf("%s\n", "Copyright (C) 2024 John Cage.");
+	printf("%s\n", "Copyright (C) 2025 John Cage.");
 	printf("%s\n", "This is free software; see the source for copying conditions.  There is NO");
 	printf("%s\n", "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 }

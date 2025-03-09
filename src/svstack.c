@@ -233,7 +233,7 @@ void stkDeleteL_O(P_STACK_L pstkl)
  *         TRUE Stack is empty.
  *        FALSE Stack is not empty.
  * Caution:       Address of pstkl Must Be Allocated first.
- * Tip:           A macro version of this function named stkIsEmptyA_M is available.
+ * Tip:           A macro version of this function named stkIsEmptyL_M is available.
  */
 BOOL stkIsEmptyL_O(P_STACK_L pstkl)
 {

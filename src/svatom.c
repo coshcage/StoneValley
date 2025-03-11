@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A00201251300L00306
+ * File ID:     0306170948A00201251300L00305
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -77,7 +77,6 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
  *       pval Pointer to the value you want to set.
  *       size Size of each element.
  * Return value:  N/A.
- *                If function returned NULL, it would indicate an allocation failure.
  * Caution:       Address of parrz Must Be Allocated first.
  */
 void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)

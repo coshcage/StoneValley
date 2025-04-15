@@ -20,6 +20,8 @@ exp_2019-01-22_1.c  J.C.    Cross Platform  A doubly-pointer linked-list solutio
 exp_2019-01-29_1.c  J.C.    Windows NT      An example of permutation and combination.
 exp_2019-02-14_1.c  J.C.    Unix|GNU/Linux  An example of matrices.
 exp_2019-06-20_1.c  J.C.    Unix|GNU/Linux  A puzzle game example of a matrix.
+svxs.c              J.C.    Cross Platform  External sort algorithm.
+svxs.h              J.C.    Cross Platform  The interface of external sort.
   _______________
  / /   __----__  \
  | |  ///--/  \\  |

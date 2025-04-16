@@ -1,8 +1,8 @@
 /*
  * Name:        svxs.c
- * Description: External Sort.
+ * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0415251642L00231
+ * File ID:     0415251642A0415252317L00234
  * License:     LGPLv3
  * Copyright (C) 2025 John Cage
  *
@@ -48,10 +48,12 @@ void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t chunk_count)
 	size_t i;
 	for (i = 0; i < chunk_count; ++i)
 	{
-		if (NULL != ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp)
-			fclose(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp);
-		remove(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fname);
-		free(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fname);
+		P_MFILE pmf = (P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i);
+		if (NULL != pmf->fp)
+			fclose(pmf->fp);
+		/* Expunge temporary chunk file. */
+		remove(pmf->fname);
+		free(pmf->fname);
 	}
 	strDeleteArrayZ(parrChunkFile);
 }
@@ -169,6 +171,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		rewind(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp);
 	}
 	
+	/* Merge chunk files. */
 	parrBuffer = strCreateArrayZ(chunk_count, size);
 	parrValid  = strCreateArrayZ(chunk_count, sizeof(BOOL));
 
@@ -213,7 +216,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		if (feof(fp))
 		{
 			*(BOOL *)strLocateItemArrayZ(parrValid, sizeof(BOOL), min_index) = FALSE;
-			valid_count--;
+			--valid_count;
 		}
 		else
 			fread(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, fp);

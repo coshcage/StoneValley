@@ -2,7 +2,7 @@
  * Name:        svxs.c
  * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0415252317L00234
+ * File ID:     0415251642A0416250147L00236
  * License:     LGPLv3
  * Copyright (C) 2025 John Cage
  *
@@ -76,7 +76,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 	P_ARRAY_Z parrChunk = strCreateArrayZ(num, size);
 	P_ARRAY_Z parrChunkFile = strCreateArrayZ(BUFSIZ, sizeof(MFILE));
 	P_ARRAY_Z parrBuffer;
-	P_ARRAY_Z parrValid;
+	P_BITMAT  pbmValid;
 	
 	size_t chunk_count = 0;
 	size_t count = 0;
@@ -173,7 +173,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 	
 	/* Merge chunk files. */
 	parrBuffer = strCreateArrayZ(chunk_count, size);
-	parrValid  = strCreateArrayZ(chunk_count, sizeof(BOOL));
+	pbmValid   = strCreateBMap(1, chunk_count, FALSE);
 
 	for (i = 0; i < chunk_count; ++i)
 	{
@@ -182,12 +182,12 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		if (!feof(fp))
 		{
 			fread(strLocateItemArrayZ(parrBuffer, size, i), size, 1, fp);
-			*(BOOL *)strLocateItemArrayZ(parrValid, sizeof(BOOL), i) = TRUE;
-			valid_count++;
+			strSetBitBMap(pbmValid, 0, i, TRUE);
+			++valid_count;
 		}
 		else
 		{
-			*(BOOL *)strLocateItemArrayZ(parrValid, sizeof(BOOL), i) = FALSE;
+			strSetBitBMap(pbmValid, 0, i, FALSE);
 		}
 	}
 
@@ -199,7 +199,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		{
 			if
 			(
-				*(BOOL *)strLocateItemArrayZ(parrValid, sizeof(BOOL), i) &&
+				strGetBitBMap(pbmValid, 0, i) &&
 				(
 					min_index == -1 ||
 					cbfcmp(strLocateItemArrayZ(parrBuffer, size, i), strLocateItemArrayZ(parrBuffer, size, min_index)) < 0
@@ -215,15 +215,17 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), min_index))->fp;
 		if (feof(fp))
 		{
-			*(BOOL *)strLocateItemArrayZ(parrValid, sizeof(BOOL), min_index) = FALSE;
+			strSetBitBMap(pbmValid, 0, min_index, FALSE);
 			--valid_count;
 		}
 		else
+		{
 			fread(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, fp);
+		}
 	}
 
 	strDeleteArrayZ(parrBuffer);
-	strDeleteArrayZ(parrValid);
+	strDeleteBMap(pbmValid);
 
 	_svxsDestroyMFileArrayZ(parrChunkFile, chunk_count);
 

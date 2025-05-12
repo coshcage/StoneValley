@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0115211509L00170
+ * File ID:     0901171620T0512251300L00170
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -58,8 +58,8 @@ BOOL     setIsEmptyT_O          (P_SET_T pset);
 BOOL     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
 BOOL     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
 BOOL     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-void     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
-void     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+BOOL     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+BOOL     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);

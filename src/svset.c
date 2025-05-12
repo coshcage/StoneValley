@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L1217240707L00907
+ * File ID:     0901171620L0512251300L00914
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -624,14 +624,16 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *      pitem Pointer to an element that you want to insert.
  *       size Size of the element.
  *     cbfcmp Pointer to a comparison function.
- * Return value:  N/A.
+ * Return value:  TRUE:  Insertion succeeded.
+ *                FALSE: Insertion failed.
  * Tip:           You may use function setIsMemberT to check whether insertion succeeded or not after invoking.
  */
-void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+BOOL setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
-		return; /* Item has already existed. */
+		return FALSE; /* Item has already existed. */
 	*pset = _setInsertBST(*pset, pitem, size, cbfcmp);
+	return TRUE;
 }
 
 /* Function name: setRemoveT
@@ -641,13 +643,18 @@ void setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  *      pitem Pointer to an element that you want to remove.
  *       size Size of the element.
  *     cbfcmp Pointer to a comparison function.
- * Return value:  N/A.
+ * Return value:  TRUE:  Deletion succeeded.
+ *                FALSE: Deletion failed.
  * Tip:           You may use function setIsMemberT to check whether removal succeeded or not after calling.
  */
-void setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+BOOL setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
+	{
 		*pset = _setRemoveBST(*pset, pitem, size, cbfcmp);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

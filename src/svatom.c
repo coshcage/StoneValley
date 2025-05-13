@@ -134,7 +134,7 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
 	else
 	{
 		incl = -incl;
-		if (strLevelArrayZ(parrz) <= incl)
+		if (strLevelArrayZ(parrz) <= (size_t)incl)
 			return NULL;
 		return strResizeArrayZ(parrz, strLevelArrayZ(parrz) - (size_t)incl, size);
 	}

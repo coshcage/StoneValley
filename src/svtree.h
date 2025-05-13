@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0716241635L00455
+ * File ID:     0809171737V0513250808L00456
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -178,7 +178,8 @@ size_t *        treSearchTrieA         (P_TRIE_A        ptrie,   const void * ps
 BOOL            treInsertTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,  size_t      vapdx,  CBF_COMPARE cbfcmp);
 BOOL            treRemoveTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,  CBF_COMPARE cbfcmp);
 /* Functions for Huffman coding trees. */
-P_BITSTREAM     treHuffmanEncoding     (P_ARRAY_Z *     pptable, const PUCHAR s,      const size_t  n);
+P_ARRAY_Z       treCreateHuffmanTable  (const PUCHAR    s,       const size_t n);
+P_BITSTREAM     treHuffmanEncoding     (P_ARRAY_Z       ptable,  const PUCHAR s,      const size_t  n);
 P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s);
 
 /* Macros for function inline to accelerate execution speed. */

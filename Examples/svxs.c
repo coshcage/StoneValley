@@ -61,8 +61,8 @@ void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t chunk_count)
 /* Function name: svXSort
  * Description:   EXternal sort algorithm.
  * Parameters:
- *      szfin Pointer to the set you want to allocate.
- *     szfout Number of buckets for the hash table in the set.
+ *      szfin File name and path that you want to sort.
+ *     szfout File name and path to store result after sorting.
  *        num How many numbers there are in a chunk.
  *       size Size of each element in the chunk buffer.
  *     cbfcmp Pointer to compare function.

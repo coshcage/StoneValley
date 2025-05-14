@@ -22,6 +22,8 @@ exp_2019-02-14_1.c  J.C.    Unix|GNU/Linux  An example of matrices.
 exp_2019-06-20_1.c  J.C.    Unix|GNU/Linux  A puzzle game example of a matrix.
 svxs.c              J.C.    Cross Platform  External sort algorithm.
 svxs.h              J.C.    Cross Platform  The interface of external sort.
+svcompress.c        J.C.    Cross Platform  File compressor.
+svcompress.h        J.C.    Cross Platform  The interface of file compressor.
   _______________
  / /   __----__  \
  | |  ///--/  \\  |

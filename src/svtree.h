@@ -42,7 +42,7 @@ typedef P_NODE_D * P_BYTREE;   /* Pointer to a binary tree. */
  */
 typedef struct st_BSTNODE { /* Binary node with additional information. */
 	TNODE_BY knot; /* Left and right children and data pointer. */
-	size_t param;  /* Parameter for a Treap node. */
+	size_t  param; /* Parameter for a Treap node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
 #define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */

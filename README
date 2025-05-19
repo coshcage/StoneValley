@@ -23,7 +23,7 @@ i   Preface
 	*) The author claimed that he does will refine source files and references later and he needs time and arms to fix it.
 	*) Should you have any problems with this library, please do not hesitate to contact the author via Email(Email appears in each .C or .H file.).
 
-ii  Acknowledgement
+ii  Acknowledgment
 
 	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
 
@@ -81,7 +81,7 @@ iv  Scenario
 
 v  The naming of library functions and types
 
-	Naming functions and types for StoneValley observe guidelines. Suffixes, infixes and postfixes are used to stipulate identifiers. For functions named with suffix, such as function "stkInitA", the suffix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
+	The nomenclature for StoneValley observe guidelines. Prefixes, infixes and suffixes are used to stipulate identifiers. For functions named with prefix, such as function "stkInitA", the prefix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
 
 	+__Category__________________________Type_________Location___+ [Figure 2]
 	|strING______________________________|___________<svstring.h>|
@@ -158,7 +158,7 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers warn users of precision losing and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed length while it needs padding bytes to alter the original structure, compilers may warn users either. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
 
 	4) Warnings of library function returns.
-		Some compilers installed with code analysis techniques would check return values of functions in the C standard library. For example, it would check if the realloc function might return a NULL pointer to its left-hand-side expression. Library users could [IGNORE] these types of warnings.
+		Some compilers installed with code analysis techniques would check return values of functions in the C standard library. For example, it would check if the "realloc" function might return a NULL pointer to its left-hand-side expression. Library users could [IGNORE] these types of warnings.
 
 	5) Other concerns.
 		If an architecture did not support users to use too many register variables, compilers would produce warnings. Library users could comment the 'REGISTER' macro at file "svdef.h" or [IGNORE] compiler produced warnings.

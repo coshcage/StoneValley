@@ -220,7 +220,7 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, B
  * Caution:       Address of parrz Must Be Allocated first.
  *                (*) The array that parrz pointed must be sorted in increasing order.
  * Tip:           For instance, to locate number 5 in array (1,2,3,4,4,6) will get an index as 5 pointes to element 6.
- *                Returned index always pointes to the smallest item in the array that is great than the value that pitem pointed.
+ *                Returned index always points to the smallest item in the array that is great than the value that pitem pointed.
  *                If the value you retrieved exceeded the maximum value in the array, the returned index would be (parrz->num - 1).
  */
 size_t strBinaryLocateArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, CBF_COMPARE cbfcmp)

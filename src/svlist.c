@@ -766,7 +766,7 @@ int strTraverseLinkedListDC_N(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strInitLinkedListDC_O
- * Description:   Initialize a doubly-pointer-node linked-list.
+ * Description:   Initialize a double-pointer-node linked-list.
  * Parameter:
  *     plist Pointer to the list you want to initialize.
  * Return value:  N/A.
@@ -846,7 +846,7 @@ size_t strLevelLinkedListDC(LIST_D list, BOOL brev)
  *       size Size of data in each node.
  *       brev If brev equaled TRUE, copying procedure would start at the current node and search for the NEXT node.
  *            Otherwise copying procedure will start at the current node and search for the PREVIOUS node.
- *            If the doubly linked-list had only one direction in clockwise or anti-clockwise,
+ *            If the doubly linked-list had only one direction in clockwise or counterclockwise,
  *            to adjust this parameter could be useful to redirect copying.
  * Return value:  The first element of new linked-list.
  * Caution:       Data in each node of linked-list must be in the same size.
@@ -1085,7 +1085,7 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, BOOL bafter)
 	{
 		plast = plast->ppnode[NEXT];
 		/* Dead loop appears only if ->A<- and A<-B->A.
-		 * We have to prevent it from occuring.
+		 * We have to prevent it from occurring.
 		 */
 		if (ptmp == plast)
 			break;
@@ -1119,8 +1119,8 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, BOOL bafter)
  * Return value:  The same pointer as pnode.
  * Tip:           No dead cycles for circular linked-lists.
  *                Function will NOT deallocate the address of pnode rather than put two pointers in pnode into value NULL.
- *                Use strFreeNodeD(strRemoveItemLinkedListD(pfirst, pnode)); to free a removed node.
- *                Use strDeleteNodeD(strRemoveItemLinkedListD(pfirst, pnode)); to delete an allocated node from list.
+ *                Use strFreeNodeD(strRemoveItemLinkedListDC(pnode)); to free a removed node.
+ *                Use strDeleteNodeD(strRemoveItemLinkedListDC(pnode)); to delete an allocated node from list.
  */
 P_NODE_D strRemoveItemLinkedListDC(P_NODE_D pnode)
 {

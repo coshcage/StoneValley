@@ -1,0 +1,72 @@
+Examples\exp_2017-12-27_1.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\exp_2017-12-28_1.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\exp_2018-01-17_1.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\exp_2019-01-29_1.c:95:0: error: failed to expand 'paste', Wrong number of parameters for macro 'numerize'. [preprocessorErrorDirective]
+   printf(paste("%", numerize(N_), "d:\t"), ++i),
+^
+Examples\exp_2019-02-14_1.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\exp_2019-06-20_1.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\svcompress.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+Examples\svxs.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svarray.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svbytree.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svgraph.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svgtree.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svgtree.c:311:3: warning: If memory allocation fails, then there is a possible null pointer dereference: ptreg [nullPointerOutOfMemory]
+ *ptreg = NULL;
+  ^
+src\svgtree.c:334:34: note: Assuming allocation function fails
+ P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
+                                 ^
+src\svgtree.c:334:18: note: Assignment 'ptreg=(struct st_TNODE_G**)malloc(sizeof(struct st_TNODE_G*))', assigned value is 0
+ P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
+                 ^
+src\svgtree.c:335:11: note: Calling function 'treInitG_O', 1st argument 'ptreg' value is 0
+ treInitG(ptreg);
+          ^
+src\svgtree.c:311:3: note: Null pointer dereference
+ *ptreg = NULL;
+  ^
+src\svlist.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svlist.c:1395:21: error: Pointer addition with NULL pointer. [nullPointerArithmetic]
+    *((void **)list + PREV) = tail;
+                    ^
+src\svlist.c:1297:10: note: Assignment 'list=NULL', assigned value is 0
+  list = NULL;
+         ^
+src\svlist.c:1395:21: note: Null pointer addition
+    *((void **)list + PREV) = tail;
+                    ^
+src\svmatrix.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svmisc.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^
+src\svstree.c:0:0: information: Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches. [normalCheckLevelMaxBranches]
+
+^

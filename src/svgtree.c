@@ -329,12 +329,13 @@ void treFreeG(P_GTREE ptreg)
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated tree.
  */
-P_GTREE treCreateG(void)
-{
-	P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
-	treInitG(ptreg);
-	return ptreg;
+P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
+if (ptreg == NULL) {
+    fprintf(stderr, "Erro: Falha na alocação de memória para ptreg.\n");
+    return; // ou outro tratamento conforme o contexto
 }
+*ptreg = NULL;
+treInitG(ptreg); // Só chama se ptreg for válido
 
 /* Function name: treDeleteG
  * Description:   Delete a generic tree of which is allocated by function treCreateG.

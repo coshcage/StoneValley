@@ -92,7 +92,7 @@ int main(void)
 	{	/* Generate all permutations of the current subset for combination. */
 		while
 		(	/* Some versions of GCCs would mis-parse the following sentence while VC won't. */
-			printf(paste("%", numerize(N_), "d:\t"), ++i),
+			printf("%%%dd:\t", numerize(N_)),
 			PrintArrayZ(&r, sizeof(MYTYPE), (BOOL)q),
 			strPermuteArrayZ(&r, &t, sizeof(MYTYPE), cbfcmp, TRUE)
 		);

@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with StoneValley.
  * If not, see <https://www.gnu.org/licenses/>.
  *
+ vericação
  */
 
 #include <stdlib.h> /* Using function malloc, realloc, free. */

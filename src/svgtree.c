@@ -2,9 +2,10 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H1130230706L00559
+ * File ID:     0809171737H0615252050L00562
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
+ * Copyright (C) 2025      Sarah Silva @github.com/sah524
  *
  * This file is part of StoneValley.
  *
@@ -332,7 +333,9 @@ void treFreeG(P_GTREE ptreg)
 P_GTREE treCreateG(void)
 {
 	P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
-	treInitG(ptreg);
+	/* Sarah Silva found this issue that we must detect NULL pointer before alter it. */
+	if (NULL != ptreg)
+		treInitG(ptreg);
 	return ptreg;
 }
 

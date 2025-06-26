@@ -317,7 +317,7 @@ int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param)
  *       pgrp Pointer to a graph.
  *        vid Vertex ID.
  *     cbftvs Pointer to a callback function.
- *            The first parameter of cbftvs pointes to each EDGE structure in a list.
+ *            The first parameter of cbftvs points to each EDGE structure in a list.
  *      param Additional information for each edge.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.

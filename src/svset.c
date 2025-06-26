@@ -515,7 +515,7 @@ size_t setSizeT_O(P_SET_T pset)
 }
 
 /* Function name: setIsEmptyT_O
- * Description:   Make a judgement whether a set is empty or not.
+ * Description:   Make a judgment whether a set is empty or not.
  * Parameter:
  *      pset Pointer to the set you want to check.
  * Return value:

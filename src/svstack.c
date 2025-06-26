@@ -172,7 +172,7 @@ size_t stkLevelA_O(P_STACK_A pstka)
 }
 
 /* Function name: stkInitL_O
- * Description:   Initialize a Linked-list stack.
+ * Description:   Initialize a linked-list stack.
  * Parameters:
  *      pstkl Pointer to the stack you want to create.
  *       size Size of each element in the stack.

@@ -121,6 +121,7 @@ Logs:
 05-12-2025: Library refined. Version 1.2.1.6.
 05-13-2025: Library refined. Version 1.2.1.7.
 06-14-2025: Library refined. Version 1.2.1.8.
+07-01-2025: Bug fixed. Version 1.2.1.9.
 _______________________________________________________________________________
 
 09-24-2018:
@@ -167,6 +168,8 @@ _______________________________________________________________________________
 	Fixed.
 12-17-2024:
 	Bugs at svset.c, SET_T and SET_H are both fixed.
+07-01-2025:
+	Bugs for tries are fixed.
 _______________________________________________________________________________
                 GNU Free Documentation License
                  Version 1.3, 3 November 2008

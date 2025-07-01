@@ -27,7 +27,7 @@
 #include <stddef.h> /* Using type size_t, ptrdiff_t. */
 
 /* Library version. */
-#define SV_LIB_VER "1.2.1.8"
+#define SV_LIB_VER "1.2.1.9"
 
 /* Boolean constants. */
 #define TRUE  1

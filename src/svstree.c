@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0227240922L02053
+ * File ID:     0809171737I0701251116L02053
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -1876,7 +1876,7 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
 			return NULL;
 		ptrie = (P_TRIE_A) &pdat[size];
 		--num;
-		++pbase;
+		pbase += size;
 	}
 	if (0 == num) /* Searching reaches at the end of string. */
 		if (FALSE != *((PUCHAR) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
@@ -1908,7 +1908,7 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 	REGISTER size_t j;
 	REGISTER PUCHAR pdat;
 	REGISTER PUCHAR pbase = (PUCHAR) pstr;
-	for (j = 0; j < num; ++j, ++pbase, ptrie = (P_TRIE_A) &pdat[size])
+	for (j = 0; j < num; ++j, pbase += size, ptrie = (P_TRIE_A) &pdat[size])
 	{
 		if (NULL != *ptrie)
 		{
@@ -2000,7 +2000,7 @@ BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 		}
 		ptrie = (P_TRIE_A) &pdat[size];
 		--num;
-		++pbase;
+		pbase += size;
 	}
 	if (0 == num)
 	{

@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0701251116L02053
+ * File ID:     0809171737I0703251000L02054
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -1755,8 +1755,9 @@ BOOL treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 #include "svstack.h"
 
 /* A macro used to calculate the length of an element in a trie's array. */
-#define _ELESIZ(size) ((size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(UCHART))
-/* Element consists of: data-----next_trie----reference_counter---appendix---------flag. */
+#define _ELESIZ(size) ((size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))
+/* Element consists of: data----next_trie------reference_counter--appendix---------flag. */
+/* We make the flag sign as size_t to further align structure to a suitable size. */
 
 /* File level function declarations. */
 void _treFreeTrieNode(P_TRIE_A ptrie, size_t size);
@@ -1879,7 +1880,7 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
 		pbase += size;
 	}
 	if (0 == num) /* Searching reaches at the end of string. */
-		if (FALSE != *((PUCHAR) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
+		if (FALSE != *((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
 			return ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]);
 	return NULL;
 }
@@ -1952,12 +1953,12 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 		*(P_TRIE_A)  &pdat[size] = NULL; /* pnext. */
 		*(size_t *)  &pdat[size + sizeof(TRIE_A)] = 1; /* Reference counter. */
 		*((size_t *) &pdat[size + sizeof(TRIE_A) + sizeof(size_t)]) = 0; /* Appendix. */
-		*((PUCHAR)   &pdat[size + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t)]) = FALSE; /* Flag. */
+		*((size_t *) &pdat[size + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t)]) = FALSE; /* Flag. */
 	}
 	/* Bypass reference counter and assign appendix onto the right position. */
 	*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]) = vapdx;
 	/* Set the flag on the tail of string in trie into valid. */
-	*((PUCHAR)  &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]) = TRUE;
+	*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]) = TRUE;
 	return TRUE;
 }
 
@@ -2004,8 +2005,8 @@ BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 	}
 	if (0 == num)
 	{
-		PUCHAR pflag = ((PUCHAR) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]);
-		if (FALSE == *pflag) /* Avoid to delete a found sub string. */
+		size_t * pflag = ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]);
+		if (! (*pflag)) /* Avoid to delete a found sub string. FALSE == *pflag */
 			goto Lbl_Clear;
 		else
 		{

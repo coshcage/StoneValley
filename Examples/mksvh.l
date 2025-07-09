@@ -86,7 +86,7 @@ int main()
 	FILE * fpin = NULL;
 	
 	/* Open sv.h for writing. */
-	fpout = fopen(SZ_HEADER, "w");
+	yyout = fpout = fopen(SZ_HEADER, "w");
 	
 	if (NULL != fpout)
 	{

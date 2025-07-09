@@ -5,7 +5,7 @@
  * Then use a C compiler to compile lex.yy.c which should appear after using flex.
  * Use the final executable file to convert C source files and header files.
  * Here is a compound command line that can produce an executable file on Unix|GNU/Linux:
- *     flex name_conv.l; cc lex.yy.c; ./a.out *.c *.h; rm lex.yy.c; rm ./a.out;
+ * $ flex name_conv.l; cc lex.yy.c; ./a.out *.c *.h; rm lex.yy.c; rm ./a.out;
  * Notice that flex is required on your platform before you use the above command line.
  * Names of generated files are each original file name that headed with a '~' symbol.
  * Then original files will be renamed as '#'s add their file names.

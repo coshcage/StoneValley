@@ -24,6 +24,7 @@ svxs.c              J.C.    Cross Platform  External sort algorithm.
 svxs.h              J.C.    Cross Platform  The interface of external sort.
 svcompress.c        J.C.    Cross Platform  File compressor.
 svcompress.h        J.C.    Cross Platform  The interface of file compressor.
+mksvh.c             J.C.    Unix|GNU/Linux  Make one StoneValley header tool.
   _______________
  / /   __----__  \
  | |  ///--/  \\  |

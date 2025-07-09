@@ -2,7 +2,7 @@
  * Name:        svxs.c
  * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0709251615L00233
+ * File ID:     0415251642A0709251630L00238
  * License:     LGPLv3
  * Copyright (C) 2025 John Cage
  *
@@ -79,32 +79,64 @@ void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t uChunkCount)
  */
 XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	size_t i;
-	fpos_t pos;
-	P_ARRAY_Z parrChunk     = strCreateArrayZ(num, size);
-	P_ARRAY_Z parrChunkFile = strCreateArrayZ(BUFSIZ, sizeof(MFILE));
-	P_ARRAY_Z parrBuffer;
-	P_BITMAT  pbmValid;
-	
-	size_t    uChunkCount = 0;
-	size_t    uCount      = 0;
-	ptrdiff_t uValidCount = 0;
-	
-	if (!fpin)
+	if ((!len) || (!num) || (!size))
+		return XSE_BAD_ARGUMENT;
+	else
 	{
-		strDeleteArrayZ(parrChunkFile);
-		strDeleteArrayZ(parrChunk);
-		return XSE_OPEN_INPUT_FILE;
-	}
-	
-	if (fpin == fpout)
-		fgetpos(fpout, &pos);
+		size_t i;
+		fpos_t pos;
+		P_ARRAY_Z parrChunk     = strCreateArrayZ(num, size);
+		P_ARRAY_Z parrChunkFile = strCreateArrayZ(BUFSIZ, sizeof(MFILE));
+		P_ARRAY_Z parrBuffer;
+		P_BITMAT  pbmValid;
+		
+		size_t    uChunkCount = 0;
+		size_t    uCount      = 0;
+		ptrdiff_t uValidCount = 0;
+		
+		if (!fpin)
+		{
+			strDeleteArrayZ(parrChunkFile);
+			strDeleteArrayZ(parrChunk);
+			return XSE_OPEN_INPUT_FILE;
+		}
+		
+		if (fpin == fpout)
+			fgetpos(fpout, &pos);
 
-	while (!feof(fpin) && len--)
-	{
-		fread(strLocateItemArrayZ(parrChunk, size, uCount++), size, 1, fpin);
+		while (!feof(fpin) && len--)
+		{
+			fread(strLocateItemArrayZ(parrChunk, size, uCount++), size, 1, fpin);
 
-		if (uCount == num)
+			if (uCount == num)
+			{
+				FILE * fpChunkFile;
+				char szChunkFilename[L_tmpnam];
+
+				fpChunkFile = fopen(tmpnam(szChunkFilename), "wb+");
+				((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), uChunkCount))->fp = fpChunkFile;
+				((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), uChunkCount))->fname = strdup(szChunkFilename);
+				++uChunkCount;
+				
+				if (uChunkCount >= strLevelArrayZ(parrChunkFile))
+					strResizeBufferedArrayZ(parrChunkFile, sizeof(MFILE), +BUFSIZ);
+				
+				if (!fpChunkFile)
+				{
+					_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
+					strDeleteArrayZ(parrChunk);
+					return XSE_OPEN_CHUNK_FILE;
+				}
+
+				FN_SORT(parrChunk->pdata, uCount, size, cbfcmp);
+
+				fwrite(parrChunk->pdata, size, uCount, fpChunkFile);
+				
+				uCount = 0;
+			}
+		}
+
+		if (uCount > 0)
 		{
 			FILE * fpChunkFile;
 			char szChunkFilename[L_tmpnam];
@@ -114,9 +146,6 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 			((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), uChunkCount))->fname = strdup(szChunkFilename);
 			++uChunkCount;
 			
-			if (uChunkCount >= strLevelArrayZ(parrChunkFile))
-				strResizeBufferedArrayZ(parrChunkFile, sizeof(MFILE), +BUFSIZ);
-			
 			if (!fpChunkFile)
 			{
 				_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
@@ -125,109 +154,85 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 			}
 
 			FN_SORT(parrChunk->pdata, uCount, size, cbfcmp);
-
-			fwrite(parrChunk->pdata, size, uCount, fpChunkFile);
 			
-			uCount = 0;
+			fwrite(parrChunk->pdata, size, uCount, fpChunkFile);
 		}
-	}
 
-	if (uCount > 0)
-	{
-		FILE * fpChunkFile;
-		char szChunkFilename[L_tmpnam];
-
-		fpChunkFile = fopen(tmpnam(szChunkFilename), "wb+");
-		((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), uChunkCount))->fp = fpChunkFile;
-		((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), uChunkCount))->fname = strdup(szChunkFilename);
-		++uChunkCount;
+		strDeleteArrayZ(parrChunk);
 		
-		if (!fpChunkFile)
+		if (!fpout)
 		{
 			_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
-			strDeleteArrayZ(parrChunk);
-			return XSE_OPEN_CHUNK_FILE;
+			return XSE_OPEN_OUTPUT_FILE;
 		}
-
-		FN_SORT(parrChunk->pdata, uCount, size, cbfcmp);
 		
-		fwrite(parrChunk->pdata, size, uCount, fpChunkFile);
-	}
+		if (fpin == fpout)
+			fsetpos(fpout, &pos);
 
-	strDeleteArrayZ(parrChunk);
-	
-	if (!fpout)
-	{
-		_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
-		return XSE_OPEN_OUTPUT_FILE;
-	}
-	
-	if (fpin == fpout)
-		fsetpos(fpout, &pos);
-
-	for (i = 0; i < uChunkCount; ++i)
-	{
-		rewind(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp);
-	}
-	
-	/* Merge chunk files. */
-	parrBuffer = strCreateArrayZ(uChunkCount, size);
-	pbmValid   = strCreateBMap(1, uChunkCount, FALSE);
-
-	for (i = 0; i < uChunkCount; ++i)
-	{
-		FILE * fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp;
-
-		if (!feof(fp))
-		{
-			fread(strLocateItemArrayZ(parrBuffer, size, i), size, 1, fp);
-			strSetBitBMap(pbmValid, 0, i, TRUE);
-			++uValidCount;
-		}
-		else
-		{
-			strSetBitBMap(pbmValid, 0, i, FALSE);
-		}
-	}
-
-	while (uValidCount > 0)
-	{
-		FILE * fp;
-		ptrdiff_t min_index = -1;
 		for (i = 0; i < uChunkCount; ++i)
 		{
-			if
-			(
-				strGetBitBMap(pbmValid, 0, i) &&
-				(
-					min_index == -1 ||
-					cbfcmp(strLocateItemArrayZ(parrBuffer, size, i), strLocateItemArrayZ(parrBuffer, size, min_index)) < 0
-				)
-			)
+			rewind(((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp);
+		}
+		
+		/* Merge chunk files. */
+		parrBuffer = strCreateArrayZ(uChunkCount, size);
+		pbmValid   = strCreateBMap(1, uChunkCount, FALSE);
+
+		for (i = 0; i < uChunkCount; ++i)
+		{
+			FILE * fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i))->fp;
+
+			if (!feof(fp))
 			{
-				min_index = (ptrdiff_t)i;
+				fread(strLocateItemArrayZ(parrBuffer, size, i), size, 1, fp);
+				strSetBitBMap(pbmValid, 0, i, TRUE);
+				++uValidCount;
+			}
+			else
+			{
+				strSetBitBMap(pbmValid, 0, i, FALSE);
 			}
 		}
 
-		fwrite(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, fpout);
-		
-		fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), min_index))->fp;
-		if (feof(fp))
+		while (uValidCount > 0)
 		{
-			strSetBitBMap(pbmValid, 0, min_index, FALSE);
-			--uValidCount;
+			FILE * fp;
+			ptrdiff_t iMinIndex = -1;
+			for (i = 0; i < uChunkCount; ++i)
+			{
+				if
+				(
+					strGetBitBMap(pbmValid, 0, i) &&
+					(
+						iMinIndex == -1 ||
+						cbfcmp(strLocateItemArrayZ(parrBuffer, size, i), strLocateItemArrayZ(parrBuffer, size, iMinIndex)) < 0
+					)
+				)
+				{
+					iMinIndex = (ptrdiff_t)i;
+				}
+			}
+
+			fwrite(strLocateItemArrayZ(parrBuffer, size, iMinIndex), size, 1, fpout);
+			
+			fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), iMinIndex))->fp;
+			if (feof(fp))
+			{
+				strSetBitBMap(pbmValid, 0, iMinIndex, FALSE);
+				--uValidCount;
+			}
+			else
+			{
+				fread(strLocateItemArrayZ(parrBuffer, size, iMinIndex), size, 1, fp);
+			}
 		}
-		else
-		{
-			fread(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, fp);
-		}
+
+		strDeleteArrayZ(parrBuffer);
+		strDeleteBMap(pbmValid);
+
+		_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
+
+		return XSE_NONE;
 	}
-
-	strDeleteArrayZ(parrBuffer);
-	strDeleteBMap(pbmValid);
-
-	_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
-
-	return XSE_NONE;
 }
 

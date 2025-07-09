@@ -34,7 +34,7 @@ typedef enum en_XSortError
 } XSortError;
 
 /* Function declaration goes here. */
-XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t size, CBF_COMPARE cbfcmp);
+XSortError svXSort(FILE * fpout, FILE * fpin, size_t num, size_t size, CBF_COMPARE cbfcmp);
 
 #endif
 

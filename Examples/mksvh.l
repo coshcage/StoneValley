@@ -21,7 +21,7 @@
  *
  * Tips of usage:
  * Put mksvh.l(this file) under StoneValley/src/ and run this compound command line under GNU/Linux.
- * $ flex mksvh.l; cc lex.yy.c -o mksvh; rm lex.yy.c ./mksvh;
+ * $ flex mksvh.l; cc lex.yy.c -o mksvh; rm lex.yy.c; ./mksvh;
  * You can see a file named sv.h at StoneValley/src/.
  * Please include sv.h whenever and wherever you want.
  *

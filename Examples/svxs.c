@@ -2,7 +2,7 @@
  * Name:        svxs.c
  * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0416250147L00236
+ * File ID:     0415251642A0709251206L00221
  * License:     LGPLv3
  * Copyright (C) 2025 John Cage
  *
@@ -61,16 +61,16 @@ void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t chunk_count)
 /* Function name: svXSort
  * Description:   EXternal sort algorithm.
  * Parameters:
- *      szfin File name and path that you want to sort.
- *     szfout File name and path to store result after sorting.
+ *      fpout Pointer to a file to store result after sorting for writing.
+ *       fpin Pointer to a file that you want to sort for reading.
  *        num How many numbers there are in a chunk.
  *       size Size of each element in the chunk buffer.
  *     cbfcmp Pointer to compare function.
  *            Please refer to svdef.h for more detail.
  * Return value:  Please refer to svxs.h XSortError enumeration.
- * Tip:           szfin and szfout could be equal.
+ * Tip:           After sorting, you should close fpin and fpout.
  */
-XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t size, CBF_COMPARE cbfcmp)
+XSortError svXSort(FILE * fpout, FILE * fpin, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
 	size_t i;
 	P_ARRAY_Z parrChunk = strCreateArrayZ(num, size);
@@ -82,19 +82,16 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 	size_t count = 0;
 	ptrdiff_t valid_count = 0;
 	
-	FILE * input = fopen(szfin, "rb");
-	FILE * output;
-	
-	if (!input)
+	if (!fpin)
 	{
 		strDeleteArrayZ(parrChunkFile);
 		strDeleteArrayZ(parrChunk);
 		return XSE_OPEN_INPUT_FILE;
 	}
 
-	while (!feof(input))
+	while (!feof(fpin))
 	{
-		fread(strLocateItemArrayZ(parrChunk, size, count++), size, 1, input);
+		fread(strLocateItemArrayZ(parrChunk, size, count++), size, 1, fpin);
 
 		if (count == num)
 		{
@@ -113,7 +110,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 			{
 				_svxsDestroyMFileArrayZ(parrChunkFile, chunk_count);
 				strDeleteArrayZ(parrChunk);
-				fclose(input);
+				fclose(fpin);
 				return XSE_OPEN_CHUNK_FILE;
 			}
 
@@ -139,7 +136,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 		{
 			_svxsDestroyMFileArrayZ(parrChunkFile, chunk_count);
 			strDeleteArrayZ(parrChunk);
-			fclose(input);
+			fclose(fpin);
 			return XSE_OPEN_CHUNK_FILE;
 		}
 
@@ -150,17 +147,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 
 	strDeleteArrayZ(parrChunk);
 	
-	if (0 == strcmp(szfin, szfout))	/* They are the same. */
-	{
-		output = freopen(szfout, "wb", input);
-	}
-	else
-	{
-		fclose(input);
-		output = fopen(szfout, "wb");
-	}
-	
-	if (!output)
+	if (!fpout)
 	{
 		_svxsDestroyMFileArrayZ(parrChunkFile, chunk_count);
 		return XSE_OPEN_OUTPUT_FILE;
@@ -210,7 +197,7 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 			}
 		}
 
-		fwrite(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, output);
+		fwrite(strLocateItemArrayZ(parrBuffer, size, min_index), size, 1, fpout);
 		
 		fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), min_index))->fp;
 		if (feof(fp))
@@ -228,8 +215,6 @@ XSortError svXSort(const char * szfin, const char * szfout, size_t num, size_t s
 	strDeleteBMap(pbmValid);
 
 	_svxsDestroyMFileArrayZ(parrChunkFile, chunk_count);
-
-	fclose(output);
 
 	return XSE_NONE;
 }

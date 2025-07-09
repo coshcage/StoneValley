@@ -2,7 +2,7 @@
  * Name:        svxs.h
  * Description: External Sort Interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642B0416250148L00040
+ * File ID:     0415251642B0709251615L00084
  * License:     LGPLv3
  * Copyright (C) 2025 John Cage
  *
@@ -23,7 +23,7 @@
 #ifndef _SVXS_H_
 #define _SVXS_H_
 
-#include "svstring.h"
+#include "svdef.h"
 
 typedef enum en_XSortError
 {
@@ -34,7 +34,51 @@ typedef enum en_XSortError
 } XSortError;
 
 /* Function declaration goes here. */
-XSortError svXSort(FILE * fpout, FILE * fpin, size_t num, size_t size, CBF_COMPARE cbfcmp);
+XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t size, CBF_COMPARE cbfcmp);
 
 #endif
+
+/* Test SVXS suit.
+// Codes for wd.c(Generate 1000 int numbers into file data.).
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+	size_t i;
+	FILE * fp = fopen("data", "wb");
+	srand(time(NULL));
+	for (i = 0; i < 1000; ++i) {
+		int j = rand();
+		fwrite(&j, sizeof(j), 1, fp);
+	}
+	fclose(fp);
+	return 0;
+}
+// Codes for rd.c(Read file data to stdout.).
+#include <stdio.h>
+int main() {
+	FILE * fp = fopen("data", "rb");
+	while (!feof(fp)) {
+		int j;
+		fread(&j, sizeof(j), 1, fp);
+		printf("%d\n", j);
+	}
+	fclose(fp);
+	return 0;
+}
+// Codes for svxs_test.c(Sort front 500 numbers in file data.).
+#include <stdio.h>
+#include "svxs.h"
+int cbfcmp(const void * px, const void * py) {
+	return *(int *)px - *(int *)py;
+}
+int main() {
+	XSortError r;
+	FILE * fp = fopen("data", "rb+");
+	r = svXSort(fp, fp, 500, 10, sizeof(int), cbfcmp);  // Sort front 500 numbers.
+	if (fp)
+		fclose(fp);
+	return r;
+}
+*/
 

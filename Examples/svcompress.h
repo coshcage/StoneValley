@@ -32,7 +32,7 @@ typedef enum en_SVCERROR {
 	SVC_ALLOCATION, /* Allocation failure. */
 	SVC_COMPRESS,   /* Compressing error. */
 	SVC_FILE_TYPE,  /* Data file error. */
-	SVC_PLATFORM,   /* Platform intger length mismatch. */
+	SVC_PLATFORM,   /* Platform integer length mismatch. */
 	SVC_DECOMPRESS  /* Decompressing error. */
 } SVCERROR;
 

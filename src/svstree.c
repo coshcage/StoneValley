@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0703251000L02054
+ * File ID:     0809171737I0710250556L02063
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -1923,7 +1923,16 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 				 * This procedure would reduce the worst case of searching complexity to approximately O(lg N),
 				 * but not restricts to the worst case of O(N) by using linear search.
 				 */
-				REGISTER size_t i = strBinaryLocateArrayZ(*ptrie, pbase, _ELESIZ(size), cbfcmp);
+				REGISTER size_t i =
+				((PUCHAR)svBinarySearchDispatch
+				(
+					pbase,
+					(*ptrie)->pdata,
+					strLevelArrayZ(*ptrie),
+					_ELESIZ(size),
+					cbfcmp,
+					EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+				) - (*ptrie)->pdata) / _ELESIZ(size) + 1;
 				if (NULL == strResizeArrayZ(*ptrie, strLevelArrayZ(*ptrie) + 1, _ELESIZ(size)))
 					return FALSE; /* Allocation failure. */
 				else

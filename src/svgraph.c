@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0201241730L01436
+ * File ID:     0905171125M0710250553L01452
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -1058,7 +1058,15 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 		parrz,
 		&rec,
 		sizeof(_EDGEREC),
-		strBinaryLocateArrayZ(parrz, &rec.weight, sizeof(_EDGEREC), _grpCBFCompareInteger)
+		((PUCHAR)svBinarySearchDispatch
+		(
+			&rec.weight,
+			parrz->pdata,
+			strLevelArrayZ(parrz),
+			sizeof(_EDGEREC),
+			_grpCBFCompareInteger,
+			EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+		) - parrz->pdata) / sizeof(_EDGEREC) + 1
 	);
 	return CBF_CONTINUE;
 }
@@ -1188,7 +1196,15 @@ BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 				pvarr = (ix - 1)[(P_ARRAY_Z *)parrz->pdata];
 				x = y;
 			}
-			i = strBinaryLocateArrayZ(pvarr, &x, sizeof(size_t), _grpCBFCompareInteger);
+			i = ((PUCHAR)svBinarySearchDispatch
+			(
+				&x,
+				pvarr->pdata,
+				strLevelArrayZ(pvarr),
+				sizeof(size_t),
+				_grpCBFCompareInteger,
+				EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+			) - pvarr->pdata) / sizeof(size_t) + 1;
 			if (NULL == strResizeArrayZ(pvarr, strLevelArrayZ(pvarr) + 1, sizeof(P_ARRAY_Z)))
 				return FALSE; /* Allocation failure. */
 			strInsertItemArrayZ(pvarr, &x, sizeof(size_t), i);

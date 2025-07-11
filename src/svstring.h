@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0220251750L00479
+ * File ID:     0306170921Y0710250550L00487
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -29,6 +29,14 @@
 /* The following two macros are used to address nodes pointers for NODE_D structures. */
 #define PREV 1
 #define NEXT 0
+
+/* An enumeration of binary search methods. */
+typedef enum en_BSearch {
+	EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
+	EBS_LAST_LESS_THAN_KEY,
+	EBS_FIRST_GREATER_THAN_KEY,
+	EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+} BSearch;
 
 /* Sized array. */
 typedef struct st_ARRAY_Z {
@@ -97,6 +105,7 @@ void *      svQuickSort                    (void *       pbase,    size_t       
 void *      svMergeSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svHeapSort                     (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svBinarySearch                 (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
+void *      svBinarySearchDispatch         (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp, BSearch method);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
@@ -122,7 +131,6 @@ void *      strCopyArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    
 void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
 void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,      size_t       index);
 size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    BOOL         brev);
-size_t      strBinaryLocateArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    CBF_COMPARE  cbfcmp);
 void *      strInsertItemArrayZ            (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    size_t       index);
 void        strRemoveItemArrayZ            (P_ARRAY_Z    parrz,    size_t       size,      size_t       index,   BOOL         bshrink);
 void        strSortArrayZ_O                (P_ARRAY_Z    parrz,    size_t       size,      CBF_COMPARE  cbfcmp);

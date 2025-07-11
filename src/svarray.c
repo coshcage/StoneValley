@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0131251420L00806
+ * File ID:     0306170948B0710251552L00769
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -202,43 +202,6 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, B
 				if (0 == memcmp(p, pitem, size))
 					return i;
 		}
-	}
-	return 0;
-}
-
-/* Function name: strBinaryLocateArrayZ
- * Description:   Binary locate an item in a sized-array.
- * Parameters:
- *      parrz Pointer to a sized array.
- *      pitem Pointer to an element as a searching target.
- *       size Size of an element.
- *     cbfcmp Pointer to a CBF_COMPARE function.
- *            The left parameter of cbfcmp may point to any element in the array,
- *            whereas the right parameter of cbfcmp always holds the same pointer that pitem stores.
- *            Please refer to the definition of callback function type CBF_COMPARE at file svdef.h for more details.
- * Return value:  Index of an element.
- * Caution:       Address of parrz Must Be Allocated first.
- *                (*) The array that parrz pointed must be sorted in increasing order.
- * Tip:           For instance, to locate number 5 in array (1,2,3,4,4,6) will get an index as 5 pointes to element 6.
- *                Returned index always points to the smallest item in the array that is great than the value that pitem pointed.
- *                If the value you retrieved exceeded the maximum value in the array, the returned index would be (parrz->num - 1).
- */
-size_t strBinaryLocateArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
-{
-	if (strLevelArrayZ(parrz) > 0)
-	{
-		REGISTER size_t l = 0, m = 0, r = strLevelArrayZ(parrz) - 1;
-		while (l < r)
-		{
-			m = l + ((r - l) >> 1);
-			if (cbfcmp(parrz->pdata + m * size, pitem) < 0)
-				l = m + 1;
-			else
-				r = m;
-		}
-		if (cbfcmp(parrz->pdata + r * size, pitem) <= 0)
-			return r + 1;
-		return r;
 	}
 	return 0;
 }

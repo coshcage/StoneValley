@@ -20,7 +20,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 //
 #include <stdio.h>
-#include "../src/svstring.h"
+#include "svstring.h"
 
 // Function: cbftvs_print_list
 // Desc:     Print item number in linked-list.

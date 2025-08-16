@@ -25,8 +25,8 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#include "../src/svstring.h"
-#include "../src/svstack.h"
+#include "svstring.h"
+#include "svstack.h"
 
 /* The following structure defines game actions in undo list. */
 typedef struct st_Action {

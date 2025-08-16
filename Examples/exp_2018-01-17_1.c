@@ -25,8 +25,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "../src/svset.h"
-#include "../src/svstack.h"
+#include "svset.h"
+#include "svstack.h"
 
 static const char * pstr = "thequickbrownfoxjumpsoverthelazydog";
 

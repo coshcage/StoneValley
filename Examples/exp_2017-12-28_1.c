@@ -21,8 +21,8 @@
 //
 #include <stdio.h>
 #include <string.h>
-#include "..\\src\\svqueue.h"
-#include "..\\src\\svstring.h"
+#include "svqueue.h"
+#include "svstring.h"
 #include <Windows.h>
 
 static char * pstr[16] = {

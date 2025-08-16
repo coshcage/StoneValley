@@ -21,7 +21,7 @@
 //
 #include <stdio.h>
 #include <string.h>
-#include "../src/svqueue.h"
+#include "svqueue.h"
 
 static const char * slnefmt[4] = {
 	"      %c\n",

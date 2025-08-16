@@ -25,9 +25,9 @@
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
-#include "../src/svstack.h"
-#include "../src/svqueue.h"
-#include "../src/svtree.h"
+#include "svstack.h"
+#include "svqueue.h"
+#include "svtree.h"
 
 #define BUF_SIZ (100)
 #define OPR_MAX (8)

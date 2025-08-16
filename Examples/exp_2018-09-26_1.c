@@ -21,7 +21,7 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
-#include "../src/svstring.h"
+#include "svstring.h"
 
 #define LIST1_LEN (10) // Length of single pointer linked list.
 #define LIST2_LEN (20) // Length of double pointer linked list.

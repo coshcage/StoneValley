@@ -21,7 +21,7 @@
 //
 #include <stdio.h>
 #include <string.h>
-#include "..\\src\\svstring.h"
+#include "svstring.h"
 
 #define N_ 4
 #define R_ 3

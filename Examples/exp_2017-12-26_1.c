@@ -20,8 +20,8 @@
 // If not, see <https://www.gnu.org/licenses/>.
 //
 #include <stdio.h>
-#include "../src/svstring.h"
-#include "../src/svtree.h"
+#include "svstring.h"
+#include "svtree.h"
 
 /* This function illustrates how to use Huffman algorithm to compress data. */
 int main(void)

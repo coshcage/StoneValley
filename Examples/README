@@ -25,6 +25,7 @@ svxs.h              J.C.    Cross Platform  The interface of external sort.
 svcompress.c        J.C.    Cross Platform  File compressor.
 svcompress.h        J.C.    Cross Platform  The interface of file compressor.
 mksvh.l             J.C.    Unix|GNU/Linux  Make one StoneValley header tool.
+exp_2025-08-16_1    J.C.    Cross Platform  This tool is used to calculate frequencies of words of an article. This program uses Trie and array.
   _______________
  / /   __----__  \
  | |  ///--/  \\  |

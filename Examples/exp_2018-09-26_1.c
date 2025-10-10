@@ -1,6 +1,6 @@
 //
 //  exp_2018-09-26_1.c
-//  External sorting for linked-lists.
+//  Sorting for linked-lists.
 //  Created by cosh.cage#hotmail.com on 09/26/18.
 //  License:  LGPLv3
 //  Platform: Cross Platform.

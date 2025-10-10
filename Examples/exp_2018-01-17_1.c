@@ -62,7 +62,7 @@ int main(void)
 	int i;
 	// Notice that 113 is a prime number.
 	// A suitable prime number is required while creating a chaining hash table.
-	// The technic of choosing a prime number is simple:
+	// The technique of choosing a prime number is simple:
 	// Not too big, Not too small than the number of data you want to insert.
 	P_SET_H pseta = setCreateH(113);
 	if (NULL == pseta)

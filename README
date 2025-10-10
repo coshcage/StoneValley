@@ -23,15 +23,16 @@ i   Preface
 	*) The author claimed that he does will refine source files and references later and he needs time and arms to fix it.
 	*) Should you have any problems with this library, please do not hesitate to contact the author via Email(Email appears in each .C or .H file.).
 
-ii  Acknowledgment
+ii  Disclaimer
 
-	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
+	*) While StoneValley has been intensively tested, residual bugs might exist which can lead to unexpected consequences. So, JBC(Just Be Careful).
+
 
 iii Table of Contents
 
 	[Contents]                                                    [Line number]
 	Preface ................................................................ 21
-	Acknowledgment ......................................................... 26
+	Disclaimer ............................................................. 26
 	Table of Contents ...................................................... 30
 	Scenario ............................................................... 45
 	Naming ................................................................. 82
@@ -44,9 +45,9 @@ iii Table of Contents
 
 iv  Scenario
 
-	StoneValley is a programming library that was written in plain C programming language and aimed at providing its users a set of functions with a variety of algorithms that could manipulate various data structures. This Readme file briefly introduced this library in a users' perspective. Contents in this Readme file guide users in an approach of what it is, how to use it and how to reprogram it. To advance and proficiently utilize this library need users to practice programming with it.
+	StoneValley is a data structure & algorithm library written in plain C programming language. It offers users various data structures along with the algorithms for manipulating them. This Readme file briefly describes what it is, how to use it and how to reprogram it from a user's perspective. 
 
-	Divided into several parts were String, Stack, Queue, Tree, Hash table, Graph and Set laid in StoneValley.
+	The library consists of several components, including String, Stack, Queue, Tree, Hash table, Graph and Set.
 	 ________ ________ ________ _________
 	[ strING }        {  treE  }        {{ [Figure 1]
 	[       _}        {_      _}        {_
@@ -780,4 +781,5 @@ If your document contains nontrivial examples of program code, we
 recommend releasing these examples in parallel under your choice of
 free software license, such as the GNU General Public License,
 to permit their use in free software.
+
 

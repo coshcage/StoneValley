@@ -142,8 +142,8 @@ void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       
 BOOL        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, BOOL        bnext);
 BOOL        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    unsigned int seed);
-BOOL        strKMPSearchArrayZ             (P_ARRAY_Z    parrtxt,  void **      pptxt,     P_ARRAY_Z    parrptn, size_t       size,   P_ARRAY_Z   parrlps);
-P_ARRAY_Z   strCreateZSearchArrayZ         (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size);
+int         strKMPSearchArrayZ             (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
+int         strZSearchArrayZ               (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
 /* Functions for single pointer linked-lists. */
 int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);

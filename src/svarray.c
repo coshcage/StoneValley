@@ -677,7 +677,7 @@ BOOL strKMPSearchArrayZ(P_ARRAY_Z parrtxt, void ** pptxt, P_ARRAY_Z parrptn, siz
 	if (parrlps->num < parrptn->num)
 		return FALSE;
 
-	/* Processe the pattern to generate the longest prefix suffix (parrlps) array. */
+	/* Process the pattern to generate the longest prefix suffix (parrlps) array. */
 	{
 		REGISTER size_t len = 0;
 		REGISTER size_t k   = 1;

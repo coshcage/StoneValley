@@ -61,7 +61,7 @@ iv  Scenario
 	[   __   {        }   __   {{
 	[__{{ }__{__    __}__{{ }__{{     UU
 	[           {__}}
-	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishes functions into parts shows the real formation of StoneValley less unpleasant. Users could always add their own appliances manque for StoneValley.
+	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishes functions into parts shows the real formation of StoneValley with less unpleasant. Users could always add their own appliances manque for StoneValley.
 
 	Inquiring deeper inside this library, string is a collection of linear data structures which contain array, single linked-list, doubly linked-list, bit-stream, common matrix, bit-matrix and sparse matrix. Functions that operate on these linear data structures were distributed into file "svstring.h". Furthermore, files "svatom.c", "svarray.c", "svlist.c", "svmatrix.c" and "svmisc.c" stored definitions of these functions.
 

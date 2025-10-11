@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0710251552L00769
+ * File ID:     0306170948B1010252150L00872
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -636,6 +636,109 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int s
 			svSwap(parrz->pdata + size * i, parrz->pdata + size * j, ptemp, size);
 		}
 	}
+}
+
+/* Function name: strKMPSearchArrayZ
+ * Description:   Match pattern in text by using KMP algorithm.
+ * Parameters:
+ *    parrtxt Pointer to the sized array you want to search.
+ *      pptxt Points to a pointer to the first element that is matched in txt array.
+ *    parrptn Pointer to the sized array which contains the pattern.
+ *       size Size of each element in both parrtxt and parrptn.
+ *    parrlps Pointer to a sized array whose elements are size_t and length equals parrptn.
+ * Return value:  TRUE  Pattern can be found.
+                  FALSE Can not find pattern.
+ * Caution:       parrlps->num must equal to parrptn->num.
+ * Tips:          Users may reference to the following codes:
+ *                // wchar_t txt[] = L"ABABDABACDABABCABAB";
+ *                // wchar_t ptn[] = L"ABABCABAB";
+ *                // wchar_t * ptxt = txt + 3; // Finding begins at txt + 3.
+ *                // size_t lps[9] = { 0 };
+ *                // ARRAY_Z parrtxt, parrptn, parrlps;
+ *                //
+ *                // parrtxt.pdata = (PUCHAR)txt;
+ *                // parrtxt.num = wcslen(txt);
+ *                //
+ *                // parrptn.pdata = (PUCHAR)ptn;
+ *                // parrptn.num = wcslen(ptn);
+ *                //
+ *                // parrlps.pdata = (PUCHAR)lps;
+ *                // parrlps.num = parrptn.num;
+ *                //
+ *                // wprintf(L"%d\n", strKMPSearchArrayZ(&parrtxt, (void **)&ptxt, &parrptn, sizeof(wchar_t), &parrlps)); // Prints 1.
+ *                // wprintf(L"%ls\n", ptxt); // Prints ABABCABAB.
+ */
+BOOL strKMPSearchArrayZ(P_ARRAY_Z parrtxt, void ** pptxt, P_ARRAY_Z parrptn, size_t size, P_ARRAY_Z parrlps)
+{
+	REGISTER size_t i = 0; /* Index for parrtxt. */
+	REGISTER size_t j = 0; /* Index for parrptn. */
+	BOOL r = FALSE;
+	
+	if (parrlps->num < parrptn->num)
+		return FALSE;
+
+	/* Processe the pattern to generate the longest prefix suffix (parrlps) array. */
+	{
+		REGISTER size_t len = 0;
+		REGISTER size_t k   = 1;
+		
+		*(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), 0) = 0; /* parrlps[0] is always 0. */
+		
+		while (k < parrptn->num)
+		{
+			if (memcmp(strLocateItemArrayZ(parrptn, size, k), strLocateItemArrayZ(parrptn, size, len), size) == 0)
+			{
+				++len;
+				*(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), k) = len;
+				++k;
+			}
+			else
+			{
+				if (0 != len)
+				{
+					len = *(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), len - 1);
+				}
+				else
+				{
+					*(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), k) = 0;
+					++k;
+				}
+			}
+		}
+	}
+
+	while (i < parrtxt->num)
+	{
+		if (memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size) == 0)
+		{
+			++j;
+			++i;
+		}
+		
+		if (j == parrptn->num)
+		{
+			REGISTER PUCHAR p = parrtxt->pdata + (i - j) * size;
+			if (pptxt)
+			{
+				if ((size_t)*pptxt <= (size_t)p)
+					*pptxt = p;
+				else
+					*pptxt = NULL;
+			}
+			*(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), j - 1) = j;
+			r = TRUE;
+		}
+		
+		else if (i < parrtxt->num && (memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size) != 0))
+		{
+			if (0 != j)
+				j = *(size_t *)strLocateItemArrayZ(parrlps, sizeof(size_t), j - 1);
+			else
+				++i;
+		}
+	}
+	
+	return r;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

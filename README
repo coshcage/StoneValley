@@ -25,22 +25,24 @@ i   Preface
 
 ii  Acknowledgment
 
+	*) This library is published under GNU Lesser General Public License Version 3.
 	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
+	*) Please contact the author for other mercantile licenses of this library.
 
 iii Table of Contents
 
 	[Contents]                                                    [Line number]
 	Preface ................................................................ 21
 	Acknowledgment ......................................................... 26
-	Table of Contents ...................................................... 30
-	Scenario ............................................................... 45
-	Naming ................................................................. 82
+	Table of Contents ...................................................... 32
+	Scenario ............................................................... 47
+	Naming ................................................................. 84
 	Callbacks ............................................................. 127
-	Checklist ............................................................. 131
-	Alteration Guide ...................................................... 166
-	Limitations ........................................................... 315
-	Appendix .............................................................. 325
-	GNU Free Documentation License ........................................ 331
+	Checklist ............................................................. 133
+	Alteration Guide ...................................................... 168
+	Limitations ........................................................... 317
+	Appendix .............................................................. 327
+	GNU Free Documentation License ........................................ 335
 
 iv  Scenario
 
@@ -322,7 +324,9 @@ ix  Limitations
 
 		The length of a 'size_t' integer depends on the specific machine environment that implements C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures in StoneValley.
 
-x  Star me to support an open network and boycott Chinese government from building the Great Fire Wall!
+x	Give me a *star to support an open internet and boycott Chinese government from building the Great Fire Wall!
+	Please support the Free Software Foundation (https://www.fsf.org/).
+	Support the Electronic Frontier Foundation (https://www.eff.org/).
 
 	The Story About StoneValley
 

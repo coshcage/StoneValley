@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B1010252150L00860
+ * File ID:     0306170948B1025252335L00860
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -39,10 +39,10 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size);
  */
 char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
 {
-	REGISTER char * ps = (char *) pstr;
-	while (*ps)
-		++ps;
-	parrz->num = (size_t)(ps - pstr);
+	parrz->num = 0;
+	while (pstr[parrz->num])
+		++(parrz->num);
+	/* While this is not an efficient implementation. */
 	/* parrz->num = strlen(pstr). */
 	parrz->pdata = (PUCHAR) malloc(strLevelArrayZ(parrz));
 	if (NULL == parrz->pdata)

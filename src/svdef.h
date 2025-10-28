@@ -29,11 +29,11 @@
 /* Library version. */
 #define SV_LIB_VER "1.2.2.2"
 
-/* Boolean type and constants. */
-typedef enum bool
+/* Boolean type enumeration and constants. */
+typedef enum en_bool
 {
-	FALSE, /* =0. */
-	TRUE   /* =1. */
+	FALSE = 0,
+	TRUE  = 1
 } BOOL;
 
 /* Callback function returning values. */

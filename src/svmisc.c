@@ -664,7 +664,7 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
  *            EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY     [1,2,3,5,5,5,8,9]
  *                                                              ^
  * Return value:  A pointer to an entry in the array that matches the searching key.
- *                If the value of parameter method is not belong to BSearch, function will return NULL.
+ *                If the value of parameter method does not belong to BSearch, function will return NULL.
  */
 void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp, BSearch method)
 {

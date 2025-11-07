@@ -26,7 +26,7 @@ i   Preface
 ii  Acknowledgment
 
 	*) This library is published under GNU Lesser General Public License Version 3.
-	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable quantity of times. So, JBC(Just Be Careful).
+	*) Bugs may cause nuisances in StoneValley, although this library has been tested for a considerable number of times. So, JBC(Just Be Careful).
 	*) Please contact the author for other mercantile licenses of this library.
 
 iii Table of Contents
@@ -46,7 +46,7 @@ iii Table of Contents
 
 iv  Scenario
 
-	StoneValley is a programming library that was written in plain C programming language and aimed at providing its users a set of functions with a variety of algorithms that could manipulate various data structures. This Readme file briefly introduced this library in a users' perspective. Contents in this Readme file guide users in an approach of what it is, how to use it and how to reprogram it. To advance and proficiently utilize this library need users to practice programming with it.
+	StoneValley is a programming library that was written in plain C programming language and aimed at providing its users a set of functions with a variety of algorithms that could manipulate various data structures. This README file briefly introduced this library in a users' perspective. Contents in this README file guide users in an approach of what it is, how to use it and how to reprogram it. To advance and proficiently utilize this library need users to practice programming with it.
 
 	Divided into several parts were String, Stack, Queue, Tree, Hash table, Graph and Set laid in StoneValley.
 	 ________ ________ ________ _________
@@ -63,31 +63,31 @@ iv  Scenario
 	[   __   {        }   __   {{
 	[__{{ }__{__    __}__{{ }__{{     UU
 	[           {__}}
-	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishes functions into parts shows the real formation of StoneValley with less unpleasant. Users could always add their own appliances manque for StoneValley.
+	 Rather than portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishing functions into parts shows the real formation of StoneValley with less unpleasant. Users could always add their own appliances manque for StoneValley.
 
-	Inquiring deeper inside this library, string is a collection of linear data structures which contain array, single linked-list, doubly linked-list, bit-stream, common matrix, bit-matrix and sparse matrix. Functions that operate on these linear data structures were distributed into file "svstring.h". Furthermore, files "svatom.c", "svarray.c", "svlist.c", "svmatrix.c" and "svmisc.c" stored definitions of these functions.
+	Inquiring deeper inside this library, string is a collection of linear data structures that contain array, single linked-list, doubly linked-list, bit-stream, common matrix, bit-matrix and sparse matrix. Functions that operate on these linear data structures were distributed into file "svstring.h". Furthermore, files "svatom.c", "svarray.c", "svlist.c", "svmatrix.c" and "svmisc.c" stored definitions of these functions.
 
-	File "svstack.c" implemented stacks of which file "svstack.h" gathered their declarations. Two species of stack implementations involved in this library that they were devised as fixed size array type and single linked-list type. For users, Fixed-size-array stacks are suitable to use in memory space concerned situations. While articulated linked-list stacks are convenient to use for circumstances that dynamic memory allocation is allowed.
+	File "svstack.c" implemented stacks of which file "svstack.h" gathered their declarations. Two species of stack implementations are involved in this library that they were devised as fixed-size array type and single linked-list type. For users, fixed-size-array stacks are suitable to use in memory-space-concerned situations. While articulated linked-list stacks are convenient to use for circumstances in which dynamic memory allocation is allowed.
 
-	Functions for queues were exported into "svqueue.h" and simultaneously implemented in file "svqueue.c". Three types of queue implementations have been written in StoneValley. Fixed size array implementation for circular queues and single linked-list implemented queues were both collected in the library. A doubly linked-list achievement for dequeues(Double-Ended Queues) was another participant. Like stacks, users may use fixed-size-array queues to strictly control memory spaces. If users need to allocate memory spaces dynamically, elastic linked-list queues are accessible to work.
+	Functions for queues were exported into "svqueue.h" and simultaneously implemented in file "svqueue.c". Three types of queue implementations have been written in StoneValley. Fixed-size array implementation for circular queues and single linked-list implemented queues were both collected in the library. A doubly linked-list achievement for dequeues(double-ended queues) was another participant. Like stacks, users may use fixed-size-array queues to strictly control memory spaces. If users need to allocate memory spaces dynamically, elastic linked-list queues are accessible to work.
 
-	Too many tree data structures appear on the world. Only a few important trees were achieved since StoneValley cannot implement them one by one. Planted in the library were binary trees used doubly pointer nodes. Generic trees benefited from arrays; Heap trees took advantage of fixed size arrays and BSTs(Binary search trees) utilized AA-trees. Other three searching/indexing trees occupied in the library were AVL tree, B-Plus tree and array-achieved trie. Finally, a Huffman-coding tree settled in StoneValley at file "svctree.c". As the same manner, functions for trees were exported into a header file named "svtree.h". Different source files implemented diverse types of trees. These source files were "svbytree.c", "svgtree.c", "svhtree.c", "svstree.c" and "svctree.c" for the reason that "by" denoted "binary", "g" meant "generic", "h" dictated "heap", "s" indicated "searching" and "c" represented "coding".
+	Too many tree data structures appear in the world. Only a few important trees were achieved since StoneValley cannot implement them one by one. Planted in the library were binary trees using doubly pointer nodes. Generic trees benefited from arrays; heap trees took advantage of fixed-size arrays and BSTs(Binary search trees) utilized AA-trees. The other three searching/indexing trees occupied in the library were AVL tree, B-Plus tree and array-achieved trie. Finally, a Huffman-coding tree settled in StoneValley at file "svctree.c". As the same manner, functions for trees were exported into a header file named "svtree.h". Different source files implemented diverse types of trees. These source files were "svbytree.c", "svgtree.c", "svhtree.c", "svstree.c" and "svctree.c" for the reason that "by" denoted "binary", "g" meant "generic", "h" dictated "heap", "s" indicated "searching" and "c" represented "coding".
 
-	Header file "svhash.h" contained function declarations for hash tables. Hash table function bodies have been outputted into "svhash.c". In detail, separate chaining hash tables used linked-lists as buckets, open addressing hash tables used fixed size arrays as grills to separate items. At file "svhash.h", type "CBF_HASH" declared the hash function prototype. When using hash tables, users need to write their own callback hash function definitions to let StoneValley library hash functions invoke them to hash items. Interiors of this header and source will inform users more precisely for hashing.
+	Header file "svhash.h" contained function declarations for hash tables. Hash table function bodies have been outputted into "svhash.c". In detail, separate chaining hash tables used linked-lists as buckets, open addressing hash tables used fixed-size arrays as grills to separate items. At file "svhash.h", type "CBF_HASH" declared the hash function prototype. When using hash tables, users need to write their own callback hash function definitions to let StoneValley library hash functions invoke them to hash items. Interiors of this header and source will inform users more precisely for hashing.
 
-	Set is another facility that provided by StoneValley. Sets exert both hash tables and Binary-search-trees to manage their elements. StoneValley interfaced set in file "svset.h". Meanwhile, implementations were written in "svset.c". Users may use these functions to insert and remove elements into sets and make unions, intersections and differences between sets.
+	Set is another facility that is provided by StoneValley. Sets exert both hash tables and Binary-search-trees to manage their elements. StoneValley interfaced set in file "svset.h". Meanwhile, implementations were written in "svset.c". Users may use these functions to insert and remove elements into sets and make unions, intersections and differences between sets.
 
-	As for graphs, file "svgraph.c" schemes graph data structures whose interface is "svgraph.h". Adjacency lists that made by single pointer nodes linked edges of vertices for a graph together rather to use a matrix to present connections of vertices. Many operations defined by functions could be use to maneuver graphs such as calculating the shortest path and generating a minimum spanning tree.
+	As for graphs, file "svgraph.c" schemes graph data structures whose interface is "svgraph.h". Adjacency lists that are made by single pointer nodes linked edges of vertices for a graph together rather than using a matrix to present connections of vertices. Many operations defined by functions could be used to maneuver graphs such as calculating the shortest path and generating a minimum spanning tree.
 
-	At last, file "svmisc.c" vacates a habitat for extra algorithms and structures. Besides accomplished functions for bit-streams, vastly used algorithms like quick sort and binary search were arranged at this file to treat data in consecutive memory spaces.
+	At last, file "svmisc.c" vacates a habitat for extra algorithms and structures. Besides accomplished functions for bit-streams, vastly used algorithms like quick sort and binary search were arranged in this file to treat data in consecutive memory spaces.
 
 v  The naming of library functions and types
 
-	The nomenclature for StoneValley observed guidelines. Prefixes, infixes and suffixes are used to stipulate identifiers. For functions named with prefix, such as function "stkInitA", the prefix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that the word "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions contain the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure were needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
+	The nomenclature for StoneValley observed guidelines. Prefixes, infixes and suffixes are used to stipulate identifiers. For functions named with prefix, such as function "stkInitA", the prefix "stk" shows this function belongs to a group of stack structures. Thus, users should include "svstack.h" first to use this function. The infix "Init" means "stkInitA" operates on initializing stack structures. The final "A" denotes that this function initializes an array-formed stack. And "stkInitL" interpreted to initialize a linked-list stack. Have a notice that words "Init" and "Create" are distinct in StoneValley. "Init" labeled functions meant to initialize objects which already existed in main memory. Then, users should pass pointers of structures into parameters of "Init" labeled functions. Comparatively, functions containing the word "Create" will acquire new spaces for structures in RAM in the beginning and return pointers to structures at the end of their executions. If an "Init" function were used to allocate a structure, respectively, when the structure is needed to deallocate, users should bring a free function to bear. In the same way, if a creation function were adopted to fetch a pointer of a structure, a deletion function would be required to disburden memory spaces of this structure later.
 
 	+__Category__________________________Type_________Location___+ [Figure 2]
 	|strING______________________________|___________<svstring.h>|
-	|    + Fixed size array              :ARRAY_Z:    svarray.c  |
+	|    + Fixed-size array              :ARRAY_Z:    svarray.c  |
 	|    + Single linked list            :LIST_S:     svlist.c   |
 	|    + Double linked list            :LIST_D:      ditto.    |
 	|    + Bit stream                    :BITSTREAM:  svmisc.c   |
@@ -120,15 +120,15 @@ v  The naming of library functions and types
 	|grApH_______________________________|___________<svgraph.h>_|
 	|    + Adjacency list graph          :GRAPH_L:    svgraph.c  |
 	|____________________________________|_______________________|
-	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in library.
+	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in the library.
 
-	Secondarily, function name "setSizeT_O" explored that there must be a macro to inline this function and this macro is written as "setSizeT_M", because letter "O" instead of declaring the original function and letter "M" tailed declaration claimed its macro version. Inline functions by using macros would avoid conflicts during linkage between different linkers. But the drawback of macro-inline is that library maintainers have to write one function for twice. Firstly, maintainers should write an original edition for a function. Secondly, library maintainers need to write it again for its macro version. It seems to be verbose but it is a useful manner to practice in a mass of compiling environments.
+	Secondarily, function name "setSizeT_O" explored that there must be a macro to inline this function and this macro is written as "setSizeT_M", because the letter "O" instead of declaring the original function and the letter "M" tailed declaration claimed its macro version. Inline functions by using macros would avoid conflicts during linkage between different linkers. But the drawback of macro-inline is that library maintainers have to write one function twice. Firstly, maintainers should write an original edition for a function. Secondly, library maintainers need to write it again for its macro version. It seems to be verbose but it is a useful manner to practice in a mass of compiling environments.
 
-	Not until a great number of types bounced into StoneValley, did identifiers become tricky. For example, "STACK_A" is a type for stacks, and such stacks are made of arrays. Then "P_STACK_A" can define pointers to this array implemented stack. Type "SET_H" at "svset.h" derived from type "HSHTBL_C". It is not hard to imagine the implication of this kind of naming. "SET_H" implies the type of sets that consist of hash tables derived from separate chaining hash table type. Certainly, pointers to hash table implemented sets can be declared by "P_SET_H". Naming guidelines for function parameters are feasible to recognise too. For instance, "P_SET_H", the type of the first parameter of function "setInitH_O" at "svhash.h" means users should transfer a pointer to a hash table implemented set to this parameter while invoking. Suffix "CBF" explained types of callback functions. Therefore some parameters whose names are defined with "CBF_HASH" mean that users should pass the address to a hash function while invoking the callee.
+	Not until a great number of types bounced into StoneValley, did identifiers become tricky. For example, "STACK_A" is a type for stacks, and such stacks are made of arrays. Then "P_STACK_A" can define pointers to this array implemented stack. Type "SET_H" at "svset.h" derived from type "HSHTBL_C". It is not hard to imagine the implication of this kind of naming. "SET_H" implies the type of sets that consist of hash tables derived from separate chaining hash table type. Certainly, pointers to hash table implemented sets can be declared by "P_SET_H". Naming guidelines for function parameters are feasible to recognize too. For instance, "P_SET_H", the type of the first parameter of function "setInitH_O" at "svhash.h" means users should transfer a pointer to a hash table implemented set to this parameter while invoking. THe suffix "CBF" explained types of callback functions. Therefore, some parameters whose names are defined with "CBF_HASH" mean that users should pass the address to a hash function while invoking the callee.
 
 vi  Callback functions and their usages
 
-	Another crucial point of using StoneValley is to understand callback functions. There are two main types of callback functions. One is the type of callback function that used to traverse items in structures. The other is the type of callback function that used to compare values by pointers. The first one named as "CBF_TRAVERSE". The second one labeled as "CBF_COMPARE". Details about how to use these two types of callback functions are located at file "svdef.h". Additionally, two important values of callback function "CBF_TRAVERSE" returns are "CBF_TERMINATE" and "CBF_CONTINUE". 0, 1 and -1 will return after calling a "CBF_COMPARE" function. The callees for caller callback functions should obey their specific calling conventions.
+	Another crucial point of using StoneValley is to understand callback functions. There are two main types of callback functions. One is the type of callback function that is used to traverse items in structures. The other is the type of callback function that is used to compare values by pointers. The first one named as "CBF_TRAVERSE". The second one is labeled as "CBF_COMPARE". Details about how to use these two types of callback functions are located at file "svdef.h". Additionally, two important values of callback function "CBF_TRAVERSE" returns are "CBF_TERMINATE" and "CBF_CONTINUE". 0, 1 and -1 will return after calling a "CBF_COMPARE" function. The callees for caller callback functions should obey their specific calling conventions.
 
 vii Here is a simple checklist. Please retrieve it before you compile this library.
 	 _________________________________________________________________
@@ -146,31 +146,31 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	Non-normal handling:
 	*) Guiding actions will use upper case letters to type and a pair of '[]' to emphasize.
 
-	StoneValley coded adhere to the Standard of C Programming language(iso9899:1990), and it has been tested. However, different compilers with different optimization criterion may lead compilers to produce different warnings and errors.
+	StoneValley code adheres to the Standard of C Programming language(iso9899:1990), and it has been tested. However, different compilers with different optimization criteria may lead compilers to produce different warnings and errors.
 
 	1) Errors of missing symbols.
-		In some environments, especially when users try to compile StoneValley on an embedded platform, because of the lack of supporting of the C standard library, compilers will produce errors. For instance, if there were not installed the header file "stdio.h", compilers might explain an error about missing macro 'BUFSIZ' for the library source file "svmisc.c". In this circumstance, users shall simply [IMPLEMENT] macro 'BUFSIZ' by themselves. In another way, users shall [COLLECT] missing macros in a header file that has the same name with the original header in the C standard library.
+		In some environments, especially when users try to compile StoneValley on an embedded platform, because of the lack of support for the C standard library, compilers will produce errors. For instance, if there were not installed the header file "stdio.h", compilers might explain an error about the missing macro 'BUFSIZ' for the library source file "svmisc.c". In this circumstance, users shall simply [IMPLEMENT] macro 'BUFSIZ' by themselves. In another way, users shall [COLLECT] missing macros in a header file that has the same name with the original header in the C standard library.
 
-		If some C standard library functions that being used by functions in StoneValley were not implemented, compilers/linkers would report errors about missing symbols while linking. There are two ways to handle a missing of C standard library functions. First, [IMPLEMENT] the C standard library functions on users' own. Second, [REMOVE] functions that use missing C standard library functions in StoneValley directly.
+		If some C standard library functions that are being used by functions in StoneValley were not implemented, compilers/linkers would report errors about missing symbols while linking. There are two ways to handle a missing C standard library function. First, [IMPLEMENT] the C standard library functions on users' own. Second, [REMOVE] functions that use missing C standard library functions in StoneValley directly.
 
 	2) Warnings of inline function expansion.
-		Most optimizing compiler will automatically expand inline functions for a better performance. In general, library users could [NEGLECT] those warnings when compilers were attempting to expand inline functions. To [TURN] library optimization switch at file "svdef.h" into value 'SV_OPT_DISABLED' could avoid any errors which caused by inline macros.
+		Most optimizing compilers will automatically expand inline functions for better performance. In general, library users could [NEGLECT] those warnings when compilers were attempting to expand inline functions. To [TURN] the library optimization switch at file "svdef.h" into value 'SV_OPT_DISABLED' could avoid any errors which caused by inline macros.
 
 	3) Warnings of type casting and structure alignment.
-		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers warn users of precision losing and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed length while it needs padding bytes to alter the original structure, compilers may warn users either. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
+		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping the 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers to warn users of precision loss and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed-length while they need padding bytes to alter the original structure, compilers may warn users either way. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
 
 	4) Warnings of library function returns.
 		Some compilers installed with code analysis techniques would check return values of functions in the C standard library. For example, it would check if the "realloc" function might return a NULL pointer to its left-hand-side expression. Library users could [IGNORE] these types of warnings.
 
 	5) Other concerns.
-		If an architecture did not support users to use too many register variables, compilers would produce warnings. Library users could comment the 'REGISTER' macro at file "svdef.h" or [IGNORE] compiler produced warnings.
+		If an architecture did not support users to use too many register variables, compilers would produce warnings. Library users could comment on the 'REGISTER' macro at file "svdef.h" or [IGNORE] compiler produced warnings.
 
 viii Library Alteration Guide
 
-	The next instruction will guide you fix the library. This instruction has been divided into three parts, [a] [b] and [c].
-	*) Optional procedures differ from others that optional lines titled by digits and brackets such as '0)' while digits and dot such as '0.' title other operations.
+	The next instruction will guide you to fix the library. This instruction has been divided into three parts, [a] [b] and [c].
+	*) Optional procedures differ from others that optional lines titled by digits and brackets such as '0)' while digits and a dot such as '0.' title other operations.
 
-	a] Macro inline an existed function in the library:
+	a] Macro inline an existing function in the library:
 
 	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 4]
 	$ /* Name: example       $ 1.=> $ /* Name: example_O                       $
@@ -183,7 +183,7 @@ viii Library Alteration Guide
 	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		1. Append an '_O' sign to the tail of the original function name in the comments above its declaration.
-		2) Write a tip in the comments above the function declaration to notice users what name the macro is and where the macro locates. (Optional)
+		2) Write a tip in the comments above the function declaration to notify users what name the macro is and where the macro is located. (Optional)
 		3. Append an '_O' sign to the tail of the original function name in the declaration.
 
 	$BEFORE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 5]
@@ -203,15 +203,15 @@ viii Library Alteration Guide
 	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		4. Append an '_O' sign to the tail of the original function name in the definition at the proper header file.
-		5. Copy the entire function declaration bellow definitions block in header.
+		5. Copy the entire function declaration below definitions block in header.
 		6. Cut types off and add "#define" in the beginning of the declaration.
-		7. Alter '_O' sign in function name into '_M'. Append an '_M' sign at each parameter in declaration to prevent arguments confuse preprocessor. Please cross reference section [b] [Figure 6] and [Figure 7] for more details about inline.
-		8) Write the original function name and its macro name into a block that used to optimize library as needed. (Optional) Notice that if function name were written in any branches of preprocessor directives, function should appear in other branches simultaneously.
+		7. Alter '_O' sign in function name into '_M'. Append an '_M' sign to each parameter in declaration to prevent arguments from confusing the preprocessor. Please cross reference section [b] [Figure 6] and [Figure 7] for more details about inline.
+		8) Write the original function name and its macro name into a block that is used to optimize the library as needed. (Optional) Notice that if a function name were written in any branches of preprocessor directives, the function should appear in other branches simultaneously.
 		9. Finish.
 
-	b] Altering an existed function in the library:
+	b] Altering an existing function in the library:
 		1. Alter a function and check whether it has a macro version.
-		2. If the function you amended has an '_O' sign at the tail of its name, then both alter its macro version in the proper header file. See section [a] [Figure 4] and [Figure 5] for altering macros in detail.
+		2. If the function you amended has an '_O' sign at the tail of its name, then also alter its macro version in the proper header file. See section [a] [Figure 4] and [Figure 5] for altering macros in detail.
 
 	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
 	$ void svInit(int * p) { $ 3.=> $ #define svInit_M(p_M) do { \ $
@@ -308,29 +308,29 @@ viii Library Alteration Guide
 
 		1. Write a definition for a new function.
 		2. If the new function you wrote needs another callback function, then write the callback function for it. Then add an underscore '_' at the beginning of the callback function to declare it as an internal function.
-		3. If you wrote a definition for a callback function, both implement its declaration at the top of the current file section.
-		4. Implement a declaration for your original new wrote function into proper header file.
-		5. If you need to inline a new wrote function, write a macro version in the appropriate header file. And plus an '_O' to end of the original one. Add '_M' signs onto its name and all parameters for the macro version at header file. See section [a] and [b] for altering macros in detail.
+		3. If you wrote a definition for a callback function, implement its declaration at the top of the current file section.
+		4. Implement a declaration for your original newly written function into a proper header file.
+		5. If you need to inline a newly written function, write a macro version in the appropriate header file. And plus an '_O' to the end of the original one. Add '_M' signs onto its name and all parameters for the macro version at header file. See section [a] and [b] for altering macros in detail.
 		6. Put either name of the original function or its macro version into the right place at the bottom of header file to optimize the performance of library. See section [a] for altering macros in detail.
 		7. Addition done.
 
 ix  Limitations
 
 	Dependencies:
-		Despite some of the fundamental functions in StoneValley can be run without The C Standard Library, most part of this library needs dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
+		Despite some of the fundamental functions in StoneValley being able to be run without The C Standard Library, most parts of this library need dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
 
 	Addressing:
-		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.
+		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which is derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.
 
-		The length of a 'size_t' integer depends on the specific machine environment that implements C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures in StoneValley.
+		The length of a 'size_t' integer depends on the specific machine environment that implements the C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures in StoneValley.
 
-x	Give me a *star to support an open internet and boycott Chinese government from building the Great Fire Wall!
+x	Give me a *star to support an open internet and boycott the Chinese government from building the Great Fire Wall!
 	Please support the Free Software Foundation (https://www.fsf.org/).
 	Support the Electronic Frontier Foundation (https://www.eff.org/).
 
 	The Story About StoneValley
 
-	To think about the integration of algorithms might be a valuable job. In 2016, I was considering about this topic. And meanwhile, other coding projects urged me to write a such programming library. Yes, I needed a collection of algorithms and useful data structures. When you got well ready to your project, you are almost succeeded. I found all books about algorithms and data structures on my bookshelf and prepared to write StoneValley.
+	To think about the integration of algorithms might be a valuable job. In 2016, I was considering this topic. And meanwhile, other coding projects urged me to write such a programming library. Yes, I needed a collection of algorithms and useful data structures. When you got well ready for your project, you are almost succeeded. I found all books about algorithms and data structures on my bookshelf and prepared to write StoneValley.
 
 xi
 

@@ -107,7 +107,7 @@ int _hshCBFTraverseCPuppet(void * pitem, size_t param)
  */
 int _hshCBFCopyCPuppet(void * pitem, size_t param)
 {
-	return FALSE ==
+	return false ==
 		hshInsertC
 		(
 			(P_HSHTBL_C) 0[(size_t *)param],
@@ -124,17 +124,17 @@ int _hshCBFCopyCPuppet(void * pitem, size_t param)
  *        pht Pointer to the hash table you want to initialize.
  *    buckets Number of buckets in hash table.
  *            This value shall be a prime number.
- * Return value:  TRUE  Initialize succeeded.
- *                FALSE Cannot initialize.
+ * Return value:  true  Initialize succeeded.
+ *                false Cannot initialize.
  * Caution:       Address of pht Must Be Allocated first.
  */
-BOOL hshInitC(P_HSHTBL_C pht, size_t buckets)
+bool hshInitC(P_HSHTBL_C pht, size_t buckets)
 {
 	if (NULL == strInitArrayZ(pht, buckets, sizeof(P_NODE_S)))
-		return FALSE;
+		return false;
 	/* Clear array. */
 	memset(pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
-	return TRUE;
+	return true;
 }
 
 /* Function name: hshFreeC
@@ -146,7 +146,7 @@ BOOL hshInitC(P_HSHTBL_C pht, size_t buckets)
  */
 void hshFreeC(P_HSHTBL_C pht)
 {
-	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFFreeBuckets, ENT_SINGLE, FALSE);
+	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFFreeBuckets, ENT_SINGLE, false);
 	strFreeArrayZ(pht);
 }
 
@@ -176,7 +176,7 @@ P_HSHTBL_C hshCreateC(size_t buckets)
  */
 void hshDeleteC(P_HSHTBL_C pht)
 {
-	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFFreeBuckets, ENT_SINGLE, FALSE);
+	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFFreeBuckets, ENT_SINGLE, false);
 	strDeleteArrayZ(pht);
 }
 
@@ -190,7 +190,7 @@ void hshDeleteC(P_HSHTBL_C pht)
 size_t hshSizeC(P_HSHTBL_C pht)
 {
 	size_t n = 0;
-	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFSizeBuckets, (size_t)&n, FALSE);
+	strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFSizeBuckets, (size_t)&n, false);
 	return n;
 }
 
@@ -209,7 +209,7 @@ int hshTraverseC(P_HSHTBL_C pht, CBF_TRAVERSE cbftvs, size_t param)
 	size_t a[2];
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
-	return strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFTraverseCPuppet, (size_t)a, FALSE);
+	return strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFTraverseCPuppet, (size_t)a, false);
 }
 
 /* Function name: hshSearchC
@@ -236,17 +236,17 @@ P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t s
  *            The same hash table should use the same hash function.
  *       pkey Pointer to an element. Casted into (const void *).
  *       size Size of key.
- * Return value:  TRUE  Insertion succeeded.
- *                FALSE Insertion failure.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failure.
  * Caution:       Parameter pht Must Be Allocated first.
  * Tip:           You may need to search an element before invoke this function.
  */
-BOOL hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
+bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
 	P_NODE_S * ppnode = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
 	P_NODE_S pnew = strCreateNodeS(pkey, size);
 	if (NULL == pnew)
-		return FALSE; /* Allocation failure. */
+		return false; /* Allocation failure. */
 	if (NULL == *ppnode) /* Bucket is empty. */
 		*ppnode = pnew;
 	else /* Locate the last item in the bucket. */
@@ -254,7 +254,7 @@ BOOL hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 		P_NODE_S pnode = strLocateLastItemSC(*ppnode);
 		pnode->pnode = pnew;
 	}
-	return TRUE;
+	return true;
 }
 
 /* Function name: hshRemoveC
@@ -265,21 +265,21 @@ BOOL hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  *            The same hash table should use the same hash function.
  *       pkey Pointer to an element. Casted into (const void *).
  *       size Size of key.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failure.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failure.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-BOOL hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
+bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
 	P_NODE_S * pphead = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
 	P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, size);
 	if (NULL == pphead || NULL == *pphead || NULL == pnode)
-		return FALSE;
+		return false;
 	if (*pphead == pnode) /* Put next item into bucket. */
 		*pphead = pnode->pnode;
 	pnode = strRemoveItemLinkedListSC(*pphead, pnode);
 	strDeleteNodeS(pnode);
-	return TRUE;
+	return true;
 }
 
 /* Function name: hshCopyC
@@ -289,20 +289,20 @@ BOOL hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  *     cbfhsh Pointer to hash function for the destined table.
  *       psrc Pointer to the source hash table.
  *       size Size of each key in the source table.
- * Return value:  TRUE  Copying succeeded.
- *                FALSE Copying failure.
+ * Return value:  true  Copying succeeded.
+ *                false Copying failure.
  * Caution:       Parameter psrc Must Be Allocated first.
  *                Size of each key in the source table shall be in the same size.
  */
-BOOL hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
+bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 {
 	size_t a[3];
 	if (NULL == pdest)
-		return FALSE;
+		return false;
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh;
 	a[2] = size;
-	return CBF_CONTINUE != hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a) ? FALSE : TRUE;
+	return CBF_CONTINUE != hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a) ? false : true;
 }
 
 /* Functions for open addressing hash table using double hashing function. */
@@ -326,7 +326,7 @@ int _hshCBFCopyOPuppet     (void * pitem, size_t param);
  */
 int _hshCBFCountSlots(void * pitem, size_t param)
 {
-	if (FALSE != *(_P_FLAG)pitem)
+	if (false != *(_P_FLAG)pitem)
 		++(*(size_t *)param);
 	return CBF_CONTINUE;
 }
@@ -345,7 +345,7 @@ int _hshCBFCountSlots(void * pitem, size_t param)
  */
 int _hshCBFTraverseOPuppet(void * pitem, size_t param)
 {
-	if (FALSE != *(_P_FLAG)pitem)
+	if (false != *(_P_FLAG)pitem)
 		return ((CBF_TRAVERSE)0[(size_t *)param])((PUCHAR)pitem + _FLAG_SIZE, 1[(size_t *)param]);
 	return CBF_CONTINUE;
 }
@@ -385,17 +385,17 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
  *            Number of slots shall greater than or equal to the number of elements that you wanna insert into the table.
  *       size Size of each element in the table.
  *            Size of each element in the table should be in the same value.
- * Return value:  TRUE  Initialize succeeded.
- *                FALSE Cannot initialize.
+ * Return value:  true  Initialize succeeded.
+ *                false Cannot initialize.
  * Caution:       Address of pht Must Be Allocated first.
  */
-BOOL hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
+bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
 {
 	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + size))
-		return FALSE;
+		return false;
 	/* Clear array. */
 	memset(pht->pdata, 0, (_FLAG_SIZE + size) * strLevelArrayZ(pht));
-	return TRUE;
+	return true;
 }
 
 /* Function name: hshFreeA_O
@@ -454,7 +454,7 @@ void hshDeleteA_O(P_HSHTBL_A pht)
 size_t hshSizeA(P_HSHTBL_A pht, size_t size)
 {
 	size_t n = 0;
-	strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFCountSlots, (size_t)&n, FALSE);
+	strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFCountSlots, (size_t)&n, false);
 	return n;
 }
 
@@ -473,7 +473,7 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 	size_t a[2];
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
-	return strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFTraverseOPuppet, (size_t)a, FALSE);
+	return strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFTraverseOPuppet, (size_t)a, false);
 }
 
 /* Function name: hshSearchA
@@ -496,7 +496,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
+		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
@@ -527,9 +527,9 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
+		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
 		{
-			*pflag = TRUE;
+			*pflag = true;
 			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, size);
 		}
 	}
@@ -545,11 +545,11 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  *            The same open addressing hash table should use the same double hashing function.
  *       pkey Pointer to an element. Casted into (const void *).
  *       size Size of key.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failure.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failure.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-BOOL hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
+bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
 {
 	_P_FLAG pflag;
 	REGISTER size_t i, j;
@@ -557,15 +557,15 @@ BOOL hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (FALSE == *pflag) /* Comapre to determine whether a slot is empty or not. */
-			return FALSE;
+		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
+			return false;
 		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
 		{
-			*pflag = FALSE;
-			return TRUE;
+			*pflag = false;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 /* Function name: hshCopyA
@@ -578,19 +578,19 @@ BOOL hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
  *    cbfhsh2 Pointer to 2nd hash function for the destined table.
  *       psrc Pointer to the source hash table.
  *       size Size of each key in the source table.
- * Return value:  TRUE  Copying succeeded.
- *                FALSE Copying failure.
+ * Return value:  true  Copying succeeded.
+ *                false Copying failure.
  * Caution:       Parameter psrc Must Be Allocated first.
  *                Size of each key in the source table shall be in the same size.
  */
-BOOL hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A psrc, size_t size)
+bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A psrc, size_t size)
 {
 	size_t a[4];
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;
 	a[3] = size;
-	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? FALSE : TRUE;
+	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? false : true;
 }
 
 #undef _FLAG

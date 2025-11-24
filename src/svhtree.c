@@ -88,11 +88,11 @@ void treDeleteHeapA(P_HEAP_A pheap)
  * Parameter:
  *     pheap Pointer to the heap you want to check.
  * Return value:
- *         TRUE Heap is empty.
- *        FALSE Heap is NOT empty.
+ *         true Heap is empty.
+ *        false Heap is NOT empty.
  * Tip:           A macro version of this function named treIsEmptyHeapA_M is available.
  */
-BOOL treIsEmptyHeapA_O(P_HEAP_A pheap)
+bool treIsEmptyHeapA_O(P_HEAP_A pheap)
 {
 	return !pheap->irear;
 }
@@ -102,11 +102,11 @@ BOOL treIsEmptyHeapA_O(P_HEAP_A pheap)
  * Parameter:
  *     pstka Pointer to the heap you want to check.
  * Return value:
- *         TRUE Heap is full.
- *        FALSE Heap is starved. ;D
+ *         true Heap is full.
+ *        false Heap is starved. ;D
  * Tip:           A macro version of this function named treIsFullHeapA_M is available.
  */
-BOOL treIsFullHeapA_O(P_HEAP_A pheap)
+bool treIsFullHeapA_O(P_HEAP_A pheap)
 {
 	return pheap->irear == strLevelArrayZ(&pheap->hdarr);
 }
@@ -123,16 +123,16 @@ BOOL treIsFullHeapA_O(P_HEAP_A pheap)
  *            Two parameters of this callback function may point to any element in the heap.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
  *       bmax
- *            TRUE  Insert data into a max heap.
- *            FALSE Insert data into a min heap.
- *            (*) If a heap has been defined as a max heap in creation, do not assign FALSE before deletion, vice versa.
+ *            true  Insert data into a max heap.
+ *            false Insert data into a min heap.
+ *            (*) If a heap has been defined as a max heap in creation, do not assign false before deletion, vice versa.
  * Return value:  N/A.
  * Caution:       pheap must be allocated first.
  *                ptemp cannot be written as NULL. This buffer is managed by caller function.
  * Tip:           Please use function treIsFullHeapA to check whether a heap is full before invoking this function.
  *                If the heap is full, do not use this function, otherwise it may produce an access violation error.
  */
-void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t size, CBF_COMPARE cbfcmp, BOOL bmax)
+void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bmax)
 {
 	REGISTER PUCHAR px, py;
 	REGISTER size_t i, j;
@@ -169,16 +169,16 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
  *            Two parameters of this callback function may point to any element in the heap.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
  *       bmax
- *            TRUE  Remove data from a max heap.
- *            FALSE Remove data from a min heap.
- *            (*) If a heap has been defined as a min heap in creation, do not assign TRUE before deletion, vice versa.
+ *            true  Remove data from a max heap.
+ *            false Remove data from a min heap.
+ *            (*) If a heap has been defined as a min heap in creation, do not assign true before deletion, vice versa.
  * Return value:  N/A.
  * Caution:       pheap must be allocated first.
  *                ptemp cannot be NULL. This buffer is managed by caller function.
  * Tip:           Please use function treIsEmptyHeapA to check whether a heap is empty before invoking this function.
  *                If the heap is empty, do not use this function, otherwise it may produce an access violation error.
  */
-void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF_COMPARE cbfcmp, BOOL bmax)
+void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF_COMPARE cbfcmp, bool bmax)
 {
 	REGISTER size_t i, t, l, m, n;
 	REGISTER int r;
@@ -227,21 +227,21 @@ void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
  *       size Size of element in the heap.
  *      pheap Pointer to the heap you want to operate with.
  * Return value:
- *         TRUE Peep succeeded.
- *        FALSE Peep failed.
+ *         true Peep succeeded.
+ *        false Peep failed.
  * Caution:       pheap must be allocated first.
  *                pitem must be a valid address that can hold an element.
  */
-BOOL trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
+bool trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 {
 	if (! treIsEmptyHeapA(pheap))
 	{
 		if (NULL != pitem)
 		{
 			memcpy(pitem, pheap->hdarr.pdata, size);
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 

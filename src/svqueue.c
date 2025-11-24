@@ -95,12 +95,12 @@ void queDeleteAC(P_QUEUE_A pqueac)
  * Description:   Determin whether a queue is initial.
  * Parameter:
  *    pqueac Pointer to the circular queue you want to test.
- * Return value:  If the queue were initial, function would return a TRUE,
- *                otherwise it would return a FALSE.
+ * Return value:  If the queue were initial, function would return a true,
+ *                otherwise it would return a false.
  * Caution:       Address of pqueac Must Be Allocated first.
  * Tip:           A macro version of this function named queIsInitialA_M is available.
  */
-BOOL queIsInitialAC_O(P_QUEUE_A pqueac)
+bool queIsInitialAC_O(P_QUEUE_A pqueac)
 {
 	return pqueac->front == pqueac->rear;
 }
@@ -215,12 +215,12 @@ void queDeleteL(P_QUEUE_L pquel)
  * Description:   Determine whether a linked-list queue is empty or not.
  * Parameter:
  *     pquel Pointer to the linked-list queue you want to test.
- * Return value:  If the queue were empty, function would return a TRUE,
- *                otherwise function would return a FALSE.
+ * Return value:  If the queue were empty, function would return a true,
+ *                otherwise function would return a false.
  * Caution:       Address of pquel Must Be Allocated first.
  * Tip:           A macro version of this function named queIsEmptyL_M is available.
  */
-BOOL queIsEmptyL_O(P_QUEUE_L pquel)
+bool queIsEmptyL_O(P_QUEUE_L pquel)
 {
 	return !pquel->pfront;
 }
@@ -244,14 +244,14 @@ size_t queUsageL_O(P_QUEUE_L pquel)
  *      pquel Pointer to the linked-list queue you want to operate with.
  *      pitem Pointer to the address of an element.
  *       size Size of each element in the queue.
- * Return value:  If function work succeeded, it would return a TRUE,
- *                otherwise function would return a FALSE.
+ * Return value:  If function work succeeded, it would return a true,
+ *                otherwise function would return a false.
  */
-BOOL queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
+bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 {
 	REGISTER P_NODE_S ptail;
 	if (NULL == (ptail = strCreateNodeS(pitem, size)))
-		return FALSE;
+		return false;
 	/* Adjust the tail of queue. */
 	if (NULL != pquel->prear)
 		pquel->prear->pnode = ptail;
@@ -259,7 +259,7 @@ BOOL queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 	/* Do while queue is empty. */
 	if (NULL == pquel->pfront)
 		pquel->pfront = pquel->prear;
-	return TRUE;
+	return true;
 }
 
 /* Function name: queRemoveL
@@ -268,11 +268,11 @@ BOOL queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
  *      pitem Pointer to the address of an element.
  *       size Size of each element in the queue.
  *      pquel Pointer to the linked-list queue you want to operate with.
- * Return value:  If function work succeeded, it would return a TRUE,
- *                otherwise function would return a FALSE.
+ * Return value:  If function work succeeded, it would return a true,
+ *                otherwise function would return a false.
  * Caution:       To check whether queue is empty or not is NOT necessary.
  */
-BOOL queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
+bool queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
 {
 	if (NULL != pquel->pfront)
 	{
@@ -287,9 +287,9 @@ BOOL queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
 			pquel->pfront = pquel->prear = NULL;
 		else /* Queue is not empty. */
 			pquel->pfront = phead;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /* Functions for queues that implemented with doubly linked-lists. */
@@ -316,7 +316,7 @@ void queInitDL_O(P_DEQUE_DL pdeque)
  */
 void queFreeDL(P_DEQUE_DL pdeque)
 {
-	strFreeLinkedListDC(&pdeque->pfirst, FALSE);
+	strFreeLinkedListDC(&pdeque->pfirst, false);
 	pdeque->pfirst = pdeque->plast = NULL;
 }
 
@@ -351,12 +351,12 @@ void queDeleteDL(P_DEQUE_DL pdeque)
  * Description:   Determine whether a doubly linked-list queue is empty.
  * Parameter:
  *    pdeque Pointer to the doubly linked-list queue you want to test.
- * Return value:  If the queue were empty, function would return a TRUE,
- *                otherwise function would return a FALSE.
+ * Return value:  If the queue were empty, function would return a true,
+ *                otherwise function would return a false.
  * Caution:       Address of pdeque Must Be Allocated first.
  * Tip:           A macro version of this function named queIsEmptyDL_M is available.
  */
-BOOL queIsEmptyDL_O(P_DEQUE_DL pdeque)
+bool queIsEmptyDL_O(P_DEQUE_DL pdeque)
 {
 	return !pdeque->pfirst;
 }
@@ -371,7 +371,7 @@ BOOL queIsEmptyDL_O(P_DEQUE_DL pdeque)
  */
 size_t queUsageDL_O(P_DEQUE_DL pdeque)
 {
-	return strLevelLinkedListDC(pdeque->pfirst, FALSE);
+	return strLevelLinkedListDC(pdeque->pfirst, false);
 }
 
 /* Function name: queFirstDL_O

@@ -92,57 +92,57 @@ int cbfcmp_2(const void * px, const void * py)
 // Function: SortLinkedListSC
 // Desc:     Sort data in a single pointer linked list. This function takes pdata as value directly.
 // Param:    plist: pointer to a linked list. cbfcmp: pointer to a comparison function.
-// Return:   TRUE: sorting succeeded; FALSE: sorting failed.
-BOOL SortLinkedListSC(P_NODE_S plist, CBF_COMPARE cbfcmp)
+// Return:   true: sorting succeeded; false: sorting failed.
+bool SortLinkedListSC(P_NODE_S plist, CBF_COMPARE cbfcmp)
 {
 	size_t a[2];
 	char * pstr;
 	P_ARRAY_Z parr;
 	// Move list 1's content to an array.
 	if (NULL == (parr = strCreateArrayZ(strLevelLinkedListSC(plist), sizeof(char))))
-		return FALSE; // Allocation failure.
+		return false; // Allocation failure.
 	pstr = (char *)parr->pdata;
-	a[0] = TRUE;
+	a[0] = true;
 	a[1] = (size_t)&pstr;
 	strTraverseLinkedListSC_A(plist, NULL, cbftvs_copy_1, (size_t)a);
 	strSortArrayZ(parr, sizeof(char), cbfcmp);
 	// Copy data back to list.
 	pstr = (char *)parr->pdata;
-	a[0] = FALSE;
+	a[0] = false;
 	a[1] = (size_t)&pstr;
 	strTraverseLinkedListSC_A(plist, NULL, cbftvs_copy_1, (size_t)a);
 	// Deallocate array.
 	strDeleteArrayZ(parr);
-	return TRUE;
+	return true;
 }
 
 // Function: SortLinkedListDC
 // Desc:     Sort data in a single pointer linked list.
 // Param:    plist:  pointer to a linked list.
 //           cbfcmp: pointer to a comparison function.
-//           brev:   TRUE, search list downward; FALSE, search list upward.
-// Return:   TRUE: sorting succeeded; FALSE: sorting failed.
-BOOL SortLinkedListDC(P_NODE_D plist, CBF_COMPARE cbfcmp, BOOL brev)
+//           brev:   true, search list downward; false, search list upward.
+// Return:   true: sorting succeeded; false: sorting failed.
+bool SortLinkedListDC(P_NODE_D plist, CBF_COMPARE cbfcmp, bool brev)
 {
 	size_t a[2];
 	int * pint;
 	P_ARRAY_Z parr;
 	// Move list 2's content to an array.
 	if (NULL == (parr = strCreateArrayZ(strLevelLinkedListDC(plist, brev), sizeof(int))))
-		return FALSE; // Allocation failure.
+		return false; // Allocation failure.
 	pint = (int *)parr->pdata;
-	a[0] = TRUE;
+	a[0] = true;
 	a[1] = (size_t)&pint;
 	strTraverseLinkedListDC_A(plist, NULL, cbftvs_copy_2, (size_t)a, brev);
 	strSortArrayZ(parr, sizeof(int), cbfcmp);
 	// Copy data back to list.
 	pint = (int *)parr->pdata;
-	a[0] = FALSE;
+	a[0] = false;
 	a[1] = (size_t)&pint;
 	strTraverseLinkedListDC_A(plist, NULL, cbftvs_copy_2, (size_t)a, brev);
 	// Deallocate array.
 	strDeleteArrayZ(parr);
-	return TRUE;
+	return true;
 }
 
 // Function: main
@@ -182,20 +182,20 @@ int main(void)
 	{
 		if (NULL == (pnoded->ppnode[NEXT] = strCreateNodeD(&n, sizeof(int))))
 		{
-			strFreeLinkedListDC(&list2, FALSE);
+			strFreeLinkedListDC(&list2, false);
 			puts("Error occurred while creating list 2.");
 			return 2; /* Allocation failure while creating doubly linked list. */
 		}
 		pnoded = pnoded->ppnode[NEXT];
 	}
 	// Print list 2.
-	puts("\n\nList 2:"); strTraverseLinkedListDC_A(list2, NULL, cbftvs_print, ENT_DOUBLE, FALSE); printf("\n");
-	if (SortLinkedListDC(list2, cbfcmp_2, FALSE))
-		puts("List 2 after sorting:"), strTraverseLinkedListDC_A(list2, NULL, cbftvs_print, ENT_DOUBLE, FALSE);
+	puts("\n\nList 2:"); strTraverseLinkedListDC_A(list2, NULL, cbftvs_print, ENT_DOUBLE, false); printf("\n");
+	if (SortLinkedListDC(list2, cbfcmp_2, false))
+		puts("List 2 after sorting:"), strTraverseLinkedListDC_A(list2, NULL, cbftvs_print, ENT_DOUBLE, false);
 	else
 		puts("Error occurred while sorting list 2.");
 	printf("\n");
-	strFreeLinkedListDC(&list2, FALSE);
+	strFreeLinkedListDC(&list2, false);
 	return 0;
 }
 

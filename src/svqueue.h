@@ -49,7 +49,7 @@ void *     queInitAC        (P_QUEUE_A  pqueac, size_t       num,   size_t     s
 void       queFreeAC        (P_QUEUE_A  pqueac);
 P_QUEUE_A  queCreateAC      (size_t     num,    size_t       size);
 void       queDeleteAC      (P_QUEUE_A  pqueac);
-BOOL       queIsInitialAC_O (P_QUEUE_A  pqueac);
+bool       queIsInitialAC_O (P_QUEUE_A  pqueac);
 size_t     queUsageAC_O     (P_QUEUE_A  pqueac);
 void       queInsertAC_O    (P_QUEUE_A  pqueac, const void * pitem, size_t     size);
 void       queRemoveAC_O    (void *     pitem,  size_t       size,  P_QUEUE_A  pqueac);
@@ -58,16 +58,16 @@ void       queInitL_O       (P_QUEUE_L  pquel);
 void       queFreeL         (P_QUEUE_L  pquel);
 P_QUEUE_L  queCreateL       (void);
 void       queDeleteL       (P_QUEUE_L  pquel);
-BOOL       queIsEmptyL_O    (P_QUEUE_L  pquel);
+bool       queIsEmptyL_O    (P_QUEUE_L  pquel);
 size_t     queUsageL_O      (P_QUEUE_L  pquel);
-BOOL       queInsertL       (P_QUEUE_L  pquel,  const void * pitem, size_t     size);
-BOOL       queRemoveL       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
+bool       queInsertL       (P_QUEUE_L  pquel,  const void * pitem, size_t     size);
+bool       queRemoveL       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
 /* Functions for queues that implemented with doubly linked-lists. */
 void       queInitDL_O      (P_DEQUE_DL pdeque);
 void       queFreeDL        (P_DEQUE_DL pdeque);
 P_DEQUE_DL queCreateDL      (void);
 void       queDeleteDL      (P_DEQUE_DL pdeque);
-BOOL       queIsEmptyDL_O   (P_DEQUE_DL pdeque);
+bool       queIsEmptyDL_O   (P_DEQUE_DL pdeque);
 size_t     queUsageDL_O     (P_DEQUE_DL pdeque);
 void       queFirstDL_O     (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
 P_NODE_D   quePushDL        (P_DEQUE_DL pdeque, const void * pitem, size_t     size);
@@ -101,7 +101,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	(pdeque_M)->pfirst = (pdeque_M)->plast = NULL; \
 } while (0)
 #define queIsEmptyDL_M(pdeque_M) (!(pdeque_M)->pfirst)
-#define queUsageDL_M(pdeque_M) (strLevelLinkedListDC((pdeque_M)->pfirst, FALSE))
+#define queUsageDL_M(pdeque_M) (strLevelLinkedListDC((pdeque_M)->pfirst, false))
 #define queFirstDL_M(pitem_M, size_M, pdeque_M) do { \
 	memcpy((pitem_M), (pdeque_M)->pfirst->pdata, (size_M)); \
 } while (0)

@@ -298,8 +298,8 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
  *        sln Number of line for the item on the left up corner of the source matrix.
  *       scol Number of column for the item on the left up corner of the source matrix.
  *       size Size of each element in both two matrices.
- * Return value:  TRUE  Projection succeeded.
- *                FALSE Projection failed.
+ * Return value:  true  Projection succeeded.
+ *                false Projection failed.
  * Caution:       Address of pdest and psrc Must Be Allocated first.
  *                All line number dln, sln and column number dcol, scol start from 0.
  * Tip:           Assume that we have two matrices A and B, then a projection can be the following situation.
@@ -310,7 +310,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
  *                //   | i j k l |   | w x y | :   | i x.y.l |   | w x y |
  *                //   | m n o p |             :   | m n o p |
  */
-BOOL strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, size_t sln, size_t scol, size_t size)
+bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, size_t sln, size_t scol, size_t size)
 {
 	if (dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col)
 	{
@@ -338,9 +338,9 @@ BOOL strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 				);
 			}
 		}
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /* Function name: strM1Matrix
@@ -506,11 +506,11 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  *        pbm Pointer to a bit-matrix you want to initialize.
  *         ln Number of lines in the bit-matrix.
  *        col Number of columns in the bit-matrix.
- *       bval Initialize all bits as TRUE or FALSE.
+ *       bval Initialize all bits as true or false.
  * Return value:  Pointer to the buffer.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
+void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 {
 	stdiv_t dr = stdiv(ln * col, CHAR_BIT); /* ln bit * col bit / CHAR_BIT. */
 	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(UCHART)))
@@ -518,7 +518,7 @@ void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
 		pbm->ln = pbm->col = 0;
 		return NULL;
 	}
-	memset(pbm->arrz.pdata, bval ? UCHAR_MAX : FALSE, sizeof(UCHART) * pbm->arrz.num);
+	memset(pbm->arrz.pdata, bval ? UCHAR_MAX : false, sizeof(UCHART) * pbm->arrz.num);
 	pbm->col = col;
 	pbm->ln = ln;
 	return pbm->arrz.pdata;
@@ -542,10 +542,10 @@ void strFreeBMap_O(P_BITMAT pbm)
  * Parameters:
  *         ln Number of lines in a bit-matrix.
  *        col Number of columns in a bit-matrix.
- *       bval Initialize all bits as value TRUE or FALSE.
+ *       bval Initialize all bits as value true or false.
  * Return value:  Pointer to a new created bit-matrix.
  */
-P_BITMAT strCreateBMap(size_t ln, size_t col, BOOL val)
+P_BITMAT strCreateBMap(size_t ln, size_t col, bool val)
 {
 	P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
 	if (NULL == pbm)
@@ -594,15 +594,15 @@ void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
  *        pbm Pointer to a bit-matrix you want to operate with.
  *         ln Number of line in the bit-matrix. Line number starts from 0.
  *        col Number of column in the bit-matrix. Column number starts from 0.
- * Return value:  Either TRUE or FALSE at the specific line and column.
+ * Return value:  Either true or false at the specific line and column.
  *                If function returned value -1, it would indicate parameter ln or col is out of range.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-BOOL strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
+bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
 {
 	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
 	if (ln >= pbm->ln || col >= pbm->col)
-		return FALSE; /* Over size. */
+		return false; /* Over size. */
 	/* Right shift a UCHART block to compare its LSBit with 1. */
 	return 0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0));
 }
@@ -613,27 +613,27 @@ BOOL strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
  *        pbm Pointer to a bit-matrix you want to operate.
  *         ln Number of line in the bit-matrix. Line number starts from 0.
  *        col Number of column in the bit-matrix. Column number starts from 0.
- * Return value:  TRUE indicates operation succeeded.
- *                If function returned FALSE, it would indicate parameter ln or col is out of range.
+ * Return value:  true indicates operation succeeded.
+ *                If function returned false, it would indicate parameter ln or col is out of range.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-BOOL strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, BOOL bval)
+bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 {
 	REGISTER UCHART t = 0x01;
 	REGISTER size_t i;
 	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
 	if (ln >= pbm->ln || col >= pbm->col)
-		return FALSE; /* Over size. */
+		return false; /* Over size. */
 	/* Left shift t and pile it onto the specific UCHART block. */
 	t <<= (dr.rem ? CHAR_BIT - dr.rem : 0);
 	i = dr.rem ? dr.quot : dr.quot - 1;
 	pbm->arrz.pdata[i] = (UCHART)
 	(
-		FALSE == bval ?
+		false == bval ?
 		pbm->arrz.pdata[i] & (~t) :
 		pbm->arrz.pdata[i] | t
 	);
-	return TRUE;
+	return true;
 }
 
 /* Functions for sparse matrices are implemented bellow. */
@@ -688,16 +688,16 @@ size_t _strBITSum(size_t idx, P_ARRAY_Z parrz)
  *       pbmx Pointer to a sparse matrix you want to initialize.
  *         ln Number of lines in the sparse matrix.
  *        col Number of columns in the sparse matrix.
- * Return value:  TRUE  Initialization succeeded.
- *                FALSE Initialization failed.
+ * Return value:  true  Initialization succeeded.
+ *                false Initialization failed.
  * Caution:       Address of pmtx Must Be Allocated first.
  */
-BOOL strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
+bool strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
 {
 	if (NULL != strInitArrayZ(&pmtx->bita, ln, sizeof(size_t)))
 		memset(pmtx->bita.pdata, 0, sizeof(size_t) * strLevelArrayZ(&pmtx->bita));
 	strInitLinkedListSC(&pmtx->datlst);
-	return (NULL != strInitBMap(&pmtx->bmask, ln, col, FALSE));
+	return (NULL != strInitBMap(&pmtx->bmask, ln, col, false));
 }
 
 /* Function name: strFreeSparseMatrix
@@ -810,7 +810,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 			l = dr.quot  - 1;
 			m = CHAR_BIT - 1;
 		}
-		if (FALSE != (0x01 & (pmtx->bmask.arrz.pdata[l] >> j)))
+		if (false != (0x01 & (pmtx->bmask.arrz.pdata[l] >> j)))
 		{	/* Item exists. */
 			REGISTER size_t s = 0;
 			REGISTER P_NODE_S pnode;
@@ -849,7 +849,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 {
 	stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
 	if (ln >= pmtx->bmask.ln || col >= pmtx->bmask.col)
-		return FALSE; /* Over size. */
+		return false; /* Over size. */
 	else
 	{
 		REGISTER size_t i, j, l, m, s = 0;
@@ -876,7 +876,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
 				++s;
-		if (FALSE != (0x01 & u))
+		if (false != (0x01 & u))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))
 			{
@@ -930,13 +930,13 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
  *      pdest Pointer to a common matrix you want to flush.
  *       psrc Pointer to a sparse matrix you want to operate.
  *       size Size of each element in the sparse matrix and the common matrix.
- * Return value:  TRUE  Filling succeeded.
- *                FALSE Filling failed.
+ * Return value:  true  Filling succeeded.
+ *                false Filling failed.
  * Caution:       Address of pdest and psrc Must Be Allocated first.
  *                (*) Line and column number of the common destination matrix shall
  *                greater than or equal to each value for the source sparse matrix.
  */
-BOOL strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
+bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 {
 	if ((pdest->ln >= psrc->bmask.ln) && (pdest->col >= psrc->bmask.col))
 	{
@@ -948,8 +948,8 @@ BOOL strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 			for (j = 0; j < psrc->bmask.col; ++j)
 				if (strGetBitBMap(&psrc->bmask, i, j))
 					strSetValueMatrix(pdest, i, j, pnode->pdata, size), pnode = pnode->pnode;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 

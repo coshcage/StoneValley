@@ -98,7 +98,7 @@ int main(int argc, char * argv[])
 {
 	int c;
 	long i, j = 0, k = 0;
-	BOOL bCase = FALSE, bSort = FALSE;
+	bool bCase = false, bSort = false;
 	ARRAY_Z arrbuf = { 0 };
 	ARRAY_Z arrz   = { 0 };
 	P_TRIE_A ptrie;
@@ -121,9 +121,9 @@ int main(int argc, char * argv[])
 	for (i = 1; i < argc; ++i)
 	{
 		if (0 == strcmp("-s", argv[i])) /* Sorting switch. */
-			bSort = TRUE;
+			bSort = true;
 		else if (0 == strcmp("-c", argv[i])) /* Case switch. */
-			bCase = TRUE;
+			bCase = true;
 		else
 		{
 			DestoryArray(&arrz);
@@ -197,7 +197,7 @@ int main(int argc, char * argv[])
 	strResizeArrayZ(&arrz, k, sizeof(P_VOCABULARY));
 	if (bSort)
 		strSortArrayZ(&arrz, sizeof(P_VOCABULARY), cbfcmpfreq);
-	strTraverseArrayZ(&arrz, sizeof(P_VOCABULARY), CbfPrintResult, 0, FALSE);
+	strTraverseArrayZ(&arrz, sizeof(P_VOCABULARY), CbfPrintResult, 0, false);
 	DestoryArray(&arrz);
 	treDeleteTrieA(ptrie, sizeof(char));
 	strFreeArrayZ(&arrbuf);

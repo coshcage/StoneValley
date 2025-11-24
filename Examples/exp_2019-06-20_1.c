@@ -81,18 +81,18 @@ void PrintMatrixInMat(P_MATRIX pmtx)
 // Function: ValidateMatrix
 // Desc:     Validate a puzzle to check whether it has been finished.
 // Param:    pmtx: Pointer to a matrix presented puzzle.
-// Return:   TRUE: Solved; FALSE Not solved.
-BOOL ValidateMatrix(P_MATRIX pmtx)
+// Return:   true: Solved; false Not solved.
+bool ValidateMatrix(P_MATRIX pmtx)
 {
 	if (*(char *)strGetValueMatrix(NULL, pmtx, pmtx->ln - 1, pmtx->col - 1, sizeof(char)) == 32)
 	{	/* Only the last square in the puzzle is a space can indicate that the puzzle might be solved. */
 		if (0 == memcmp(pAnswer + 1, pmtx->arrz.pdata, strLevelArrayZ(&pmtx->arrz) - 1))
 		{	/* Good job. */
 			printf(":) CONGRATULATIONS! You win the game in %d movement%c!\n\n", gCtrMove, gCtrMove > 1 ? 's' : '!');
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 // Function: MoveMatrix
@@ -100,9 +100,9 @@ BOOL ValidateMatrix(P_MATRIX pmtx)
 // Param:    pmtx: Pointer to a matrix presented puzzle.
 //           x:    Line that uses want to hit.
 //           y:    Column that uses want to hit.
-//           bundo:TRUE Undoing movement; FALSE Normal movement.
+//           bundo:true Undoing movement; false Normal movement.
 // Return:   N/A.
-void MoveMatrix(P_MATRIX pmtx, size_t x, size_t y, BOOL bundo)
+void MoveMatrix(P_MATRIX pmtx, size_t x, size_t y, bool bundo)
 {
 	register char * pchar = (char *)strGetValueMatrix(NULL, pmtx, x, y, sizeof(char));
 	if (NULL != pchar)
@@ -180,7 +180,7 @@ void UndoMoving(P_MATRIX pmtx)
 	{
 		ACTION act;
 		stkPopL(&act, sizeof(ACTION), &stkAction);
-		MoveMatrix(pmtx, act.x, act.y, TRUE); /* Restore previous status. */
+		MoveMatrix(pmtx, act.x, act.y, true); /* Restore previous status. */
 		--gCtrMove;
 	}
 	else
@@ -189,19 +189,19 @@ void UndoMoving(P_MATRIX pmtx)
 
 // Function: ShowHelp
 // Desc:     Show help information.
-// Param:    b: TRUE Show welcome text; FALSE Show usage.
+// Param:    b: true Show welcome text; false Show usage.
 // Return:   N/A.
-void ShowHelp(BOOL b)
+void ShowHelp(bool b)
 {
 	switch (b)
 	{
-	case FALSE:
+	case false:
 		printf("Welcome to Puzzle at ");
 		svPrintVersion();
 		printf(".\n\tPlease input:\n\t16: playing a 4*4 puzzle. (Alphabet)\n\t25: playing a 5*5 puzzle. (Alphabet)\n\
 \t36: playing a 6*6 puzzle. (Inscription)\n\t49: playing a 7*7 puzzle. (Map)\n\t 0: Exit.\n?> ");
 		break;
-	case TRUE:
+	case true:
 		printf("\tInput 'xy' to hit a square in the puzzle,\n\
 \twhereas x denotes line, y denotes column.\n\tInput 'z' to undo.\n\
 \tInput '0' or 'q' to quit.\n\tInput 'h' or \'?\' for help.\n\
@@ -217,7 +217,7 @@ void ShowHelp(BOOL b)
 int CommandParser(P_MATRIX pmtx, char * pcmd)
 {
 	int i = 0, r = 0;
-	BOOL bhelp = FALSE;
+	bool bhelp = false;
 	do
 	{
 		if ('\0' == pcmd[0] || '\n' == pcmd[0]) /* Buffer end. */
@@ -242,13 +242,13 @@ int CommandParser(P_MATRIX pmtx, char * pcmd)
 		}
 		if (('h' == pcmd[0]) || ('?' == pcmd[0]))
 		{	/* Help. */
-			if (FALSE == bhelp)
-				ShowHelp(bhelp = TRUE);
+			if (false == bhelp)
+				ShowHelp(bhelp = true);
 			++pcmd;
 			continue;
 		}
 		/* Translate the current command. */
-		MoveMatrix(pmtx, pcmd[0] - 'a', pcmd[1] - 'a', FALSE);
+		MoveMatrix(pmtx, pcmd[0] - 'a', pcmd[1] - 'a', false);
 		pcmd += 2;
 		++i;
 	}
@@ -269,7 +269,7 @@ signed int main(void)
 Lbl_Again:
 	for (gCtrMove = 0; ; )
 	{	/* Select a mode to play or quit game. */
-		ShowHelp(FALSE);
+		ShowHelp(false);
 		fgets(ipb, BUFSIZ, stdin);
 		t = atoi(ipb);
 		switch (t)
@@ -325,7 +325,7 @@ Lbl_Resume:
 			return 0;
 		}
 	}
-	while (TRUE != ValidateMatrix(&mtxPuzzle));
+	while (true != ValidateMatrix(&mtxPuzzle));
 Lbl_Restart:
 	stkFreeL(&stkAction);
 	strFreeMatrix(&mtxPuzzle);

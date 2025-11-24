@@ -707,19 +707,19 @@ _P_BPT_INFO      _treCreateBPTInfo           (void);
 void             _treDeleteBPTInfo_O         (_P_BPT_INFO      pbi);
 P_BPTNODE        _treGetParentBPTNode_O      (P_BPTNODE        pnode);
 P_BPTNODE        _treGetNextBPTNode_O        (P_BPTNODE        pnode);
-BOOL             _treIsLeafBPTNode_O         (P_BPTNODE        pnode);
+bool             _treIsLeafBPTNode_O         (P_BPTNODE        pnode);
 void             _treFreeBPTPuppet           (P_QUEUE_L        pquelx,  P_QUEUE_L    pquely);
 P_BPTNODE        _treLocateKeyChainHeaderBPT (P_BPT            pbpt);
 P_BPTNODE        _treLocateKeyInLeafBPT      (P_BPT            pbpt,    const void * pkey,   CBF_COMPARE  cbfcmp);
 _P_BPT_KEY_INFO  _treInsertKeyIntoArrayBPT   (_P_BPT_INFO      pbni,    const void * pkey,   P_BPTNODE    pchild,   CBF_COMPARE  cbfcmp);
 size_t           _treRemoveKeyFromArrayBPT   (_P_BPT_INFO      pbni,    const void * pkey,   CBF_COMPARE  cbfcmp);
-BOOL             _treSplitArrayInLeafBPT     (P_BPTNODE        pnew,    P_BPTNODE    pold,   const size_t degree);
-BOOL             _treSplitArrayInNodeBPT     (_P_BPT_KEY_INFO  pbki,    P_BPTNODE    pnew,   P_BPTNODE    pold,     const size_t degree);
-BOOL             _treMakeKeyChainBPT         (P_QUEUE_L        pquel,   P_BPTNODE *  pprev,  PUCHAR *     ppkeys[], const size_t num);
-P_BPTNODE        _treGetSiblingNodeBPT       (P_BPTNODE        pnode,   BOOL         bright);
-void             _treRedistributeNodesBPT    (P_BPTNODE        pnode,   P_BPTNODE    psib,   BOOL         bright);
-void             _treMergeNodesBPT           (P_BPTNODE        pnode,   P_BPTNODE    psib,   P_BPTNODE    phead,    BOOL         bright);
-BOOL             _treBPTRemovePuppet         (P_BPT            pbpt,    P_BPTNODE    pnode,  const size_t hdeg,     const void * pkey,  CBF_COMPARE cbfcmp);
+bool             _treSplitArrayInLeafBPT     (P_BPTNODE        pnew,    P_BPTNODE    pold,   const size_t degree);
+bool             _treSplitArrayInNodeBPT     (_P_BPT_KEY_INFO  pbki,    P_BPTNODE    pnew,   P_BPTNODE    pold,     const size_t degree);
+bool             _treMakeKeyChainBPT         (P_QUEUE_L        pquel,   P_BPTNODE *  pprev,  PUCHAR *     ppkeys[], const size_t num);
+P_BPTNODE        _treGetSiblingNodeBPT       (P_BPTNODE        pnode,   bool         bright);
+void             _treRedistributeNodesBPT    (P_BPTNODE        pnode,   P_BPTNODE    psib,   bool         bright);
+void             _treMergeNodesBPT           (P_BPTNODE        pnode,   P_BPTNODE    psib,   P_BPTNODE    phead,    bool         bright);
+bool             _treBPTRemovePuppet         (P_BPT            pbpt,    P_BPTNODE    pnode,  const size_t hdeg,     const void * pkey,  CBF_COMPARE cbfcmp);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treInitBPTInfo_O
@@ -878,12 +878,12 @@ P_BPTNODE _treGetNextBPTNode_O(P_BPTNODE pnode)
  * Description:   Check whether pnode is a leaf.
  * Parameter:
  *     pnode Pointer to a node you want to check.
- * Return value:  TRUE pnode is a leaf and pnode is a root node.
- *                FALSE pnode is not a leaf.
+ * Return value:  true pnode is a leaf and pnode is a root node.
+ *                false pnode is not a leaf.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named _treIsLeafBPTNode_M is available.
  */
-BOOL _treIsLeafBPTNode_O(P_BPTNODE pnode)
+bool _treIsLeafBPTNode_O(P_BPTNODE pnode)
 {
 	return !((_P_BPT_INFO)pnode->pdata)->headptr;
 }
@@ -1138,7 +1138,7 @@ size_t _treRemoveKeyFromArrayBPT(_P_BPT_INFO pbni, const void * pkey, CBF_COMPAR
 	{
 		if (cbfcmp(i[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey, pkey) == 0)
 		{
-			strRemoveItemArrayZ(&pbni->keyarr, sizeof(_BPT_KEY_INFO), i, TRUE);
+			strRemoveItemArrayZ(&pbni->keyarr, sizeof(_BPT_KEY_INFO), i, true);
 			return i + 1;
 		}
 	}
@@ -1153,23 +1153,23 @@ size_t _treRemoveKeyFromArrayBPT(_P_BPT_INFO pbni, const void * pkey, CBF_COMPAR
  *       pold Pointer to the node that you want to split.
  *     degree Degree of B-plus tree.
  *            Value of degree shall be greater than or equal to 3.
- * Return value:  TRUE  Splitting succeeded.
- *                FALSE Splitting failed.
+ * Return value:  true  Splitting succeeded.
+ *                false Splitting failed.
  * Caution:       Address of pold and pnew Must Be Allocated first.
  */
-BOOL _treSplitArrayInLeafBPT(P_BPTNODE pnew, P_BPTNODE pold, const size_t degree)
+bool _treSplitArrayInLeafBPT(P_BPTNODE pnew, P_BPTNODE pold, const size_t degree)
 {
 	_P_BPT_INFO pbni0 = (_P_BPT_INFO)pold->pdata;
 	_P_BPT_INFO pbni1 = (_P_BPT_INFO)pnew->pdata;
 	size_t j = degree >> 1;
 	if (NULL == strResizeArrayZ(&pbni1->keyarr, pbni0->keyarr.num - j, sizeof(_BPT_KEY_INFO)))
-		return FALSE; /* Reallocation failure. */
+		return false; /* Reallocation failure. */
 	/* Fill up new allocated array. */
 	memcpy(pbni1->keyarr.pdata, ((_P_BPT_KEY_INFO)pbni0->keyarr.pdata) + j, sizeof(_BPT_KEY_INFO) * (pbni0->keyarr.num - j));
 	/* Shrink array of the previous node. */
 	if (NULL == strResizeArrayZ(&pbni0->keyarr, j, sizeof(_BPT_KEY_INFO)))
-		return FALSE; /* Reallocation failure. */
-	return TRUE;
+		return false; /* Reallocation failure. */
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1182,17 +1182,17 @@ BOOL _treSplitArrayInLeafBPT(P_BPTNODE pnew, P_BPTNODE pold, const size_t degree
  *       pold Pointer to the node that you want to split.
  *     degree Degree of B-plus tree.
  *            Value of degree shall be greater than or equal to 3.
- * Return value:  TRUE  Splitting succeeded.
- *                FALSE Splitting failed.
+ * Return value:  true  Splitting succeeded.
+ *                false Splitting failed.
  * Caution:       Address of pold and pnew Must Be Allocated first.
  */
-BOOL _treSplitArrayInNodeBPT(_P_BPT_KEY_INFO pbki, P_BPTNODE pnew, P_BPTNODE pold, const size_t degree)
+bool _treSplitArrayInNodeBPT(_P_BPT_KEY_INFO pbki, P_BPTNODE pnew, P_BPTNODE pold, const size_t degree)
 {
 	_P_BPT_INFO pbni0 = (_P_BPT_INFO)pold->pdata;
 	_P_BPT_INFO pbni1 = (_P_BPT_INFO)pnew->pdata;
 	size_t j = degree >> 1;
 	if (NULL == strResizeArrayZ(&pbni1->keyarr, pbni0->keyarr.num - j - 1, sizeof(_BPT_KEY_INFO)))
-		return FALSE; /* Reallocation failure. */
+		return false; /* Reallocation failure. */
 	/* Extract the middle key from pold. */
 	pbki->pkey   = (((_P_BPT_KEY_INFO)pbni0->keyarr.pdata) + j)->pkey;
 	pbki->pchild = (((_P_BPT_KEY_INFO)pbni0->keyarr.pdata) + j)->pchild;
@@ -1200,8 +1200,8 @@ BOOL _treSplitArrayInNodeBPT(_P_BPT_KEY_INFO pbki, P_BPTNODE pnew, P_BPTNODE pol
 	memcpy(pbni1->keyarr.pdata, ((_P_BPT_KEY_INFO)pbni0->keyarr.pdata) + j + 1, sizeof(_BPT_KEY_INFO) * (pbni0->keyarr.num - j - 1));
 	/* Shrink array of the previous node. */
 	if (NULL == strResizeArrayZ(&pbni0->keyarr, j, sizeof(_BPT_KEY_INFO)))
-		return FALSE; /* Reallocation failure. */
-	return TRUE;
+		return false; /* Reallocation failure. */
+	return true;
 }
 
 /* Function name: treInsertBPT
@@ -1213,27 +1213,27 @@ BOOL _treSplitArrayInNodeBPT(_P_BPT_KEY_INFO pbki, P_BPTNODE pnew, P_BPTNODE pol
  *       pkey Pointer to an element in the memory.
  *            This key will be stored in B-plus tree directly.
  *     cbfcmp Pointer to a callback function that compares data size of pkey.
- * Return value:  TRUE  Insertion succeeded.
- *                FALSE Insertion failed.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failed.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
-BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
+bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	P_BPTNODE pnode = *pbpt;
 	if (NULL == pnode)
 	{	/* Tree is empty. */
 		*pbpt = treCreateBPTNode(NULL, NULL);
 		if (NULL == *pbpt)
-			return FALSE;
+			return false;
 		if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO)((*pbpt)->pdata), pkey, NULL, cbfcmp))
-			return FALSE;
+			return false;
 	}
 	else
 	{
-		BOOL bleaf = TRUE; /* This variable is used to restrict operations on leaf nodes. */
+		bool bleaf = true; /* This variable is used to restrict operations on leaf nodes. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO)pnode->pdata, pkey, NULL, cbfcmp))
-			return FALSE; /* Insertion failure. */
+			return false; /* Insertion failure. */
 		while (NULL != pnode)
 		{
 			if (((_P_BPT_INFO)pnode->pdata)->keyarr.num >= degree)
@@ -1243,13 +1243,13 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				P_BPTNODE pnew, parent = _treGetParentBPTNode(pnode);
 				/* Create a new node. */
 				if (NULL == (pnew = treCreateBPTNode(parent, NULL)))
-					return FALSE; /* Allocation failure. */
+					return false; /* Allocation failure. */
 				if (bleaf) /* Split a leaf node. */
 				{
-					if (FALSE == _treSplitArrayInLeafBPT(pnew, pnode, degree))
+					if (false == _treSplitArrayInLeafBPT(pnew, pnode, degree))
 					{
 						treDeleteBPTNode(pnew);
-						return FALSE; /* Can not split array. */
+						return false; /* Can not split array. */
 					}
 					/* Set next pointer of pnode. */
 					pnode->ppnode[NEXTPTR] = pnew;
@@ -1260,10 +1260,10 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				else /* Split an internal node. */
 				{
 					_BPT_KEY_INFO bki;
-					if (FALSE == _treSplitArrayInNodeBPT(&bki, pnew, pnode, degree))
+					if (false == _treSplitArrayInNodeBPT(&bki, pnew, pnode, degree))
 					{
 						treDeleteBPTNode(pnew);
-						return FALSE; /* Can not split array. */
+						return false; /* Can not split array. */
 					}
 					pk = bki.pkey;
 					((_P_BPT_INFO)pnew->pdata)->headptr = bki.pchild;
@@ -1272,7 +1272,7 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				if (NULL == parent)
 				{	/* Root is a leaf. */
 					if (NULL == (parent = treCreateBPTNode(parent, NULL)))
-						return FALSE;
+						return false;
 					/* Alter the root node of tree. */
 					*pbpt = parent;
 					/* Alter children's parent node. */
@@ -1282,15 +1282,15 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				}
 				/* Insert key into parent. */
 				if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO)parent->pdata, pk, pnew, cbfcmp))
-					return FALSE; /* Can not insert key into parent node. */
+					return false; /* Can not insert key into parent node. */
 				pnode = parent;
-				bleaf = FALSE;
+				bleaf = false;
 			}
 			else
 				break;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1302,11 +1302,11 @@ BOOL treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
  *      pprev Pointer to a pointer that pointed the previously created node.
  *     ppkeys Pointer to a pointer to an array of keys.
  *        num Number of keys in new leaf node's array.
- * Return value:  TRUE  Allocation failure.
- *                FALSE Making succeeded.
- *                (*) Especially, if parameter num equaled to zero, function would return value FALSE.
+ * Return value:  true  Allocation failure.
+ *                false Making succeeded.
+ *                (*) Especially, if parameter num equaled to zero, function would return value false.
  */
-BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], const size_t num)
+bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], const size_t num)
 {
 	if (num > 0)
 	{
@@ -1315,7 +1315,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
 		_P_BPT_KEY_INFO pki;
 		P_BPTNODE pnew = treCreateBPTNode(NULL, NULL);
 		if (NULL == pnew)
-			return TRUE; /* Allocation failure. */
+			return true; /* Allocation failure. */
 		if /* Allocate a new BPT info structure on new created tree node. */
 		(  /* Then allocate an array in BPT info structure with num elements. */
 			NULL == (pnew->pdata = (PUCHAR) (pti = _treCreateBPTInfo())) ||
@@ -1324,7 +1324,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
 		{
 			free(pti);
 			free(pnew);
-			return TRUE; /* Allocation failure. */
+			return true; /* Allocation failure. */
 		}
 		for (i = 0; i < num; ++i)
 		{
@@ -1338,7 +1338,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
 		*pprev = pnew;
 		queInsertL(pquel, &pnew, sizeof(P_BPTNODE));
 	}
-	return FALSE;
+	return false;
 }
 
 /* Function name: treBulkLoadBPT
@@ -1350,8 +1350,8 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  *      pkeys Pointer to an array that contains key pointers in sorted order.
  *            Each key pointer in this array should be converted into (PUCHAR).
  *        num Length of the key pointer array.
- * Return value:  TRUE  Loading succeeded.
- *                FALSE Loading failed.
+ * Return value:  true  Loading succeeded.
+ *                false Loading failed.
  * Caution:       (*) The address of pbpt pointed must be allocated first and (*pbpt) shall equal to value NULL.
  *                (*) Users need to sort pointers in the array that pkeys pointed and let the 1st pointer points to the smallest value,
  *                and the last pointer in this array shall point to the biggest value.
@@ -1361,7 +1361,7 @@ BOOL _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  *                keys[0] = (PUCHAR)&a[1]; keys[1] = (PUCHAR)&a[0]; keys[2] = (PUCHAR)&a[2]; keys[3] = (PUCHAR)&a[3]; keys[4] = (PUCHAR)&a[4];
  *                treBulkLoadBPT(pbpt, 3, keys, 5); treDeleteBPT(pbpt);
  */
-BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
+bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {
 	if (num > 0 && degree > 2)
 	{
@@ -1438,7 +1438,7 @@ BOOL treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 		}
 		queFreeL(&q1);
 		queFreeL(&q2);
-		return TRUE;
+		return true;
 Lbl_Allocation_Failure:
 		treDeleteBPT(pbpt);
 		/* Move contents of the 2nd. queue to the 1st. queue. */
@@ -1452,7 +1452,7 @@ Lbl_Allocation_Failure:
 		queFreeL(&q1);
 		queFreeL(&q2);
 	}
-	return FALSE;
+	return false;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1460,12 +1460,12 @@ Lbl_Allocation_Failure:
  * Description:   Get the sibling of a node.
  * Parameters:
  *      pnode Pointer to a node in B-plus tree.
- *     bright TRUE  Get the right sibling of pnode.
- *            FALSE Get the left sibling of pnode.
+ *     bright true  Get the right sibling of pnode.
+ *            false Get the left sibling of pnode.
  * Return value:  Pointer to the sibling of pnode.
  * Caution:       Address of pnode Must Be Allocated first.
  */
-P_BPTNODE _treGetSiblingNodeBPT(P_BPTNODE pnode, BOOL bright)
+P_BPTNODE _treGetSiblingNodeBPT(P_BPTNODE pnode, bool bright)
 {
 	P_BPTNODE parent = _treGetParentBPTNode(pnode);
 	if (NULL != parent)
@@ -1509,12 +1509,12 @@ P_BPTNODE _treGetSiblingNodeBPT(P_BPTNODE pnode, BOOL bright)
  * Parameters:
  *      pnode Pointer to a node in B-plus tree.
  *       psib Pointer to the sibling of pnode.
- *     bright TRUE  Get the right sibling of pnode.
- *            FALSE Get the left sibling of pnode.
+ *     bright true  Get the right sibling of pnode.
+ *            false Get the left sibling of pnode.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
-void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, BOOL bright)
+void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, bool bright)
 {
 	REGISTER size_t i;
 	P_BPTNODE parent = _treGetParentBPTNode(pnode);
@@ -1587,12 +1587,12 @@ void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, BOOL bright)
  *      pnode Pointer to a node in B-plus tree.
  *       psib Pointer to the sibling node of pnode.
  *      phead Pointer to the header of key chain in B-plus indexing tree.
- *     bright TRUE  Get the right sibling of pnode.
- *            FALSE Get the left sibling of pnode.
+ *     bright true  Get the right sibling of pnode.
+ *            false Get the left sibling of pnode.
  * Return value:  Pointer to the new merged node.
  * Caution:       Address of pnode Must Be Allocated first.
  */
-void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, BOOL bright)
+void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, bool bright)
 {
 	P_BPTNODE parent = _treGetParentBPTNode(pnode);
 	P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
@@ -1600,7 +1600,7 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, BOOL br
 	P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
 	if (bright) /* Left toward fusing. */
 	{
-		BOOL b = FALSE;
+		bool b = false;
 		if (_treIsLeafBPTNode(pnode))
 		{
 			/* Locate the previous item. */
@@ -1616,7 +1616,7 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, BOOL br
 					phead->ppnode[NEXTPTR] = psib;
 			}
 			else
-				b = TRUE;
+				b = true;
 			/* Alter header pointer in parent node. */
 			((_P_BPT_INFO)parent->pdata)->headptr = ((_P_BPT_KEY_INFO)parrz0->pdata)->pchild;
 			/* Left shift key value in parent. */
@@ -1685,18 +1685,18 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, BOOL br
  *       hdeg The value of degree of node in B-plus indexing tree divide by 2.
  *       pkey Pointer to an element which is stored in the B-plus tree.
  *     cbfcmp Pointer to a callback function that compares data size of pkey.
- * Return value:  TRUE  Removal succeed.
- *                FALSE Removal failed.
+ * Return value:  true  Removal succeed.
+ *                false Removal failed.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
-BOOL _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const void * pkey, CBF_COMPARE cbfcmp)
+bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	size_t i;
 	P_BPTNODE phead  = _treLocateKeyChainHeaderBPT(pbpt);
 	P_ARRAY_Z parrz = &((_P_BPT_INFO)pnode->pdata)->keyarr;
 	/* Remove the entry. */
 	if (0 == (i = _treRemoveKeyFromArrayBPT((_P_BPT_INFO)pnode->pdata, pkey, cbfcmp)))
-		return FALSE; /* Removal failure. */
+		return false; /* Removal failure. */
 	else if (1 == i && pnode == *pbpt)
 	{	/* Current node is the root node and it is empty.*/
 		treDeleteBPTNode(pnode); /* Delete parent. */
@@ -1704,14 +1704,14 @@ BOOL _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 	}
 	else if (strLevelArrayZ(parrz) < hdeg)
 	{
-		BOOL d;
+		bool d;
 		/* Fetch sibling node. */
 		P_BPTNODE psib = _treGetSiblingNodeBPT(pnode, (d = RIGHT));
 		if (NULL == psib)
 		{
 			psib = _treGetSiblingNodeBPT(pnode, (d = LEFT));
 			if (NULL == psib)
-				return FALSE; /* Error occurred while pnode has no sibling. */
+				return false; /* Error occurred while pnode has no sibling. */
 		}
 		parrz = &((_P_BPT_INFO)psib->pdata)->keyarr;
 		if (strLevelArrayZ(parrz) > hdeg) /* Borrow a key from sibling node. */
@@ -1722,7 +1722,7 @@ BOOL _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 			return _treBPTRemovePuppet(pbpt, _treGetParentBPTNode(pnode), hdeg, pkey, cbfcmp);
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Function name: treRemoveBPT
@@ -1733,11 +1733,11 @@ BOOL _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
  *            Value of degree shall be greater than or equal to 3.
  *       pkey Pointer to an element which is stored in the B-plus tree.
  *     cbfcmp Pointer to a callback function that compares data size of pkey.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failed.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
-BOOL treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
+bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	P_BPTNODE pnode = *pbpt;
 	if (NULL != pnode)
@@ -1745,7 +1745,7 @@ BOOL treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		return _treBPTRemovePuppet(pbpt, pnode, degree >> 1, pkey, cbfcmp);
 	}
-	return FALSE;
+	return false;
 }
 
 #undef PARENTPTR
@@ -1880,7 +1880,7 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
 		pbase += size;
 	}
 	if (0 == num) /* Searching reaches at the end of string. */
-		if (FALSE != *((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
+		if (false != *((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
 			return ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]);
 	return NULL;
 }
@@ -1897,14 +1897,14 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
  *     cbfcmp Pointer a CBF_COMPARE callback function.
  *            Two parameters of this callback function may point to any element in the string.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
- * Return value:  TRUE  Insertion succeeded.
- *                FALSE Insertion failed.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failed.
  * Caution:       ptrie must be allocated first.
  * Tip:           Inserting the same string in multiple times is allowed for tries;
  *                Then deletion of the same string needs to be duplicated in the same times.
  *                Value vapdx that stored with a string in trie will be replaced if users insert the same string repeatedly.
  */
-BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, size_t vapdx, CBF_COMPARE cbfcmp)
+bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, size_t vapdx, CBF_COMPARE cbfcmp)
 {
 	REGISTER size_t j;
 	REGISTER PUCHAR pdat;
@@ -1934,7 +1934,7 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
 				) - (*ptrie)->pdata) / _ELESIZ(size) + 1;
 				if (NULL == strResizeArrayZ(*ptrie, strLevelArrayZ(*ptrie) + 1, _ELESIZ(size)))
-					return FALSE; /* Allocation failure. */
+					return false; /* Allocation failure. */
 				else
 				{	/* Insert new item. */
 					pdat = (PUCHAR)memcpy
@@ -1954,7 +1954,7 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 		else
 		{
 			if (NULL == (*ptrie = strCreateArrayZ(1, _ELESIZ(size))))
-				return FALSE; /* Allocation failure. */
+				return false; /* Allocation failure. */
 			else
 				pdat = (PUCHAR) memcpy((*ptrie)->pdata, pbase, size);
 		}
@@ -1962,13 +1962,13 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 		*(P_TRIE_A)  &pdat[size] = NULL; /* pnext. */
 		*(size_t *)  &pdat[size + sizeof(TRIE_A)] = 1; /* Reference counter. */
 		*((size_t *) &pdat[size + sizeof(TRIE_A) + sizeof(size_t)]) = 0; /* Appendix. */
-		*((size_t *) &pdat[size + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t)]) = FALSE; /* Flag. */
+		*((size_t *) &pdat[size + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t)]) = false; /* Flag. */
 	}
 	/* Bypass reference counter and assign appendix onto the right position. */
 	*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]) = vapdx;
 	/* Set the flag on the tail of string in trie into valid. */
-	*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]) = TRUE;
-	return TRUE;
+	*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]) = true;
+	return true;
 }
 
 /* Function name: treRemoveTrieA
@@ -1981,20 +1981,20 @@ BOOL treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
  *     cbfcmp Pointer a CBF_COMPARE callback function.
  *            Two parameters of this callback function may point to any element in the string.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failed.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
  * Caution:       ptrie must be allocated first.
  */
-BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, CBF_COMPARE cbfcmp)
+bool treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	BOOL r = FALSE;
+	bool r = false;
 	P_STACK_L pstk; /* Stores every data to be erased. */
 	const P_TRIE_A pot = ptrie; /* Stores the original header of trie. */
 	REGISTER PUCHAR pbase = (PUCHAR) pstr;
 	/* In the following structure, pdat is the pointer that leads data in array (*trie). */
 	struct { TRIE_A trie; PUCHAR pdat; } eleset;
 	if ((0 == num || 0 == size) || NULL == (pstk = stkCreateL()))
-		return FALSE; /* Allocation failure. */
+		return false; /* Allocation failure. */
 	/* Traverse trie to pick elements that to be deleted into a stack. */
 	while (NULL != *ptrie && 0 != num)
 	{
@@ -2015,13 +2015,13 @@ BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 	if (0 == num)
 	{
 		size_t * pflag = ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]);
-		if (! (*pflag)) /* Avoid to delete a found sub string. FALSE == *pflag */
+		if (! (*pflag)) /* Avoid to delete a found sub string. false == *pflag */
 			goto Lbl_Clear;
 		else
 		{
 			REGISTER TRIE_A tprev = NULL; /* Previous trie record. */
 			if (*((size_t *) &(sizeof(TRIE_A))[(PUCHAR) ptrie]) < 2)
-				*pflag = FALSE; /* Unflag. */
+				*pflag = false; /* Unflag. */
 			while (! stkIsEmptyL(pstk))
 			{	/* Pop elements to be deleted one by one that previously collected in the stack. */
 				stkPopL(&eleset, sizeof(eleset), pstk);
@@ -2039,7 +2039,7 @@ BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 						eleset.trie,
 						_ELESIZ(size),
 						(eleset.pdat - eleset.trie->pdata) / _ELESIZ(size),
-						TRUE
+						true
 					);
 					/* If there are not exist elements in the set, then remove array entity either. */
 					if (0 == strLevelArrayZ(eleset.trie))
@@ -2051,7 +2051,7 @@ BOOL treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					}
 				}
 			}
-			r = TRUE;
+			r = true;
 		}
 	}
 Lbl_Clear:

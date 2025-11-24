@@ -94,12 +94,12 @@ size_t strLevelArrayZ_O(P_ARRAY_Z parrz)
  *       size Element size of an array.
  *     cbftvs Pointer to the callback function.
  *      param Parameter which can be transfer into callback function.
- *       brev Input TRUE to traverse array in order.
- *            Input FALSE to traverse array in reverse.
+ *       brev Input true to traverse array in order.
+ *            Input false to traverse array in reverse.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of parrz Must Be Allocated first.
  */
-int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t param, BOOL brev)
+int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
 	if (strLevelArrayZ(parrz) > 0)
 	{
@@ -179,12 +179,12 @@ void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
  *      parrz Pointer to a sized array.
  *      pitem Pointer to an element as the searching target.
  *       size Size of an element.
- *       brev Input TRUE  to search array in reverse.
- *            Input FALSE to search array in order. That means to search the element from index 0 to the end of array.
+ *       brev Input true  to search array in reverse.
+ *            Input false to search array in order. That means to search the element from index 0 to the end of array.
  * Return value:  (*) Index of element + 1. If function returned 0, it should mean pitem could not found.
  * Caution:       Address of parrz Must Be Allocated first.
  */
-size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, BOOL brev)
+size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, bool brev)
 {
 	if (strLevelArrayZ(parrz) > 0)
 	{
@@ -242,11 +242,11 @@ void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, siz
  *      parrz Pointer to a sized array.
  *       size Size of each element in the array.
  *      index Index of the item you want to remove. Index starts from 0.
- *    bshrink Input TRUE to shrink array, otherwise input FASLE.
+ *    bshrink Input true to shrink array, otherwise input FASLE.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  */
-void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, BOOL bshrink)
+void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrink)
 {
 	if (index >= strLevelArrayZ(parrz))
 		return; /* Index out of range. */
@@ -298,13 +298,13 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 
 	REGISTER size_t di = 0, si = 0, sj = 0, t;
 	REGISTER int r0, r1;
-	REGISTER BOOL binc =
+	REGISTER bool binc =
 	(
 		cbfcmp(pdest->pdata, _P_ARRAY_Z_ITEM(pdest, strLevelArrayZ(pdest) - 1)) <= 0 &&
 		cbfcmp(psrc->pdata,  _P_ARRAY_Z_ITEM(psrc,  strLevelArrayZ(psrc)  - 1)) <= 0
 	) ?
-	TRUE : /* Both destination and source are in increasing order. */
-	FALSE; /* Both destination and source are in decreasing order. */
+	true : /* Both destination and source are in increasing order. */
+	false; /* Both destination and source are in decreasing order. */
 
 	PUCHAR pnew = (PUCHAR) realloc(pdest->pdata, (strLevelArrayZ(pdest) + strLevelArrayZ(psrc)) * size);
 	if (NULL == pnew)
@@ -453,11 +453,11 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
  * Tip:           After invoking, the buffer that ptemp pointed stored the limit value.
  *                To get the index of maximum value in fixed-size array arr, use following sentences:
- *                size_t index; PUCHAR ptr = strGetLimitationArrayZ(&arr, ptemp, size, cbfcmp, TRUE);
+ *                size_t index; PUCHAR ptr = strGetLimitationArrayZ(&arr, ptemp, size, cbfcmp, true);
  *                if (NULL != ptr) index = (ptr == parrz->pdata ? 0 : (ptr - arr.pdata) / size - 1);
  *
  */
-void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, BOOL bmax)
+void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bmax)
 {
 	REGISTER void * prtn = NULL;
 	if (strLevelArrayZ(parrz) > 0)
@@ -486,13 +486,13 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_CO
  *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares any two elements in array.
- *    bshrink Input TRUE to shrink array, otherwise input FASLE.
+ *    bshrink Input true to shrink array, otherwise input FASLE.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
  */
-void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, BOOL bshrink)
+void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bshrink)
 {
 	REGISTER size_t i, j;
 	REGISTER PUCHAR px, py;
@@ -512,8 +512,8 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
  *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares any two elements in array.
- *      bnext Input TRUE to permute an array next; Input FALSE to permute an array previously.
- * Return value:  TRUE indicates permutation continued; FALSE indicates permutation ended.
+ *      bnext Input true to permute an array next; Input false to permute an array previously.
+ * Return value:  true indicates permutation continued; false indicates permutation ended.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                (*) The size of the buffer of ptemp pointed shall equal to parameter size.
@@ -521,7 +521,7 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
  * Tip:           Users may call strUniqueArrayZ to generate a suitable array for permuting.
  *                This function references to two similar templates in STL of C Plus Plus.
  */
-BOOL strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, BOOL bnext)
+bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bnext)
 {
 	if (strLevelArrayZ(parrz) > 1 && size > 0) /* Worth permuting. */
 	{	/* ptrl Always points the last element. */
@@ -548,7 +548,7 @@ BOOL strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cb
 					arrt.pdata = ptrj;
 					strReverseArrayZ(&arrt, ptemp, size);
 				}
-				return TRUE;
+				return true;
 			}
 			if (ptri <= parrz->pdata)
 			{	/* Reverse array from first to last. */
@@ -558,7 +558,7 @@ BOOL strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cb
 		}
 	}
 Lbl_End_Permuting:
-	return FALSE;
+	return false;
 }
 
 /* Function name: strCombineNextArrayZ
@@ -570,14 +570,14 @@ Lbl_End_Permuting:
  *     parrzn Pointer to a sized array that is sorted in increasing order.
  *       size Size of each element in both two arrays.
  *     cbfcmp Pointer to a function that compares any two elements in two arrays.
- * Return value:  TRUE indicates combination continued; FALSE indicates combination ended.
+ * Return value:  true indicates combination continued; false indicates combination ended.
  * Caution:       Address of Both parrzn and parrzr Must Be Allocated first.
  *                (*) Each element in parrzn shall be unique.
  *                (*) Elements in array that parrzn and parrzr pointed shall be sorted in increasing order.
- * Tip:           Users may call strUniqueArrayZ(parrzn, ptemp, size, cbfcmp, TRUE);
+ * Tip:           Users may call strUniqueArrayZ(parrzn, ptemp, size, cbfcmp, true);
  *                to generate a suitable array for combination.
  */
-BOOL strCombineNextArrayZ(P_ARRAY_Z parrzr, P_ARRAY_Z parrzn, size_t size, CBF_COMPARE cbfcmp)
+bool strCombineNextArrayZ(P_ARRAY_Z parrzr, P_ARRAY_Z parrzn, size_t size, CBF_COMPARE cbfcmp)
 {	/* Assume that the array that parrzn contains has been assigned and sorted yet. */
 	if (parrzr->num > 0 && parrzr->num < parrzn->num)
 	{
@@ -602,10 +602,10 @@ BOOL strCombineNextArrayZ(P_ARRAY_Z parrzr, P_ARRAY_Z parrzn, size_t size, CBF_C
 			pt += size;
 		}
 		while (0 != i--);
-		return TRUE;
+		return true;
 	}
 Lbl_End_Combination:
-	return FALSE; /* No next combination. */
+	return false; /* No next combination. */
 }
 
 /* Function name: strShuffleArrayZ

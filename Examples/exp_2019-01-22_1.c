@@ -59,7 +59,7 @@ Lbl_Start:
 		if (NULL == (pnew = strCreateNodeD(&i, sizeof(long))))
 		{
 			puts("Error! Allocation failure while building ring.");
-			strFreeLinkedListDC(&jring, FALSE);
+			strFreeLinkedListDC(&jring, Ffalse);
 			return 1; /* Allocation failure. */
 		}
 		if (NULL != pnode)
@@ -98,9 +98,9 @@ to choose to delete ite%s sequentially? ", sfx[(j > 1) + 2], j, sfx[j > 1], sfx[
 	{
 		printf("The rest of ite%s in the ring %s labeled with: ",
 		sfx[jring != jring->ppnode[NEXT]], sfx[(jring != jring->ppnode[NEXT]) + 2]);
-		strTraverseLinkedListDC_X(jring, NULL, cbftvs_print_list, 0, FALSE); puts("\b\b.");
+		strTraverseLinkedListDC_X(jring, NULL, cbftvs_print_list, 0, Ffalse); puts("\b\b.");
 	}
-	strFreeLinkedListDC(&jring, FALSE);
+	strFreeLinkedListDC(&jring, Ffalse);
 	pnode = NULL;
 	do
 	{

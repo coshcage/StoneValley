@@ -130,7 +130,7 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 			hfmnode.NodeData.psbinf = psi;
 			if (NULL == (pnode = strCreateNodeD(&hfmnode, sizeof(_HFMNOD))))
 				goto Lbl_Allocation_Error; /* Allocation failure. */
-			treInsertHeapA(&heap, &pnode, &ptemp, sizeof(P_TNODE_BY), _treCBFHFMCompareSymbolFreqInNode, FALSE);
+			treInsertHeapA(&heap, &pnode, &ptemp, sizeof(P_TNODE_BY), _treCBFHFMCompareSymbolFreqInNode, false);
 		}
 	}
 	while (heap.irear > 1)
@@ -138,8 +138,8 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 		P_TNODE_BY pnode1, pnode2, ptemp;
 		REGISTER _P_HFMNOD phnode1, phnode2;
 		/* Pop two node-pointers from heap. */
-		treRemoveHeapA(&pnode1, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, FALSE);
-		treRemoveHeapA(&pnode2, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, FALSE);
+		treRemoveHeapA(&pnode1, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, false);
+		treRemoveHeapA(&pnode2, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, false);
 
 		phnode1 = (_P_HFMNOD)pnode1->pdata;
 		phnode2 = (_P_HFMNOD)pnode2->pdata;
@@ -162,7 +162,7 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 		phnode1->parent = ptemp;
 		phnode2->parent = ptemp;
 
-		treInsertHeapA(&heap, &ptemp, &pnode1, sizeof(P_TNODE_BY), _treCBFHFMCompareSymbolFreqInNode, FALSE);
+		treInsertHeapA(&heap, &ptemp, &pnode1, sizeof(P_TNODE_BY), _treCBFHFMCompareSymbolFreqInNode, false);
 	}
 	/* Extract the last node pointer in the heap. */
 	trePeepHeapA(&pnode, sizeof(P_TNODE_BY), &heap);
@@ -172,7 +172,7 @@ Lbl_Allocation_Error:
 	while (! treIsEmptyHeapA(&heap))
 	{	/* Treat every pointer in the heap as a tree. */
 		P_TNODE_BY ptemp;
-		treRemoveHeapA(&pnode, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, FALSE);
+		treRemoveHeapA(&pnode, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, false);
 		treFreeBY(&pnode);
 	}
 	treFreeHeapA(&heap);

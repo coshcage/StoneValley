@@ -90,7 +90,7 @@ int _treCBFFreeTNodeG(void * pitem, size_t param)
 int _treCBFGTreeLocateChild(void * pitem, size_t param)
 {
 	P_FindingInfo pfi = (P_FindingInfo)param;
-	if (0 != strLinearSearchArrayZ(&((P_TNODE_G)pitem)->children, &pfi->pitem, sizeof(P_TNODE_G), FALSE))
+	if (0 != strLinearSearchArrayZ(&((P_TNODE_G)pitem)->children, &pfi->pitem, sizeof(P_TNODE_G), false))
 	{
 		pfi->result = pitem;
 		return CBF_TERMINATE;
@@ -184,7 +184,7 @@ int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 		queRemoveL(&pnode, sizeof(P_TNODE_G), &q);
 		/* Enqueue all the children of the node. */
 		if (strLevelArrayZ(&pnode->children) > 0)
-			r = strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, FALSE);
+			r = strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false);
 		/* Visit the current node. */
 		if (CBF_CONTINUE != cbftvs(pnode, param))
 		{	/* Do not forget to free queue here. */
@@ -388,9 +388,9 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
  *                If function returned a NULL, it should mean that pchild you input is not a child node of parent.
  * Caution:       The whole sub tree that the child node holds will be deallocated! Do not panic. It is a feature.
  */
-P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, BOOL bclear)
+P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, bool bclear)
 {
-	size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), FALSE);
+	size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), false);
 	if (0 == i) /* Can not find pchild in parent. */
 		return NULL;
 	if (bclear)
@@ -398,7 +398,7 @@ P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, BOOL bclear)
 		treFreeG(&pchild);
 		pchild = NULL;
 	}
-	strRemoveItemArrayZ(&parent->children, sizeof(P_TNODE_G), i - 1, TRUE);
+	strRemoveItemArrayZ(&parent->children, sizeof(P_TNODE_G), i - 1, true);
 	return pchild;
 }
 
@@ -465,8 +465,8 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
 		REGISTER size_t i, j;
 		P_TNODE_G ptmp;
 		/* Locate pnodex and y in their parents. */
-		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), FALSE) - 1;
-		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), FALSE) - 1;
+		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), false) - 1;
+		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), false) - 1;
 		svSwap(&i[(P_TNODE_G *)prtx->children.pdata], &j[(P_TNODE_G *)prty->children.pdata], &ptmp, sizeof(P_TNODE_G));
 		return pnodey;
 	}

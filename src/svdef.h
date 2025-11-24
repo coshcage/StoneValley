@@ -24,21 +24,15 @@
 #ifndef _SVDEF_H_
 #define _SVDEF_H_
 
-#include <stddef.h> /* Using type size_t, ptrdiff_t. */
+#include <stddef.h>  /* Using type size_t, ptrdiff_t. */
+#include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.2.2.2"
-
-/* Boolean type enumeration and constants. */
-typedef enum en_bool
-{
-	FALSE = 0,
-	TRUE  = 1
-} BOOL;
+#define SV_LIB_VER "1.2.2.3"
 
 /* Callback function returning values. */
-#define CBF_TERMINATE TRUE
-#define CBF_CONTINUE FALSE
+#define CBF_TERMINATE true
+#define CBF_CONTINUE false
 
 /* Common data types. */
 typedef unsigned char   UCHART;

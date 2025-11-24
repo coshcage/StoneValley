@@ -64,11 +64,11 @@ void PrintMatrix(P_MATRIX pmat, const char width)
 	{
 		for (j = 0; j < width; ++j)
 		{
-			for (k = 0, b = FALSE; k < (const char) pmat->col; ++k)
+			for (k = 0, b = false; k < (const char) pmat->col; ++k)
 			{
 				if (NULL != strGetValueMatrix(&m, pmat, 0, k, sizeof(char)) && m == i &&
 					NULL != strGetValueMatrix(&n, pmat, 1, k, sizeof(char)) && n == j
-					) b = TRUE;
+					) b = true;
 			}
 			if (b)
 				printf("E");

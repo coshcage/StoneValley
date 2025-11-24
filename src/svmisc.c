@@ -165,12 +165,12 @@ void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
  * Description:   Test a bit-stream. Check Whether the bit-stream is empty or not.
  * Parameter:
  *     pbstm Pointer to the bit-stream you want to operate on.
- * Return value:  TRUE indicates that the bit-stream is empty.
- *                FALSE indicates that the bit-stream is NOT empty.
+ * Return value:  true indicates that the bit-stream is empty.
+ *                false indicates that the bit-stream is NOT empty.
  * Caution:       Address of pbstm Must Be Allocated first.
  * Tip:           A macro version of this function named strBitStreamIsEmpty_M is available.
  */
-BOOL strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
+bool strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
 {
 	return (strLevelArrayZ(&pbstm->arrz) <= 1 && 0 == pbstm->bilc);
 }
@@ -180,11 +180,11 @@ BOOL strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
  * Parameters:
  *      pbstm Pointer to the bit-stream you want to operate on.
  *      value A bit value you are about to push into.
- * Return value:  TRUE indicates that no error has been occurred.
- *                FALSE indicates that error occurred while pushing bit onto the stream.
+ * Return value:  true indicates that no error has been occurred.
+ *                false indicates that error occurred while pushing bit onto the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-BOOL strBitStreamPush(P_BITSTREAM pbstm, BOOL value)
+bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 {
 	REGISTER size_t i;
 	if (++pbstm->bilc > CHAR_BIT)
@@ -192,7 +192,7 @@ BOOL strBitStreamPush(P_BITSTREAM pbstm, BOOL value)
 		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(UCHART)))
 		{
 			--pbstm->bilc; /* Decrease bit number. */
-			return FALSE; /* Allocation failure. */
+			return false; /* Allocation failure. */
 		}
 		pbstm->bilc = 1;
 	}
@@ -205,24 +205,24 @@ BOOL strBitStreamPush(P_BITSTREAM pbstm, BOOL value)
 			pbstm->arrz.pdata[i] |= ((UCHART) 0x01 << (CHAR_BIT - 1));
 	}
 	*pbstm->arrz.pdata >>= 1;
-	if (FALSE != value) /* Alter MSBit in the first block. */
+	if (false != value) /* Alter MSBit in the first block. */
 		*pbstm->arrz.pdata |= ((UCHART) 0x01 << (CHAR_BIT - 1));
-	return TRUE;
+	return true;
 }
 
 /* Function name: strBitStreamPop
  * Description:   Pop a bit from the start of the stream.
  * Parameter:
  *     pbstm Pointer to the bit-stream you want to operate on.
- * Return value:  Popped bit. Converted to BOOL. Values TRUE 1 or FALSE 0.
+ * Return value:  Popped bit. Converted to bool. Values true 1 or false 0.
  * Caution:       Use this function on a bit stream which is not empty.
  *                Address of pbstm Must Be Allocated first.
  * Tip:           Use function strBitStreamIsEmpty first
  *                To check whether bit-stream is empty.
  */
-BOOL strBitStreamPop(P_BITSTREAM pbstm)
+bool strBitStreamPop(P_BITSTREAM pbstm)
 {
-	BOOL r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
+	bool r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
 	REGISTER size_t i, j = strLevelArrayZ(&pbstm->arrz) - 1;
 	for (i = 0; i < j; ++i)
 	{
@@ -242,7 +242,7 @@ BOOL strBitStreamPop(P_BITSTREAM pbstm)
 			pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return FALSE != r;
+	return false != r;
 }
 
 /* Function name: strBitStreamAdd
@@ -250,11 +250,11 @@ BOOL strBitStreamPop(P_BITSTREAM pbstm)
  * Parameters:
  *      pbstm Pointer to the bit-stream you want to operate on.
  *      value A bit value you are about to add.
- * Return value:  TRUE indicates that no error has been occurred.
- *                FALSE indicates that error occurred while adding bit to the stream.
+ * Return value:  true indicates that no error has been occurred.
+ *                false indicates that error occurred while adding bit to the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
-BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
+bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 {
 	size_t j;
 	PUCHAR pt;
@@ -263,7 +263,7 @@ BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
 		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(UCHART)))
 		{
 			--pbstm->bilc; /* Decrease bit number. */
-			return FALSE; /* Allocation failure. */
+			return false; /* Allocation failure. */
 		}
 		pbstm->bilc = 1; /* Reset bits in the last block of UCHART integer. */
 	}
@@ -271,24 +271,24 @@ BOOL strBitStreamAdd(P_BITSTREAM pbstm, BOOL value)
 	pt = &(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1]);
 	*pt = (UCHART)
 	(
-		FALSE != value ?
+		false != value ?
 		(*pt | ((UCHART)  0x01  << j)) : /* Pad 1. */
 		(*pt & ((UCHAR_MAX - 1) << j))   /* Pad 0. */
 	);
-	return TRUE;
+	return true;
 }
 
 /* Function name: strBitStreamExtract
  * Description:   Extract a bit from the end of the stream.
  * Parameter:
  *     pbstm Pointer to the bit-stream you want to operate on.
- * Return value:  Extracted bit. Converted to BOOL. Values TRUE 1 or FALSE 0.
+ * Return value:  Extracted bit. Converted to bool. Values true 1 or false 0.
  * Caution:       Use this function on a bit stream that is not empty.
  *                Address of pbstm Must Be Allocated first.
  * Tip:           Use function strBitStreamIsEmpty firstly
  *                to check whether the bit-stream is empty.
  */
-BOOL strBitStreamExtract(P_BITSTREAM pbstm)
+bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
 	UCHART r = (UCHART)(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc)));
 	if (--pbstm->bilc < 1)
@@ -299,7 +299,7 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
 				pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return FALSE != r;
+	return false != r;
 }
 
 /* Function name: strBitStreamLocate
@@ -307,18 +307,18 @@ BOOL strBitStreamExtract(P_BITSTREAM pbstm)
  * Parameters:
  *      pbstm Pointer to the bit-stream you want to operate on.
  *      index Index value to be evaluated. Starts from 0.
- * Return value:  TRUE or FALSE.
+ * Return value:  true or false.
  * Caution:       Address of pbstm Must Be Allocated first.
- *                If index exceeded the range, function would return FALSE.
+ *                If index exceeded the range, function would return false.
  */
-BOOL strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
+bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
 	if (index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc)
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
-		return FALSE != (pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
+		return false != (pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
 	}
-	return FALSE;
+	return false;
 }
 
 /* Function name: strBitStreamReverse

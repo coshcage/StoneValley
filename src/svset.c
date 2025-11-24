@@ -24,8 +24,8 @@
 #include "svset.h"
 
 /* These following two macros are used to switch between BSTs. */
-#define _setInsertBST treBSTInsertAVL
-#define _setRemoveBST treBSTRemoveAVL
+#define _setInsertBST treBSTInsertAA
+#define _setRemoveBST treBSTRemoveAA
 
 /* Callback function declarations for sets using hash table. */
 int _setCBFIsSubsetHPuppet     (void * pitem, size_t param);
@@ -66,12 +66,12 @@ int _setCBFIsSubsetHPuppet(void * pitem, size_t param)
  *       pset Pointer to the set you want to allocate.
  *    buckets Number of buckets for the hash table in the set.
  *            This value shall be a prime number.
- * Return value:  TRUE  Succeeded.
- *                FALSE Failed.
+ * Return value:  true  Succeeded.
+ *                false Failed.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setInitH_M is available.
  */
-BOOL setInitH_O(P_SET_H pset, size_t buckets)
+bool setInitH_O(P_SET_H pset, size_t buckets)
 {
 	return hshInitC(pset, buckets);
 }
@@ -135,11 +135,11 @@ size_t setSizeH_O(P_SET_H pset)
  * Parameter:
  *      pset Pointer to the stack you want to check.
  * Return value:
- *         TRUE Set is empty.
- *        FALSE Set is not empty.
+ *         true Set is empty.
+ *        false Set is not empty.
  * Tip:           A macro version of this function named setIsEmptyH_M is available.
  */
-BOOL setIsEmptyH_O(P_SET_H pset)
+bool setIsEmptyH_O(P_SET_H pset)
 {
 	return !setSizeH(pset);
 }
@@ -153,13 +153,13 @@ BOOL setIsEmptyH_O(P_SET_H pset)
  *      pitem Pointer to an element to want to check.
  *       size Size of that element.
  * Return value:
- *         TRUE Element belongs to the set.
- *        FALSE Element does not belong to the set.
+ *         true Element belongs to the set.
+ *        false Element does not belong to the set.
  * Tip:           A macro version of this function named setIsMemberH_M is available.
  */
-BOOL setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
 {
-	return NULL == pset ? FALSE : (NULL != hshSearchC(pset, cbfhsh, pitem, size) ? TRUE : FALSE);
+	return NULL == pset ? false : (NULL != hshSearchC(pset, cbfhsh, pitem, size) ? true : false);
 }
 
 /* Function name: setIsSubsetH
@@ -171,11 +171,11 @@ BOOL setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t si
  *            Two sets should use the same hash function.
  *       size Size of that element.
  * Return value:
- *         TRUE seta belongs to setb.
- *        FALSE seta does not belong setb.
+ *         true seta belongs to setb.
+ *        false seta does not belong setb.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-BOOL setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 {
 	if (NULL != pseta)
 	{
@@ -183,9 +183,9 @@ BOOL setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 		a[0] = (size_t)psetb;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
-		return CBF_CONTINUE != hshTraverseC(pseta, _setCBFIsSubsetHPuppet, (size_t)a) ? FALSE : TRUE;
+		return CBF_CONTINUE != hshTraverseC(pseta, _setCBFIsSubsetHPuppet, (size_t)a) ? false : true;
 	}
-	return TRUE; /* An empty set is a subset of any set. */
+	return true; /* An empty set is a subset of any set. */
 }
 
 /* Function name: setIsEqualH
@@ -197,15 +197,15 @@ BOOL setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
  *            Two sets should use the same hash function.
  *       size Size of element.
  * Return value:
- *         TRUE Two sets are equal.
- *        FALSE Two sets are NOT equal.
+ *         true Two sets are equal.
+ *        false Two sets are NOT equal.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-BOOL setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 {
 	if (pseta == psetb || (setIsSubsetH(pseta, psetb, cbfhsh, size) && setIsSubsetH(psetb, pseta, cbfhsh, size)))
-		return TRUE;
-	return FALSE;
+		return true;
+	return false;
 }
 
 /* Function name: setInsertH
@@ -217,14 +217,14 @@ BOOL setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
  *      pitem Pointer to an element to want to insert.
  *       size Size of that element.
  * Return value:
- *         TRUE Insertion succeeded.
- *        FALSE Insertion failed.
+ *         true Insertion succeeded.
+ *        false Insertion failed.
  * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
-BOOL setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
 {
 	if (NULL != hshSearchC(pset, cbfhsh, pitem, size))
-		return FALSE; /* Item has already existed. */
+		return false; /* Item has already existed. */
 	return hshInsertC(pset, cbfhsh, pitem, size);
 }
 
@@ -237,11 +237,11 @@ BOOL setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
  *      pitem Pointer to an element you want to remove.
  *       size Size of that element.
  * Return value:
- *         TRUE Removal succeeded.
- *        FALSE Removal failed.
+ *         true Removal succeeded.
+ *        false Removal failed.
  * Caution:  pset can not be NULL. Please check the value of pset before invoking.
  */
-BOOL setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
 {
 	return hshRemoveC(pset, cbfhsh, pitem, size);
 }
@@ -318,7 +318,7 @@ Lbl_Empty_Set:
  *            size_t[2] stores the size of each element.
  *            size_t[3] stores either pseta or psetb of the caller function. (Flexible)
  *            size_t[4] stores a boolean value.
- *                      If size_t[4] == FALSE, Do insertion only when element in set
+ *                      If size_t[4] == false, Do insertion only when element in set
  *                      size_t[3] did not match elements in set size_t[0] at all.
  *                      So that we can generate a difference set of set A and set B.
  * Return value:  CBF_CONTINUE only.
@@ -333,7 +333,7 @@ int _setCBFIntersectionHPuppet(void * pitem, size_t param)
 			(CBF_HASH)1[(size_t *)param],
 			pitem,
 			2[(size_t *)param]
-		) == (BOOL)4[(size_t *)param]
+		) == (bool)4[(size_t *)param]
 	)
 	{
 		setInsertH
@@ -370,7 +370,7 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
-		a[4] = TRUE;
+		a[4] = true;
 		if (NULL != psetb)
 		{
 			a[3] = (size_t)psetb;
@@ -415,7 +415,7 @@ P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
 		a[3] = (size_t)psetb;
-		a[4] = FALSE;
+		a[4] = false;
 		hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a);
 		if (setIsEmptyH(psetr))
 		{
@@ -519,13 +519,13 @@ size_t setSizeT_O(P_SET_T pset)
  * Parameter:
  *      pset Pointer to the set you want to check.
  * Return value:
- *         TRUE Set is empty.
- *        FALSE Set is not empty.
+ *         true Set is empty.
+ *        false Set is not empty.
  * Tip:           A macro version of this function named setIsEmptyT_M is available.
  */
-BOOL setIsEmptyT_O(P_SET_T pset)
+bool setIsEmptyT_O(P_SET_T pset)
 {
-	return NULL == pset ? TRUE: !(*pset);
+	return NULL == pset ? true: !(*pset);
 }
 
 /* Function name: setIsMemberT_O
@@ -535,13 +535,13 @@ BOOL setIsEmptyT_O(P_SET_T pset)
  *      pitem Pointer to an element to want to check.
  *     cbfcmp Pointer to a comparison function for pset.
  * Return value:
- *         TRUE Element belongs to the set.
- *        FALSE Element does not belong to the set.
+ *         true Element belongs to the set.
+ *        false Element does not belong to the set.
  * Tip:           A macro version of this function named setIsMemberT_M is available.
  */
-BOOL setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
+bool setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
 {
-	return NULL == treBSTFindData_X(*pset, pitem, cbfcmp) ? FALSE : TRUE;
+	return NULL == treBSTFindData_X(*pset, pitem, cbfcmp) ? false : true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -578,11 +578,11 @@ int _setCBFIsSubsetTPuppet(void * pitem, size_t param)
  *     cbfcmp Pointer to a comparison function for psetb.
  *            Two sets should use the same comparison function.
  * Return value:
- *         TRUE seta belongs to setb.
- *        FALSE seta does not belong to setb.
+ *         true seta belongs to setb.
+ *        false seta does not belong to setb.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-BOOL setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
+bool setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 {
 	if (NULL != pseta)
 	{
@@ -590,11 +590,11 @@ BOOL setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 		a[0] = NULL != psetb ? (size_t)*psetb : (size_t)NULL;
 		a[1] = (size_t)cbfcmp;
 		if (setIsEmptyT(pseta))
-			return TRUE; /* The empty set is the subset of any sets. */
+			return true; /* The empty set is the subset of any sets. */
 		if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*pseta), _setCBFIsSubsetTPuppet, (size_t)a))
-			return FALSE;
+			return false;
 	}
-	return TRUE; /* An empty set is a subset of any set. */
+	return true; /* An empty set is a subset of any set. */
 }
 
 /* Function name: setIsEqualT
@@ -606,15 +606,15 @@ BOOL setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *            Two sets should use the same comparison function.
  *       size Size of element.
  * Return value:
- *         TRUE Two sets are equal.
- *        FALSE Two sets are NOT equal.
+ *         true Two sets are equal.
+ *        false Two sets are NOT equal.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
+bool setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 {
 	if (pseta == psetb || (setIsSubsetT(pseta, psetb, cbfcmp) && setIsSubsetT(psetb, pseta, cbfcmp)))
-		return TRUE;
-	return FALSE;
+		return true;
+	return false;
 }
 
 /* Function name: setInsertT
@@ -624,16 +624,16 @@ BOOL setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *      pitem Pointer to an element that you want to insert.
  *       size Size of the element.
  *     cbfcmp Pointer to a comparison function.
- * Return value:  TRUE:  Insertion succeeded.
- *                FALSE: Insertion failed.
+ * Return value:  true:  Insertion succeeded.
+ *                false: Insertion failed.
  * Tip:           You may use function setIsMemberT to check whether insertion succeeded or not after invoking.
  */
-BOOL setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+bool setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
-		return FALSE; /* Item has already existed. */
+		return false; /* Item has already existed. */
 	*pset = _setInsertBST(*pset, pitem, size, cbfcmp);
-	return TRUE;
+	return true;
 }
 
 /* Function name: setRemoveT
@@ -643,18 +643,18 @@ BOOL setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  *      pitem Pointer to an element that you want to remove.
  *       size Size of the element.
  *     cbfcmp Pointer to a comparison function.
- * Return value:  TRUE:  Deletion succeeded.
- *                FALSE: Deletion failed.
+ * Return value:  true:  Deletion succeeded.
+ *                false: Deletion failed.
  * Tip:           You may use function setIsMemberT to check whether removal succeeded or not after calling.
  */
-BOOL setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+bool setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
 	{
 		*pset = _setRemoveBST(*pset, pitem, size, cbfcmp);
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -745,7 +745,7 @@ Lbl_Empty_Set:
  *            size_t[2] stores the size of each element.
  *            size_t[3] stores the pointer to either pseta or psetb of the caller function. (Flexible)
  *            size_t[4] stores a boolean value.
- *                      If size_t[4] == FALSE, do insertion only when an element settled-
+ *                      If size_t[4] == false, do insertion only when an element settled-
  *                      in set size_t[3] did not match elements in psetr at all.
  *                      So that we can generate a difference set of set A and set B.
  * Return value:  CBF_CONTINUE  Insertion succeeded.
@@ -753,15 +753,15 @@ Lbl_Empty_Set:
  */
 int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 {
-	BOOL r = (NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
+	bool r = (NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
 		treBSTFindData_X
 		(
 			**(P_SET_T *)3[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
 			(CBF_COMPARE)1[(size_t *)param]
 		)
-		? FALSE : TRUE);
-	if (r == (BOOL)4[(size_t *)param])
+		? false : true);
+	if (r == (bool)4[(size_t *)param])
 	{
 		if
 		(! setIsMemberT
@@ -809,7 +809,7 @@ P_SET_T setCreateIntersectionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_CO
 		a[0] = (size_t)&psetr;
 		a[1] = (size_t)cbfcmp;
 		a[2] = size;
-		a[4] = TRUE;
+		a[4] = true;
 		if (! setIsEmptyT(pseta))
 		{
 			a[3] = (size_t)&psetb;
@@ -855,7 +855,7 @@ P_SET_T setCreateDifferenceT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMP
 		a[0] = (size_t)&psetr;
 		a[1] = (size_t)cbfcmp;
 		a[2] = size;
-		a[4] = FALSE;
+		a[4] = false;
 		a[3] = (size_t)&psetb;
 		if (! setIsEmptyT(pseta))
 		{

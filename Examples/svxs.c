@@ -176,7 +176,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 		
 		/* Merge chunk files. */
 		parrBuffer = strCreateArrayZ(uChunkCount, size);
-		pbmValid   = strCreateBMap(1, uChunkCount, FALSE);
+		pbmValid   = strCreateBMap(1, uChunkCount, false);
 
 		for (i = 0; i < uChunkCount; ++i)
 		{
@@ -185,12 +185,12 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 			if (!feof(fp))
 			{
 				fread(strLocateItemArrayZ(parrBuffer, size, i), size, 1, fp);
-				strSetBitBMap(pbmValid, 0, i, TRUE);
+				strSetBitBMap(pbmValid, 0, i, true);
 				++uValidCount;
 			}
 			else
 			{
-				strSetBitBMap(pbmValid, 0, i, FALSE);
+				strSetBitBMap(pbmValid, 0, i, false);
 			}
 		}
 
@@ -218,7 +218,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 			fp = ((P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), iMinIndex))->fp;
 			if (feof(fp))
 			{
-				strSetBitBMap(pbmValid, 0, iMinIndex, FALSE);
+				strSetBitBMap(pbmValid, 0, iMinIndex, false);
 				--uValidCount;
 			}
 			else

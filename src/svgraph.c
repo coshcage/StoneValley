@@ -30,7 +30,7 @@
 typedef struct _st_FIEDG {
 	EDGE         vertex;
 	P_NODE_S     pnode;
-	BOOL         bweight; /* TRUE for weighted graph; FALSE for unweighted graph. */
+	bool         bweight; /* true for weighted graph; false for unweighted graph. */
 	CBF_TRAVERSE cbftvs;
 	size_t       param;
 } _FIEDG, * _P_FIEDG;
@@ -39,14 +39,14 @@ typedef struct _st_FIEDG {
 typedef struct _st_DATINF {
 	CBF_TRAVERSE cbftvs;
 	size_t       param;
-	size_t       bedge; /* TRUE for edges; FALSE for vertices. */
+	size_t       bedge; /* true for edges; false for vertices. */
 } _DATINF, * _P_DATINF;
 
 /* Edge record for generating minimal spanning tree. */
 typedef struct _st_EDGEREC {
 	size_t weight;  /* Weight of this edge. */
 	size_t vids[2]; /* This edge connects vids[0] and vids[1]. */
-	size_t flag;    /* Values flag TRUE or FALSE to determine whether this edge is valid or not. */
+	size_t flag;    /* Values flag true or false to determine whether this edge is valid or not. */
 } _EDGEREC, * _P_EDGEREC;
 
 /* File level function declarations here. */
@@ -69,13 +69,13 @@ int        _grpDFSLPuppet                     (P_GRAPH_L pgrp, size_t vid, CBF_T
 int        _grpCBFQueueInsertVertex           (void * pitem, size_t param);
 int        _grpCBFSPLFillVertices             (void * pitem, size_t param);
 int        _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
-BOOL       _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd);
+bool       _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd);
 int        _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
 int        _grpCBFMSTInsertEdges              (void * pitem, size_t param);
 int        _grpCBFMSTScanVertices             (void * pitem, size_t param);
 /* Function declarations for embedded disjoint set structure. */
-BOOL       _grpDisjointSetSearch              (P_ARRAY_Z parrz, size_t x, size_t y);
-BOOL       _grpDisjointSetInsert              (P_ARRAY_Z parrz, size_t x, size_t y);
+bool       _grpDisjointSetSearch              (P_ARRAY_Z parrz, size_t x, size_t y);
+bool       _grpDisjointSetInsert              (P_ARRAY_Z parrz, size_t x, size_t y);
 void       _grpDisjointSetFree                (P_ARRAY_Z parrz);
 int        _grpCBFTSFillVertexArray           (void * pitem, size_t param);
 int        _grpCBFTSInitQ                     (void * pitem, size_t param);
@@ -282,13 +282,13 @@ int _grpCBFRemoveEdge(void * pitem, size_t param)
  * Parameters:
  *       pgrp Pointer to a graph.
  *       vid Vertex ID.
- * Return value:  TRUE  Vertex vid exists.
- *                FALSE Vertex vid does NOT exist.
+ * Return value:  true  Vertex vid exists.
+ *                false Vertex vid does NOT exist.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
+bool grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
 {
-	return NULL == _grpGetVertexByID(pgrp, vid) ? FALSE : TRUE;
+	return NULL == _grpGetVertexByID(pgrp, vid) ? false : true;
 }
 
 /* Function name: grpTraverseVerticesL
@@ -306,7 +306,7 @@ int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param)
 	_DATINF si;
 	si.cbftvs = cbftvs;
 	si.param  = param;
-	si.bedge  = FALSE;
+	si.bedge  = false;
 	/* Only post order traversal is needed here. */
 	return setTraverseT(pgrp, _grpCBFTraversePuppet, (size_t)&si, ETM_POSTORDER);
 }
@@ -330,7 +330,7 @@ int grpTraverseVertexEdgesL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, siz
 		_DATINF si;
 		si.cbftvs = cbftvs;
 		si.param  = param;
-		si.bedge  = TRUE;
+		si.bedge  = true;
 		return strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFTraversePuppet, (size_t)&si);
 	}
 	return CBF_TERMINATE; /* Can not find vertex vid. */
@@ -420,13 +420,13 @@ size_t grpEdgesCountL(P_GRAPH_L pgrp)
  *        pgrp Pointer to a graph.
  *        vidx 1st Vertex ID.
  *        vidy 2nd Vertex ID.
- *     bweight Input TRUE for weighted graph, FALSE for unweighted graph.
+ *     bweight Input true for weighted graph, false for unweighted graph.
  *      weight Search specific edge with weight.
- * Return value:  TRUE  vidx and vidy are adjacent.
- *                FALSE vidx and vidy are NOT adjacent.
+ * Return value:  true  vidx and vidy are adjacent.
+ *                false vidx and vidy are NOT adjacent.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, BOOL bweight, size_t weight)
+bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bweight, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
 	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
@@ -439,9 +439,9 @@ BOOL grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, BOOL bwei
 		fd.cbftvs        = NULL;
 		fd.param         = 0;
 		if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
-			return TRUE; /* Edge already exists. */
+			return true; /* Edge already exists. */
 	}
-	return FALSE; /* Can not find vertex vidx. */
+	return false; /* Can not find vertex vidx. */
 }
 
 /* Function name: grpTraverseEdgesWeightL
@@ -462,7 +462,7 @@ int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVER
 	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
 	{
 		_FIEDG fd;
-		fd.bweight       = TRUE;
+		fd.bweight       = true;
 		fd.pnode         = NULL;
 		fd.vertex.vid    = vidy;
 		fd.vertex.weight = 0;
@@ -515,11 +515,11 @@ size_t grpOutdegreeVertexL(P_GRAPH_L pgrp, size_t vid)
  * Parameters:
  *       pgrp Pointer to a graph.
  *        vid ID of the new vertex that you want to insert.
- * Return value:  TRUE  Insertion succeeded.
- *                FALSE Insertion failure.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failure.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
+bool grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
 {
 	if (! grpVertexExistsL(pgrp, vid))
 	{
@@ -529,7 +529,7 @@ BOOL grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
 		setInsertT(pgrp, &vtx, sizeof(VERTEX_L), _grpCBFCompareInteger);
 		return grpVertexExistsL(pgrp, vid);
 	}
-	return FALSE; /* Vertex exists. */
+	return false; /* Vertex exists. */
 }
 
 /* Function name: grpInsertEdgeL
@@ -539,15 +539,15 @@ BOOL grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
  *       vidx 1st vertex ID.
  *       vidy 2nd vertex ID.
  *     weight Weight of the edge.
- * Return value:  TRUE  Insertion succeeded.
- *                FALSE Insertion failed.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failed.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
+bool grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
 	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vidx)))
-		return FALSE; /* Can not find vertex vidx. */
+		return false; /* Can not find vertex vidx. */
 	else
 	{
 		REGISTER P_NODE_S pnew;
@@ -555,11 +555,11 @@ BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 		nedg.vid    = vidy;
 		nedg.weight = weight;
 		if (NULL == (pnew = strCreateNodeS(&nedg, sizeof(EDGE))))
-			return FALSE; /* Edge node allocation failure. */
+			return false; /* Edge node allocation failure. */
 		else
 		{
 			_FIEDG fd;
-			fd.bweight = TRUE;
+			fd.bweight = true;
 			fd.pnode   = NULL;
 			fd.vertex  = nedg; /* Fill the new edge. */
 			fd.cbftvs  = NULL;
@@ -569,7 +569,7 @@ BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 				if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 				{
 					strDeleteNodeS(pnew);
-					return FALSE; /* Edge already exists. */
+					return false; /* Edge already exists. */
 				}
 				strLocateLastItemSC(pvtx->adjlist)->pnode = pnew;
 			}
@@ -577,7 +577,7 @@ BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 				pvtx->adjlist = pnew;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Function name: grpRemoveVertexL
@@ -585,16 +585,16 @@ BOOL grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
  * Parameters:
  *       pgrp Pointer to a graph.
  *        vid Vertex ID.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failed.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
+bool grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
 {
 	REGISTER P_VERTEX_L pvtx;
 	/* First find the vertex identified by vid. */
 	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vid)))
-		return FALSE; /* Can not find vertex vid. */
+		return false; /* Can not find vertex vid. */
 	else
 	{	/* Remove every edge that contains vertex vid. */
 		grpTraverseVerticesL(pgrp, _grpCBFRemoveEdge, vid);
@@ -602,7 +602,7 @@ BOOL grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
 		strFreeLinkedListSC(&pvtx->adjlist);
 		setRemoveT(pgrp, &vid, sizeof(VERTEX_L), _grpCBFCompareInteger);
 	}
-	return TRUE;
+	return true;
 }
 
 /* Function name: grpRemoveEdgeL
@@ -612,27 +612,27 @@ BOOL grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
  *       vidx 1st vertex ID.
  *       vidy 2nd vertex ID.
  *     weight Weight of the edge.
- * Return value:  TRUE  Removal succeeded.
- *                FALSE Removal failed.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-BOOL grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
+bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
 	/* Find the vertex identified by vid first. */
 	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vidx)))
-		return FALSE; /* Can not find vertex vidx. */
+		return false; /* Can not find vertex vidx. */
 	else
 	{
 		_FIEDG fd;
-		fd.bweight       = TRUE;
+		fd.bweight       = true;
 		fd.pnode         = NULL;
 		fd.vertex.vid    = vidy;
 		fd.vertex.weight = weight;
 		fd.cbftvs        = NULL;
 		fd.param         = 0;
 		if (CBF_TERMINATE != strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
-			return FALSE; /* Edge doesn't exist. */
+			return false; /* Edge doesn't exist. */
 		else
 		{
 			if (pvtx->adjlist != fd.pnode) /* fd is not a header. */
@@ -642,7 +642,7 @@ BOOL grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 			strDeleteNodeS(fd.pnode);
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -893,11 +893,11 @@ int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
  *       pgrp Pointer to a graph.
  *      parrz Pointer to an array to be initialized.
  *       vidx Vertex ID to start.
- *      barrd TRUE to indicated initialize the distance array. FALSE to initialized queue array.
- * Return value:  If initializing succeeded, function would return TRUE,
- *                FALSE would return if initializing failed.
+ *      barrd true to indicated initialize the distance array. false to initialized queue array.
+ * Return value:  If initializing succeeded, function would return true,
+ *                false would return if initializing failed.
  */
-BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd)
+bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 {
 	P_VTXREC prec = (P_VTXREC)parrz->pdata;
 	/* Fill vertices into array and sort array. */
@@ -906,13 +906,13 @@ BOOL _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, BOOL barrd)
 	/* Fill distance into array. Pick the specific value off the array and sign it.
 	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
 	 */
-	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, barrd ? ~0U : FALSE, FALSE);
+	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, barrd ? ~0U : false, false);
 	prec = (P_VTXREC)strBinarySearchArrayZ(parrz, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 	if (NULL != prec)
-		prec->dist = barrd ? 0 : TRUE;
+		prec->dist = barrd ? 0 : true;
 	else
-		return FALSE;
-	return TRUE;
+		return false;
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -953,7 +953,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 				if (!prec->dist)
 				{
 					queInsertL(pq, &v, sizeof(size_t));
-					prec->dist = TRUE;
+					prec->dist = true;
 				}
 			}
 			else
@@ -990,10 +990,10 @@ P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 		goto Lbl_Bad_Result;
 
 	/* Create array d to store shortest distance. */
-	if (TRUE != _grpSPLInitArray(pgrp, parrd, vidx, TRUE))
+	if (true != _grpSPLInitArray(pgrp, parrd, vidx, true))
 		goto Lbl_Bad_Result;
 	/* Boolean array to check if vertex is present in queue or not. */
-	if (TRUE != _grpSPLInitArray(pgrp, parrq, vidx, FALSE))
+	if (true != _grpSPLInitArray(pgrp, parrq, vidx, false))
 		goto Lbl_Bad_Result;
 
 	queInsertL(&q, &vidx, sizeof(size_t));
@@ -1007,7 +1007,7 @@ P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
 		queRemoveL(&vidx, sizeof(size_t), &q);
 		prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 		if (NULL != prec)
-			prec->dist = FALSE; /* Out of the queue. */
+			prec->dist = false; /* Out of the queue. */
 		else
 			goto Lbl_Bad_Result;
 
@@ -1048,7 +1048,7 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 {
 	REGISTER P_ARRAY_Z parrz = (P_ARRAY_Z)0[(size_t *)param];
 	_EDGEREC rec;
-	rec.flag = FALSE;
+	rec.flag = false;
 	rec.vids[0] = 1[(size_t *)param];
 	rec.vids[1] = ((P_EDGE)((P_NODE_S)pitem)->pdata)->vid;
 	rec.weight  = ((P_EDGE)((P_NODE_S)pitem)->pdata)->weight;
@@ -1126,24 +1126,24 @@ int _grpCBFMSTScanVertices(void * pitem, size_t param)
  *      parrz Pointer to an array represented disjoint set.
  *          x The first vertex ID for an edge.
  *          y The second vertex ID for an edge.
- * Return value:  TRUE  Caller can insert x and y.
- *                FALSE Caller cannot insert x and y.
+ * Return value:  true  Caller can insert x and y.
+ *                false Caller cannot insert x and y.
  * Caution:       Address of parrz Must Be Allocated and Initialized first.
  */
-BOOL _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y)
+bool _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y)
 {
 	REGISTER size_t i;
-	REGISTER BOOL bfx;
-	for (i = 0; (bfx = FALSE), (i < strLevelArrayZ(parrz)); ++i)
+	REGISTER bool bfx;
+	for (i = 0; (bfx = false), (i < strLevelArrayZ(parrz)); ++i)
 	{
 		P_ARRAY_Z pslot = *(P_ARRAY_Z *)strLocateItemArrayZ(parrz, sizeof(P_ARRAY_Z), i);
 		if (NULL != strBinarySearchArrayZ(pslot, &x, sizeof(size_t), _grpCBFCompareInteger))
-			bfx = TRUE;
+			bfx = true;
 		if (NULL != strBinarySearchArrayZ(pslot, &y, sizeof(size_t), _grpCBFCompareInteger))
 			if (bfx) /* x and y are in the same slot. */
-				return FALSE;
+				return false;
 	}
-	return TRUE;
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1153,11 +1153,11 @@ BOOL _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y)
  *      parrz Pointer to an array represented disjoint set.
  *          x The first vertex ID for an edge.
  *          y The second vertex ID for an edge.
- * Return value:  TRUE  Insertion succeeded
- *                FALSE Insertion failed.
+ * Return value:  true  Insertion succeeded
+ *                false Insertion failed.
  * Caution:       Address of parrz Must Be Allocated and Initialized first.
  */
-BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
+bool _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 {
 	REGISTER size_t i;
 	REGISTER size_t ix = 0, iy = 0;
@@ -1175,9 +1175,9 @@ BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 		REGISTER P_ARRAY_Z pnarr;
 		/* Allocate a new slot. */
 		if (NULL == strResizeArrayZ(parrz, strLevelArrayZ(parrz) + 1, sizeof(P_ARRAY_Z)))
-			return FALSE; /* Allocation failure. */
+			return false; /* Allocation failure. */
 		if (NULL == (pnarr = (strLevelArrayZ(parrz) - 1)[(P_ARRAY_Z *)parrz->pdata] = strCreateArrayZ(2, sizeof(size_t))))
-			return FALSE; /* Allocation failure. */
+			return false; /* Allocation failure. */
 		if (x > y)
 			svSwap(&x, &y, &t, sizeof(size_t));
 		/* Arrange x and y in the array by increasing order. */
@@ -1206,7 +1206,7 @@ BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 				EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
 			) - pvarr->pdata) / sizeof(size_t) + 1;
 			if (NULL == strResizeArrayZ(pvarr, strLevelArrayZ(pvarr) + 1, sizeof(P_ARRAY_Z)))
-				return FALSE; /* Allocation failure. */
+				return false; /* Allocation failure. */
 			strInsertItemArrayZ(pvarr, &x, sizeof(size_t), i);
 		}
 		else /* Combine two sets. */
@@ -1219,13 +1219,13 @@ BOOL _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 			parr2 = (--iy)[(P_ARRAY_Z *)parrz->pdata];
 			i = strLevelArrayZ(parr1);
 			if (NULL == strResizeArrayZ(parr1, i + strLevelArrayZ(parr2), sizeof(size_t)))
-				return FALSE;
+				return false;
 			memcpy(&i[(size_t *)parr1->pdata], parr2->pdata, sizeof(size_t) * strLevelArrayZ(parr2));
 			strSortArrayZ(parr1, sizeof(size_t), _grpCBFCompareInteger);
-			strRemoveItemArrayZ(parrz, sizeof(P_ARRAY_Z), iy, TRUE);
+			strRemoveItemArrayZ(parrz, sizeof(P_ARRAY_Z), iy, true);
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1248,17 +1248,17 @@ void _grpDisjointSetFree(P_ARRAY_Z parrz)
  * Description:   Generate the corresponding minimum spanning tree of a graph by Kruskal algorithm.
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
- * Return value:  TRUE  Generation succeeded.
- *                FALSE Generation failed.
+ * Return value:  true  Generation succeeded.
+ *                false Generation failed.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  *                (*) After generating the graph that pgrp pointed will be altered into its minimum spanning tree.
  * Tip:           Kruskal algorithm works on undirected graph. Since users need to insert an edge into adjacency-list
  *                represented graph from a vertex to another, this function ignore directions for edges while searching the list.
  */
-BOOL grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
+bool grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 {
 	REGISTER size_t i;
-	BOOL rtn = TRUE;
+	bool rtn = true;
 	size_t a[2];
 	ARRAY_Z vtxarr;
 	ARRAY_Z setarr;
@@ -1277,16 +1277,16 @@ BOOL grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 		if (_grpDisjointSetSearch(&setarr, prec->vids[0], prec->vids[1]))
 		{
 			if (_grpDisjointSetInsert(&setarr, prec->vids[0], prec->vids[1]))
-				prec->flag = TRUE;
+				prec->flag = true;
 			else
 			{
-				rtn = FALSE;
+				rtn = false;
 				goto Lbl_Cleanup;
 			}
 		}
 	}
 	for (i = 0; (prec = &i[(_P_EDGEREC)vtxarr.pdata]), (i < vtxarr.num); ++i)
-		if (TRUE != prec->flag) /* Pick edges from graph. */
+		if (true != prec->flag) /* Pick edges from graph. */
 			grpRemoveEdgeL(pgrp, prec->vids[0], prec->vids[1], prec->weight);
 Lbl_Cleanup:
 	strFreeArrayZ(&vtxarr);
@@ -1425,7 +1425,7 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	a[0] = (size_t)&i;
 	a[1] = (size_t)&q;
 	a[2] = (size_t)prtn;
-	strTraverseArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFTSInitQ, (size_t)a, FALSE);
+	strTraverseArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFTSInitQ, (size_t)a, false);
 
 	a[0] = (size_t)&arrvtx;
 	a[1] = (size_t)&q;

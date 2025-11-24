@@ -92,11 +92,11 @@ void stkDeleteA(P_STACK_A pstka)
  * Parameter:
  *     pstka Pointer to the stack you want to check.
  * Return value:
- *         TRUE Stack is empty.
- *        FALSE Stack is NOT empty.
+ *         true Stack is empty.
+ *        false Stack is NOT empty.
  * Tip:           A macro version of this function named stkIsEmptyA_M is available.
  */
-BOOL stkIsEmptyA_O(P_STACK_A pstka)
+bool stkIsEmptyA_O(P_STACK_A pstka)
 {
 	return !pstka->top;
 }
@@ -106,11 +106,11 @@ BOOL stkIsEmptyA_O(P_STACK_A pstka)
  * Parameter:
  *     pstka Pointer to the stack you want to check.
  * Return value:
- *         TRUE Stack is full.
- *        FALSE Stack is NOT full.
+ *         true Stack is full.
+ *        false Stack is NOT full.
  * Tip:           A macro version of this function named stkIsFullA_M is available
  */
-BOOL stkIsFullA_O(P_STACK_A pstka)
+bool stkIsFullA_O(P_STACK_A pstka)
 {
 	return (pstka->arr.num == pstka->top);
 }
@@ -230,12 +230,12 @@ void stkDeleteL_O(P_STACK_L pstkl)
  * Parameter:
  *     pstkl Pointer to the stack you want to check.
  * Return value:
- *         TRUE Stack is empty.
- *        FALSE Stack is not empty.
+ *         true Stack is empty.
+ *        false Stack is not empty.
  * Caution:       Address of pstkl Must Be Allocated first.
  * Tip:           A macro version of this function named stkIsEmptyL_M is available.
  */
-BOOL stkIsEmptyL_O(P_STACK_L pstkl)
+bool stkIsEmptyL_O(P_STACK_L pstkl)
 {
 	return !(*pstkl);
 }

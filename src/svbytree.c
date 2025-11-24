@@ -71,7 +71,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
 	P_FindingInfo pfi = (P_FindingInfo)param;
 	if (pfi->pitem == pitem)
 	{
-		pfi->size = TRUE;
+		pfi->size = true;
 		return CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
@@ -513,18 +513,18 @@ P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, size_t size, Tv
  * Parameters:
  *      proot Pointer to a root node of the tree you want to test.
  *      pnode Pointer to a node.
- * Return value:  If pnode were a descendant of a tree, function would return a TRUE,
- *                otherwise function would return a FALSE.
+ * Return value:  If pnode were a descendant of a tree, function would return a true,
+ *                otherwise function would return a false.
  */
-BOOL treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
+bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
 {
 	FindingInfo fi;
 	if (proot == pnode || NULL == proot || NULL == pnode)
-		return FALSE;
+		return false;
 	fi.pitem = pnode;
-	fi.size  = FALSE;
+	fi.size  = false;
 	treTraverseBYPre(proot, _treCBFNodeLocator, (size_t)&fi);
-	return (BOOL)(fi.size ? TRUE: FALSE);
+	return (bool)(fi.size ? true: false);
 }
 
 /* Function name: treMergeNodesBY

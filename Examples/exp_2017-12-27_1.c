@@ -56,7 +56,7 @@ typedef struct st_Element {
 		float  value; /* Operand. */
 		OPERATOR opr; /* Operator. */
 	} edata;          /* Element data. */
-	int bnum;         /* TRUE while element is an operand. */
+	int bnum;         /* true while element is an operand. */
 } ELEMENT, * P_ELEMENT;
 
 static P_QUEUE_L queRPNExpr  = NULL; /* A queue used to build an execution sequence. */
@@ -253,7 +253,7 @@ int Scanner(char * expr, char * buf)
 	int i, j;
 	char l = 0;
 	OPERATOR opr;
-	BOOL ob = TRUE; /* Previous token is null or an operator. */
+	bool ob = true; /* Previous token is null or an operator. */
 	char c[2] = { 0 };
 	ELEMENT elmt = { 0 };
 	for (j = (int) strlen(expr), i = 0; *c = *(expr + i), i <= j; ++i)
@@ -261,13 +261,13 @@ int Scanner(char * expr, char * buf)
 		if (isdigit(0[c]) || 0[c] == '.')
 		{
 			strcat(buf, c);
-			ob = FALSE;
+			ob = false;
 		}
 		else
 		{
 			if ('\0' != *buf)
 			{
-				elmt.bnum = TRUE;
+				elmt.bnum = true;
 				elmt.edata.value = (float) atof(buf); /* Convert string to number. */
 				queInsertL(queRPNExpr, &elmt, sizeof(ELEMENT)); /* Insert number into queue. */
 				*buf = '\0'; /* Reset buffer. */
@@ -299,7 +299,7 @@ int Scanner(char * expr, char * buf)
 					while (opr.level >= l)
 					{
 						stkPopL(&opr, sizeof(OPERATOR), stkOperator);
-						elmt.bnum = FALSE;
+						elmt.bnum = false;
 						memcpy(&elmt.edata.opr, &opr, sizeof(OPERATOR));
 						queInsertL(queRPNExpr, &elmt, sizeof(ELEMENT));
 						if (stkIsEmptyL(stkOperator))
@@ -315,7 +315,7 @@ int Scanner(char * expr, char * buf)
 						return 1;
 					}
 				}
-				ob = TRUE;
+				ob = true;
 			}
 			else if (0[c] == '(')
 			{
@@ -326,7 +326,7 @@ int Scanner(char * expr, char * buf)
 					puts(strException);
 					return 1;
 				}
-				ob = TRUE;
+				ob = true;
 			}
 			else if (0[c] == ')')
 			{
@@ -336,7 +336,7 @@ int Scanner(char * expr, char * buf)
 					while (opr.name != '(')
 					{
 						stkPopL(&opr, sizeof(OPERATOR), stkOperator);
-						elmt.bnum = FALSE;
+						elmt.bnum = false;
 						memcpy(&elmt.edata.opr, &opr, sizeof(OPERATOR));
 						queInsertL(queRPNExpr, &elmt, sizeof(ELEMENT));
 						if (stkIsEmptyL(stkOperator))
@@ -351,7 +351,7 @@ int Scanner(char * expr, char * buf)
 					printf("Right brace mismatch at position %d.\n\n", i + 1);
 					return 1;
 				}
-				ob = TRUE;
+				ob = true;
 			}
 			else if (0[c] != ' ' && 0[c] != '\t' && 0[c] != '\0' && 0[c] != '\n' && 0[c] != '\r')
 			{	/* Bypass spaces. */
@@ -368,7 +368,7 @@ int Scanner(char * expr, char * buf)
 			puts("Left brace mismatch.\n");
 			return 1;
 		}
-		elmt.bnum = FALSE;
+		elmt.bnum = false;
 		memcpy(&elmt.edata.opr, &opr, sizeof(OPERATOR));
 		queInsertL(queRPNExpr, &elmt, sizeof(ELEMENT));
 	}
@@ -419,9 +419,9 @@ void PhoneyParser(int mode)
 
 // Function: DoCleanup.
 // Desc:     Cleanup or reset stack and queues.
-// Param:    style: FALSE - Reset but not deleting. TRUE - Delete entities.
+// Param:    style: false - Reset but not deleting. true - Delete entities.
 // Return:   N/A.
-void DoCleanup(BOOL style)
+void DoCleanup(bool style)
 {
 	if (style)
 	{	/* Destroy entities. */
@@ -500,13 +500,13 @@ int main(void)
 				if (0 == Scanner(expr, buf))
 					PhoneyParser(m);
 		}
-		DoCleanup(FALSE);
+		DoCleanup(false);
 	}
 Lbl_Quit:
-	DoCleanup(TRUE);
+	DoCleanup(true);
 	return 0;
 Lbl_Error:
-	DoCleanup(TRUE);
+	DoCleanup(true);
 	printf("%s initializing failure.\n", tips[err]);
 	return 1;
 }

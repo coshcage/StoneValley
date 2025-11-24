@@ -33,17 +33,17 @@ typedef HSHTBL_C SET_H, * P_SET_H;
 typedef BST SET_T, * P_SET_T;
 
 /* Functions for hash-table style sets. */
-BOOL     setInitH_O             (P_SET_H pset,   size_t   buckets);
+bool     setInitH_O             (P_SET_H pset,   size_t   buckets);
 void     setFreeH_O             (P_SET_H pset);
 P_SET_H  setCreateH_O           (size_t  buckets);
 void     setDeleteH_O           (P_SET_H pset);
 size_t   setSizeH_O             (P_SET_H pset);
-BOOL     setIsEmptyH_O          (P_SET_H pset);
-BOOL     setIsMemberH_O         (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
-BOOL     setIsSubsetH           (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-BOOL     setIsEqualH            (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-BOOL     setInsertH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
-BOOL     setRemoveH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
+bool     setIsEmptyH_O          (P_SET_H pset);
+bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
+bool     setIsSubsetH           (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
+bool     setIsEqualH            (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
+bool     setInsertH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
+bool     setRemoveH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
 P_SET_H  setCreateUnionH        (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
 P_SET_H  setCreateIntersectionH (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
 P_SET_H  setCreateDifferenceH   (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
@@ -54,12 +54,12 @@ P_SET_T  setCreateT_O           (void);
 void     setDeleteT_O           (P_SET_T pset);
 P_SET_T  setCopyT               (P_SET_T pset,   size_t       size);
 size_t   setSizeT_O             (P_SET_T pset);
-BOOL     setIsEmptyT_O          (P_SET_T pset);
-BOOL     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
-BOOL     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-BOOL     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-BOOL     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
-BOOL     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+bool     setIsEmptyT_O          (P_SET_T pset);
+bool     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
+bool     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
+bool     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
+bool     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
+bool     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
 P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
@@ -78,8 +78,8 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 #define setSizeH_M(pset_M) (NULL == (pset_M) ? 0 : hshSizeC(pset_M))
 #define setIsEmptyH_M(pset_M) (!setSizeH(pset_M))
 #define setIsMemberH_M(pset_M, cbfhsh_M, pitem_M, size_M) \
-	(NULL == (pset_M) ? FALSE : \
-	(NULL != hshSearchC((pset_M), (cbfhsh_M), (pitem_M), (size_M)) ? TRUE : FALSE))
+	(NULL == (pset_M) ? false : \
+	(NULL != hshSearchC((pset_M), (cbfhsh_M), (pitem_M), (size_M)) ? true : false))
 /* Macros for binary search tree represented sets. */
 #define setInitT_M(pset_M) do { \
 	treInitBST(pset_M); \
@@ -92,8 +92,8 @@ int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 	treDeleteBST(pset_M); \
 } while (0)
 #define setSizeT_M(pset_M) (NULL == (pset_M) ? 0 : treArityBY(P2P_TNODE_BY(*(pset_M))))
-#define setIsEmptyT_M(pset_M) (NULL == (pset_M) ? TRUE: !(*(pset_M)))
-#define setIsMemberT_M(pset_M, pitem_M, cbfcmp_M) (NULL == treBSTFindData_X(*(pset_M), (pitem_M), (cbfcmp_M)) ? FALSE : TRUE)
+#define setIsEmptyT_M(pset_M) (NULL == (pset_M) ? true: !(*(pset_M)))
+#define setIsMemberT_M(pset_M, pitem_M, cbfcmp_M) (NULL == treBSTFindData_X(*(pset_M), (pitem_M), (cbfcmp_M)) ? false : true)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

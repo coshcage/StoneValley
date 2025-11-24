@@ -47,9 +47,9 @@ int cbfcmp(const void * px, const void * py)
 // Param:    parrz:  pointer to a sized array.
 //           n:      Number of items you want to print.
 //           size:   Size of each element in the array.
-//           bchar:  TRUE: print char; FALSE: print number.
+//           bchar:  true: print char; false: print number.
 // Return:   N/A.
-void PrintArrayZ(P_ARRAY_Z parrz, size_t size, BOOL bchar)
+void PrintArrayZ(P_ARRAY_Z parrz, size_t size, bool bchar)
 {
 	char c;
 	size_t i;
@@ -93,8 +93,8 @@ int main(void)
 		while
 		(	/* Some versions of GCCs would mis-parse the following sentence while VC won't. */
 			printf(paste("%", numerize(N_), "d:\t"), ++i),
-			PrintArrayZ(&r, sizeof(MYTYPE), (BOOL)q),
-			strPermuteArrayZ(&r, &t, sizeof(MYTYPE), cbfcmp, TRUE)
+			PrintArrayZ(&r, sizeof(MYTYPE), (bool)q),
+			strPermuteArrayZ(&r, &t, sizeof(MYTYPE), cbfcmp, true)
 		);
 	}	/* Generate (nCr) circularly. */
 	while (strCombineNextArrayZ(&r, &n, sizeof(MYTYPE), cbfcmp));

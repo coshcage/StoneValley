@@ -56,7 +56,7 @@ int PrintQueue(void * pitem, size_t param)
 int main(void)
 {
 	int i;
-	BOOL refresh;
+	bool refresh;
 	P_NODE_D pos;
 	P_DEQUE_DL pque;
 	char * pneo = NULL;
@@ -72,23 +72,23 @@ int main(void)
 	/* Snake ate its tail. */
 	pque->pfirst->ppnode[PREV] = pque->plast;
 	pque->plast->ppnode[NEXT] = pque->pfirst;
-	for (refresh = TRUE;; refresh = FALSE)
+	for (refresh = true;; refresh = false)
 	{
 		if (GetAsyncKeyState(VK_UP))
 		{	/* Move cursor up. */
 			pos = pos->ppnode[PREV];
-			refresh = TRUE;
+			refresh = true;
 			pneo = NULL;
 		}
 		else if (GetAsyncKeyState(VK_DOWN))
 		{	/* Move cursor down. */
 			pos = pos->ppnode[NEXT];
-			refresh = TRUE;
+			refresh = true;
 			pneo = NULL;
 		}
 		else if (GetAsyncKeyState(VK_SPACE))
 		{	/* Choose. */
-			refresh = TRUE;
+			refresh = true;
 			pneo = *(char **) pos->pdata;
 		}
 		else if (GetAsyncKeyState(VK_ESCAPE))
@@ -98,7 +98,7 @@ int main(void)
 		{	/* Need to refresh. */
 			system("cls");
 			printf("Type up, down or space key to show what happened! Type ESC to quit.\n\n");
-			strTraverseLinkedListDC_X(pque->pfirst, NULL, PrintQueue, (size_t)pos, FALSE);
+			strTraverseLinkedListDC_X(pque->pfirst, NULL, PrintQueue, (size_t)pos, false);
 			putc('\n', stdout);
 			if (pneo != NULL)
 			{

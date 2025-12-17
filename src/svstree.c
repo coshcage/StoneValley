@@ -1156,8 +1156,8 @@ void treRemoveRBT(P_RBT prbt, P_RBTNODE z)
 
 /* Functions for B+ trees. */
 #include "svqueue.h"
-#define PARENTPTR (0)
-#define NEXTPTR   (1)
+#define PARENTPTR 0
+#define NEXTPTR   1
 
 /* Additional info for BPTNODE of B-plus trees. */
 typedef struct _st_BPT_INFO {

@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0513250808L00456
+ * File ID:     0809171737V1216251951L00501
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -30,6 +30,12 @@
 #define LEFT  0
 #define RIGHT 1
 
+/* An enumeration for red black tree nodes. */
+typedef enum en_RBTColor {
+	RED,
+	BLACK
+} RBTColor;
+
 /* Types for binary trees. */
 typedef NODE_D     TNODE_BY;   /* Node for binary trees. */
 typedef P_NODE_D   P_TNODE_BY; /* Pointer of tree nodes. */
@@ -45,8 +51,15 @@ typedef struct st_BSTNODE { /* Binary node with additional information. */
 	size_t  param; /* Parameter for a Treap node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
+/* Binary search tree node with parent pointer for red black tree. */
+typedef struct st_RBTNODE {
+	BSTNODE             bstn;   /* BST block. */
+	struct st_RBTNODE * parent; /* Pointer to parent node. */
+} RBTNODE, * P_RBTNODE, * RBT, ** P_RBT;
+
 #define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */
 #define P2P_BSTNODE(pnode)  ((P_BSTNODE) (pnode)) /* Cast a pointer to P_BSTNODE. */
+#define P2P_RBTNODE(pnode)  ((P_RBTNODE) (pnode)) /* Cast a pointer to P_RBTNODE. */
 
 /* Generic tree. */
 typedef struct st_TNODE_G {
@@ -155,6 +168,18 @@ P_BSTNODE       treBSTInsertAA         (P_BSTNODE       pnode,   const void * pi
 P_BSTNODE       treBSTRemoveAA         (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTRemoveAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
+/* Functions for red black trees. */
+void *          treInitRBTNode         (P_RBTNODE       pnode,   const void * pitem,   size_t       size,    RBTColor     color, P_RBTNODE   parent);
+void            treFreeRBTNode_O       (P_RBTNODE       pnode);
+P_RBTNODE       treCreateRBTNode       (const void *    pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
+void            treDeleteRBTNode_O     (P_RBTNODE       pnode);
+void            treInitRBT_O           (P_RBT           prbt);
+void            treFreeRBT             (P_RBT           prbt);
+P_RBT           treCreateRBT           (void);
+void            treDeleteRBT           (P_RBT           prbt);
+P_RBTNODE       treCopyRBT             (P_RBTNODE       proot,   size_t       size);
+void            treInsertRBT           (P_RBT           prbt,    const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
+void            treRemoveRBT           (P_RBT           prbt,    P_RBTNODE    z);
 /* Functions for B-plus trees. */
 void *          treInitBPTNode         (P_BPTNODE       pnode,   P_TNODE_BY   parent,  P_TNODE_BY   pnext);
 void            treFreeBPTNode         (P_BPTNODE       pnode);
@@ -214,6 +239,14 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	treFreeBST(pbst_M); \
 	free(pbst_M); \
 } while (0)
+/* Macros for red black trees. */
+#define treDeleteRBTNode_M(pnode_M) do { \
+	treFreeRBTNode(pnode_M); \
+	free(pnode_M); \
+} while (0)
+#define treInitRBT_M(prbt_M) do { \
+	*(prbt_M) = NULL; \
+} while (0)
 /* Macros for B-plus trees. */
 #define _treInitBPTInfo_M(pbi_M) do { \
 	(pbi_M)->headptr = NULL; \
@@ -260,6 +293,9 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treDeleteBSTNode     treDeleteBSTNode_O
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_M
+	/* Macros for red black trees. */
+	#define treDeleteRBTNode     treDeleteRBTNode_O
+	#define treInitRBT           treInitRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_O
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_M
@@ -287,6 +323,9 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treDeleteBSTNode     treDeleteBSTNode_M
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_M
+	/* Macros for red black trees. */
+	#define treDeleteRBTNode     treDeleteRBTNode_M
+	#define treInitRBT           treInitRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_M
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_M
@@ -313,6 +352,9 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treDeleteBSTNode     treDeleteBSTNode_O
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_O
+	/* Macros for red black trees. */
+	#define treDeleteRBTNode     treDeleteRBTNode_M
+	#define treInitRBT           treInitRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_M
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_O
@@ -339,6 +381,9 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treDeleteBSTNode     treDeleteBSTNode_O
 	#define treInitBST           treInitBST_O
 	#define treDeleteBST         treDeleteBST_O
+	/* Macros for red black trees. */
+	#define treDeleteRBTNode     treDeleteRBTNode_O
+	#define treInitRBT           treInitRBT_O
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_O
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_O

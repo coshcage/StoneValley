@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0710250556L02063
+ * File ID:     0809171737I1216252000L02530
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -95,13 +95,13 @@ P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 	return pnew;
 }
 
-/* Function name: treDeleteBYSTNode_O
+/* Function name: treDeleteBSTNode_O
  * Description:   Deallocate a node of which is allocated by function treCreateBSTNode.
  * Parameter:
  *     pnode Pointer to the node you want to deallocate.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
- * Tip:           A macro version of this function named treDeleteBYSTNode_M is available.
+ * Tip:           A macro version of this function named treDeleteBSTNode_M is available.
  */
 void treDeleteBSTNode_O(P_BSTNODE pnode)
 {
@@ -168,13 +168,13 @@ P_BST treCreateBST(void)
 	return pbst;
 }
 
-/* Function name: treDeleteBYST_O
+/* Function name: treDeleteBST_O
  * Description:   Deallocate a binary search tree of which is allocated by function treCreateBST.
  * Parameter:
  *      pbst Pointer to the tree you want to deallocate.
  * Return value:  N/A.
  * Caution:       Address of pbst Must Be Allocated first.
- * Tip:           A macro version of this function named treDeleteBYST_M is available.
+ * Tip:           A macro version of this function named treDeleteBST_M is available.
  */
 void treDeleteBST_O(P_BST pbst)
 {
@@ -335,7 +335,6 @@ P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
  *       size Size of the element.
  *     cbfcmp Pointer to a callback function.
  * Return value:  Pointer to the new root node of an AA-tree.
- * Caution:       Function would not insert pitem successful, if it met an allocation error.
  * Tip:           Usage:
  *                P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
  *                *pbst = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
@@ -400,7 +399,7 @@ enum _en_AVLBalanceFactor {
 	_ABF_BALANCED = 00,
 	_ABF_HEAVY_LT = 01
 };
-typedef ptrdiff_t _en_BalanceFactor;
+typedef ptrdiff_t _en_BalanceFactor; /* Useless for redefine it for lower C standards. */
 
 /* Sub-section function declarations for AVL-tree. */
 ptrdiff_t _treBSTGetBalanceFactorAVL  (P_BSTNODE pnode);
@@ -681,6 +680,474 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 #undef _NODE_PARAM
 #undef pbstchild
+/* Undefine used macros for this section. */
+
+/* This following section is for red black trees. */
+
+/* Fetch parent pointer for a red black tree node pointer. */
+#define prbtparent(pnode) ((pnode)->parent)
+
+/* A macro describes children nodes pointers of a RBT node. */
+#define prbtchild(pnode) *(P_RBTNODE *)&(pnode)->bstn.knot.ppnode
+
+/* A macro to the node parameter which represented the color of a red black tree node.
+ * This macro has the same usage as _NODE_PARAM.
+ */
+#define _NODE_COLOR(pnode, act_type) (*(act_type *)&(pnode)->bstn.param)
+
+/* File level function declarations. */
+int  _treCBFFreeNodeRBT (void * pitem, size_t    param);
+void _treRBRotate       (P_RBT  prbt,  P_RBTNODE x,    bool      bleft);
+void _treRBInsertFixup  (P_RBT  prbt,  P_RBTNODE z);
+void _treRBTransplant   (P_RBT  prbt,  P_RBTNODE u,    P_RBTNODE v);
+void _treRBDeleteFixup  (P_RBT  prbt,  P_RBTNODE x);
+
+/* Function name: treInitRBTNode
+ * Description:   Initialize a node of red black tree.
+ * Parameters:
+ *      pnode Pointer to the node you want to initialize.
+ *      pitem Pointer to the address of an element.
+ *       size Size of the element.
+ *      color Color of the current node.
+ *     parent Pointer to parent node of the current node.
+ * Return value:  pdata pointer of NODE_D structure in the node.
+ *                If function could not initialize a node, it would return a NULL.
+ * Caution:       Address of pnode Must Be Allocated first.
+ */
+void * treInitRBTNode(P_RBTNODE pnode, const void * pitem, size_t size, RBTColor color, P_RBTNODE parent)
+{
+	pnode->parent = parent;
+	return treInitBSTNode(&pnode->bstn, pitem, size, color);
+}
+
+/* Function name: treFreeRBTNode
+ * Description:   Deallocate a node of which is allocated by function treInitRBTNode.
+ * Parameter:
+ *     pnode Pointer to the node you want to deallocate.
+ * Return value:  N/A.
+ * Caution:       Address of pnode Must Be Allocated first.
+ */
+void treFreeRBTNode(P_RBTNODE pnode)
+{
+	treFreeBSTNode(&pnode->bstn);
+}
+/* Function name: treCreateRBTNode
+ * Description:   Dynamically allocate a node of red black tree.
+ * Parameters:
+ *      pitem Pointer to the address of an element.
+ *       size Size of the element.
+ *      color Color of the current node.
+ *     parent Pointer to parent node of the current node.
+ * Return value:  Pointer to the new allocated node.
+ *                If function could not create a node, it would return a NULL.
+ */
+P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RBTNODE parent)
+{
+	P_RBTNODE pnew = P2P_RBTNODE(malloc(sizeof(RBTNODE)));
+	if (NULL != pnew)
+	{
+		if (NULL == treInitRBTNode(pnew, pitem, size, color, parent))
+		{
+			free(pnew);
+			return NULL;
+		}
+	}
+	return pnew;
+}
+
+/* Function name: treDeleteRBTNode_O
+ * Description:   Deallocate a node of which is allocated by function treCreateRBTNode.
+ * Parameter:
+ *     pnode Pointer to the node you want to deallocate.
+ * Return value:  N/A.
+ * Caution:       Address of pnode Must Be Allocated first.
+ * Tip:           A macro version of this function named treDeleteRBTNode_M is available.
+ */
+void treDeleteRBTNode_O(P_RBTNODE pnode)
+{
+	treFreeRBTNode(pnode);
+	free(pnode);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treCBFFreeNodeRBT
+ * Description:   This function is used to free nodes in a red black tree.
+ * Parameters:
+ *      pitem Pointer to each node in the tree.
+ *      param N/A.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _treCBFFreeNodeRBT(void * pitem, size_t param)
+{
+	treDeleteRBTNode(P2P_RBTNODE(pitem));
+	DWC4100(param);
+	return CBF_CONTINUE;
+}
+
+/* Function name: treInitRBT_O
+ * Description:   Initialize a red black tree.
+ * Parameter:
+ *      prbt Pointer to the red black tree you want to initialize.
+ * Return value:  N/A.
+ * Caution:       Address of prbt Must Be Allocated first.
+ * Tip:           A macro version of this function named treInitRBT_M is available.
+ */
+void treInitRBT_O(P_RBT prbt)
+{
+	*prbt = NULL;
+}
+
+/* Function name: treFreeRBT
+ * Description:   Deallocate a red black tree of which is allocated by function treInitRBT_O.
+ * Parameter:
+ *      prbt Pointer to the red black tree you want to deallocate.
+ * Return value:  N/A.
+ * Caution:       Address of prbt Must Be Allocated first.
+ */
+void treFreeRBT(P_RBT prbt)
+{
+	/* A post-order traversal is needed here.
+	 * Because we have to free nodes from crown to root.
+	 */
+	treTraverseBYPost(P2P_TNODE_BY(*prbt), _treCBFFreeNodeRBT, 0);
+	*prbt = NULL;
+}
+
+/* Function name: treCreateRBT
+ * Description:   Dynamically allocate a red black tree.
+ * Parameter:     N/A.
+ * Return value:  Pointer to the new allocated tree.
+ *                If function could not create a pointer, it would return a NULL.
+ */
+P_RBT treCreateRBT(void)
+{
+	P_RBT prbt = (P_RBT) malloc(sizeof(RBT));
+	if (NULL == prbt)
+		return NULL;
+	treInitRBT(prbt);
+	return prbt;
+}
+
+/* Function name: treDeleteRBT_O
+ * Description:   Deallocate a red black tree of which is allocated by function treCreateRBT.
+ * Parameter:
+ *      prbt Pointer to the tree you want to deallocate.
+ * Return value:  N/A.
+ * Caution:       Address of prbt Must Be Allocated first.
+ * Tip:           A macro version of this function named treDeleteRBT_M is available.
+ */
+void treDeleteRBT(P_RBT prbt)
+{
+	treFreeRBT(prbt);
+	free(prbt);
+}
+
+/* Function name: treCopyRBT
+ * Description:   Copy a red black tree.
+ * Parameters:
+ *      proot Pointer to the root node of the original RBT.
+ *       size Size of each element in the original RBT.
+ * Return value:  Pointer to the new root node.
+ * Caution:       Address of proot Must Be Allocated first.
+ */
+P_RBTNODE treCopyRBT(P_RBTNODE proot, size_t size)
+{
+	REGISTER P_RBTNODE pp;
+	if (NULL == proot)
+		return NULL;
+	if (NULL != (pp = treCreateRBTNode(proot->bstn.knot.pdata, size, _NODE_COLOR(proot, const RBTColor), prbtparent(proot))))
+	{
+		prbtchild(pp)[LEFT]  = treCopyRBT(prbtchild(proot)[LEFT],  size);
+		prbtchild(pp)[RIGHT] = treCopyRBT(prbtchild(proot)[RIGHT], size);
+	}
+	return pp;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treRBRotate
+ * Description:   This function is used to rotate a red black tree node.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          x Pointer to the red black tree node you want to rotate.
+ *      bleft true for left rotate, false for right rotate.
+ * Return value:  N/A.
+ */
+void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bleft)
+{
+	REGISTER bool A, B;
+	REGISTER P_RBTNODE y;
+	
+	if (bleft)
+	{
+		A = LEFT;
+		B = RIGHT;
+	}
+	else
+	{
+		A = RIGHT;
+		B = LEFT;
+	}	
+	
+	y = prbtchild(x)[B];
+	
+	if (NULL != y)
+	{
+		prbtchild(x)[B] = prbtchild(y)[A];
+		
+		if (NULL != prbtchild(y)[A])
+			prbtparent(prbtchild(y)[A]) = x;
+		
+		prbtparent(y) = prbtparent(x);
+		
+		if (NULL == prbtparent(x))
+			*prbt = y;
+		else if (x == prbtchild(prbtparent(x))[A])
+			prbtchild(prbtparent(x))[A] = y;
+		else
+			prbtchild(prbtparent(x))[B] = y;
+		
+		prbtchild(y)[A] = x;
+		prbtparent(x) = y;
+	}
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treRBInsertFixup
+ * Description:   This function is used balance a red black tree after insertion.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          z Pointer to a red black tree node.
+ * Return value:  N/A.
+ */
+void _treRBInsertFixup(P_RBT prbt, P_RBTNODE z)
+{
+	if (NULL != prbtparent(z))
+	{
+		while (RED == _NODE_COLOR(prbtparent(z), const RBTColor))
+		{
+			REGISTER bool B;
+			REGISTER P_RBTNODE y;
+			
+			if (prbtparent(z) == prbtchild(prbtparent(prbtparent(z)))[LEFT])
+				B = RIGHT;
+			else
+				B = LEFT;
+			
+			y = prbtchild(prbtparent(prbtparent(z)))[B];
+			
+			if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
+			{
+				_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
+				_NODE_COLOR(y, RBTColor) = BLACK;
+				_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
+				z = prbtparent(prbtparent(z));
+			}
+			else if (z == prbtchild(prbtparent(z))[B])
+			{
+				z = prbtparent(z);
+				_treRBRotate(prbt, z, true);
+			}
+			
+			_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
+			_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
+			
+			_treRBRotate(prbt, prbtparent(prbtparent(z)), false);
+		}
+	}
+	_NODE_COLOR(*prbt, RBTColor) = BLACK;
+}
+
+/* Function name: treInsertRBT
+ * Description:   Insert data into a red black tree.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *      pitem Pointer to an element that contains the data you want to insert.
+ *       size Size of the element.
+ *     cbfcmp Pointer to a callback function.
+ * Return value:  N/A.
+ * Caution:       Function would not insert pitem successful, if it met an allocation error.
+ * Tip:           Usage:
+ *                P_RBT prbt = treCreateRBT(); // Create a new red black tree.
+ *                treInsertRBT(prbt, &a, sizeof(a), cbfcmp);
+ *                treDeleteRBT(prbt); // Destroy the red black tree.
+ */
+void treInsertRBT(P_RBT prbt, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+{
+	REGISTER P_RBTNODE y = NULL;
+	REGISTER P_RBTNODE x = *prbt;
+	REGISTER P_RBTNODE z = treCreateRBTNode(pitem, size, RED, NULL);
+	
+	while (NULL != x)
+	{
+		y = x;
+		
+		if (cbfcmp(z->bstn.knot.pdata, x->bstn.knot.pdata) < 0)
+			x = prbtchild(x)[LEFT];
+		else
+			x = prbtchild(x)[RIGHT];
+	}
+	
+	prbtparent(z) = y;
+	
+	if (NULL == y)
+		*prbt = z;
+	else if (cbfcmp(z->bstn.knot.pdata, y->bstn.knot.pdata) < 0)
+		prbtchild(y)[LEFT] = z;
+	else
+		prbtchild(y)[RIGHT] = z;
+	
+	_treRBInsertFixup(prbt, z);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treRBTransplant
+ * Description:   This function is used to convert nodes in a red black tree during deletion.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          u Pointer to a red black tree node.
+ *          v Pointer to another red black tree node.
+ * Return value:  N/A.
+ */
+void _treRBTransplant(P_RBT prbt, P_RBTNODE u, P_RBTNODE v)
+{
+	if (NULL == prbtparent(u))
+		*prbt = v;
+	else if (u == prbtchild(prbtparent(u))[LEFT])
+		prbtchild(prbtparent(u))[LEFT] = v;
+	else
+		prbtchild(prbtparent(u))[RIGHT] = v;	
+	if (NULL != v)
+		prbtparent(v) = prbtparent(u);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treRBDeleteFixup
+ * Description:   This function is used balance a red black tree after deletion.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          x Pointer to a red black tree node.
+ * Return value:  N/A.
+ */
+void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
+{
+	while (x != *prbt && BLACK == _NODE_COLOR(x, const RBTColor))
+	{
+		REGISTER bool A, B;
+		REGISTER P_RBTNODE w;
+		
+		if (x == prbtchild(prbtparent(x))[LEFT])
+		{
+			A = LEFT;
+			B = RIGHT;
+		}
+		else
+		{
+			A = RIGHT;
+			B = LEFT;
+		}
+		
+		w = prbtchild(prbtparent(x))[B];
+		
+		if (RED == _NODE_COLOR(w, const RBTColor))
+		{
+			_NODE_COLOR(w, RBTColor) = BLACK;
+			_NODE_COLOR(prbtparent(x), RBTColor) = RED;
+			_treRBRotate(prbt, prbtparent(x), true);
+			w = prbtchild(prbtparent(x))[B];
+		}
+		if (BLACK == _NODE_COLOR(prbtchild(w)[A], const RBTColor) && BLACK == _NODE_COLOR(prbtchild(w)[B], const RBTColor))
+		{
+			_NODE_COLOR(w, RBTColor) = RED;
+			x = prbtparent(x);
+		}
+		else if (BLACK == _NODE_COLOR(prbtchild(w)[B], const RBTColor))
+		{
+			_NODE_COLOR(prbtchild(w)[A], RBTColor) = BLACK;
+			_NODE_COLOR(w, RBTColor) = RED;
+			_treRBRotate(prbt, w, false);
+			w = prbtchild(prbtparent(x))[B];
+		}
+		
+		_NODE_COLOR(w, RBTColor) = _NODE_COLOR(prbtparent(x), const RBTColor);
+		_NODE_COLOR(prbtparent(x), RBTColor) = BLACK;
+		_NODE_COLOR(prbtchild(w)[B], RBTColor) = BLACK;
+		_treRBRotate(prbt, prbtparent(x), true);
+		x = *prbt;
+	}
+	
+	if (NULL != x)
+		_NODE_COLOR(x, RBTColor) = BLACK;
+}
+
+/* Function name: treRemoveRBT
+ * Description:   Remove data from a red black tree.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          z Pointer to the red black tree node you want to remove.
+ *            (*) This node MUST be in the red black tree.
+ * Return value:  N/A.
+ * Caution:       Try to deallocate node z by calling treDeleteRBTNode by yourself.
+ * Tip:           Usage:
+ *                P_RBTNODE pnode;
+ *                P_RBT prbt = treCreateRBT(); // Create a new red black tree.
+ *                treInsertRBT(prbt, &a, sizeof(a), cbfcmp); // Insert data a.
+ *                pnode = P2P_RBTNODE(treBSTFindData_A(P2P_BSTNODE(*prbt), &a, cbfcmp)); // Find data a.
+ *                treRemoveRBT(prbt, pnode); // Remove node that contains a.
+ *                if (*prbt == pnode) // This if block is important.
+ *                    *prbt = NULL;   // Crucial.
+ *                treDeleteRBT(prbt); // Destroy the red black tree.
+ */
+void treRemoveRBT(P_RBT prbt, P_RBTNODE z)
+{
+	if (NULL != z)
+	{
+		REGISTER P_RBTNODE x;
+		REGISTER P_RBTNODE y = z;
+		REGISTER RBTColor yorigcol = _NODE_COLOR(y, const RBTColor);
+		
+		if (NULL == prbtchild(z)[LEFT])
+		{
+			x = prbtchild(z)[RIGHT];
+			_treRBTransplant(prbt, z, prbtchild(z)[RIGHT]);
+		}
+		else if (NULL == prbtchild(z)[RIGHT])
+		{
+			x = prbtchild(z)[LEFT];
+			_treRBTransplant(prbt, z, prbtchild(z)[LEFT]);
+		}
+		else
+		{
+			REGISTER P_RBTNODE a = prbtchild(z)[RIGHT];
+			while (NULL != prbtchild(a)[RIGHT])
+				a = prbtchild(a)[RIGHT];
+			y = a;
+			
+			yorigcol = _NODE_COLOR(y, const RBTColor);
+			x = prbtchild(y)[RIGHT];
+			
+			if (prbtparent(y) == z)
+				prbtparent(x) = y;
+			else
+			{
+				_treRBTransplant(prbt, y, prbtchild(y)[RIGHT]);
+				prbtchild(y)[RIGHT] = prbtchild(z)[RIGHT];
+				prbtparent(prbtchild(y)[RIGHT]) = y;
+			}
+			
+			_treRBTransplant(prbt, z, y);
+			prbtchild(x)[LEFT] = prbtchild(z)[LEFT];
+			prbtparent(prbtchild(y)[LEFT]) = y;
+			_NODE_COLOR(y, RBTColor) = _NODE_COLOR(z, const RBTColor);
+		}
+		
+		if (BLACK == yorigcol)
+			_treRBDeleteFixup(prbt, x);
+	}
+}
+
+#undef prbtparent
+#undef prbtchild
+#undef _NODE_COLOR
 /* Undefine used macros for this section. */
 
 /* Functions for B+ trees. */

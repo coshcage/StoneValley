@@ -821,7 +821,7 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
  */
 int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER size_t i, j = 0, l = strLevelArrayZ(parrtxt) + 1 + strLevelArrayZ(parrptn);
+	REGISTER size_t i, l = strLevelArrayZ(parrtxt) + 1 + strLevelArrayZ(parrptn);
 	size_t * z = (size_t *) calloc(l, sizeof(size_t));
 	ARRAY_Z arrstr = { 0 };
 	int r = CBF_TERMINATE;

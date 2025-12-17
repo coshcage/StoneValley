@@ -37,12 +37,12 @@ iii Table of Contents
 	Table of Contents ...................................................... 32
 	Scenario ............................................................... 47
 	Naming ................................................................. 84
-	Callbacks ............................................................. 127
-	Checklist ............................................................. 133
-	Alteration Guide ...................................................... 168
-	Limitations ........................................................... 317
-	Appendix .............................................................. 327
-	GNU Free Documentation License ........................................ 335
+	Callbacks ............................................................. 130
+	Checklist ............................................................. 134
+	Alteration Guide ...................................................... 169
+	Limitations ........................................................... 318
+	Appendix .............................................................. 328
+	GNU Free Documentation License ........................................ 336
 
 iv  Scenario
 
@@ -102,6 +102,7 @@ v  The naming of library functions and types
 	|        + Binary search tree        :BST:        svstree.c  |
 	|            + AA tree                ditto.       ditto.    |
 	|            + AVL tree               ditto.       ditto.    |
+	|            + Red-black tree        :RBT:         ditto.    |
 	|        + Huffman coding tree        N/A.        svctree.c  |
 	|    + Generic tree                  :GTREE:      svgtree.c  |
 	|    + Heap tree                     :HEAP_A:     svhtree.c  |
@@ -146,7 +147,7 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	Non-normal handling:
 	*) Guiding actions will use upper case letters to type and a pair of '[]' to emphasize.
 
-	StoneValley code adheres to the Standard of C Programming language(iso9899:1990), and it has been tested. However, different compilers with different optimization criteria may lead compilers to produce different warnings and errors.
+	StoneValley code adheres to the Standard of C Programming language(iso9899:1990) except the "stdbool.h" part, and it has been tested. However, different compilers with different optimization criteria may lead compilers to produce different warnings and errors.
 
 	1) Errors of missing symbols.
 		In some environments, especially when users try to compile StoneValley on an embedded platform, because of the lack of support for the C standard library, compilers will produce errors. For instance, if there were not installed the header file "stdio.h", compilers might explain an error about the missing macro 'BUFSIZ' for the library source file "svmisc.c". In this circumstance, users shall simply [IMPLEMENT] macro 'BUFSIZ' by themselves. In another way, users shall [COLLECT] missing macros in a header file that has the same name with the original header in the C standard library.
@@ -326,7 +327,7 @@ ix  Limitations
 
 x	Give me a *star to support an open internet and boycott the Chinese government from building the Great Fire Wall!
 	Please support the Free Software Foundation (https://www.fsf.org/).
-	Support the Electronic Frontier Foundation (https://www.eff.org/).
+	Support the Electronic Frontier Foundation  (https://www.eff.org/).
 
 	The Story About StoneValley
 

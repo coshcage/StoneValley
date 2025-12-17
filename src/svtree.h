@@ -170,7 +170,7 @@ P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pi
 P_BSTNODE       treBSTRemoveAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for red black trees. */
 void *          treInitRBTNode         (P_RBTNODE       pnode,   const void * pitem,   size_t       size,    RBTColor     color, P_RBTNODE   parent);
-void            treFreeRBTNode_O       (P_RBTNODE       pnode);
+void            treFreeRBTNode         (P_RBTNODE       pnode);
 P_RBTNODE       treCreateRBTNode       (const void *    pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
 void            treDeleteRBTNode_O     (P_RBTNODE       pnode);
 void            treInitRBT_O           (P_RBT           prbt);

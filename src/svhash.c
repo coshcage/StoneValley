@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0824232030L00616
+ * File ID:     0901171615K0824232030L00617
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -604,13 +604,14 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
  * Return value:  Hash result.
  * Notice:        This function comes from book Data Structures and Algorithm Analysis in C.
  *                The Author of this book is Mark Allen Weiss.
+ *                DJB2 string hashing.
  */
 size_t hshCBFHashString(const void * pkey)
 {
 	REGISTER char * pstr = (char *) pkey;
-	REGISTER size_t hrtn = 0;
+	REGISTER size_t hrtn = 5381;
 	while ('\0' != *pstr)
-		hrtn = (hrtn << 5) + *pstr++;
+		hrtn = ((hrtn << 5) + hrtn) + *pstr++;
 	return hrtn;
 }
 

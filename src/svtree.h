@@ -179,7 +179,7 @@ P_RBT           treCreateRBT           (void);
 void            treDeleteRBT           (P_RBT           prbt);
 P_RBTNODE       treCopyRBT             (P_RBTNODE       proot,   size_t       size);
 void            treInsertRBT           (P_RBT           prbt,    const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
-void            treRemoveRBT           (P_RBT           prbt,    P_RBTNODE    z);
+void            treRemoveRBT           (P_RBT           prbt,    const void * pitem,   CBF_COMPARE  cbfcmp);
 /* Functions for B-plus trees. */
 void *          treInitBPTNode         (P_BPTNODE       pnode,   P_TNODE_BY   parent,  P_TNODE_BY   pnext);
 void            treFreeBPTNode         (P_BPTNODE       pnode);

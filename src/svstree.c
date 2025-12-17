@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1216252000L02534
+ * File ID:     0809171737I1216252000L02532
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -1087,22 +1087,18 @@ void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
  * Description:   Remove data from a red black tree.
  * Parameters:
  *       prbt Pointer to a red black tree.
- *          z Pointer to the red black tree node you want to remove.
- *            (*) This node MUST be in the red black tree.
+ *      pitem Pointer to an element that contains the data you want to delete.
+ *     cbfcmp Pointer to a callback function.
  * Return value:  N/A.
- * Caution:       Try to deallocate node z by calling treDeleteRBTNode by yourself.
  * Tip:           Usage:
- *                P_RBTNODE pnode;
  *                P_RBT prbt = treCreateRBT(); // Create a new red black tree.
- *                treInsertRBT(prbt, &a, sizeof(a), cbfcmp); // Insert data a.
- *                pnode = P2P_RBTNODE(treBSTFindData_A(P2P_BSTNODE(*prbt), &a, cbfcmp)); // Find data a.
- *                treRemoveRBT(prbt, pnode); // Remove node that contains a.
- *                if (*prbt == pnode) // This if block is important.
- *                    *prbt = NULL;   // Crucial.
+ *                treInsertRBT(prbt, &a, sizeof a, cbfcmp);
+ *                treRemoveRBT(prbt, &a, cbfcmp);
  *                treDeleteRBT(prbt); // Destroy the red black tree.
  */
-void treRemoveRBT(P_RBT prbt, P_RBTNODE z)
+void treRemoveRBT(P_RBT prbt, const void * pitem, CBF_COMPARE cbfcmp)
 {
+	REGISTER P_RBTNODE z = P2P_RBTNODE(treBSTFindData_A(P2P_BSTNODE(*prbt), pitem, cbfcmp));
 	if (NULL != z)
 	{
 		REGISTER P_RBTNODE x;
@@ -1143,6 +1139,8 @@ void treRemoveRBT(P_RBT prbt, P_RBTNODE z)
 			prbtparent(prbtchild(y)[LEFT]) = y;
 			_NODE_COLOR(y, RBTColor) = _NODE_COLOR(z, const RBTColor);
 		}
+		
+		treDeleteRBTNode(z);
 		
 		if (BLACK == yorigcol)
 			_treRBDeleteFixup(prbt, x);

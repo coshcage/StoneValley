@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1216252000L02530
+ * File ID:     0809171737I1216252000L02534
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -682,7 +682,11 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 #undef pbstchild
 /* Undefine used macros for this section. */
 
-/* This following section is for red black trees. */
+/* This following section is for red black trees.
+ * Red black tree refers to the book Introduction to Algorithms Third Edition by
+ * Thomas H Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein,
+ * with ISBN 978-0-262-03384-8, page 174 to 191.
+ */
 
 /* Fetch parent pointer for a red black tree node pointer. */
 #define prbtparent(pnode) ((pnode)->parent)
@@ -1030,7 +1034,7 @@ void _treRBTransplant(P_RBT prbt, P_RBTNODE u, P_RBTNODE v)
  */
 void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
 {
-	while (x != *prbt && BLACK == _NODE_COLOR(x, const RBTColor))
+	while (NULL != x && x != *prbt && BLACK == _NODE_COLOR(x, const RBTColor))
 	{
 		REGISTER bool A, B;
 		REGISTER P_RBTNODE w;

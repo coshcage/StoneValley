@@ -1274,7 +1274,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
  * Return value:  This function would return a new header for sorted linked-list. 
  * Tip:           This function CAN sort circular single/double linked-list after parameter bCircular was set.
  *                Merge sort algorithm is used for this function.
- *                This function refer to web: https://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
+ *                This function refers to web: https://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
  *                Thank him for his idea and code!
  */
 void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_COMPARE cbfcmp)

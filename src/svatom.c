@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A00201251300L00305
+ * File ID:     0306170948A0201251300L00305
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *

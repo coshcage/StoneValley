@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0711250110L00724
+ * File ID:     0306170948D1227250813L00728
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -695,6 +695,8 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 			else
 				r = m;
 		}
+		if (-1 == l)
+			return p;
 		return p + l * s;
 	case EBS_FIRST_GREATER_THAN_KEY:
 		while (l + 1 < r)
@@ -717,6 +719,8 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 			else
 				r = m;
 		}
+		if (-1 == l)
+			return p;
 		return p + l * s;
 	}
 	return NULL; /* Argument error. */

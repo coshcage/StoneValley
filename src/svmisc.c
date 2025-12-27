@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D1227250813L00728
+ * File ID:     0306170948D1227251200L00729
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -35,9 +35,9 @@
 void svPrintVersion(void)
 {
 	printf("StoneValley %s\n", SV_LIB_VER);
-	printf("%s\n", "Copyright (C) 2025 John Cage.");
-	printf("%s\n", "This is free software; see the source for copying conditions.  There is NO");
-	printf("%s\n", "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
+	printf("%s\n", "Copyright (C) 2017-2025 John Cage.");
+	printf("%s\n", "This is free software; see the source for copying conditions.");
+	printf("%s\n", "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -664,7 +664,8 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
  *            EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY     [1,2,3,5,5,5,8,9]
  *                                                              ^
  * Return value:  A pointer to an entry in the array that matches the searching key.
- *                If the value of parameter method does not belong to BSearch, function will return NULL.
+ *                If the value of parameter method does not belong to BSearch
+ *                or function cannot find the key, function will return NULL.
  */
 void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp, BSearch method)
 {
@@ -696,7 +697,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 				r = m;
 		}
 		if (-1 == l)
-			return p;
+			return NULL; /* Cannot find. */
 		return p + l * s;
 	case EBS_FIRST_GREATER_THAN_KEY:
 		while (l + 1 < r)
@@ -720,7 +721,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 				r = m;
 		}
 		if (-1 == l)
-			return p;
+			return NULL; /* Cannot find. */
 		return p + l * s;
 	}
 	return NULL; /* Argument error. */

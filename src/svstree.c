@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1216252000L02532
+ * File ID:     0809171737I1227251200L02535
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -2223,9 +2223,12 @@ bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 /* Functions that implemented tries are listed here. */
 #include "svstack.h"
 
+/* A macro that is used to align size to the multiply of sizeof(size_t). */
+#define _ASIZE(size) ((((size) - 1) / sizeof(size_t) + 1) * sizeof(size_t))
+
 /* A macro used to calculate the length of an element in a trie's array. */
-#define _ELESIZ(size) ((size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))
-/* Element consists of: data----next_trie------reference_counter--appendix---------flag. */
+#define _ELESIZ(size) (_ASIZE(size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))
+/* Element consists of: ------data----next_trie------reference_counter--appendix---------flag. */
 /* We make the flag sign as size_t to further align structure to a suitable size. */
 
 /* File level function declarations. */
@@ -2392,8 +2395,7 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 				 * This procedure would reduce the worst case of searching complexity to approximately O(lg N),
 				 * but not restricts to the worst case of O(N) by using linear search.
 				 */
-				REGISTER size_t i =
-				((PUCHAR)svBinarySearchDispatch
+				REGISTER PUCHAR p = (PUCHAR)svBinarySearchDispatch
 				(
 					pbase,
 					(*ptrie)->pdata,
@@ -2401,7 +2403,8 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					_ELESIZ(size),
 					cbfcmp,
 					EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
-				) - (*ptrie)->pdata) / _ELESIZ(size) + 1;
+				);
+				REGISTER size_t i = NULL == p ? 0 : (p - (*ptrie)->pdata) / _ELESIZ(size) + 1;
 				if (NULL == strResizeArrayZ(*ptrie, strLevelArrayZ(*ptrie) + 1, _ELESIZ(size)))
 					return false; /* Allocation failure. */
 				else

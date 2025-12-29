@@ -685,8 +685,8 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 			else
 				r = m;
 		}
-		if (r == (ptrdiff_t)num)
-			return NULL; /* Cannot find. */
+		if ((ptrdiff_t)num == r)
+			return NULL; /* Out of range. Cannot find. */
 		return p + r * s;
 	case EBS_LAST_LESS_THAN_KEY:
 		while (l + 1 < r)
@@ -699,7 +699,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 				r = m;
 		}
 		if (-1 == l)
-			return NULL; /* Cannot find. */
+			return NULL; /* Out of range. Cannot find. */
 		return p + l * s;
 	case EBS_FIRST_GREATER_THAN_KEY:
 		while (l + 1 < r)
@@ -711,8 +711,8 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 			else
 				r = m;
 		}
-		if (r == (ptrdiff_t)num)
-			return NULL; /* Cannot find. */
+		if ((ptrdiff_t)num == r)
+			return NULL; /* Out of range. Cannot find. */
 		return p + r * s;
 	case EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY:
 		while (l + 1 < r)
@@ -725,7 +725,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 				r = m;
 		}
 		if (-1 == l)
-			return NULL; /* Cannot find. */
+			return NULL; /* Out of range. Cannot find. */
 		return p + l * s;
 	}
 	return NULL; /* Argument error. */

@@ -185,7 +185,7 @@ int main(int argc, char * argv[])
 					*(P_VOCABULARY *)strLocateItemArrayZ(&arrz, sizeof(P_VOCABULARY), k++) = pvol;
 				}
 				else
-				{	/* Found word. Fetch the appendix in the Trie and convert it to P_VOCABULARY, and increase the frequency, */
+				{	/* Found word. Fetch the appendix in the Trie and convert it to P_VOCABULARY, and increase the frequency. */
 					pvol = (P_VOCABULARY)*presult;
 					++pvol->freq;
 				}

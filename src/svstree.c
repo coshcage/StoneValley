@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I1227251200L02535
+ * File ID:     0809171737I1230250832L02538
  * License:     LGPLv3
  * Copyright (C) 2017-2025 John Cage
  *
@@ -2223,8 +2223,11 @@ bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 /* Functions that implemented tries are listed here. */
 #include "svstack.h"
 
-/* A macro that is used to align size to the multiply of sizeof(size_t). */
-#define _ASIZE(size) ((((size) - 1) / sizeof(size_t) + 1) * sizeof(size_t))
+/* A macro that is used to align size to the multiply of sizeof(size_t).
+ * Users may watch this technique on the book Hacker's Delight written by Henry S. Warren.
+ * With ISBN 0-201-91465-4. Chapter 3-1.
+ */
+#define _ASIZE(size) (((size) + sizeof(size_t) - 1) & -sizeof(size_t))
 
 /* A macro used to calculate the length of an element in a trie's array. */
 #define _ELESIZ(size) (_ASIZE(size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))

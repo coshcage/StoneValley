@@ -218,7 +218,7 @@ int hshTraverseC(P_HSHTBL_C pht, CBF_TRAVERSE cbftvs, size_t param)
  *        pht Pointer to the hash table you want to operate.
  *     cbfhsh Pointer to hash function.
  *            The same hash table should use the same hash function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *      param size Size of data of pkey.
  * Return value:  Pointer to a NODE_S that contains key value.
  * Caution:       Parameter pht Must Be Allocated first.
@@ -234,7 +234,7 @@ P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t s
  *        pht Pointer to the hash table you want to operate.
  *     cbfhsh Pointer to hash function.
  *            The same hash table should use the same hash function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
  * Return value:  true  Insertion succeeded.
  *                false Insertion failure.
@@ -263,7 +263,7 @@ bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  *        pht Pointer to the hash table you want to operate.
  *     cbfhsh Pointer to hash function.
  *            The same hash table should use the same hash function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
  * Return value:  true  Removal succeeded.
  *                false Removal failure.
@@ -483,7 +483,7 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
  *    cbfhsh1 Pointer to 1st hash function.
  *    cbfhsh2 Pointer to 2nd hash function.
  *            The same open addressing hash table should use the same double hashing function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of each element in the table.
  * Return value:  Pointer to an element that contains key value.
  * Caution:       Parameter pht Must Be Allocated first.
@@ -514,9 +514,9 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  *    cbfhsh1 Pointer to 1st hash function.
  *    cbfhsh2 Pointer to 2nd hash function.
  *            The same open addressing hash table should use the same double hashing function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
- * Return value:  Pointer to new inserted element. Casted to (void *).
+ * Return value:  Pointer to new inserted element. Cast to (void *).
  * Caution:       Parameter pht Must Be Allocated first.
  */
 void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
@@ -543,7 +543,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  *    cbfhsh1 Pointer to 1st hash function.
  *    cbfhsh2 Pointer to 2nd hash function.
  *            The same open addressing hash table should use the same double hashing function.
- *       pkey Pointer to an element. Casted into (const void *).
+ *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
  * Return value:  true  Removal succeeded.
  *                false Removal failure.

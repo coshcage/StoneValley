@@ -85,8 +85,8 @@ P_ARRAY_Z _treHFMCreateSymbolTable(PUCHAR s, size_t n)
  * Function name: _treCBFHFMCompareSymbolFreqInNode
  * Description:   Compare symbol by its frequency between nodes.
  * Parameters:
- *          x Pointer to any node pointer in array. Casted into (void *).
- *          y Pointer to any node pointer in array. Casted into (void *).
+ *          x Pointer to any node pointer in array. Cast into (void *).
+ *          y Pointer to any node pointer in array. Cast into (void *).
  * Return value:  Please refer to the type definition of CBF_COMPARE in svdef.h.
  */
 int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)

@@ -4,7 +4,7 @@
  * Author:      cosh.cage#hotmail.com
  * File ID:     0306170948D1228250528L00733
  * License:     LGPLv3
- * Copyright (C) 2017-2025 John Cage
+ * Copyright (C) 2017-2026 John Cage
  *
  * This file is part of StoneValley.
  *
@@ -35,7 +35,7 @@
 void svPrintVersion(void)
 {
 	printf("StoneValley %s\n", SV_LIB_VER);
-	printf("%s\n", "Copyright (C) 2017-2025 John Cage.");
+	printf("%s\n", "Copyright (C) 2017-2026 John Cage.");
 	printf("%s\n", "This is free software; see the source for copying conditions.");
 	printf("%s\n", "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 }

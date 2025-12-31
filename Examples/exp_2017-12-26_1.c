@@ -4,7 +4,7 @@
 //  Created by cosh.cage#hotmail.com on 12/24/17.
 //  License:  LGPLv3
 //  Platform: Unix|GNU/Linux
-//  Copyright (C) 2017-2025 John Cage
+//  Copyright (C) 2017-2026 John Cage
 //
 // This file is part of StoneValley.
 //

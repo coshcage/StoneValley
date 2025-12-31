@@ -1,10 +1,10 @@
 //
-//  exp_2025-08-16_1.c
+//  exp_2026-08-16_1.c
 //  Use Trie and array to calculate the frequency of words in an article.
 //  Created by cosh.cage#hotmail.com on 08/16/25.
 //  License:  LGPLv3
 //  Platform: Unix|GNU/Linux
-//  Copyright (C) 2017-2025 John Cage
+//  Copyright (C) 2017-2026 John Cage
 //
 // This file is part of StoneValley.
 //

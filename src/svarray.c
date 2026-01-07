@@ -486,7 +486,7 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_CO
  *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares any two elements in array.
- *    bshrink Input true to shrink array, otherwise input FASLE.
+ *    bshrink Input true to shrink array, otherwise input false.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.

@@ -199,7 +199,7 @@ size_t hshSizeC(P_HSHTBL_C pht)
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
  *     cbftvs Pointer to the callback function.
- *      param Parameter which can be transfer into callback function.
+ *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pht Must Be Allocated first.
  *                The type of pitem of function cbftvs is the type of pointer to the element you inserted.
@@ -463,7 +463,7 @@ size_t hshSizeA(P_HSHTBL_A pht, size_t size)
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
  *     cbftvs Pointer to the callback function.
- *      param Parameter which can be transfer into callback function.
+ *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pht Must Be Allocated first.
  *                The type of pitem of function cbftvs is the type of pointer to the element you inserted.

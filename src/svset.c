@@ -888,7 +888,7 @@ Lbl_Empty_Set:
  *       pset Pointer to a set.
  *            (*) Especially, if pset equaled to NULL, function would return value CBF_CONTINUE.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  *         tm Method of traversal. This parameter can be any value in enumeration TvsMtd.
  *            (*) Especially, if tm does not equaled to any value in enumeration TvsMtd, function would return value CBF_TERMINATE.
  * Return value:  The same value as callback function cbftvs returns.

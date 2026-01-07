@@ -1483,7 +1483,7 @@ P_BPTNODE _treLocateKeyChainHeaderBPT(P_BPT pbpt)
  * Parameters:
  *       pbpt Pointer to the B-plus tree.
  *     cbftvs Pointer to a callback function.
- *      param A size_t value which can be transfer into callback function.
+ *      param A size_t value which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pbpt Must Be Allocated first.
  */

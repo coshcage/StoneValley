@@ -93,7 +93,7 @@ size_t strLevelArrayZ_O(P_ARRAY_Z parrz)
  *      parrz Pointer to the array you want to traverse.
  *       size Element size of an array.
  *     cbftvs Pointer to the callback function.
- *      param Parameter which can be transfer into callback function.
+ *      param Parameter which can be transferred into callback function.
  *       brev Input true to traverse array in order.
  *            Input false to traverse array in reverse.
  * Return value:  The same value as callback function returns.
@@ -447,7 +447,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
  *     cbfcmp Pointer to a function that compares any two elements in the array.
  *       bmax If bmax were not zero, function would return the maximum value of an array,
  *            otherwise, function would return the minimum value of an array.
- * Return value:  Pointer to the limit in array and caste the pointer to (void *).
+ * Return value:  Pointer to the limit in array and cast the pointer to (void *).
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.

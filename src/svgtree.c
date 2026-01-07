@@ -168,7 +168,7 @@ Lbl_Allocation_Failure:
  * Parameters:
  *      pnode Pointer to the node you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into callback function.
+ *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)

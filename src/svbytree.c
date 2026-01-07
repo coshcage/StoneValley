@@ -82,7 +82,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
@@ -102,7 +102,7 @@ int treTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
@@ -122,7 +122,7 @@ int treTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
@@ -142,7 +142,7 @@ int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
@@ -176,7 +176,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *            D/d and R/r represent left node, current node and right node.
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  */
 int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
@@ -213,7 +213,7 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, siz
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  * Tip:           You can not break traversal when you return CBF_TERMINATE in callback function.
  */
@@ -266,7 +266,7 @@ int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Parameters:
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
- *      param Parameter which can be transfer into the callback function.
+ *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  * Tip:           You can not break traversal when you return CBF_TERMINATE in callback function.
  */

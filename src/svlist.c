@@ -325,7 +325,7 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *      listy Another linked-list to be compared.
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always pdata of listx
- *            and the second one points to pdata of listy. Both of them are type-casted to (const void *).
+ *            and the second one points to pdata of listy. Both of them are type-cast to (const void *).
  * Return value:   1: listx is greater than listy.
  *                 0: listx equal to listy.
  *                -1: listx is less than listy.
@@ -924,7 +924,7 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, bool brev)
  *     listy The second linked-list to be compared.
  *     cbfcmp Pointer to a function that compares two elements in a NODE_D.
  *            Comparison takes two pointers as arguments, the first one is always the pdata of listx
- *            and the second one points to pdata of listy. Both of them are type-casted to const void pointer.
+ *            and the second one points to pdata of listy. Both of them are type-cast to const void pointer.
  *       brev If brev equaled true, function would do comparison from current node to the next node.
  *            If brev equaled false, function would perform comparison reversely.
  * Return value:   1: listx is greater than listy.
@@ -1204,8 +1204,8 @@ void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size
  *            Input ENT_DOUBLE for doubly linked-list nodes. Cast P_NODE_D to (void *) as parameters.
  *            Input ENT_SINGLE for single linked-list nodes. Cast P_NODE_S to (void *) as parameters.
  *       brev Input true to search a linked-list reversely.
- *            Input FASLE to search a linked-list in order.
- * Return value:  Pointer of the last item of the linked-list will be casted into (void *) and returned.
+ *            Input false to search a linked-list in order.
+ * Return value:  Pointer of the last item of the linked-list will be cast into (void *) and returned.
  */
 void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 {	/* Unfortunately, the pursuing of interchangeability made this function difficult to read. */

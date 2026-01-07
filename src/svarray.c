@@ -242,7 +242,7 @@ void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, siz
  *      parrz Pointer to a sized array.
  *       size Size of each element in the array.
  *      index Index of the item you want to remove. Index starts from 0.
- *    bshrink Input true to shrink array, otherwise input FASLE.
+ *    bshrink Input true to shrink array, otherwise input false.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  */
@@ -447,7 +447,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
  *     cbfcmp Pointer to a function that compares any two elements in the array.
  *       bmax If bmax were not zero, function would return the maximum value of an array,
  *            otherwise, function would return the minimum value of an array.
- * Return value:  Pointer to the limit in array and casted the pointer to (void *).
+ * Return value:  Pointer to the limit in array and caste the pointer to (void *).
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.

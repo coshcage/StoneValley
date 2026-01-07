@@ -445,7 +445,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
  *   _ARRAY_Z_+--*      |next_trie         |TRIE_A|
  *  |num|pdata| |1      |reference_counter |size_t|
  *  |__1|*____| |       |appendix          |size_t|
- *       |      |FALSE__|flag______________|UCHART|
+ *       |      |false__|flag______________|UCHART|
  *       |      |'d'    |data              |  size|
  *       |      |NULL   |next_trie         |TRIE_A|
  *       |      |1      |reference_counter |size_t|

@@ -225,8 +225,8 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
  * Function name: _treCBFHFMCompareSymbolFreq
  * Description:   Compare symbol by its frequency.
  * Parameters:
- *          x Pointer to any symbol in array. And casted it into (void *).
- *          y Pointer to any symbol in array. And casted it into (void *).
+ *          x Pointer to any symbol in array. And cast it into (void *).
+ *          y Pointer to any symbol in array. And cast it into (void *).
  * Return value:  Please refer to the type definition of CBF_COMPARE in svdef.h.
  */
 int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)

@@ -2325,7 +2325,7 @@ void treDeleteTrieA_O(P_TRIE_A ptrie, size_t size)
  * Description:   Search a string in a trie.
  * Parameters:
  *      ptrie Pointer to a trie that you wanna operate on.
- *       pstr Pointer to the first element to a string and casted the pointer into (const void *).
+ *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
  *     cbfcmp Pointer a CBF_COMPARE callback function.
@@ -2364,7 +2364,7 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
  * Description:   Insert a string into a trie.
  * Parameters:
  *      ptrie Pointer to a trie that you wanna operate on.
- *       pstr Pointer to the first element to a string and casted the pointer into (const void *).
+ *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
  *      vapdx An integer in size_t as an appendix that can store a pointer.
@@ -2450,7 +2450,7 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
  * Description:   Remove a string from a trie.
  * Parameters:
  *      ptrie Pointer to a trie that you wanna operate on.
- *       pstr Pointer to the first element to a string and casted the pointer into (const void *).
+ *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
  *     cbfcmp Pointer a CBF_COMPARE callback function.

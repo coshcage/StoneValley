@@ -849,7 +849,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 {
 	stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
 	if (ln >= pmtx->bmask.ln || col >= pmtx->bmask.col)
-		return false; /* Over size. */
+		return NULL; /* Over size. */
 	else
 	{
 		REGISTER size_t i, j, l, m, s = 0;

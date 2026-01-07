@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0615252050L00562
+ * File ID:     0809171737H0107261000252050L00564
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -465,6 +465,8 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
 		REGISTER size_t i, j;
 		P_TNODE_G ptmp;
 		/* Locate pnodex and y in their parents. */
+		prtx = treGetParentNodeG(prootx, pnodex);
+		prty = treGetParentNodeG(prooty, pnodey);
 		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), false) - 1;
 		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), false) - 1;
 		svSwap(&i[(P_TNODE_G *)prtx->children.pdata], &j[(P_TNODE_G *)prty->children.pdata], &ptmp, sizeof(P_TNODE_G));

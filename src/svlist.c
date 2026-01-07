@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C1118240255L01408
+ * File ID:     0306170948C0107261000L01409
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1390,11 +1390,12 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 
 		if (bCircular)
 		{
-			*(void **)tail = list;
-			if (ENT_DOUBLE == ntp)
+			if (NULL != tail)
+				*(void **)tail = list;
+			if (ENT_DOUBLE == ntp && NULL != list)
 				*((void **)list + PREV) = tail;
 		}
-		else
+		else if (NULL != tail)
 			*(void **)tail = NULL;
 
 		/* If we have done only one merge, we're finished. */

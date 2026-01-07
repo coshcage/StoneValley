@@ -129,6 +129,7 @@ Logs:
 10-10-2025: Adapt to stdbool. Version 1.2.2.3.
 10-10-2025: Add red black tree. Version 1.2.2.4.
 12-27-2025: Library refined. Version 1.2.2.5. Happy new year! Welcome 2026.
+01-07-2026: After Morteza's kind help, we have a Wiki page at: https://deepwiki.com/coshcage/StoneValley/. Thank him very much! The library will be further rolling!
 _______________________________________________________________________________
 
 09-24-2018:
@@ -179,6 +180,12 @@ _______________________________________________________________________________
 	Bugs for tries are fixed.
 12-31-2025:
 	Bugs for AA tree has been eradicated.
+_______________________________________________________________________________
+Currently we have a small developing team at https://savannah.nongnu.org/projects/stonevalley/ which includes:
+John Cage	cosh dot cage at hotmail dot com
+Morteza NourelahiAlamdari	m at 0g1 dot org
+Marku	mar dot lin at tutamail dot com
+
 _______________________________________________________________________________
                 GNU Free Documentation License
                  Version 1.3, 3 November 2008

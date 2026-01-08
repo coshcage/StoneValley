@@ -211,7 +211,7 @@ int _grpCBFFreePuppet(void * pitem, size_t param)
  * Parameters:
  *      pitem Pointer to each P_NODE_S in a list.
  *      param Pointer to a size_t[2] array of which
- *            a[0] stores the indegree value after calculation.
+ *            a[0] stores the in-degree value after calculation.
  *            a[1] stores the vertex ID to be handled.
  * Return value:  CBF_CONTINUE only.
  */
@@ -1348,7 +1348,7 @@ int _grpCBFTSInitQ(void * pitem, size_t param)
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFTSReduceIndegree
  * Description:   This function is used to cooperate with function grpTopologicalSortL
- *                to reduce indegrees of vertices.
+ *                to reduce in-degrees of vertices.
  * Parameters:
  *      pitem Pointer to an EDGE structure.
  *      param Pointer to a size_t[4] array.

@@ -370,7 +370,7 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
 	{
 		P_TNODE_G pnew;
 		if (NULL == (pnew = treCreateTNodeG(pitem, size)))
-			return NULL; /* Init node allocation failed. */
+			return NULL; /* Initialized node allocation failed. */
 		if (NULL == strResizeArrayZ(&pnode->children, strLevelArrayZ(&pnode->children) + 1, sizeof(P_TNODE_G)))
 			return NULL; /* Reallocation for parent node failed. */
 		/* Put the new node into parent's children array. */

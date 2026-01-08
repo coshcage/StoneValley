@@ -124,7 +124,7 @@ int _hshCBFCopyCPuppet(void * pitem, size_t param)
  *        pht Pointer to the hash table you want to initialize.
  *    buckets Number of buckets in hash table.
  *            This value shall be a prime number.
- * Return value:  true  Initialize succeeded.
+ * Return value:  true  Initialization succeeded.
  *                false Cannot initialize.
  * Caution:       Address of pht Must Be Allocated first.
  */
@@ -357,8 +357,8 @@ int _hshCBFTraverseOPuppet(void * pitem, size_t param)
  *      pitem Pointer to each slot in array.
  *      param Pointer to a size_t[4] array.
  *            size_t[0] stores a pointer to the destination hash table.
- *            size_t[1] stores a pointer to 1st hash function.
- *            size_t[2] stores a pointer to 2nd hash function.
+ *            size_t[1] stores a pointer to the first hash function.
+ *            size_t[2] stores a pointer to the second hash function.
  *            size_t[3] stores size of each element in the source table.
  * Return value:  CBF_CONTINUE  Inserting data in to the destined table is done.
  *                CBF_TERMINATE Cannot insert data into the target table.
@@ -480,8 +480,8 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
  * Description:   Search an element in an open addressing hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
- *    cbfhsh1 Pointer to 1st hash function.
- *    cbfhsh2 Pointer to 2nd hash function.
+ *    cbfhsh1 Pointer to the first hash function.
+ *    cbfhsh2 Pointer to the second hash function.
  *            The same open addressing hash table should use the same double hashing function.
  *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of each element in the table.
@@ -496,7 +496,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
+		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
@@ -511,8 +511,8 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  * Description:   Insert an element into an open addressing hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
- *    cbfhsh1 Pointer to 1st hash function.
- *    cbfhsh2 Pointer to 2nd hash function.
+ *    cbfhsh1 Pointer to the first hash function.
+ *    cbfhsh2 Pointer to the second hash function.
  *            The same open addressing hash table should use the same double hashing function.
  *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
@@ -527,7 +527,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
+		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 		{
 			*pflag = true;
 			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, size);
@@ -540,8 +540,8 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  * Description:   Remove an element from an open addressing hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
- *    cbfhsh1 Pointer to 1st hash function.
- *    cbfhsh2 Pointer to 2nd hash function.
+ *    cbfhsh1 Pointer to the first hash function.
+ *    cbfhsh2 Pointer to the second hash function.
  *            The same open addressing hash table should use the same double hashing function.
  *       pkey Pointer to an element. Cast into (const void *).
  *       size Size of key.
@@ -557,7 +557,7 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
-		if (false == *pflag) /* Comapre to determine whether a slot is empty or not. */
+		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return false;
 		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
 		{
@@ -574,8 +574,8 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
  *                hash functions for an open addressing hash table.
  * Parameters:
  *      pdest Pointer to the destined hash table.
- *    cbfhsh1 Pointer to 1st hash function for the destined table.
- *    cbfhsh2 Pointer to 2nd hash function for the destined table.
+ *    cbfhsh1 Pointer to the first hash function for the destined table.
+ *    cbfhsh2 Pointer to the second hash function for the destined table.
  *       psrc Pointer to the source hash table.
  *       size Size of each key in the source table.
  * Return value:  true  Copying succeeded.

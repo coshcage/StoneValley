@@ -1006,7 +1006,7 @@ P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, boo
  *            If incmtl == 0, function would return the pointer to the current node, that was the same value as pnode stored.
  * Return value:  Pointer to the NODE_D which is located forward or backward for incmtl numbers of nodes.
  * Caution:       (*) Addressing capability of this function limited in the range of which a ptrdiff_t integer could perform.
- * Tip:           This function worked on noncyclic doubly pointer linked lists as well as cyclic lists.
+ * Tip:           This function worked on acyclic doubly pointer linked lists as well as cyclic lists.
  *                You may use this function conveniently like these ways:
  *                pnode = strLocateItemDC_R(pnode, +5); // Returns the pointer of 5 nodes next if possible.
  *                pnode = strLocateItemDC_R(pnode, -3); // Returns the pointer of 3 nodes previously.
@@ -1034,7 +1034,7 @@ P_NODE_D strLocateItemDC_R(P_NODE_D pnode, ptrdiff_t incmtl)
  *            If incmtl == 0, function would return the pointer to the current node, that was the same value as pnode stored.
  * Return value:  Pointer to the NODE_D which is located forward or backward for incmtl numbers of nodes.
  * Caution:       (*) Addressing capability of this function limited in the range which a ptrdiff_t integer could perform.
- * Tip:           This function worked on noncyclic doubly pointer linked lists as well as cyclic lists.
+ * Tip:           This function worked on acyclic doubly pointer linked lists as well as cyclic lists.
  *                (*) Compare this function with its recursive version, either two functions might be optimized by compilers.
  *                If your compiler supported tail recursive optimization, strLocateItemDC_R would be optimized, and its size
  *                would be reduced; Its execution speed would be accelerated, unless to use strLocateItemDC_N is a good way to

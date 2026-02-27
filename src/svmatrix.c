@@ -353,7 +353,7 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
  *            The left pointer of cbfagb pointes to any element in the matrix,
  *            and the right pointer of cbfagb always holds a same value as pval.
  *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depends on function cbfagb.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           Users could use this function to multiply a number with a matrix like this way:
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
@@ -379,7 +379,7 @@ int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfag
  *            The left pointer of cbfagb pointes to any element in pmtxa,
  *            and the right pointer of cbfagb pointes to the corresponding value in pmtxb.
  *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depends on function cbfagb.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
  * Caution:       Address of pmtxa and pmtxb Have to Be Allocated first.
  * Tip:           Users could use this function to add a matrix with another like this way:
  *                int plus(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
@@ -423,7 +423,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  * pcbfagb[2] pcbfagb[0] stores the pointer to a function that can perform addition.
  *            pcbfagb[1] stores the pointer to a function that can perform multiplication.
  *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depends on function cbfagb.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
  * Caution:       Address of ppmtx[0], ppmtx[1] and ppmtx[2] Must Be Allocated first.
  * Tip:           Users could use this function to multiply a matrix with another like this way:
  *                int add(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
@@ -638,8 +638,8 @@ bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 
 /* Functions for sparse matrices are implemented bellow. */
 /* Sectional function declarations. */
-void   _strBITAdd  (size_t    idx,  ptrdiff_t val,  P_ARRAY_Z parrz);
-size_t _strBITSum  (size_t    idx,  P_ARRAY_Z parrz);
+void   _strBITAdd (size_t idx, ptrdiff_t val,  P_ARRAY_Z parrz);
+size_t _strBITSum (size_t idx, P_ARRAY_Z parrz);
 
 /* This macro is used to get lowest bit of an integer and is for Fenwick trees. */
 #define _LOWBIT(x) ((x) & (~(x) + 1))

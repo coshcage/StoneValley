@@ -152,7 +152,7 @@ void strDeleteBitStream(P_BITSTREAM pbstm)
  */
 void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
 {
-	if (strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART)))
+	if (NULL != strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART)))
 	{
 		pdest->bilc = (NULL == strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(UCHART)) ? 0 : psrc->bilc);
 		return pdest->arrz.pdata;

@@ -379,7 +379,7 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
 	}
 }
 
-#define _CUTOFF (6) /* This macro is used by function svQuickSort. */
+#define _CUTOFF 6 /* This macro is used by function svQuickSort. */
 
 /* Function name: svQuickSort
  * Description:   Quick sort algorithm.

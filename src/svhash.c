@@ -307,9 +307,15 @@ bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 
 /* Functions for open addressing hash table using double hashing function. */
 
-#define _FLAG size_t    /* Flag used to sign whether a slot is empty or not. */
-#define _P_FLAG _FLAG * /* Pointer to flag. */
+#define _FLAG size_t             /* Flag used to sign whether a slot is empty or not. */
+#define _P_FLAG _FLAG *          /* Pointer to flag. */
 #define _FLAG_SIZE sizeof(_FLAG) /* Size of a flag. */
+
+/* A macro that is used to align size to the multiply of sizeof(size_t).
+ * Users may watch this technique on the book Hacker's Delight written by Henry S. Warren.
+ * With ISBN 0-201-91465-4. Chapter 3-1.
+ */
+#define _ALIGN(size) (((size) + sizeof(size_t) - 1) & -sizeof(size_t))
 
 /* File level function declarations. */
 int _hshCBFCountSlots      (void * pitem, size_t param);
@@ -360,6 +366,7 @@ int _hshCBFTraverseOPuppet(void * pitem, size_t param)
  *            size_t[1] stores a pointer to the first hash function.
  *            size_t[2] stores a pointer to the second hash function.
  *            size_t[3] stores size of each element in the source table.
+ *                      Caution: Before invoking this function, size MUST be aligned!
  * Return value:  CBF_CONTINUE  Inserting data in to the destined table is done.
  *                CBF_TERMINATE Cannot insert data into the target table.
  */
@@ -372,7 +379,7 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
 			(CBF_HASH)1[(size_t *)param],
 			(CBF_HASH)2[(size_t *)param],
 			pitem,
-			3[(size_t *)param]
+			3[(size_t *)param] /* This parameter MUST be aligned initially. */
 		)
 		? CBF_TERMINATE : CBF_CONTINUE;
 }
@@ -391,10 +398,10 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
  */
 bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
 {
-	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + size))
+	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + _ALIGN(size)))
 		return false;
 	/* Clear array. */
-	memset(pht->pdata, 0, (_FLAG_SIZE + size) * strLevelArrayZ(pht));
+	memset(pht->pdata, 0, (_FLAG_SIZE + _ALIGN(size)) * strLevelArrayZ(pht));
 	return true;
 }
 
@@ -422,11 +429,11 @@ void hshFreeA_O(P_HSHTBL_A pht)
  */
 P_HSHTBL_A hshCreateA(size_t slots, size_t size)
 {
-	P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + size);
+	P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + _ALIGN(size));
 	if (NULL == phtn)
 		return NULL;
 	/* Clear array. */
-	memset(phtn->pdata, 0, (_FLAG_SIZE + size) * strLevelArrayZ(phtn));
+	memset(phtn->pdata, 0, (_FLAG_SIZE + _ALIGN(size)) * strLevelArrayZ(phtn));
 	return phtn;
 }
 
@@ -454,7 +461,7 @@ void hshDeleteA_O(P_HSHTBL_A pht)
 size_t hshSizeA(P_HSHTBL_A pht, size_t size)
 {
 	size_t n = 0;
-	strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFCountSlots, (size_t)&n, false);
+	strTraverseArrayZ(pht, _FLAG_SIZE + _ALIGN(size), _hshCBFCountSlots, (size_t)&n, false);
 	return n;
 }
 
@@ -462,6 +469,7 @@ size_t hshSizeA(P_HSHTBL_A pht, size_t size)
  * Description:   Traverse each elements in an open addressing hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
+ *       size Size of each element in the table.
  *     cbftvs Pointer to the callback function.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
@@ -473,7 +481,7 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 	size_t a[2];
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
-	return strTraverseArrayZ(pht, _FLAG_SIZE + size, _hshCBFTraverseOPuppet, (size_t)a, false);
+	return strTraverseArrayZ(pht, _FLAG_SIZE + _ALIGN(size), _hshCBFTraverseOPuppet, (size_t)a, false);
 }
 
 /* Function name: hshSearchA
@@ -495,12 +503,12 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
-			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
+			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size)))
 				return (PUCHAR)pflag + _FLAG_SIZE;
 		}
 	}
@@ -526,11 +534,11 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 		{
 			*pflag = true;
-			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, size);
+			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size));
 		}
 	}
 	return NULL;
@@ -556,10 +564,10 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + size));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return false;
-		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, size))
+		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size)))
 		{
 			*pflag = false;
 			return true;
@@ -589,13 +597,14 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;
-	a[3] = size;
+	a[3] = _ALIGN(size); /* We MUST align size before we transfer it into a[3]. */
 	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? false : true;
 }
 
 #undef _FLAG
 #undef _P_FLAG
 #undef _FLAG_SIZE
+#undef _ALIGN
 
 /* Function name: hshCBFHashString
  * Description:   Hash a string.

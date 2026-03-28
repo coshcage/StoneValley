@@ -73,7 +73,7 @@ void svPrintVersion(void);
 stdiv_t stdiv(size_t numerator, size_t denominator);
 
 /* Disable warning C4100 for Visual C/C++ compiler.
- * As for gcc/clang, please alter the following macro as DWC4100(param) // Noting appears at tail.
+ * As for gcc/clang, please alter the following macro as DWC4100(param) // Nothing appears at tail.
  */
 #define DWC4100(param) (void)(param)
 

@@ -133,7 +133,7 @@ bool hshInitC(P_HSHTBL_C pht, size_t buckets)
 	if (NULL == strInitArrayZ(pht, buckets, sizeof(P_NODE_S)))
 		return false;
 	/* Clear array. */
-	memset(pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
+	memset((P_NODE_S *)pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
 	return true;
 }
 
@@ -163,7 +163,7 @@ P_HSHTBL_C hshCreateC(size_t buckets)
 	if (NULL == pht)
 		return NULL;
 	/* Clear array. */
-	memset(pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
+	memset((P_NODE_S *)pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
 	return pht;
 }
 

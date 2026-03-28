@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0328260815L00617
+ * File ID:     0901171615K0328260815L00619
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -311,12 +311,6 @@ bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 #define _P_FLAG _FLAG *          /* Pointer to flag. */
 #define _FLAG_SIZE sizeof(_FLAG) /* Size of a flag. */
 
-/* A macro that is used to align size to the multiply of sizeof(size_t).
- * Users may watch this technique on the book Hacker's Delight written by Henry S. Warren.
- * With ISBN 0-201-91465-4. Chapter 3-1.
- */
-#define _ALIGN(size) (((size) + sizeof(size_t) - 1) & -sizeof(size_t))
-
 /* File level function declarations. */
 int _hshCBFCountSlots      (void * pitem, size_t param);
 int _hshCBFTraverseOPuppet (void * pitem, size_t param);
@@ -398,10 +392,10 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
  */
 bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
 {
-	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + _ALIGN(size)))
+	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + ALIGN_SIZET(size)))
 		return false;
 	/* Clear array. */
-	memset(pht->pdata, 0, (_FLAG_SIZE + _ALIGN(size)) * strLevelArrayZ(pht));
+	memset(pht->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(pht));
 	return true;
 }
 
@@ -429,11 +423,11 @@ void hshFreeA_O(P_HSHTBL_A pht)
  */
 P_HSHTBL_A hshCreateA(size_t slots, size_t size)
 {
-	P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + _ALIGN(size));
+	P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + ALIGN_SIZET(size));
 	if (NULL == phtn)
 		return NULL;
 	/* Clear array. */
-	memset(phtn->pdata, 0, (_FLAG_SIZE + _ALIGN(size)) * strLevelArrayZ(phtn));
+	memset(phtn->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(phtn));
 	return phtn;
 }
 
@@ -461,7 +455,7 @@ void hshDeleteA_O(P_HSHTBL_A pht)
 size_t hshSizeA(P_HSHTBL_A pht, size_t size)
 {
 	size_t n = 0;
-	strTraverseArrayZ(pht, _FLAG_SIZE + _ALIGN(size), _hshCBFCountSlots, (size_t)&n, false);
+	strTraverseArrayZ(pht, _FLAG_SIZE + ALIGN_SIZET(size), _hshCBFCountSlots, (size_t)&n, false);
 	return n;
 }
 
@@ -481,7 +475,7 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 	size_t a[2];
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
-	return strTraverseArrayZ(pht, _FLAG_SIZE + _ALIGN(size), _hshCBFTraverseOPuppet, (size_t)a, false);
+	return strTraverseArrayZ(pht, _FLAG_SIZE + ALIGN_SIZET(size), _hshCBFTraverseOPuppet, (size_t)a, false);
 }
 
 /* Function name: hshSearchA
@@ -503,12 +497,12 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
-			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size)))
+			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))
 				return (PUCHAR)pflag + _FLAG_SIZE;
 		}
 	}
@@ -534,11 +528,11 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 		{
 			*pflag = true;
-			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size));
+			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size));
 		}
 	}
 	return NULL;
@@ -564,10 +558,10 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + _ALIGN(size)));
+		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
 			return false;
-		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, _ALIGN(size)))
+		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))
 		{
 			*pflag = false;
 			return true;
@@ -597,14 +591,13 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;
-	a[3] = _ALIGN(size); /* We MUST align size before we transfer it into a[3]. */
+	a[3] = ALIGN_SIZET(size); /* We MUST align size before we transfer it into a[3]. */
 	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? false : true;
 }
 
 #undef _FLAG
 #undef _P_FLAG
 #undef _FLAG_SIZE
-#undef _ALIGN
 
 /* Function name: hshCBFHashString
  * Description:   Hash a string.

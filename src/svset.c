@@ -672,7 +672,8 @@ bool setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 {
 	if
-	(! setIsMemberT
+	(
+		! setIsMemberT
 		(
 			*(P_SET_T *)0[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
@@ -680,8 +681,7 @@ int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 		)
 	)
 	{
-		P_BSTNODE pnode =
-			_setInsertBST
+		REGISTER P_BSTNODE pnode = _setInsertBST
 			(
 				**(P_SET_T *)0[(size_t *)param],
 				((P_BSTNODE)pitem)->knot.pdata,
@@ -764,7 +764,8 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 	if (r == (bool)4[(size_t *)param])
 	{
 		if
-		(! setIsMemberT
+		(
+			! setIsMemberT
 			(
 				*(P_SET_T *)0[(size_t *)param],
 				((P_BSTNODE)pitem)->knot.pdata,
@@ -772,8 +773,7 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 			)
 		)
 		{
-			P_BSTNODE pnode =
-			_setInsertBST
+			REGISTER P_BSTNODE pnode = _setInsertBST
 			(
 				**(P_SET_T *)0[(size_t *)param],
 				((P_BSTNODE)pitem)->knot.pdata,

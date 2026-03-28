@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0328260436L01410
+ * File ID:     0306170948C0328260700L01424
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -82,10 +82,14 @@ int _strCBFNodesCounter(void * pitem, size_t param)
 int _strCBFCompareNodeDataS(void * pitem, size_t param)
 {
 	/* The type of param is P_FindingInfo. */
-	if (0 == memcmp(((P_NODE_S)pitem)->pdata,
-			( (P_FindingInfo) param)->pitem,
-			( (P_FindingInfo) param)->size)
+	if
+	(0 == memcmp
+		(
+			((P_NODE_S)     pitem)->pdata,
+			((P_FindingInfo)param)->pitem,
+			((P_FindingInfo)param)->size
 		)
+	)
 	{
 		((P_FindingInfo)param)->result = pitem;
 		return CBF_TERMINATE;
@@ -105,10 +109,14 @@ int _strCBFCompareNodeDataS(void * pitem, size_t param)
 int _strCBFCompareNodeDataD(void * pitem, size_t param)
 {
 	/* The type of param is P_FindingInfo. */
-	if (0 == memcmp(((P_NODE_D)pitem)->pdata,
-			( (P_FindingInfo) param)->pitem,
-			( (P_FindingInfo) param)->size)
+	if
+	(0 == memcmp
+		(
+			((P_NODE_D)     pitem)->pdata,
+			((P_FindingInfo)param)->pitem,
+			((P_FindingInfo)param)->size
 		)
+	)
 	{
 		((P_FindingInfo)param)->result = pitem;
 		return CBF_TERMINATE;
@@ -1227,14 +1235,17 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 			)
 		)
 		{
-			plast = (ENT_SINGLE == ntp ?
-						(void *) _P2P_NODE_S(plast)->pnode :
-						(void *)
-						(brev ?
-							_P2P_NODE_D(plast)->ppnode[PREV] :
-							_P2P_NODE_D(plast)->ppnode[NEXT]
-						)
-					);
+			plast = 
+			(
+				ENT_SINGLE == ntp ?
+				(void *) _P2P_NODE_S(plast)->pnode :
+				(void *)
+				(
+					brev ?
+					_P2P_NODE_D(plast)->ppnode[PREV] :
+					_P2P_NODE_D(plast)->ppnode[NEXT]
+				)
+			);
 			if (ptmp == plast) /* Prevent function from a dead loop. */
 				break;
 			ptmp = plast;
@@ -1244,11 +1255,14 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 		return NULL;
 	if
 	(
-		(ptmp =
-			((ENT_SINGLE == ntp) ?
-			(void *)(_P2P_NODE_S(plast)->pnode) :
-			(void *)
-				(brev ?
+		(
+			ptmp =
+			(
+				(ENT_SINGLE == ntp) ?
+				(void *)(_P2P_NODE_S(plast)->pnode) :
+				(void *)
+				(
+					brev ?
 					(void *)(_P2P_NODE_D(plast)->ppnode[PREV]) :
 					(void *)(_P2P_NODE_D(plast)->ppnode[NEXT])
 				)

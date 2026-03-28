@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0325261948L00564
+ * File ID:     0809171737H0328260650L00571
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -110,10 +110,14 @@ int _treCBFGTreeLocateChild(void * pitem, size_t param)
 int _treCBFCompareTNodeDataG(void * pitem, size_t param)
 {
 	/* The type of param is P_FindingInfo. */
-	if (0 == memcmp(((P_TNODE_G)pitem)->pdata,
+	if 
+	(0 == memcmp
+		(
+			((P_TNODE_G)    pitem)->pdata,
 			((P_FindingInfo)param)->pitem,
-			((P_FindingInfo)param)->size)
+			((P_FindingInfo)param)->size
 		)
+	)
 	{
 		((P_FindingInfo)param)->result = pitem;
 		return CBF_TERMINATE;
@@ -333,7 +337,7 @@ void treFreeG(P_GTREE ptreg)
 P_GTREE treCreateG(void)
 {
 	P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
-	/* Sarah Silva found this issue that we must detect NULL pointer before alter it. */
+	/* Sarah Silva found this issue which is that we must detect NULL pointer before alter it. */
 	if (NULL != ptreg)
 		treInitG(ptreg);
 	return ptreg;
@@ -454,14 +458,17 @@ P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, size_t size)
  */
 P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_TNODE_G pnodey)
 {
-	REGISTER P_TNODE_G prtx, prty;
-	if (NULL == prootx || NULL == prooty ||
+	if 
+	(
+		NULL == prootx || NULL == prooty ||
 		NULL == pnodex || NULL == pnodey ||
-		NULL != (prtx = treGetParentNodeG(pnodex, pnodey)) ||
-		NULL != (prty = treGetParentNodeG(pnodey, pnodex))
-		) return NULL; /* T1 contains T2, or T2 contains T1. */
+		NULL != treGetParentNodeG(pnodex, pnodey) ||
+		NULL != treGetParentNodeG(pnodey, pnodex)
+	)
+		return NULL; /* T1 contains T2, or T2 contains T1. */
 	else
 	{
+		REGISTER P_TNODE_G prtx, prty;
 		REGISTER size_t i, j;
 		P_TNODE_G ptmp;
 		/* Locate pnodex and y in their parents. */

@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0512251300L00914
+ * File ID:     0901171620L0328260438L00915
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -907,6 +907,7 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 		case ETM_INORDER:    r = treTraverseBYIn   (P2P_TNODE_BY(*pset), cbftvs, param); break;
 		case ETM_POSTORDER:  r = treTraverseBYPost (P2P_TNODE_BY(*pset), cbftvs, param); break;
 		case ETM_LEVELORDER: r = treTraverseBYLevel(P2P_TNODE_BY(*pset), cbftvs, param); break;
+		default:                                                                         break;
 		}
 		return r;
 	}

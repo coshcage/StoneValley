@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0716241632L00631
+ * File ID:     0809171737G0328260433L00634
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -200,6 +200,8 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, siz
 			case 'D':
 			case 'd':
 				r3 = cbftvs(pnode, param);
+				break;
+			default:
 				break;
 			}
 		}
@@ -503,6 +505,7 @@ P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, size_t size, Tv
 	case ETM_INORDER:    treTraverseBYIn   (pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
 	case ETM_POSTORDER:  treTraverseBYPost (pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
 	case ETM_LEVELORDER: treTraverseBYLevel(pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
+	default:             fi.result = NULL;                                                break;
 	}
 	return (P_TNODE_BY)fi.result;
 }

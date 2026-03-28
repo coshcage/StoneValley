@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D1228250528L00733
+ * File ID:     0306170948D0328260437L00735
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -727,6 +727,8 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		if (-1 == l)
 			return NULL; /* Out of range. Cannot find. */
 		return p + l * s;
+	default:
+		break;
 	}
 	return NULL; /* Argument error. */
 }

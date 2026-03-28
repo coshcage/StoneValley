@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0107261000L01409
+ * File ID:     0306170948C0328260436L01410
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -46,7 +46,8 @@ int _strCBFDeleteNode(void * pitem, size_t param)
 	switch (param)
 	{
 	case ENT_SINGLE: strDeleteNodeS((P_NODE_S)pitem); break;
-	case ENT_DOUBLE: strDeleteNodeD((P_NODE_D)pitem);
+	case ENT_DOUBLE: strDeleteNodeD((P_NODE_D)pitem); break;
+	default:                                          break;
 	}
 	return CBF_CONTINUE;
 }

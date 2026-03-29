@@ -360,7 +360,7 @@ int _hshCBFTraverseOPuppet(void * pitem, size_t param)
  *            size_t[1] stores a pointer to the first hash function.
  *            size_t[2] stores a pointer to the second hash function.
  *            size_t[3] stores size of each element in the source table.
- *                      Caution: Before invoking this function, size MUST be aligned!
+ *                      Caution: Before invoking this function, size Must Be Aligned!
  * Return value:  CBF_CONTINUE  Inserting data in to the destined table is done.
  *                CBF_TERMINATE Cannot insert data into the target table.
  */
@@ -373,7 +373,7 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
 			(CBF_HASH)1[(size_t *)param],
 			(CBF_HASH)2[(size_t *)param],
 			pitem,
-			3[(size_t *)param] /* This parameter MUST be aligned initially. */
+			3[(size_t *)param] /* This parameter Must Be Aligned initially. */
 		)
 		? CBF_TERMINATE : CBF_CONTINUE;
 }
@@ -591,7 +591,7 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;
-	a[3] = ALIGN_SIZET(size); /* We MUST align size before we transfer it into a[3]. */
+	a[3] = ALIGN_SIZET(size); /* We Must Align size before we transfer it into a[3]. */
 	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? false : true;
 }
 

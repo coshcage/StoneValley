@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0331260900L01706
+ * File ID:     0905171125M0331261000L01717
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1150,6 +1150,14 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  * Return value:  Pointer of a doubly linked list that contains each vertex ID and distance from vids to that vide.
  *                Each element of the returned doubly linked list is a VTXREC structure.
  *                If function returned NULL, it should either indicate searching failure or vids could not reach at vide.
+ *                (*) Especially, If a graph had only one vertex and this vertex looped back to itself,
+ *                    when this function starts on this vertex and ends at the same vertex,
+ *                    no matter what weight of loop back edge this vertex has, this function would return NULL.
+ *                    Such as:
+ *                    P_GRAPH_L p = grpCreateL();
+ *                    grpInsertVertexL(p, 1);
+ *                    grpInsertEdgeL(p, 1, 1, 1);
+ *                    l = grpDijkstraShortestPathL(p, 1, 1); // Returns NULL.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           Tips of use:
  *                //#include <stdio.h>
@@ -1248,21 +1256,24 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	{
 		size_t pvid = rec.pvid;
 		
-		/* Back trace the shortest path. */
-		do
+		if (pvid != vids)
 		{
-			REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
-			
-			if (NULL != pbstn)
+			/* Back trace the shortest path. */
+			do
 			{
-				pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
-				vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
-				vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
+				REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
 				
-				*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
+				if (NULL != pbstn)
+				{
+					pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
+					vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
+					vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
+					
+					*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
+				}
 			}
+			while (pvid != vids);
 		}
-		while (pvid != vids);
 
 		vr.vid  = pvid;
 		vr.dist = 0;

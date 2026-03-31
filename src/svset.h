@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0331260805L00171
+ * File ID:     0901171620T0331260900L00175
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -31,6 +31,10 @@
 typedef HSHTBL_C SET_H, * P_SET_H;
 /* Definition of sets using binary search trees. */
 typedef BST SET_T, * P_SET_T;
+
+/* These following two macros are used to switch between BSTs. */
+#define _setInsertBST treBSTInsertAA /* treBSTInsertAVL */
+#define _setRemoveBST treBSTRemoveAA /* treBSTRemoveAVL */
 
 /* Functions for hash-table style sets. */
 bool     setInitH_O             (P_SET_H pset,   size_t   buckets);

@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0331260805L01701
+ * File ID:     0905171125M0331260900L01706
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1062,7 +1062,8 @@ int _grpCBFDijkstraFillVb(void * pitem, size_t param)
 {
 	if (((P_VERTEX_L)pitem)->vid != 0[(size_t *)param])
 	{
-		if (! setInsertT((P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger))
+		//if (! setInsertT((P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger))
+		if (NULL == (*(P_SET_T)1[(size_t *)param] = _setInsertBST(*(P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger)))
 			return CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
@@ -1105,21 +1106,17 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 	if (setIsMemberT((P_SET_T)1[(size_t *)param], &pedg->vid, _grpCBFCompareInteger))
 	{
 		REGISTER P_BSTNODE pnode = treBSTFindData_R((P_BSTNODE)*(P_SET_T)3[(size_t *)param], &4[(size_t *)param], _grpCBFCompareInteger);
-		
 		_SPTREC rec, t;
 		
 		rec.vid  = pedg->vid;
-		
 		if (NULL != pnode)
 			rec.dist = pedg->weight + ((_P_SPTREC)pnode->knot.pdata)->dist;
 		else
 			return CBF_TERMINATE;
-		
 		rec.pvid = 4[(size_t *)param];
 		
 		treInsertHeapA((P_HEAP_A)2[(size_t *)param], &rec, &t, sizeof(_SPTREC), _grpCBFCompareRecordDistance, false);
 	}
-	
 	return CBF_CONTINUE;
 }
 
@@ -1150,7 +1147,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *       pgrp Pointer to a graph.
  *       vids Starting vertex ID that you want to start searching.
  *       vide End vertex ID.
- * Return value:  Pointer of a doubly linked list that contains each vertex and distance from vids to that vide.
+ * Return value:  Pointer of a doubly linked list that contains each vertex ID and distance from vids to that vide.
  *                Each element of the returned doubly linked list is a VTXREC structure.
  *                If function returned NULL, it should either indicate searching failure or vids could not reach at vide.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -1185,7 +1182,7 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	setInitT(&vb);
 	treInitHeapA(&h, grpVerticesCountL(pgrp), sizeof(_SPTREC));
 
-	/* Insert all vertices' vids into Vb except vid start. */
+	/* Insert all vertices' vid into Vb except vid start's vid. */
 	a[0] = vids;
 	a[1] = (size_t)&vb;
 	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a))
@@ -1206,10 +1203,13 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	
 	do
 	{
+		/* Clear the heap. */
 		treMakeEmptyHeapA(&h);
-
-		setInsertT(&va, &rec, sizeof(_SPTREC), _grpCBFCompareInteger);
 		
+		/* Insert shortest path trajectory record into set Va. */
+		va = _setInsertBST(va, &rec, sizeof(_SPTREC), _grpCBFCompareInteger);
+		
+		/* Find edges between set Va and Vb and insert them as a _SPTREC structure into a heap. */
 		if (CBF_CONTINUE != setTraverseTDispatch(&va, _grpCBFDijkstraFindEdgesToVb, (size_t)a, treMorrisTraverseBYIn))
 		{
 			/* Set Va corrupted. */
@@ -1218,6 +1218,7 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 			goto Lbl_Cleanup;
 		}
 		
+		/* Pop the minimum item from the heap. */
 		if (! treIsEmptyHeapA(&h))
 			treRemoveHeapA(&rec, &t, sizeof(_SPTREC), &h, _grpCBFCompareRecordDistance, false);
 		else
@@ -1228,23 +1229,26 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 			goto Lbl_Cleanup;
 		}
 		
-		if (rec.vid == vide) /* Found end vertex. */
+		/* Found ending vertex. */
+		if (rec.vid == vide)
 			break;
 		
-		/* Remove e.vid from Vb. */
+		/* Remove rec.vid from Vb. */
 		setRemoveT(&vb, &rec.vid, sizeof(size_t), _grpCBFCompareInteger);
 	}
 	while (! setIsEmptyT(&vb));
 	
 	vr.vid  = rec.vid;
 	vr.dist = rec.dist;
-
+	
+	/* Insert vide into a doubly linked list. */
 	*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), true);
 	
 	if (rec.vid == vide) /* Exit normally. */
 	{
 		size_t pvid = rec.pvid;
 		
+		/* Back trace the shortest path. */
 		do
 		{
 			REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
@@ -1262,6 +1266,7 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 
 		vr.vid  = pvid;
 		vr.dist = 0;
+		/* Insert the beginning vide into the returning doubly linked list. */
 		*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 	}
 	else

@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0331260805L00945
+ * File ID:     0901171620L0331260900L00941
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -22,10 +22,6 @@
  */
 
 #include "svset.h"
-
-/* These following two macros are used to switch between BSTs. */
-#define _setInsertBST treBSTInsertAA
-#define _setRemoveBST treBSTRemoveAA
 
 /* Callback function declarations for sets using hash table. */
 int _setCBFIsSubsetHPuppet     (void * pitem, size_t param);

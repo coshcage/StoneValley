@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0328260700L01424
+ * File ID:     0306170948C0331260805L01424
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -504,8 +504,8 @@ P_NODE_S strLocateItemSC_N(P_NODE_S pnode, size_t incmtl)
  *       list Pointer to the first NODE_S element of linked-list.
  *      pdest Pointer to the node you want to operate with.
  *      pnode Pointer to a single link node that you want to insert.
- *     bafter Input true to insert pnode in front of pdest.
- *            Input false to insert pnode after pdest.
+ *     bafter Input true to insert pnode after pdest.
+ *            Input false to insert pnode in front of pdest.
  * Return value:  The same pointer as pnode. If function returned value NULL, it should indicate an insertion failure.
  * Tip:           No dead cycles for circular linked-lists.
  */
@@ -523,9 +523,9 @@ P_NODE_S strInsertItemLinkedListSC(LIST_S list, P_NODE_S pdest, P_NODE_S pnode, 
 	{
 		P_NODE_S pr = strLocatePreviousItemSC(list, pdest);
 		if (NULL != pr)
-			return strInsertItemLinkedListSC(list, pr, pnode, true);
+			return strInsertItemLinkedListSC(list, pr, pnode, false);
 		else
-			return strInsertItemLinkedListSC(NULL, strLocateLastItemSC(pnode), pdest, true);
+			return strInsertItemLinkedListSC(NULL, strLocateLastItemSC(pnode), pdest, false);
 	}
 }
 
@@ -1074,12 +1074,11 @@ P_NODE_D strLocateItemDC_N(P_NODE_D pnode, ptrdiff_t incmtl)
  * Parameters:
  *      pdest Pointer to the first NODE_D element of linked-list.
  *      pnode Pointer to a double link node you want to insert.
- *     bafter Input true to insert pnode in front of pdest.
- *            Input false to insert pnode after pdest.
+ *     bafter Input true to insert pnode after pdest.
+ *            Input false to insert pnode in front of pdest.
  * Return value:  The new header of the current linked-list.
  * Caution:       If the following situation occurred, dead cycle would happen:
- *                (->A<-) and (A<-B->A).
- *                (->A<-)   means A.ppnode[PREV] == &A && A.ppnode[NEXT] == &A;
+ *                (A<-B->A).
  *                (A<-B->A) means B.ppnode[PREV] == &A && B.ppnode[NEXT] == &A;
  * Tip:           No dead cycles for other circular linked-lists.
  */
@@ -1087,13 +1086,13 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 {
 	REGISTER P_NODE_D ptmp = NULL;
 	REGISTER P_NODE_D plast = pnode;
-	if (NULL == pdest || NULL == pnode)
+	if (NULL == pnode)
 		return NULL;
-	/* Locate tail in pitem. */
-	while ((NULL != plast->ppnode[NEXT]) && (pnode != plast->ppnode[NEXT]))
+	/* Locate tail in pnode. */
+	while (NULL != plast->ppnode[NEXT])
 	{
 		plast = plast->ppnode[NEXT];
-		/* Dead loop appears only if ->A<- and A<-B->A.
+		/* Dead loop appears only if A<-B->A.
 		 * We have to prevent it from occurring.
 		 */
 		if (ptmp == plast)
@@ -1102,23 +1101,24 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 	}
 	if (bafter)
 	{
-		plast->ppnode[NEXT] = pdest->ppnode[NEXT];
-		if (NULL != pdest->ppnode[NEXT])
-			pdest->ppnode[NEXT]->ppnode[PREV] = plast;
-		pdest->ppnode[NEXT] = pnode;
-		pnode->ppnode[PREV] = pdest;
-		return pdest;
+		if (NULL != pdest)
+		{
+			plast->ppnode[NEXT] = pdest->ppnode[NEXT];
+			if (NULL != pdest->ppnode[NEXT])
+				pdest->ppnode[NEXT]->ppnode[PREV] = plast;
+			pdest->ppnode[NEXT] = pnode;
+			pnode->ppnode[PREV] = pdest;
+			return pdest;
+		}
 	}
 	else /* Before. */
 	{
 		plast->ppnode[NEXT] = pdest;
 		if (NULL != (pnode->ppnode[PREV] = pdest->ppnode[PREV]))
-		{
 			pdest->ppnode[PREV]->ppnode[NEXT] = pnode;
-			pdest->ppnode[PREV] = plast;
-		}
-		return pnode;
+		pdest->ppnode[PREV] = plast;
 	}
+	return pnode;
 }
 
 /* Function name: strRemoveItemLinkedListDC

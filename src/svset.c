@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0328260438L00915
+ * File ID:     0901171620L0331260805L00945
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -883,7 +883,7 @@ Lbl_Empty_Set:
 }
 
 /* Function name: setTraverseT
- * Description:   Traverse elements in a BST-style set. This function is a wrapper or dispatcher.
+ * Description:   Traverse elements in a BST-style set. This function is a wrapper.
  * Parameters:
  *       pset Pointer to a set.
  *            (*) Especially, if pset equaled to NULL, function would return value CBF_CONTINUE.
@@ -903,13 +903,43 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 		int r = CBF_TERMINATE;
 		switch (tm)
 		{
-		case ETM_PREORDER:   r = treTraverseBYPre  (P2P_TNODE_BY(*pset), cbftvs, param); break;
-		case ETM_INORDER:    r = treTraverseBYIn   (P2P_TNODE_BY(*pset), cbftvs, param); break;
-		case ETM_POSTORDER:  r = treTraverseBYPost (P2P_TNODE_BY(*pset), cbftvs, param); break;
-		case ETM_LEVELORDER: r = treTraverseBYLevel(P2P_TNODE_BY(*pset), cbftvs, param); break;
-		default:                                                                         break;
+		case ETM_PREORDER:        r = treTraverseBYPre      (P2P_TNODE_BY(*pset), cbftvs, param); break;
+		case ETM_INORDER:         r = treTraverseBYIn       (P2P_TNODE_BY(*pset), cbftvs, param); break;
+		case ETM_POSTORDER:       r = treTraverseBYPost     (P2P_TNODE_BY(*pset), cbftvs, param); break;
+		case ETM_LEVELORDER:      r = treTraverseBYLevel    (P2P_TNODE_BY(*pset), cbftvs, param); break;
+		case ETM_PREORDER_MORRIS: r = treMorrisTraverseBYPre(P2P_TNODE_BY(*pset), cbftvs, param); break;
+		case ETM_INORDER_MORRIS:  r = treMorrisTraverseBYIn (P2P_TNODE_BY(*pset), cbftvs, param); break;
+		default:                                                                                  break;
 		}
 		return r;
 	}
+}
+
+/* Function name: setTraverseTDispatch
+ * Description:   Traverse elements in a BST-style set. This function is a dispatcher.
+ * Parameters:
+ *       pset Pointer to a set.
+ *            (*) Especially, if pset equaled to NULL, function would return value CBF_CONTINUE.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transferred into the callback function.
+ *  cbftvsbyt Binary tree traversal callback function name or say function address.
+ *            The value of cbftvsbyt can either be the following item:
+ *            (treTraverseBYPre)
+ *            (treTraverseBYIn)
+ *            (treTraverseBYPost)
+ *            (treTraverseBYLevel)
+ *            (treMorrisTraverseBYPre)
+ *            (treMorrisTraverseBYIn).
+ * Return value:  The same value as callback function cbftvs returns or CBF_CONTINUE.
+ * Tip:           Example of usage:
+ *                setTraverseTDispatch(pset, cbftvs, param, treTraverseBYPre);
+ * Caution:       Address of pset Must Be Allocated first.
+ */
+int setTraverseTDispatch(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, CBF_TRAVERSE_BYTREE cbftvsbyt)
+{
+	if (setIsEmptyT(pset)) /* There is no need to traverse elements in an empty set. */
+		return CBF_CONTINUE;
+	else
+		return cbftvsbyt(P2P_TNODE_BY(*pset), cbftvs, param);
 }
 

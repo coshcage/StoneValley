@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0328260850L02532
+ * File ID:     0809171737I0331260805L02534
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -367,8 +367,10 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 					while (NULL != pbstchild(temp)[LEFT])
 						temp = pbstchild(temp)[LEFT];
 					pbstchild(temp)[LEFT] = pbstchild(pnode)[LEFT];
+					pnode = pbstchild(pnode)[RIGHT];
 				}
-				pnode = pbstchild(pnode)[RIGHT];
+				else
+					pnode = (NULL != pbstchild(pnode)[LEFT]) ? pbstchild(pnode)[LEFT] : pbstchild(pnode)[RIGHT];
 				treDeleteBSTNode(plast);
 			}
 		}

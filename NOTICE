@@ -131,6 +131,7 @@ Logs:
 12-27-2025: Library refined. Version 1.2.2.5. Happy new year! Welcome 2026.
 01-07-2026: After Morteza's kind help, we have a Wiki page at: https://deepwiki.com/coshcage/StoneValley/. Thank him very much! The library will be further rolling!
 28-03-2026: Library refined. Version 1.2.3.0. This is a stable version.
+03-31-2026: Library refined. Version 1.2.3.4. Add function grpDijkstraShortestPathL and so on.
 _______________________________________________________________________________
 
 09-24-2018:
@@ -179,7 +180,7 @@ _______________________________________________________________________________
 	Bugs at svset.c, SET_T and SET_H are both fixed.
 07-01-2025:
 	Bugs for tries are fixed.
-12-31-2025:
+03-31-2026:
 	Bugs for AA tree has been eradicated.
 _______________________________________________________________________________
 Currently we have a small developing team at https://savannah.nongnu.org/projects/stonevalley/ which includes:

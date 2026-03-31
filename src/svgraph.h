@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0201240440L00134
+ * File ID:     0901171625S0331260805L00135
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -69,7 +69,8 @@ bool       grpRemoveEdgeL          (P_GRAPH_L pgrp, size_t       vidx,   size_t 
 P_GRAPH_L  grpCopyL                (P_GRAPH_L pgrp);
 int        grpDFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t       param);
 int        grpBFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t       param);
-P_ARRAY_Z  grpShortestPathL        (P_GRAPH_L pgrp, size_t       vidx);
+P_ARRAY_Z  grpShortestPathFastL    (P_GRAPH_L pgrp, size_t       vidx);
+P_LIST_D   grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t       vids,   size_t       vide);
 bool       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
 P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
 

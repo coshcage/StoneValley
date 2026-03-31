@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0710250553L01452
+ * File ID:     0905171125M0331260805L01701
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -42,6 +42,13 @@ typedef struct _st_DATINF {
 	size_t       bedge; /* true for edges; false for vertices. */
 } _DATINF, * _P_DATINF;
 
+/* Shortest path trajectory record. */
+typedef struct _st_SPTREC {
+	size_t vid;  /* Vertex ID. */
+	size_t dist; /* Distance. */
+	size_t pvid; /* Previous vertex ID. */
+} _SPTREC, * _P_SPTREC;
+
 /* Edge record for generating minimal spanning tree. */
 typedef struct _st_EDGEREC {
 	size_t weight;  /* Weight of this edge. */
@@ -49,7 +56,7 @@ typedef struct _st_EDGEREC {
 	size_t flag;    /* Values flag true or false to determine whether this edge is valid or not. */
 } _EDGEREC, * _P_EDGEREC;
 
-/* File level function declarations here. */
+/* File level function declarations go here. */
 extern int _strCBFNodesCounter                (void * pitem, size_t param);
 int        _grpCBFCompareInteger              (const void * px, const void * py);
 P_VERTEX_L _grpGetVertexByID                  (P_GRAPH_L pgrp, size_t vid);
@@ -71,6 +78,10 @@ int        _grpCBFSPLFillVertices             (void * pitem, size_t param);
 int        _grpCBFSPLInitVtxrecArray          (void * pitem, size_t param);
 bool       _grpSPLInitArray                   (P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd);
 int        _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param);
+int        _grpCBFDijkstraFillVb              (void * pitem, size_t param);
+int        _grpCBFCompareRecordDistance       (const void * px, const void * py);
+int        _grpCBFDijkstraFindEdgesToVbPuppet (void * pitem, size_t param);
+int        _grpCBFDijkstraFindEdgesToVb       (void * pitem, size_t param);
 int        _grpCBFMSTInsertEdges              (void * pitem, size_t param);
 int        _grpCBFMSTScanVertices             (void * pitem, size_t param);
 /* Function declarations for embedded disjoint set structure. */
@@ -917,7 +928,7 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFSPLTraverseVertexEdgesPuppet
- * Description:   This function is used to cooperate with function grpShortestPathL to relaxation.
+ * Description:   This function is used to cooperate with function grpShortestPathL to relax.
  * Parameters:
  *      pitem Pointer to a EDGE structure of a vertex.
  *      param Pointer to a size_t[4] array of which
@@ -964,7 +975,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 	return CBF_TERMINATE;
 }
 
-/* Function name: grpShortestPathL
+/* Function name: grpShortestPathFastL
  * Description:   Solve the shortest path of a graph from starting by Shortest Path Faster algorithm.
  * Parameters:
  *       pgrp Pointer to a graph.
@@ -975,7 +986,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           Users may use function strDeleteArrayZ to deallocate grpShortestPathL returned arrays.
  */
-P_ARRAY_Z grpShortestPathL(P_GRAPH_L pgrp, size_t vidx)
+P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 {
 	QUEUE_L q;
 	P_ARRAY_Z parrd;
@@ -1031,6 +1042,244 @@ Lbl_Finish:
 		strDeleteArrayZ(parrq);
 	queFreeL(&q);
 	return parrd;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFDijkstraFillVb
+ * Description:   This function is used to fill set Vb of function grpDijkstraShortestPathL.
+ * Parameters:
+ *      pitem Pointer to each VERTEX_L structure in a graph tree set.
+ *      param Pointer to a size_t[5] array of which:
+ *            a[0] Stores a pointer to a graph.
+ *            a[1] Stores the pointer to set Vb.
+ *            a[2] (Not used by this function) Stores the pointer of a heap.
+ *            a[3] (Not used by this function) Stores the pointer to set Va.
+ *            a[4] (Not used by this function) Stores the previous vid of a size_t integer.
+ * Return value:  If filling succeeded, function would return CBF_CONTINUE,
+ *                CBF_TERMINATE would return if filling failed.
+ */
+int _grpCBFDijkstraFillVb(void * pitem, size_t param)
+{
+	if (((P_VERTEX_L)pitem)->vid != 0[(size_t *)param])
+	{
+		if (! setInsertT((P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger))
+			return CBF_TERMINATE;
+	}
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFCompareRecordDistance
+ * Description:   This function is used to cooperate with function treInsertHeapA of
+ *                function _grpCBFDijkstraFindEdgesToVbPuppet and
+ *                function treRemoveHeapA of function grpDijkstraShortestPathL to compare distances.
+ * Parameters:
+ *         px Pointer to a _SPTREC structure of a heap.
+ *         py Pointer to another _SPTREC structure of a heap.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ */
+int _grpCBFCompareRecordDistance(const void * px, const void * py)
+{
+	return _grpCBFCompareInteger(&((_P_SPTREC)px)->dist, &((_P_SPTREC)py)->dist);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFDijkstraFindEdgesToVbPuppet
+ * Description:   This function is used to cooperate with function _grpCBFDijkstraFindEdgesToVb to find edges between set Va and Vb.
+ * Parameters:
+ *      pitem Pointer to a EDGE structure of a single linked list of each vertex in a graph.
+ *      param Pointer to a size_t[5] array of which:
+ *            a[0] (Not used by this function) Stores a pointer to a graph.
+ *            a[1] Stores the pointer to set Vb.
+ *            a[2] Stores the pointer of a heap.
+ *            a[3] Stores the pointer to set Va.
+ *            a[4] Stores the previous vid of a size_t integer.
+ * Return value:  If finding succeeded, function would return CBF_CONTINUE,
+ *                CBF_TERMINATE would return if finding failed.
+ */
+int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
+{
+	REGISTER P_EDGE pedg = (P_EDGE)pitem;
+	
+	if (setIsMemberT((P_SET_T)1[(size_t *)param], &pedg->vid, _grpCBFCompareInteger))
+	{
+		REGISTER P_BSTNODE pnode = treBSTFindData_R((P_BSTNODE)*(P_SET_T)3[(size_t *)param], &4[(size_t *)param], _grpCBFCompareInteger);
+		
+		_SPTREC rec, t;
+		
+		rec.vid  = pedg->vid;
+		
+		if (NULL != pnode)
+			rec.dist = pedg->weight + ((_P_SPTREC)pnode->knot.pdata)->dist;
+		else
+			return CBF_TERMINATE;
+		
+		rec.pvid = 4[(size_t *)param];
+		
+		treInsertHeapA((P_HEAP_A)2[(size_t *)param], &rec, &t, sizeof(_SPTREC), _grpCBFCompareRecordDistance, false);
+	}
+	
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFDijkstraFindEdgesToVb
+ * Description:   This function is used to find edges between set Va and Vb of function grpDijkstraShortestPathL.
+ * Parameters:
+ *      pitem Pointer to a TNODE_BY structure of a SET_T or say GRAPH_L.
+ *      param Pointer to a size_t[5] array of which:
+ *            a[0] Stores a pointer to a graph.
+ *            a[1] Stores the pointer to set Vb.
+ *            a[2] Stores the pointer of a heap.
+ *            a[3] Stores the pointer to set Va.
+ *            a[4] Stores the previous vid of a size_t integer.
+ * Return value:  If finding succeeded, function would return CBF_CONTINUE,
+ *                CBF_TERMINATE would return if finding failed.
+ */
+int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
+{
+	REGISTER P_VERTEX_L pvtx = (P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata;
+	4[(size_t *)param] = pvtx->vid;
+	return grpTraverseVertexEdgesL((P_GRAPH_L)0[(size_t *)param], pvtx->vid, _grpCBFDijkstraFindEdgesToVbPuppet, param);
+}
+
+/* Function name: grpShortestPathL
+ * Description:   Solve the shortest path of a graph from starting to end by Dijkstra algorithm.
+ * Parameters:
+ *       pgrp Pointer to a graph.
+ *       vids Starting vertex ID that you want to start searching.
+ *       vide End vertex ID.
+ * Return value:  Pointer of a doubly linked list that contains each vertex and distance from vids to that vide.
+ *                Each element of the returned doubly linked list is a VTXREC structure.
+ *                If function returned NULL, it should either indicate searching failure or vids could not reach at vide.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           Tips of use:
+ *                //#include <stdio.h>
+ *                //#include "svgraph.h"
+ *                //
+ *                //int cbftvsprint(void * pitem, size_t param) {
+ *                //	P_VTXREC p = (P_VTXREC)((P_NODE_D)pitem)->pdata;
+ *                //	DWC4100(param);
+ *                //	printf("vid = %zd, dist = %zd\n", p->vid, p->dist);
+ *                //	return CBF_CONTINUE;
+ *                //}
+ *                //
+ *                //P_GRAPH_L p = grpCreateL();
+ *                //P_LIST_D pl;
+ *                //pl = grpDijkstraShortestPathL(p, vids, vide);
+ *                //strTraverseLinkedListDC_N(*pl, NULL, cbftvsprint, 0, false);
+ *                //strDeleteLinkedListDC(pl, false);
+ *                //grpDeleteL(p);
+ */
+P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
+{
+	P_LIST_D prl = strCreateLinkedListDC();
+	_SPTREC  rec, t;
+	SET_T    va, vb;
+	size_t   a[5];
+	VTXREC   vr;
+	HEAP_A   h;
+	
+	setInitT(&va);
+	setInitT(&vb);
+	treInitHeapA(&h, grpVerticesCountL(pgrp), sizeof(_SPTREC));
+
+	/* Insert all vertices' vids into Vb except vid start. */
+	a[0] = vids;
+	a[1] = (size_t)&vb;
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a))
+	{
+		/* Allocation failure. Cleanup.*/
+		strDeleteLinkedListDC(prl, false);
+		prl = NULL;
+		goto Lbl_Cleanup;
+	}
+
+	rec.vid  = vids;
+	rec.dist = 0;
+	rec.pvid = vids;
+	
+	a[0] = (size_t)pgrp;
+	a[2] = (size_t)&h;
+	a[3] = (size_t)&va;
+	
+	do
+	{
+		treMakeEmptyHeapA(&h);
+
+		setInsertT(&va, &rec, sizeof(_SPTREC), _grpCBFCompareInteger);
+		
+		if (CBF_CONTINUE != setTraverseTDispatch(&va, _grpCBFDijkstraFindEdgesToVb, (size_t)a, treMorrisTraverseBYIn))
+		{
+			/* Set Va corrupted. */
+			strDeleteLinkedListDC(prl, false);
+			prl = NULL;
+			goto Lbl_Cleanup;
+		}
+		
+		if (! treIsEmptyHeapA(&h))
+			treRemoveHeapA(&rec, &t, sizeof(_SPTREC), &h, _grpCBFCompareRecordDistance, false);
+		else
+		{
+			/* Isolated graph. */
+			strDeleteLinkedListDC(prl, false);
+			prl = NULL;
+			goto Lbl_Cleanup;
+		}
+		
+		if (rec.vid == vide) /* Found end vertex. */
+			break;
+		
+		/* Remove e.vid from Vb. */
+		setRemoveT(&vb, &rec.vid, sizeof(size_t), _grpCBFCompareInteger);
+	}
+	while (! setIsEmptyT(&vb));
+	
+	vr.vid  = rec.vid;
+	vr.dist = rec.dist;
+
+	*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), true);
+	
+	if (rec.vid == vide) /* Exit normally. */
+	{
+		size_t pvid = rec.pvid;
+		
+		do
+		{
+			REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
+			
+			if (NULL != pbstn)
+			{
+				pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
+				vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
+				vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
+				
+				*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
+			}
+		}
+		while (pvid != vids);
+
+		vr.vid  = pvid;
+		vr.dist = 0;
+		*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
+	}
+	else
+	{
+		if (0 != grpOutdegreeVertexL(pgrp, vids))
+		{
+			/* Can not reach at end vertex. */
+			strDeleteLinkedListDC(prl, false);
+			prl = NULL;
+			goto Lbl_Cleanup;
+		}
+	}
+	
+Lbl_Cleanup:
+	setFreeT(&va);
+	setFreeT(&vb);
+	treFreeHeapA(&h);
+	return prl;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0512251300L00170
+ * File ID:     0901171620T0331260805L00171
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -39,14 +39,14 @@ P_SET_H  setCreateH_O           (size_t  buckets);
 void     setDeleteH_O           (P_SET_H pset);
 size_t   setSizeH_O             (P_SET_H pset);
 bool     setIsEmptyH_O          (P_SET_H pset);
-bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
-bool     setIsSubsetH           (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-bool     setIsEqualH            (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-bool     setInsertH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
-bool     setRemoveH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t      size);
-P_SET_H  setCreateUnionH        (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-P_SET_H  setCreateIntersectionH (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
-P_SET_H  setCreateDifferenceH   (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t      size);
+bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
+bool     setIsSubsetH           (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
+bool     setIsEqualH            (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
+bool     setInsertH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
+bool     setRemoveH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
+P_SET_H  setCreateUnionH        (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
+P_SET_H  setCreateIntersectionH (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
+P_SET_H  setCreateDifferenceH   (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
 /* Functions for BST style sets. */
 void     setInitT_O             (P_SET_T pset);
 void     setFreeT_O             (P_SET_T pset);
@@ -58,12 +58,13 @@ bool     setIsEmptyT_O          (P_SET_T pset);
 bool     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
 bool     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
 bool     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-bool     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
-bool     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE cbfcmp);
-P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
-P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
-P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE cbfcmp);
-int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t      param,  TvsMtd      tm);
+bool     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE         cbfcmp);
+bool     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
+int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t      param,  TvsMtd              tm);
+int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t      param,  CBF_TRAVERSE_BYTREE cbftvsbyt);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svset.c. */

@@ -2,7 +2,7 @@
  * Name:        svdef.c
  * Description: Common definitions.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306171808Z03280848L00098
+ * File ID:     0306171808Z0331260805L00099
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -28,7 +28,7 @@
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.2.3.0"
+#define SV_LIB_VER "1.2.3.4"
 
 /* Callback function returning values. */
 #define CBF_TERMINATE true
@@ -80,11 +80,12 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 /* Register qualifier. */
 #define REGISTER register
 
-/* A macro that is used to align size to the multiply of sizeof(size_t).
+/* A macro that is used to align size to the multiply of sizeof(size_t)
+ * with a little bit alteration to prevent Visual C 19.0 compiler to trigger C4146 error.
  * Users may watch this technique on the book Hacker's Delight written by Henry S. Warren.
  * With ISBN 0-201-91465-4. Chapter 3-1.
  */
-#define ALIGN_SIZET(size) (((size) + sizeof(size_t) - 1) & -sizeof(size_t))
+#define ALIGN_SIZET(size) (((size) + sizeof(size_t) - 1) & -(ptrdiff_t)sizeof(size_t))
 
 /* Macros for library optimization. */
 #define SV_OPT_DISABLED (0x00)

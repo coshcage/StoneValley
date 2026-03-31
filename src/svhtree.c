@@ -2,7 +2,7 @@
  * Name:        svhtree.c
  * Description: Heap tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737E0130211518L00247
+ * File ID:     0809171737E0331260805L00262
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -111,13 +111,26 @@ bool treIsFullHeapA_O(P_HEAP_A pheap)
 	return pheap->irear == strLevelArrayZ(&pheap->hdarr);
 }
 
+/* Function name: treMakeEmptyHeapA_O
+ * Description:   Forcibly clear a heap.
+ * Parameter:
+ *     pheap Pointer to the heap you want to clear.
+ * Return value:  N/A.
+ * Caution:       This function would not free the buffer array of a heap.
+ * Tip:           A macro version of this function named treMakeEmptyHeapA_M is available.
+ */
+void treMakeEmptyHeapA_O(P_HEAP_A pheap)
+{
+	pheap->irear = 0;
+}
+
 /* Function name: treInsertHeapA
  * Description:   Insert an element into an array implemented heap.
  * Parameters:
  *      pheap Pointer to the heap you want to operate with.
  *      pitem Pointer to an element you wanna insert into the heap.
  *      ptemp Pointer to a buffer that is used to swap data.
- *            The length of this buffer shall equal to parameter size.
+ *            The length of this buffer shall equal to item size.
  *       size Size of element.
  *     cbfcmp Pointer to a CBF_COMPARE callback function.
  *            Two parameters of this callback function may point to any element in the heap.
@@ -161,8 +174,9 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
  * Description:   Remove an element from an array implemented heap.
  * Parameters:
  *      pitem Pointer to an element you wanna remove.
+ *            If pitem equaled to NULL, this function would drop the polarized(maximum or minimum) item directly.
  *      ptemp Pointer to a buffer that is used to swap data.
- *            The length of this buffer shall equal to parameter size.
+ *            The length of this buffer shall equal to item size.
  *       size Size of element.
  *      pheap Pointer to the heap you want to operate with.
  *     cbfcmp Pointer a CBF_COMPARE callback function.
@@ -183,7 +197,8 @@ void treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
 	REGISTER size_t i, t, l, m, n;
 	REGISTER int r;
 	/* Remove the biggest one. */
-	memcpy(pitem, pheap->hdarr.pdata, size);
+	if (NULL != pitem)
+		memcpy(pitem, pheap->hdarr.pdata, size);
 	/* Put the last element onto the head of array and decrease the real size of the array. */
 	memcpy(pheap->hdarr.pdata, pheap->hdarr.pdata + (--pheap->irear) * size, size);
 	/* Heapify. */

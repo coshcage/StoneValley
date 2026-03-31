@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V1216251951L00501
+ * File ID:     0809171737V0331260805L00514
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -81,13 +81,18 @@ typedef P_NODE_D * P_BPT;
 
 /* An enumeration for tree traversal methods. */
 typedef enum en_TvsMtd {
-	ETM_PREORDER     = 001, /* Pre-order. */
-	ETM_INORDER      = 002, /* In-order. */
-	ETM_POSTORDER    = 004, /* Post-order. */
+	ETM_PREORDER        = 001, /* Pre-order. */
+	ETM_INORDER         = 002, /* In-order. */
+	ETM_POSTORDER       = 004, /* Post-order. */
 	/* ETM_DEPTHFIRST = ETM_PREORDER + ETM_INORDER + ETM_POSTORDER, */
-	ETM_LEVELORDER   = 010  /* Breadth first. */
+	ETM_LEVELORDER      = 010, /* Breadth first. */
 	/* ETM_BREADTHFIRST = ETM_LEVELORDER */
+	ETM_PREORDER_MORRIS = 020,
+	ETM_INORDER_MORRIS  = 022
 } TvsMtd;
+
+/* Binary tree traversal callback function type definition. This type is used by set facilities. */
+typedef int (* CBF_TRAVERSE_BYTREE) (P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param);
 
 /* This structure describes a symbol of Huffman coding trees. */
 typedef struct st_HFM_SYMBOL {
@@ -149,6 +154,7 @@ P_HEAP_A        treCreateHeapA         (size_t          num,      size_t       s
 void            treDeleteHeapA         (P_HEAP_A        pheap);
 bool            treIsEmptyHeapA_O      (P_HEAP_A        pheap);
 bool            treIsFullHeapA_O       (P_HEAP_A        pheap);
+void            treMakeEmptyHeapA_O    (P_HEAP_A        pheap);
 void            treInsertHeapA         (P_HEAP_A        pheap,    const void * pitem,  void *       ptemp,   size_t       size,  CBF_COMPARE cbfcmp, bool        bmax);
 void            treRemoveHeapA         (void *          pitem,    void *       ptemp,  size_t       size,    P_HEAP_A     pheap, CBF_COMPARE cbfcmp, bool        bmax);
 bool            trePeepHeapA           (void *          pitem,    size_t       size,   P_HEAP_A     pheap);
@@ -223,6 +229,9 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 /* Functions in svhtree.c. */
 #define treIsEmptyHeapA_M(pheap_M) (!(pheap_M)->irear)
 #define treIsFullHeapA_M(pheap_M) ((pheap_M)->irear == (pheap_M)->hdarr.num)
+#define treMakeEmptyHeapA_M(pheap_M) do { \
+	(pheap_M)->irear = 0; \
+} while (0)
 /* Functions in svstree.c. */
 #define treFreeBSTNode_M(pnode_M) do { \
 	strFreeNodeD(&(pnode_M)->knot); \
@@ -287,6 +296,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	/* Functions in svhtree.c. */
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
+	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_R
 	#define treFreeBSTNode       treFreeBSTNode_O
@@ -317,6 +327,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	/* Functions in svhtree.c. */
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
+	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_A
 	#define treFreeBSTNode       treFreeBSTNode_M
@@ -346,6 +357,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	/* Functions in svhtree.c. */
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
+	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_A
 	#define treFreeBSTNode       treFreeBSTNode_O
@@ -375,6 +387,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	/* Functions in svhtree.c. */
 	#define treIsEmptyHeapA      treIsEmptyHeapA_O
 	#define treIsFullHeapA       treIsFullHeapA_O
+	#define treMakeEmptyHeapA    treMakeEmptyHeapA_O
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_R
 	#define treFreeBSTNode       treFreeBSTNode_O

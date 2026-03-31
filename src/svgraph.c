@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0331261000L01717
+ * File ID:     0905171125M0331261015L01724
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1062,8 +1062,19 @@ int _grpCBFDijkstraFillVb(void * pitem, size_t param)
 {
 	if (((P_VERTEX_L)pitem)->vid != 0[(size_t *)param])
 	{
-		//if (! setInsertT((P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger))
-		if (NULL == (*(P_SET_T)1[(size_t *)param] = _setInsertBST(*(P_SET_T)1[(size_t *)param], &((P_VERTEX_L)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger)))
+		if
+		(
+			NULL == 
+			(
+				*(P_SET_T)1[(size_t *)param] = _setInsertBST
+				(
+					*(P_SET_T)1[(size_t *)param],
+					&((P_VERTEX_L)pitem)->vid,
+					sizeof(size_t),
+					_grpCBFCompareInteger
+				)
+			)
+		)
 			return CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
@@ -1256,25 +1267,21 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	{
 		size_t pvid = rec.pvid;
 		
-		if (pvid != vids)
+		/* Back trace the shortest path. */
+		while (pvid != vids)
 		{
-			/* Back trace the shortest path. */
-			do
+			REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
+			
+			if (NULL != pbstn)
 			{
-				REGISTER P_BSTNODE pbstn = treBSTFindData_X(va, &pvid, _grpCBFCompareInteger);
+				pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
+				vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
+				vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
 				
-				if (NULL != pbstn)
-				{
-					pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
-					vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
-					vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
-					
-					*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
-				}
+				*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 			}
-			while (pvid != vids);
 		}
-
+		
 		vr.vid  = pvid;
 		vr.dist = 0;
 		/* Insert the beginning vide into the returning doubly linked list. */

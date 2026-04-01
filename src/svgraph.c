@@ -1152,7 +1152,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
 	return grpTraverseVertexEdgesL((P_GRAPH_L)0[(size_t *)param], pvtx->vid, _grpCBFDijkstraFindEdgesToVbPuppet, param);
 }
 
-/* Function name: grpShortestPathL
+/* Function name: grpDijkstraShortestPathL
  * Description:   Solve the shortest path of a graph from starting to end by Dijkstra algorithm.
  * Parameters:
  *       pgrp Pointer to a graph.

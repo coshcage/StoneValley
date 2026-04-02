@@ -620,7 +620,7 @@ Lbl_End_Combination:
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
- * Tips:          This function uses Fisher-Yates algorithm.
+ * Tip:           This function uses Fisher-Yates algorithm.
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int seed)
 {
@@ -651,7 +651,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int s
  *                    it would either indicate allocation failure or callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
- * Tips:          Users may reference to the following codes:
+ * Tip:           Users may reference to the following codes:
  *                // int cbftvs(void * pitem, size_t param) {
  *                //     DWC4100(param);
  *                //     wprintf(L"%ls\n", pitem);
@@ -804,7 +804,7 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
  *                    it would either indicate allocation failure or callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
- * Tips:          Z algorithm references to geeksforgeeks.org.
+ * Tip:           Z algorithm references to geeksforgeeks.org.
  *                Users may reference to the following codes:
  *                // int cbftvs(void * pitem, size_t param) {
  *                //     size_t i;

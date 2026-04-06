@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0331261015L01724
+ * File ID:     0905171125M0331261015L01726
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1184,8 +1184,10 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                //P_GRAPH_L p = grpCreateL();
  *                //P_LIST_D pl;
  *                //pl = grpDijkstraShortestPathL(p, vids, vide);
+ *                //if (pl) {
  *                //strTraverseLinkedListDC_N(*pl, NULL, cbftvsprint, 0, false);
  *                //strDeleteLinkedListDC(pl, false);
+ *                //}
  *                //grpDeleteL(p);
  */
 P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
@@ -1606,7 +1608,7 @@ int _grpCBFTSInitQ(void * pitem, size_t param)
 #define indegree dist
 	if (0 == ((P_VTXREC)pitem)->indegree)
 	{
-		REGISTER P_QUEUE_L pq = (P_QUEUE_L)1[(size_t *)param];
+		REGISTER P_QUEUE_L pq   = (P_QUEUE_L)1[(size_t *)param];
 		REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
 		/* Insert vertex ID into the queue. */
 		queInsertL(pq, &(((P_VTXREC)pitem)->vid), sizeof(size_t));
@@ -1633,7 +1635,7 @@ int _grpCBFTSInitQ(void * pitem, size_t param)
 int _grpCBFTSReduceIndegree(void * pitem, size_t param)
 {
 #define indegree dist
-	REGISTER P_QUEUE_L pq = (P_QUEUE_L)1[(size_t *)param];
+	REGISTER P_QUEUE_L pq  = (P_QUEUE_L)1[(size_t *)param];
 	REGISTER P_VTXREC prec = (P_VTXREC)strBinarySearchArrayZ
 	(
 		(P_ARRAY_Z)0[(size_t *)param],

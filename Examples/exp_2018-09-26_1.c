@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include "svstring.h"
 
-#define LIST1_LEN (10) // Length of single pointer linked list.
-#define LIST2_LEN (20) // Length of double pointer linked list.
+#define LIST1_LEN 10 // Length of single pointer linked list.
+#define LIST2_LEN 20 // Length of double pointer linked list.
 
 // Function: cbftvs_print
 // Desc:     Print list contents.

@@ -29,8 +29,8 @@
 #include "svqueue.h"
 #include "svtree.h"
 
-#define BUF_SIZ (100)
-#define OPR_MAX (8)
+#define BUF_SIZ 100
+#define OPR_MAX 8
 
 /* A structure describes operators. */
 typedef struct st_Operator {

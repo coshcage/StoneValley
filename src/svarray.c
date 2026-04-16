@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0416261710L00860
+ * File ID:     0306170948B0416261730L00860
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -22,7 +22,7 @@
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */
-#include <stdlib.h> /* Using function malloc, calloc, realloc, free, srand, rand. */
+#include <stdlib.h> /* Using function malloc, calloc, realloc, free. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
 

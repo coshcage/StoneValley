@@ -257,6 +257,15 @@ int CommandParser(P_MATRIX pmtx, char * pcmd)
 	return r;
 }
 
+// Function: nxtrnd
+// Desc:     Generate next random number.
+// Param:    N/A.
+// Return:   A random size_t integer.
+size_t nxtrnd(void)
+{
+	return (size_t)(rand() ^ rand()) * rand();
+}
+
 // Function: main
 // Desc:     Program entry.
 // Param:    N/A.
@@ -290,7 +299,8 @@ Lbl_Again:
 	}
 	strInitMatrix(&mtxPuzzle, t, t, sizeof(char));
 	memcpy(mtxPuzzle.arrz.pdata, pAnswer, mtxPuzzle.ln * mtxPuzzle.col);
-	strShuffleArrayZ(&mtxPuzzle.arrz, &t, sizeof(char), (unsigned int) time(NULL));
+	srand(time(NULL));
+	strShuffleArrayZ(&mtxPuzzle.arrz, &t, sizeof(char), nxtrnd);
 	PrintMatrixInMat(&mtxPuzzle);
 	do
 	{

@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B1025252335L00860
+ * File ID:     0306170948B0416261710L00860
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -614,25 +614,25 @@ Lbl_End_Combination:
  *      parrz Pointer to a sized array.
  *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
- *       seed A seed for random number generation.
- *            Function strShuffleArrayZ calls srand from C Standard Library to initialize the random seed.
+ *     nxtrnd Pointer to a random number generator function to return a size_t random integer.
+ *            Users shall implement this function by their own and manually control it's distribution.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
  * Tip:           This function uses Fisher-Yates algorithm.
  */
-void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, unsigned int seed)
+void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrnd)(void))
 {
 	REGISTER size_t i, j;
-	srand(seed);
+	
 	switch (strLevelArrayZ(parrz))
 	{
 	case 0: case 1: return; /* Why should I shuffle nothing or one thing? */
 	default:
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
 		{
-			j = rand() * rand() % (i + 1);
+			j = nxtrnd() % (i + 1);
 			svSwap(parrz->pdata + size * i, parrz->pdata + size * j, ptemp, size);
 		}
 	}

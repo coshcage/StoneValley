@@ -132,6 +132,7 @@ Logs:
 01-07-2026: After Morteza's kind help, we have a Wiki page at: https://deepwiki.com/coshcage/StoneValley/. Thank him very much! The library will be further rolling!
 28-03-2026: Library refined. Version 1.2.3.0. This is a stable version.
 03-31-2026: Library refined. Version 1.2.3.4. Add function grpDijkstraShortestPathL and so on.
+04-16-2026: Library refined. Version 1.2.3.5. Alter API strShuffleArrayZ ar svstring.h.
 _______________________________________________________________________________
 
 09-24-2018:

@@ -1,6 +1,6 @@
 /*
  * Name:        svgraph.c
- * Description: Graph.
+ * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
  * File ID:     0905171125M0420261300L02202
  * License:     LGPLv3

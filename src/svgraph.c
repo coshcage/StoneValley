@@ -1778,7 +1778,7 @@ P_GRAPH_M grpCreateM(size_t vtxc)
 /* Function name: grpDeleteM_O
  * Description:   Delete a graph of which is allocated by function grpCreateM.
  * Parameter:
- *      pgrp Pointer to the graph you want to delete.
+ *      pgrp Pointer to the graph you want to delete from memory.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function named grpDeleteM_M is available.

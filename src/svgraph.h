@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0420261001L00183
+ * File ID:     0901171625S0420261050L00183
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -79,7 +79,7 @@ P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
 /* Functions for adjacent matrix representation of graphs. */
 void *     grpInitM                (P_GRAPH_M pgrp,  size_t       vtxc);
 void       grpFreeM_O              (P_GRAPH_M pgrp);
-P_GRAPH_M  grpCreateM              (size_t vtxc);
+P_GRAPH_M  grpCreateM              (size_t    vtxc);
 void       grpDeleteM_O            (P_GRAPH_M pgrp);
 bool       grpCopyM_O              (P_GRAPH_M pdest, P_GRAPH_M    psrc);
 size_t     grpGetDimensionM_O      (P_GRAPH_M pgrp);

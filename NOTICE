@@ -133,6 +133,7 @@ Logs:
 28-03-2026: Library refined. Version 1.2.3.0. This is a stable version.
 03-31-2026: Library refined. Version 1.2.3.4. Add function grpDijkstraShortestPathL and so on.
 04-16-2026: Library refined. Version 1.2.3.5. Alter API strShuffleArrayZ ar svstring.h.
+04-20-2026: Library refined. Version 1.3.0.0.
 _______________________________________________________________________________
 
 09-24-2018:

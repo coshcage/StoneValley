@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0331260805L00135
+ * File ID:     0901171625S0420261001L00183
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -48,31 +48,49 @@ typedef struct st_VTXREC {
 /* Adjacency-list representation of graphs. */
 typedef SET_T GRAPH_L, * P_GRAPH_L;
 
+/* Adjacent matrix representation of graphs. */
+typedef MATRIX GRAPH_M, * P_GRAPH_M;
+
 /* Functions for linked-list graphs. */
-bool       grpVertexExistsL        (P_GRAPH_L pgrp, size_t       vid);
-int        grpTraverseVerticesL    (P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t       param);
-int        grpTraverseVertexEdgesL (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t       param);
+bool       grpVertexExistsL        (P_GRAPH_L pgrp,  size_t       vid);
+int        grpTraverseVerticesL    (P_GRAPH_L pgrp,  CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpTraverseVertexEdgesL (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 void       grpInitL_O              (P_GRAPH_L pgrp);
 void       grpFreeL                (P_GRAPH_L pgrp);
 P_GRAPH_L  grpCreateL_O            (void);
 void       grpDeleteL              (P_GRAPH_L pgrp);
 size_t     grpVerticesCountL_O     (P_GRAPH_L pgrp);
 size_t     grpEdgesCountL          (P_GRAPH_L pgrp);
-bool       grpAreAdjacentVerticesL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   bool         bweight, size_t weight);
-int        grpTraverseEdgesWeightL (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   CBF_TRAVERSE cbftvs,  size_t param);
-size_t     grpIndegreeVertexL      (P_GRAPH_L pgrp, size_t       vid);
-size_t     grpOutdegreeVertexL     (P_GRAPH_L pgrp, size_t       vid);
-bool       grpInsertVertexL        (P_GRAPH_L pgrp, size_t       vid);
-bool       grpInsertEdgeL          (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   size_t       weight);
-bool       grpRemoveVertexL        (P_GRAPH_L pgrp, size_t       vid);
-bool       grpRemoveEdgeL          (P_GRAPH_L pgrp, size_t       vidx,   size_t       vidy,   size_t       weight);
+bool       grpAreAdjacentVerticesL (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   bool         bweight, size_t weight);
+int        grpTraverseEdgesWeightL (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   CBF_TRAVERSE cbftvs,  size_t param);
+size_t     grpIndegreeVertexL      (P_GRAPH_L pgrp,  size_t       vid);
+size_t     grpOutdegreeVertexL     (P_GRAPH_L pgrp,  size_t       vid);
+bool       grpInsertVertexL        (P_GRAPH_L pgrp,  size_t       vid);
+bool       grpInsertEdgeL          (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   size_t       weight);
+bool       grpRemoveVertexL        (P_GRAPH_L pgrp,  size_t       vid);
+bool       grpRemoveEdgeL          (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   size_t       weight);
 P_GRAPH_L  grpCopyL                (P_GRAPH_L pgrp);
-int        grpDFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t       param);
-int        grpBFSL                 (P_GRAPH_L pgrp, size_t       vid,    CBF_TRAVERSE cbftvs, size_t       param);
-P_ARRAY_Z  grpShortestPathFastL    (P_GRAPH_L pgrp, size_t       vidx);
-P_LIST_D   grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t       vids,   size_t       vide);
+int        grpDFSL                 (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+int        grpBFSL                 (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+P_ARRAY_Z  grpShortestPathFastL    (P_GRAPH_L pgrp,  size_t       vidx);
+P_LIST_D   grpDijkstraShortestPathL(P_GRAPH_L pgrp,  size_t       vids,    size_t       vide);
 bool       grpMinimalSpanningTreeL (P_GRAPH_L pgrp);
 P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
+/* Functions for adjacent matrix representation of graphs. */
+void *     grpInitM                (P_GRAPH_M pgrp,  size_t       vtxc);
+void       grpFreeM_O              (P_GRAPH_M pgrp);
+P_GRAPH_M  grpCreateM              (size_t vtxc);
+void       grpDeleteM_O            (P_GRAPH_M pgrp);
+bool       grpCopyM_O              (P_GRAPH_M pdest, P_GRAPH_M    psrc);
+size_t     grpGetDimensionM_O      (P_GRAPH_M pgrp);
+bool       grpResizeM              (P_GRAPH_M pgrp,  size_t       vtxc);
+size_t     grpGetEdgeWeightM       (P_GRAPH_M pgrp,  size_t *     pweight, size_t       vidx,    size_t       vidy);
+bool       grpSetEdgeWeightM_O     (P_GRAPH_M pgrp,  size_t       vidx,    size_t       vidy,    size_t       weight);
+int        grpDFSM                 (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpBFSM                 (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+/* Functions for both adjacent matrix representation of graphs and adjacent list representation of graphs. */
+P_GRAPH_L  grpCreateLFromM         (P_GRAPH_M pgrpm);
+P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svgraph.c. */
@@ -80,24 +98,54 @@ P_ARRAY_Z  grpTopologicalSortL     (P_GRAPH_L pgrp);
 	treInitBST(pgrp_M); \
 } while (0)
 #define grpVerticesCountL_M(pgrp_M) (setSizeT(pgrp_M))
+/* Macros for adjacent matrix. */
+#define grpFreeM_M(pgrp_M) do { \
+	strFreeMatrix(pgrp_M); \
+} while (0)
+#define grpDeleteM_M(pgrp_M) do { \
+	strDeleteMatrix(pgrp_M); \
+} while (0)
+#define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
+#define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
+#define grpSetEdgeWeightM_M(pgrp_M, vidx_M, vidy_M, weight_M) (NULL != strSetValueMatrix((pgrp_M), (vidy_M), (vidx_M), &(weight_M), sizeof(size_t)))
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#define grpInitL          grpInitL_M
-	#define grpCreateL        treCreateBST
-	#define grpVerticesCountL grpVerticesCountL_M
+	#define grpInitL                      grpInitL_M
+	#define grpCreateL                    treCreateBST
+	#define grpVerticesCountL             grpVerticesCountL_M
+	#define grpFreeM                      grpFreeM_M
+	#define grpDeleteM                    grpDeleteM_M
+	#define grpCopyM                      grpCopyM_M
+	#define grpGetDimensionM              grpGetDimensionM_M
+	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#define grpInitL          grpInitL_M
-	#define grpCreateL        treCreateBST
-	#define grpVerticesCountL grpVerticesCountL_M
+	#define grpInitL                      grpInitL_M
+	#define grpCreateL                    treCreateBST
+	#define grpVerticesCountL             grpVerticesCountL_M
+	#define grpFreeM                      grpFreeM_M
+	#define grpDeleteM                    grpDeleteM_M
+	#define grpCopyM                      grpCopyM_M
+	#define grpGetDimensionM              grpGetDimensionM_M
+	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#define grpInitL          grpInitL_M
-	#define grpCreateL        treCreateBST
-	#define grpVerticesCountL grpVerticesCountL_M
+	#define grpInitL                      grpInitL_M
+	#define grpCreateL                    treCreateBST
+	#define grpVerticesCountL             grpVerticesCountL_M
+	#define grpFreeM                      grpFreeM_M
+	#define grpDeleteM                    grpDeleteM_M
+	#define grpCopyM                      grpCopyM_M
+	#define grpGetDimensionM              grpGetDimensionM_M
+	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #else /* Optimization has been disabled. */
-	#define grpInitL          grpInitL_O
-	#define grpCreateL        grpCreateL_O
-	#define grpVerticesCountL grpVerticesCountL_O
+	#define grpInitL                      grpInitL_O
+	#define grpCreateL                    grpCreateL_O
+	#define grpVerticesCountL             grpVerticesCountL_O
+	#define grpFreeM                      grpFreeM_O
+	#define grpDeleteM                    grpDeleteM_O
+	#define grpCopyM                      grpCopyM_O
+    #define grpGetDimensionM              grpGetDimensionM_O
+	#define grpSetEdgeWeightM             grpSetEdgeWeightM_O
 #endif
 
 #endif

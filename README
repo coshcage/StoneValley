@@ -38,11 +38,11 @@ iii Table of Contents
 	Scenario ............................................................... 47
 	Naming ................................................................. 84
 	Callbacks ............................................................. 130
-	Checklist ............................................................. 134
-	Alteration Guide ...................................................... 169
-	Limitations ........................................................... 318
-	Appendix .............................................................. 328
-	GNU Free Documentation License ........................................ 336
+	Checklist ............................................................. 135
+	Alteration Guide ...................................................... 170
+	Limitations ........................................................... 319
+	Appendix .............................................................. 329
+	GNU Free Documentation License ........................................ 337
 
 iv  Scenario
 
@@ -77,7 +77,7 @@ iv  Scenario
 
 	Set is another facility that is provided by StoneValley. Sets exert both hash tables and Binary-search-trees to manage their elements. StoneValley interfaced set in file "svset.h". Meanwhile, implementations were written in "svset.c". Users may use these functions to insert and remove elements into sets and make unions, intersections and differences between sets.
 
-	As for graphs, file "svgraph.c" schemes graph data structures whose interface is "svgraph.h". Adjacency lists that are made by single pointer nodes linked edges of vertices for a graph together rather than using a matrix to present connections of vertices. Many operations defined by functions could be used to maneuver graphs such as calculating the shortest path and generating a minimum spanning tree.
+	As for graphs, file "svgraph.c" schemes graph data structures whose interface is "svgraph.h". Adjacency lists that are made by single pointer nodes linked edges of vertices for a graph together rather than using a matrix to present connections of vertices. Adjacent matrix represented graph is also located at this space. Many operations defined by functions could be used to maneuver graphs such as calculating the shortest path and generating a minimum spanning tree.
 
 	At last, file "svmisc.c" vacates a habitat for extra algorithms and structures. Besides accomplished functions for bit-streams, vastly used algorithms like quick sort and binary search were arranged in this file to treat data in consecutive memory spaces.
 
@@ -120,6 +120,7 @@ v  The naming of library functions and types
 	|    + Open addressing hash table    :HSHTBL_A:    ditto.    |
 	|grApH_______________________________|___________<svgraph.h>_|
 	|    + Adjacency list graph          :GRAPH_L:    svgraph.c  |
+	|    + Adjacent matrix graph         :GRAPH_M:    ditto.     |
 	|____________________________________|_______________________|
 	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in the library.
 

@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0331261015L01726
+ * File ID:     0905171125M0420261001L02191
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -25,6 +25,7 @@
 #include <string.h> /* Using function memcpy. */
 #include "svgraph.h"
 #include "svqueue.h"
+#include "svstack.h"
 
 /* Finding info for edges. */
 typedef struct _st_FIEDG {
@@ -361,7 +362,7 @@ void grpInitL_O(P_GRAPH_L pgrp)
 }
 
 /* Function name: grpFreeL
- * Description:   Deallocate a graph of which is allocated by function grpInitL_O.
+ * Description:   Deallocate a graph of which is allocated by function grpInitL.
  * Parameter:
  *      pgrp Pointer to the graph you want to deallocate.
  * Return value:  N/A.
@@ -378,6 +379,7 @@ void grpFreeL(P_GRAPH_L pgrp)
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated graph.
  * Tip:           This function can be inline for better performance.
+ *                A macro version of this function called grpCreateL_M can be found.
  */
 P_GRAPH_L grpCreateL_O(void)
 {
@@ -387,9 +389,9 @@ P_GRAPH_L grpCreateL_O(void)
 /* Function name: grpDeleteL
  * Description:   Delete a graph of which is allocated by function grpCreateL.
  * Parameter:
- *      pgrp Pointer to the graph you want to allocate.
+ *      pgrp Pointer to the graph you want to deallocate.
  * Return value:  N/A.
- * Caution:       Address of ptreb Must Be Allocated first.
+ * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteBY_M is available.
  */
 void grpDeleteL(P_GRAPH_L pgrp)
@@ -1722,5 +1724,468 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	queFreeL(&q);
 	strFreeArrayZ(&arrvtx);
 	return prtn;
+}
+
+/* Code section for adjacent matrix representation of graphs. */
+/* Sectional function declarations go here. */
+int _grpCBFFillVertexMappingTable     (void * pitem, size_t param);
+int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param);
+int _grpCBFTraverseEdgesAndFillM      (void * pitem, size_t param);
+
+/* Function name: grpInitM
+ * Description:   Initialize an adjacent matrix graph.
+ * Parameters:
+ *       pgrp Pointer to the graph you want to initialize.
+ *       vtxc Number of vertices this graph contains.
+ * Return value:  The memory buffer of matrix.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
+{
+	void * pr = strInitMatrix(pgrp, vtxc, vtxc, sizeof(size_t));
+	if(NULL != pr)
+		memset(pr, 0, vtxc * vtxc * sizeof(size_t));
+	return pr;
+}
+
+/* Function name: grpFreeM_O
+ * Description:   Deallocate a graph of which is allocated by function grpInitM.
+ * Parameter:
+ *      pgrp Pointer to the graph you want to deallocate.
+ * Return value:  N/A.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           A macro version of this function called grpFreeM_M is available.
+ */
+void grpFreeM_O(P_GRAPH_M pgrp)
+{
+	strFreeMatrix(pgrp);
+}
+
+/* Function name: grpCreateM
+ * Description:   Allocate a new adjacent matrix graph dynamically.
+ * Parameter:
+ *      vtxc The number of vertices this graph contains.
+ * Return value:  Pointer to the new allocated graph.
+ */
+P_GRAPH_M grpCreateM(size_t vtxc)
+{
+	P_GRAPH_M pgrp = (P_GRAPH_M) strCreateMatrix(vtxc, vtxc, sizeof(size_t));
+	if (NULL != pgrp && NULL != pgrp->arrz.pdata)
+		memset(pgrp->arrz.pdata, 0, vtxc * vtxc * sizeof(size_t));
+	return pgrp;
+}
+
+/* Function name: grpDeleteM_O
+ * Description:   Delete a graph of which is allocated by function grpCreateM.
+ * Parameter:
+ *      pgrp Pointer to the graph you want to delete.
+ * Return value:  N/A.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           A macro version of this function named grpDeleteM_M is available.
+ */
+void grpDeleteM_O(P_GRAPH_M pgrp)
+{
+	strDeleteMatrix(pgrp);
+}
+
+/* Function name: grpCopyM_O
+ * Description:   Copy a matrix graph from source to destination.
+ * Parameters:
+ *      pdest Pointer to the destination matrix graph whose content is to be copied.
+ *       psrc Pointer to the source of the matrix graph to copy to.
+ * Return value:  If function returned false, it indicated a duplicating failure.
+ *                Otherwise, this function would return true.
+ * Caution:       Address of pdest and psrc Must Be Allocated first.
+ *                Destination memories and source memories shall not overlap.
+ * Tip:           A macro version of this function called grpCopyM_M is available.
+ */
+bool grpCopyM_O(P_GRAPH_M pdest, P_GRAPH_M psrc)
+{
+	return NULL != strCopyMatrix(pdest, psrc, sizeof(size_t));
+}
+
+/* Function name: grpGetDimensionM_O
+ * Description:   Return how many vertices there are in the graph.
+ * Parameter:
+ *      pgrp Pointer to a matrix graph.
+ * Return value:  If function returned 0, it would indicate an error.
+ *                Otherwise, this function would return the number of vertice in the matrix graph.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           A macro version of this function called grpGetDimensionM_M is available.
+ */
+size_t grpGetDimensionM_O(P_GRAPH_M pgrp)
+{
+	return pgrp->ln != pgrp->col ? 0 : pgrp->ln;
+}
+
+/* Function name: grpResizeM
+ * Description:   Resize a matrix graph and reallocate vertices weights.
+ * Parameters:
+ *       pgrp Pointer to the matrix graph.
+ *       vtxc New number of vertices to be set. This value cannot be equal to 0.
+ * Return value:  If function returned true,  it would indicate resizing succeeded.
+ *                If function returned false, it would indicate a failure.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ *                New added vertices weights will be set into 0.
+ */
+bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
+{
+	if (0 != vtxc && pgrp->ln == pgrp->col)
+	{
+		REGISTER size_t ov = grpGetDimensionM(pgrp);
+
+		if (vtxc == ov)
+			return true;
+
+		if (NULL == strResizeMatrix(pgrp, vtxc, vtxc, sizeof(size_t)))
+			return false;
+		
+		if (vtxc > ov)
+		{
+			/* Clean newly allocated spaces. */
+			REGISTER size_t i, j;
+			size_t o = 0;
+
+			for (j = 0; j < ov; ++j)
+			{
+				for (i = ov; i < vtxc; ++i)
+				{
+					strSetValueMatrix(pgrp, j, i, &o, sizeof(size_t));
+				}
+			}
+
+			for (j = ov; j < vtxc; ++j)
+			{
+				for (i = 0; i < vtxc; ++i)
+				{
+					strSetValueMatrix(pgrp, j, i, &o, sizeof(size_t));
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+/* Function name: grpGetEdgeWeightM
+ * Description:   Return the weight of Edge(x, y).
+ * Parameters:
+ *       pgrp Pointer to a matrix graph.
+ *    pweight Pointer to the size_t integer of weight to be set. This weight will be got from the matrix.
+ *            If this parameter equaled 0, this address would be omitted.
+ *       vidx Vertex ID X.
+ *       vidy Vertex ID Y.
+ * Return value:  The equivalent size_t integer of weight of Edge(x, y).
+ *                If vertex IDs were out of range, this function would return 0.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t vidy)
+{
+	REGISTER size_t * p = (size_t *) strGetValueMatrix(pweight, pgrp, vidy, vidx, sizeof(size_t));
+	if (NULL != p)
+		return *p;
+	return 0;
+}
+
+/* Function name: grpSetEdgeWeightM_O
+ * Description:   Set the weight of Edge(x, y).
+ * Parameters:
+ *       pgrp Pointer to a matrix graph.
+ *       vidx Vertex ID X.
+ *       vidy Vertex ID Y.
+ *     weight A size_t integer of weight to be set into the matrix graph.
+ * Return value:  true:  Function call succeeded.
+ *                false: Function call failed.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           A macro version of this function called grpSetEdgeWeightM_M is available.
+ */
+bool grpSetEdgeWeightM_O(P_GRAPH_M pgrp, size_t vidx, size_t vidy, size_t weight)
+{
+	return NULL != strSetValueMatrix(pgrp, vidy, vidx, &weight, sizeof(size_t));
+}
+
+/* Function name: grpDFSM
+ * Description:   Depth first search an adjacent matrix represented graph.
+ * Parameters:
+ *        pgrp Pointer to a graph.
+ *         vid Vertex ID that you want to start your searching with it.
+ *      cbftvs Pointer to a callback function.
+ *             The pitem parameter of the callback function is the current vid cast into (void *).
+ *       param Additional information for each vertex.
+ * Return value:  The same value as callback function returns.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+{
+	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col)
+	{
+		P_BITMAT pbmvist = strCreateBMap(1, pgrp->ln, false);
+		P_STACK_A pstk = stkCreateA(pgrp->ln, sizeof(size_t));
+		REGISTER size_t i;
+		size_t j;
+
+		if (NULL == pbmvist)
+		{
+			if (NULL != pstk)
+				stkDeleteA(pstk);
+			return CBF_CONTINUE;
+		}
+
+		if (NULL == pstk)
+		{
+			if (NULL != pbmvist)
+				strDeleteBMap(pbmvist);
+			return CBF_CONTINUE;
+		}
+
+		stkPushA(pstk, &vid, sizeof(size_t));
+
+		while (! stkIsEmptyA(pstk))
+		{
+			stkPopA(&vid, sizeof(size_t), pstk);
+
+			if (! strGetBitBMap(pbmvist, 0, vid))
+			{
+				if (CBF_TERMINATE == cbftvs((void *)vid, param))
+				{
+					strDeleteBMap(pbmvist);
+					stkDeleteA(pstk);
+					return CBF_TERMINATE;
+				}
+				
+				strSetBitBMap(pbmvist, 0, vid, true);
+				
+				for (i = pgrp->ln; i > 0; --i)
+				{
+					j = i - 1;
+					if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, j, vid, sizeof(size_t)))
+						stkPushA(pstk, &j, sizeof(size_t));
+				}
+			}
+		}
+
+		strDeleteBMap(pbmvist);
+		stkDeleteA(pstk);
+	}
+	return CBF_CONTINUE;
+}
+
+/* Function name: grpBFSM
+ * Description:   Breadth first search an adjacent matrix represented graph.
+ * Parameters:
+ *       pgrp Pointer to a graph.
+ *        vid Vertex ID that you want to start your searching.
+ *     cbftvs Pointer to a callback function.
+ *            The pitem parameter of the callback function is the current vid cast into (void *).
+ *      param Additional information for each vertex.
+ * Return value:  The same value as callback function returns.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+{
+	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col)
+	{
+		P_BITMAT pbmvist = strCreateBMap(1, pgrp->ln, false);
+		P_QUEUE_A pq = queCreateAC(pgrp->ln, sizeof(size_t));
+		size_t i;
+
+		if (NULL == pbmvist)
+		{
+			if (NULL != pq)
+				queDeleteAC(pq);
+			return CBF_CONTINUE;
+		}
+
+		if (NULL == pq)
+		{
+			if (NULL != pbmvist)
+				strDeleteBMap(pbmvist);
+			return CBF_CONTINUE;
+		}
+
+		queInsertAC(pq, &vid, sizeof(size_t));
+		strSetBitBMap(pbmvist, 0, vid, true);
+
+		while (! queIsInitialAC(pq))
+		{
+			queRemoveAC(&vid, sizeof(size_t), pq);
+
+			if (CBF_TERMINATE == cbftvs((void *)vid, param))
+			{
+				strDeleteBMap(pbmvist);
+				queDeleteAC(pq);
+				return CBF_TERMINATE;
+			}			
+			
+			for (i = 0; i < pgrp->ln; ++i)
+			{
+				if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, i, vid, sizeof(size_t)) && ! strGetBitBMap(pbmvist, 0, i))
+				{
+					queInsertAC(pq, &i, sizeof(size_t));
+					strSetBitBMap(pbmvist, 0, i, true);
+				}
+			}
+		}
+
+		strDeleteBMap(pbmvist);
+		queDeleteAC(pq);
+	}
+	return CBF_CONTINUE;
+}
+
+/* Function name: grpCreateLFromM
+ * Description:   Create a linked list graph by matrix graph.
+ * Parameter:
+ *     pgrpm Pointer to a matrix graph.
+ * Return value:  The equivalent linked list graph of graph pgrpm.
+ * Caution:       Address of pgrpm Must Be Allocated first.
+ */
+P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
+{
+	REGISTER size_t k;
+	if (0 == (k = grpGetDimensionM(pgrpm)))
+		return NULL;
+	else
+	{
+		P_GRAPH_L pr = grpCreateL();
+		REGISTER size_t i, j, w;
+
+		for (i = 0; i < k; ++i)
+		{
+			if (! grpInsertVertexL(pr, i))
+			{
+				grpDeleteL(pr);
+				return NULL;
+			}
+		}
+		
+		for (j = 0; j < k; ++j)
+		{
+			for (i = 0; i < k; ++i)
+			{
+				w = grpGetEdgeWeightM(pgrpm, NULL, i, j);
+				if (0 != w)
+				{
+					if (! grpInsertEdgeL(pr, i, j, w))
+					{
+						grpDeleteL(pr);
+						return NULL;
+					}
+				}
+			}
+		}
+		return pr;
+	}
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFillVertexMappingTable
+ * Description:   This function is used to fill vertex mapping table for function grpCreateMFromL.
+ * Parameters:
+ *      pitem Pointer to each P_VERTEX_L in a GRAPH_L structure.
+ *      param Pointer to a size_t[2] array whose contents are:
+ *            a[0] A size_t integer represents the array index.
+ *            a[1] Pointer to the vertex mapping table.
+ * Return value:  CBF_CONTINUE only.
+ */
+int _grpCBFFillVertexMappingTable(void * pitem, size_t param)
+{
+	*(size_t *)strLocateItemArrayZ((P_ARRAY_Z)1[(size_t *)param], sizeof(size_t), 0[(size_t *)param]++) = ((P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata)->vid;
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFTraverseEdgesAndFillMPuppet
+ * Description:   This function is used to fill the adjacent matrix for function _grpCBFTraverseEdgesAndFillM.
+ * Parameters:
+ *      pitem Pointer to each EDGE_L structure in a VERTEX_L structure.
+ *      param Pointer to a size_t[4] array whose contents are:
+ *            a[0] (Used By This Function) Pointer to a GRAPH_M who is the return value.
+ *            a[1] (Used By This Function) Pointer to the vertex mapping table.
+ *            a[2] Pointer to a GRAPH_L structure.
+ *            a[3] A size_t integer which is used to contain vid.
+ * Return value:  CBF_CONTINUE  If function call succeeded.
+ *                CBF_TERMINATE If function call failed.
+ */
+int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param)
+{
+	REGISTER size_t * p1 = strBinarySearchArrayZ((P_ARRAY_Z)1[(size_t *)param], &3[(size_t *)param], sizeof(size_t), _grpCBFCompareInteger);
+	REGISTER size_t * p2 = strBinarySearchArrayZ((P_ARRAY_Z)1[(size_t *)param], &((P_EDGE)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger);
+	
+	if (NULL == p1 || NULL == p2)
+		return CBF_TERMINATE;
+
+	grpSetEdgeWeightM
+	(
+		(P_GRAPH_M)0[(size_t *)param], 
+		(size_t)(p1 - (size_t *)((P_ARRAY_Z)1[(size_t *)param])->pdata),
+		(size_t)(p2 - (size_t *)((P_ARRAY_Z)1[(size_t *)param])->pdata),
+		((P_EDGE)pitem)->weight
+	);
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFTraverseEdgesAndFillM
+ * Description:   This function is used to fill the adjacent matrix for function grpCreateMFromL.
+ * Parameters:
+ *      pitem Pointer to each VERTEX_L in a GRAPH_L structure.
+ *      param Pointer to a size_t[4] array whose contents are:
+ *            a[0] Pointer to a GRAPH_M who is the return value.
+ *            a[1] Pointer to the vertex mapping table.
+ *            a[2] (Used By This Function) Pointer to a GRAPH_L structure.
+ *            a[3] (Used By This Function) A size_t integer which is used to contain vid.
+ * Return value:  Depends on the return value of function _grpCBFTraverseEdgesAndFillMPuppet.
+ */
+int _grpCBFTraverseEdgesAndFillM(void * pitem, size_t param)
+{
+	3[(size_t *)param] = ((P_VERTEX_L)pitem)->vid;
+	return grpTraverseVertexEdgesL((P_GRAPH_L)2[(size_t *)param], ((P_VERTEX_L)pitem)->vid, _grpCBFTraverseEdgesAndFillMPuppet, param);
+}
+
+/* Function name: grpCreateMFromL
+ * Description:   Create a matrix graph by a linked list graph.
+ * Parameter:
+ *     pgrpl Pointer to a linked list graph.
+ * Return value:  The similar(Not Equivalent) matrix graph of graph pgrpl.
+ * Caution:       Address of pgrpm Must Be Allocated first.
+ */
+P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
+{
+	REGISTER size_t k;
+	P_ARRAY_Z pmt = strCreateArrayZ(k = grpVerticesCountL(pgrpl), sizeof(size_t)); /* Vertices mapping table. */
+	P_GRAPH_M pr  = grpCreateM(k);
+	size_t a[4];
+
+	if (NULL == pr)
+	{
+		if (NULL != pmt)
+			strDeleteArrayZ(pmt);
+		return NULL;
+	}
+
+	if (NULL == pmt)
+	{
+		if (NULL != pr)
+			grpDeleteM(pr);
+		return NULL;
+	}
+
+	a[0] = 0;
+	a[1] = (size_t)pmt;
+
+	setTraverseTDispatch(pgrpl, _grpCBFFillVertexMappingTable, (size_t)a, treMorrisTraverseBYIn);
+
+	a[0] = (size_t)pr;
+	a[2] = (size_t)pgrpl;
+	if (CBF_TERMINATE == grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a))
+	{
+		strDeleteArrayZ(pmt);
+		grpDeleteM(pr);
+		return NULL;
+	}
+
+	strDeleteArrayZ(pmt);
+	return pr;
 }
 

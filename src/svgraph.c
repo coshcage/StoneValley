@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graph.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0420261001L02191
+ * File ID:     0905171125M0420261300L02202
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1868,27 +1868,27 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 }
 
 /* Function name: grpGetEdgeWeightM
- * Description:   Return the weight of Edge(x, y).
+ * Description:   Return the weight of edge(x, y).
  * Parameters:
  *       pgrp Pointer to a matrix graph.
  *    pweight Pointer to the size_t integer of weight to be set. This weight will be got from the matrix.
  *            If this parameter equaled 0, this address would be omitted.
  *       vidx Vertex ID X.
  *       vidy Vertex ID Y.
- * Return value:  The equivalent size_t integer of weight of Edge(x, y).
+ * Return value:  The equivalent size_t integer of weight of edge(x, y).
  *                If vertex IDs were out of range, this function would return 0.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t vidy)
 {
-	REGISTER size_t * p = (size_t *) strGetValueMatrix(pweight, pgrp, vidy, vidx, sizeof(size_t));
+	REGISTER size_t * p = (size_t *) strGetValueMatrix(pweight, pgrp, vidx, vidy, sizeof(size_t));
 	if (NULL != p)
 		return *p;
 	return 0;
 }
 
 /* Function name: grpSetEdgeWeightM_O
- * Description:   Set the weight of Edge(x, y).
+ * Description:   Set the weight of edge(x, y).
  * Parameters:
  *       pgrp Pointer to a matrix graph.
  *       vidx Vertex ID X.
@@ -1897,11 +1897,10 @@ size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t v
  * Return value:  true:  Function call succeeded.
  *                false: Function call failed.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           A macro version of this function called grpSetEdgeWeightM_M is available.
  */
-bool grpSetEdgeWeightM_O(P_GRAPH_M pgrp, size_t vidx, size_t vidy, size_t weight)
+bool grpSetEdgeWeightM(P_GRAPH_M pgrp, size_t vidx, size_t vidy, size_t weight)
 {
-	return NULL != strSetValueMatrix(pgrp, vidy, vidx, &weight, sizeof(size_t));
+	return NULL != strSetValueMatrix(pgrp, vidx, vidy, &weight, sizeof(size_t));
 }
 
 /* Function name: grpDFSM
@@ -1958,7 +1957,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 				for (i = pgrp->ln; i > 0; --i)
 				{
 					j = i - 1;
-					if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, j, vid, sizeof(size_t)))
+					if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, vid, j, sizeof(size_t)))
 						stkPushA(pstk, &j, sizeof(size_t));
 				}
 			}
@@ -2019,7 +2018,7 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 			
 			for (i = 0; i < pgrp->ln; ++i)
 			{
-				if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, i, vid, sizeof(size_t)) && ! strGetBitBMap(pbmvist, 0, i))
+				if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, vid, i, sizeof(size_t)) && ! strGetBitBMap(pbmvist, 0, i))
 				{
 					queInsertAC(pq, &i, sizeof(size_t));
 					strSetBitBMap(pbmvist, 0, i, true);
@@ -2109,8 +2108,20 @@ int _grpCBFFillVertexMappingTable(void * pitem, size_t param)
  */
 int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param)
 {
-	REGISTER size_t * p1 = strBinarySearchArrayZ((P_ARRAY_Z)1[(size_t *)param], &3[(size_t *)param], sizeof(size_t), _grpCBFCompareInteger);
-	REGISTER size_t * p2 = strBinarySearchArrayZ((P_ARRAY_Z)1[(size_t *)param], &((P_EDGE)pitem)->vid, sizeof(size_t), _grpCBFCompareInteger);
+	REGISTER size_t * p1 = strBinarySearchArrayZ
+	(
+		(P_ARRAY_Z)1[(size_t *)param],
+		&3[(size_t *)param],
+		sizeof(size_t),
+		_grpCBFCompareInteger
+	);
+	REGISTER size_t * p2 = strBinarySearchArrayZ
+	(
+		(P_ARRAY_Z)1[(size_t *)param],
+		&((P_EDGE)pitem)->vid,
+		sizeof(size_t),
+		_grpCBFCompareInteger
+	);
 	
 	if (NULL == p1 || NULL == p2)
 		return CBF_TERMINATE;

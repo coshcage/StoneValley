@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0420261050L00183
+ * File ID:     0901171625S0420261300L00178
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -85,7 +85,7 @@ bool       grpCopyM_O              (P_GRAPH_M pdest, P_GRAPH_M    psrc);
 size_t     grpGetDimensionM_O      (P_GRAPH_M pgrp);
 bool       grpResizeM              (P_GRAPH_M pgrp,  size_t       vtxc);
 size_t     grpGetEdgeWeightM       (P_GRAPH_M pgrp,  size_t *     pweight, size_t       vidx,    size_t       vidy);
-bool       grpSetEdgeWeightM_O     (P_GRAPH_M pgrp,  size_t       vidx,    size_t       vidy,    size_t       weight);
+bool       grpSetEdgeWeightM       (P_GRAPH_M pgrp,  size_t       vidx,    size_t       vidy,    size_t       weight);
 int        grpDFSM                 (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
 int        grpBFSM                 (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
 /* Functions for both adjacent matrix representation of graphs and adjacent list representation of graphs. */
@@ -107,7 +107,6 @@ P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 } while (0)
 #define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
 #define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
-#define grpSetEdgeWeightM_M(pgrp_M, vidx_M, vidy_M, weight_M) (NULL != strSetValueMatrix((pgrp_M), (vidy_M), (vidx_M), &(weight_M), sizeof(size_t)))
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
@@ -118,7 +117,6 @@ P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
-	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	#define grpInitL                      grpInitL_M
 	#define grpCreateL                    treCreateBST
@@ -127,7 +125,6 @@ P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
-	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	#define grpInitL                      grpInitL_M
 	#define grpCreateL                    treCreateBST
@@ -136,7 +133,6 @@ P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
-	#define grpSetEdgeWeightM             grpSetEdgeWeightM_M
 #else /* Optimization has been disabled. */
 	#define grpInitL                      grpInitL_O
 	#define grpCreateL                    grpCreateL_O
@@ -145,7 +141,6 @@ P_GRAPH_M  grpCreateMFromL         (P_GRAPH_L pgrpl);
 	#define grpDeleteM                    grpDeleteM_O
 	#define grpCopyM                      grpCopyM_O
     #define grpGetDimensionM              grpGetDimensionM_O
-	#define grpSetEdgeWeightM             grpSetEdgeWeightM_O
 #endif
 
 #endif

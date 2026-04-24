@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0420261300L02202
+ * File ID:     0905171125M0424261115L02202
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1846,19 +1846,19 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 			REGISTER size_t i, j;
 			size_t o = 0;
 
-			for (j = 0; j < ov; ++j)
+			for (i = 0; i < ov; ++i)
 			{
-				for (i = ov; i < vtxc; ++i)
+				for (j = ov; j < vtxc; ++j)
 				{
-					strSetValueMatrix(pgrp, j, i, &o, sizeof(size_t));
+					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
 				}
 			}
 
-			for (j = ov; j < vtxc; ++j)
+			for (i = ov; i < vtxc; ++i)
 			{
-				for (i = 0; i < vtxc; ++i)
+				for (j = 0; j < vtxc; ++j)
 				{
-					strSetValueMatrix(pgrp, j, i, &o, sizeof(size_t));
+					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
 				}
 			}
 		}
@@ -2058,9 +2058,9 @@ P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
 			}
 		}
 		
-		for (j = 0; j < k; ++j)
+		for (i = 0; i < k; ++i)
 		{
-			for (i = 0; i < k; ++i)
+			for (j = 0; j < k; ++j)
 			{
 				w = grpGetEdgeWeightM(pgrpm, NULL, i, j);
 				if (0 != w)

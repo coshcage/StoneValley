@@ -120,7 +120,7 @@ v  The naming of library functions and types
 	|    + Open addressing hash table    :HSHTBL_A:    ditto.    |
 	|grApH_______________________________|___________<svgraph.h>_|
 	|    + Adjacency list graph          :GRAPH_L:    svgraph.c  |
-	|    + Adjacent matrix graph         :GRAPH_M:    ditto.     |
+	|    + Adjacent matrix graph         :GRAPH_M:     ditto.    |
 	|____________________________________|_______________________|
 	 Variants of structures are listed in the above diagram. Users may use this diagram as a quick reference for basic types in the library.
 

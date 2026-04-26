@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0426261650L02203
+ * File ID:     0905171125M0426261700L02200
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1932,8 +1932,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 
 		if (NULL == pstk)
 		{
-			if (NULL != pbmvist)
-				strDeleteBMap(pbmvist);
+			strDeleteBMap(pbmvist);
 			return CBF_CONTINUE;
 		}
 
@@ -1997,8 +1996,7 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 
 		if (NULL == pq)
 		{
-			if (NULL != pbmvist)
-				strDeleteBMap(pbmvist);
+			strDeleteBMap(pbmvist);
 			return CBF_CONTINUE;
 		}
 
@@ -2178,8 +2176,7 @@ P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 
 	if (NULL == pmt)
 	{
-		if (NULL != pr)
-			grpDeleteM(pr);
+		grpDeleteM(pr);
 		return NULL;
 	}
 

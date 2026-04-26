@@ -1945,7 +1945,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 
 			if (! strGetBitBMap(pbmvist, 0, vid))
 			{
-				if (CBF_TERMINATE == cbftvs((void *)vid, param))
+				if (CBF_CONTINUE != cbftvs((void *)vid, param))
 				{
 					strDeleteBMap(pbmvist);
 					stkDeleteA(pstk);
@@ -2189,7 +2189,7 @@ P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 
 	a[0] = (size_t)pr;
 	a[2] = (size_t)pgrpl;
-	if (CBF_TERMINATE == grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a))
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a))
 	{
 		strDeleteArrayZ(pmt);
 		grpDeleteM(pr);

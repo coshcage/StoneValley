@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0424261115L02202
+ * File ID:     0905171125M0426261650L02203
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2089,7 +2089,8 @@ P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
  */
 int _grpCBFFillVertexMappingTable(void * pitem, size_t param)
 {
-	*(size_t *)strLocateItemArrayZ((P_ARRAY_Z)1[(size_t *)param], sizeof(size_t), 0[(size_t *)param]++) = ((P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata)->vid;
+	*(size_t *)strLocateItemArrayZ((P_ARRAY_Z)1[(size_t *)param], sizeof(size_t), 0[(size_t *)param]) = ((P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata)->vid;
+	++0[(size_t *)param];
 	return CBF_CONTINUE;
 }
 

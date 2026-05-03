@@ -55,14 +55,14 @@ void PrintMatrixInMat(P_MATRIX pmtx)
 	printf("  ");
 	for (i = 0; i < pmtx->col; ++i)
 		putc(i + 'a', stdout);
-	printf("  Move: %d.\n +", gCtrMove);
+	printf("  Move: %zd.\n +", gCtrMove);
 	for (i = 0; i < pmtx->col; ++i)
 		putc('-', stdout);
 	printf("+\n");
 	/* Print puzzle body. */
 	for (i = 0; i < pmtx->ln; ++i)
 	{
-		printf("%c|", i + 'a');
+		printf("%c|", (char)(i + 'a'));
 		for (j = 0; j < pmtx->col; ++j)
 			printf("%c", *(char *)strGetValueMatrix(NULL, pmtx, i, j, sizeof(char)));
 		printf("| ");
@@ -88,7 +88,7 @@ bool ValidateMatrix(P_MATRIX pmtx)
 	{	/* Only the last square in the puzzle is a space can indicate that the puzzle might be solved. */
 		if (0 == memcmp(pAnswer + 1, pmtx->arrz.pdata, strLevelArrayZ(&pmtx->arrz) - 1))
 		{	/* Good job. */
-			printf(":) CONGRATULATIONS! You win the game in %d movement%c!\n\n", gCtrMove, gCtrMove > 1 ? 's' : '!');
+			printf(":) CONGRATULATIONS! You win the game in %zd movement%c!\n\n", gCtrMove, (char)(gCtrMove > 1 ? 's' : '!'));
 			return true;
 		}
 	}
@@ -167,7 +167,7 @@ void MoveMatrix(P_MATRIX pmtx, size_t x, size_t y, bool bundo)
 			}
 		}
 	}
-	printf(":( You have hit the wrong place at (%c,%c).\n", x <= 26 ? x + 'a' : '?', y <= 26 ? y + 'a' : '?');
+	printf(":( You have hit the wrong place at (%c,%c).\n", (char)(x <= 26 ? x + 'a' : '?'), (char)(y <= 26 ? y + 'a' : '?'));
 }
 
 // Function: UndoMoving

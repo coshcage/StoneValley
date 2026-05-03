@@ -149,8 +149,8 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	#define grpFreeM                      grpFreeM_O
 	#define grpDeleteM                    grpDeleteM_O
 	#define grpCopyM                      grpCopyM_O
-    #define grpGetDimensionM              grpGetDimensionM_O
-    #define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_O
+	#define grpGetDimensionM              grpGetDimensionM_O
+	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_O
 #endif
 
 #endif

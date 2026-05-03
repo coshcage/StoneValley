@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0426261700L02200
+ * File ID:     0905171125M0503260300L02306
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1901,6 +1901,112 @@ size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t v
 bool grpSetEdgeWeightM(P_GRAPH_M pgrp, size_t vidx, size_t vidy, size_t weight)
 {
 	return NULL != strSetValueMatrix(pgrp, vidx, vidy, &weight, sizeof(size_t));
+}
+
+/* Function name: grpTraverseVertexEdgesM
+ * Description:   Traverse all the edges of a vertex in a graph.
+ * Parameters:
+ *       pgrp Pointer to an adjacent matrix graph.
+ *        vid Vertex ID.
+ *     cbftvs Pointer to a callback function.
+ *            The first parameter of cbftvs points to each size_t that represents a weight value.
+ *      param Additional information for each edge.
+ * Return value:  The same value as callback function returns.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           Users shall filter 0 value by themselves in the callback function.
+ */
+int grpTraverseVertexEdgesM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+{
+	ARRAY_Z arrz;
+	
+	arrz.num   = pgrp->col;
+	arrz.pdata = strGetValueMatrix(NULL, pgrp, vid, 0, sizeof(size_t));
+	
+	return strTraverseArrayZ(&arrz, sizeof(size_t), cbftvs, param, false);
+}
+
+/* Function name: grpAreAdjacentVerticesM_O
+ * Description:   Check whether two vertices are adjacent or not.
+ * Parameters:
+ *        pgrp Pointer to an adjacent matrix graph.
+ *        vidx 1st Vertex ID.
+ *        vidy 2nd Vertex ID.
+ * Return value:  true  vidx and vidy are adjacent.
+ *                false vidx and vidy are NOT adjacent.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ * Tip:           A macro named grpAreAdjacentVerticesM_M is available.
+ */
+bool grpAreAdjacentVerticesM_O(P_GRAPH_M pgrp, size_t vidx, size_t vidy)
+{
+	return (0 != grpGetEdgeWeightM(pgrp, NULL, vidx, vidy));
+}
+
+/* Function name: grpEdgesCountM
+ * Description:   Calculate the number of edges in an adjacent matrix graph.
+ * Parameter:
+ *      pgrp Pointer to an adjacent matrix graph.
+ * Return value:  Number of edges of an adjacent matrix graph.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+size_t grpEdgesCountM(P_GRAPH_M pgrp)
+{
+	REGISTER size_t i, j, k;
+	
+	k = 0;
+	for (i = 0; i < pgrp->ln; ++i)
+	{
+		for (j = 0; j < pgrp->col; ++j)
+		{
+			if (grpAreAdjacentVerticesM(pgrp, i, j))
+				++k;
+		}
+	}
+	
+	return k;
+}
+
+/* Function name: grpIndegreeVertexM
+ * Description:   Calculate the in-degree of a vertex.
+ * Parameters:
+ *        pgrp Pointer to an adjacent matrix graph.
+ *         vid Vertex ID.
+ * Return value:  In-degree value.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+size_t grpIndegreeVertexM(P_GRAPH_M pgrp, size_t vid)
+{
+	REGISTER size_t i, k;
+	
+	k = 0;
+	for (i = 0; i < pgrp->ln; ++i)
+	{
+		if (grpAreAdjacentVerticesM(pgrp, i, vid))
+			++k;
+	}
+	
+	return k;
+}
+
+/* Function name: grpOutdegreeVertexM
+ * Description:   Calculate the out-degree of a vertex.
+ * Parameters:
+ *       pgrp Pointer to an adjacent matrix graph.
+ *        vid Vertex ID.
+ * Return value:  Out-degree value.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
+{
+	REGISTER size_t i, k;
+	
+	k = 0;
+	for (i = 0; i < pgrp->col; ++i)
+	{
+		if (grpAreAdjacentVerticesM(pgrp, vid, i))
+			++k;
+	}
+	
+	return k;
 }
 
 /* Function name: grpDFSM

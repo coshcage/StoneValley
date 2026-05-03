@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0503260301L00202
+ * File ID:     0901171625S0503260630L00202
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -112,7 +112,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 } while (0)
 #define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
 #define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
-#define grpAreAdjacentVerticesM_M(pgrp_M, vidx_M, vidy_M) (0 != grpGetEdgeWeightM(pgrp_M, NULL, vidx_M, vidy_M))
+#define grpAreAdjacentVerticesM_M(pgrp_M, vidx_M, vidy_M) (0 != grpGetEdgeWeightM((pgrp_M), NULL, (vidx_M), (vidy_M)))
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

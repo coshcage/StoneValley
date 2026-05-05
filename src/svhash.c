@@ -195,10 +195,10 @@ size_t hshSizeC(P_HSHTBL_C pht)
 }
 
 /* Function name: hshTraverseC
- * Description:   Traverse each elements in a separate chaining hash table.
+ * Description:   Traverse each element in a separate chaining hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pht Must Be Allocated first.
@@ -460,11 +460,11 @@ size_t hshSizeA(P_HSHTBL_A pht, size_t size)
 }
 
 /* Function name: hshTraverseA
- * Description:   Traverse each elements in an open addressing hash table.
+ * Description:   Traverse each element in an open addressing hash table.
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
  *       size Size of each element in the table.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pht Must Be Allocated first.

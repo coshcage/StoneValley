@@ -184,7 +184,7 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  * Parameters:
  *       list Pointer to the first element while traversal.
  *       pnil Please Leave It As NULL.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
  * Tip:           An element of a circular linked-lists is suitable to be a parameter of this function.
@@ -667,7 +667,7 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  *       brev If brev equaled true, doubly linked-list would be traversed reversely.
  *             That is the order of deallocation which were from the current one to the previous one.
@@ -707,7 +707,7 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  *       brev If brev equaled true, doubly linked-list would be traversed reversely.
  *            That is the order of deallocation which were from the current one to the previous one.
@@ -746,7 +746,7 @@ int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  *       brev If brev equaled true, doubly linked-list would be traversed reversely.
  *            That is the order of deallocation which were from the current one to the previous one.

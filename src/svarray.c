@@ -88,11 +88,11 @@ size_t strLevelArrayZ_O(P_ARRAY_Z parrz)
 }
 
 /* Function name: strTraverseArrayZ
- * Description:   Traverse each elements in a sized array.
+ * Description:   Traverse each element in a sized array.
  * Parameters:
  *      parrz Pointer to the array you want to traverse.
  *       size Element size of an array.
- *     cbftvs Pointer to the callback function.
+ *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
  *       brev Input true to traverse array in order.
  *            Input false to traverse array in reverse.

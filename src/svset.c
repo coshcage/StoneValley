@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0331260900L00941
+ * File ID:     0901171620L0505260720L00957
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -422,6 +422,22 @@ P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size
 	}
 Lbl_Empty_Set:
 	return NULL;
+}
+
+/* Function name: setTraverseItemH_O
+ * Description:   Traverse each element in a hash table set.
+ * Parameters:
+ *       pset Pointer to the hash table set you want to operate.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transferred into callback function.
+ * Return value:  The same value as callback function returns.
+ * Caution:       Parameter pset Must Be Allocated first.
+ *                The type of pitem of function cbftvs is the type of pointer to the element you inserted into the set.
+ * Tip:           A macro named setTraverseItemH_M is available.
+ */
+int setTraverseItemH_O(P_SET_H pset, CBF_TRAVERSE cbftvs, size_t param)
+{
+	return hshTraverseC(pset, cbftvs, param);
 }
 
 /* Functions for BST style sets. */

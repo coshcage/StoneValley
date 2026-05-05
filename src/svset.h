@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0331260900L00175
+ * File ID:     0901171620T0505260716L00181
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -37,20 +37,21 @@ typedef BST SET_T, * P_SET_T;
 #define _setRemoveBST treBSTRemoveAA /* treBSTRemoveAVL */
 
 /* Functions for hash-table style sets. */
-bool     setInitH_O             (P_SET_H pset,   size_t   buckets);
+bool     setInitH_O             (P_SET_H pset,   size_t       buckets);
 void     setFreeH_O             (P_SET_H pset);
 P_SET_H  setCreateH_O           (size_t  buckets);
 void     setDeleteH_O           (P_SET_H pset);
 size_t   setSizeH_O             (P_SET_H pset);
 bool     setIsEmptyH_O          (P_SET_H pset);
-bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
-bool     setIsSubsetH           (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
-bool     setIsEqualH            (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
-bool     setInsertH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
-bool     setRemoveH             (P_SET_H pset,   CBF_HASH cbfhsh, const void * pitem,     size_t              size);
-P_SET_H  setCreateUnionH        (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
-P_SET_H  setCreateIntersectionH (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
-P_SET_H  setCreateDifferenceH   (P_SET_H pseta,  P_SET_H  psetb,  CBF_HASH     cbfhsh,    size_t              size);
+bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH     cbfhsh, const void * pitem,     size_t              size);
+bool     setIsSubsetH           (P_SET_H pseta,  P_SET_H      psetb,  CBF_HASH     cbfhsh,    size_t              size);
+bool     setIsEqualH            (P_SET_H pseta,  P_SET_H      psetb,  CBF_HASH     cbfhsh,    size_t              size);
+bool     setInsertH             (P_SET_H pset,   CBF_HASH     cbfhsh, const void * pitem,     size_t              size);
+bool     setRemoveH             (P_SET_H pset,   CBF_HASH     cbfhsh, const void * pitem,     size_t              size);
+P_SET_H  setCreateUnionH        (P_SET_H pseta,  P_SET_H      psetb,  CBF_HASH     cbfhsh,    size_t              size);
+P_SET_H  setCreateIntersectionH (P_SET_H pseta,  P_SET_H      psetb,  CBF_HASH     cbfhsh,    size_t              size);
+P_SET_H  setCreateDifferenceH   (P_SET_H pseta,  P_SET_H      psetb,  CBF_HASH     cbfhsh,    size_t              size);
+int      setTraverseItemH_O     (P_SET_H pset,   CBF_TRAVERSE cbftvs, size_t       param);
 /* Functions for BST style sets. */
 void     setInitT_O             (P_SET_T pset);
 void     setFreeT_O             (P_SET_T pset);
@@ -59,16 +60,16 @@ void     setDeleteT_O           (P_SET_T pset);
 P_SET_T  setCopyT               (P_SET_T pset,   size_t       size);
 size_t   setSizeT_O             (P_SET_T pset);
 bool     setIsEmptyT_O          (P_SET_T pset);
-bool     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE cbfcmp);
-bool     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-bool     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE cbfcmp);
-bool     setInsertT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE         cbfcmp);
-bool     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t      size,   CBF_COMPARE         cbfcmp);
-P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
-P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
-P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t      size,   CBF_COMPARE         cbfcmp);
-int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t      param,  TvsMtd              tm);
-int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t      param,  CBF_TRAVERSE_BYTREE cbftvsbyt);
+bool     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE  cbfcmp);
+bool     setIsSubsetT           (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE  cbfcmp);
+bool     setIsEqualT            (P_SET_T pseta,  P_SET_T      psetb,  CBF_COMPARE  cbfcmp);
+bool     setInsertT             (P_SET_T pset,   const void * pitem,  size_t       size,      CBF_COMPARE         cbfcmp);
+bool     setRemoveT             (P_SET_T pset,   const void * pitem,  size_t       size,      CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateUnionT        (P_SET_T pseta,  P_SET_T      psetb,  size_t       size,      CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t       size,      CBF_COMPARE         cbfcmp);
+P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t       size,      CBF_COMPARE         cbfcmp);
+int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     TvsMtd              tm);
+int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     CBF_TRAVERSE_BYTREE cbftvsbyt);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svset.c. */
@@ -85,6 +86,7 @@ int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 #define setIsMemberH_M(pset_M, cbfhsh_M, pitem_M, size_M) \
 	(NULL == (pset_M) ? false : \
 	(NULL != hshSearchC((pset_M), (cbfhsh_M), (pitem_M), (size_M)) ? true : false))
+#define setTraverseItemH_M(pset_M, cbftvs_M, param_M) (hshTraverseC((pset_M), (cbftvs_M), (param_M)))
 /* Macros for binary search tree represented sets. */
 #define setInitT_M(pset_M) do { \
 	treInitBST(pset_M); \
@@ -103,72 +105,76 @@ int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t    
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
 	/* Macros for hash table represented sets. */
-	#define setInitH     setInitH_O
-	#define setFreeH     setFreeH_O
-	#define setCreateH   setCreateH_O
-	#define setDeleteH   setDeleteH_O
-	#define setSizeH     setSizeH_O
-	#define setIsEmptyH  setIsEmptyH_O
-	#define setIsMemberH setIsMemberH_O
+	#define setInitH         setInitH_O
+	#define setFreeH         setFreeH_O
+	#define setCreateH       setCreateH_O
+	#define setDeleteH       setDeleteH_O
+	#define setSizeH         setSizeH_O
+	#define setIsEmptyH      setIsEmptyH_O
+	#define setIsMemberH     setIsMemberH_O
+	#define setTraverseItemH setTraverseItemH_M
 	/* Macros for binary search tree represented sets. */
-	#define setInitT     setInitT_O
-	#define setFreeT     setFreeT_O
-	#define setCreateT   setCreateT_O
-	#define setDeleteT   setDeleteT_O
-	#define setSizeT     setSizeT_O
-	#define setIsEmptyT  setIsEmptyT_O
-	#define setIsMemberT setIsMemberT_O
+	#define setInitT         setInitT_O
+	#define setFreeT         setFreeT_O
+	#define setCreateT       setCreateT_O
+	#define setDeleteT       setDeleteT_O
+	#define setSizeT         setSizeT_O
+	#define setIsEmptyT      setIsEmptyT_O
+	#define setIsMemberT     setIsMemberT_O
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	/* Macros for hash table represented sets. */
-	#define setInitH     setInitH_M
-	#define setFreeH     setFreeH_M
-	#define setCreateH   setCreateH_M
-	#define setDeleteH   setDeleteH_M
-	#define setSizeH     setSizeH_M
-	#define setIsEmptyH  setIsEmptyH_M
-	#define setIsMemberH setIsMemberH_M
+	#define setInitH         setInitH_M
+	#define setFreeH         setFreeH_M
+	#define setCreateH       setCreateH_M
+	#define setDeleteH       setDeleteH_M
+	#define setSizeH         setSizeH_M
+	#define setIsEmptyH      setIsEmptyH_M
+	#define setIsMemberH     setIsMemberH_M
+	#define setTraverseItemH setTraverseItemH_M
 	/* Macros for binary search tree represented sets. */
-	#define setInitT     setInitT_M
-	#define setFreeT     setFreeT_M
-	#define setCreateT   setCreateT_M
-	#define setDeleteT   setDeleteT_M
-	#define setSizeT     setSizeT_M
-	#define setIsEmptyT  setIsEmptyT_M
-	#define setIsMemberT setIsMemberT_M
+	#define setInitT         setInitT_M
+	#define setFreeT         setFreeT_M
+	#define setCreateT       setCreateT_M
+	#define setDeleteT       setDeleteT_M
+	#define setSizeT         setSizeT_M
+	#define setIsEmptyT      setIsEmptyT_M
+	#define setIsMemberT     setIsMemberT_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	/* Macros for hash table represented sets. */
-	#define setInitH     setInitH_M
-	#define setFreeH     setFreeH_M
-	#define setCreateH   setCreateH_M
-	#define setDeleteH   setDeleteH_M
-	#define setSizeH     setSizeH_M
-	#define setIsEmptyH  setIsEmptyH_M
-	#define setIsMemberH setIsMemberH_M
+	#define setInitH         setInitH_M
+	#define setFreeH         setFreeH_M
+	#define setCreateH       setCreateH_M
+	#define setDeleteH       setDeleteH_M
+	#define setSizeH         setSizeH_M
+	#define setIsEmptyH      setIsEmptyH_M
+	#define setIsMemberH     setIsMemberH_M
+	#define setTraverseItemH setTraverseItemH_M
 	/* Macros for binary search tree represented sets. */
-	#define setInitT     setInitT_M
-	#define setFreeT     setFreeT_M
-	#define setCreateT   setCreateT_M
-	#define setDeleteT   setDeleteT_M
-	#define setSizeT     setSizeT_M
-	#define setIsEmptyT  setIsEmptyT_M
-	#define setIsMemberT setIsMemberT_M
+	#define setInitT         setInitT_M
+	#define setFreeT         setFreeT_M
+	#define setCreateT       setCreateT_M
+	#define setDeleteT       setDeleteT_M
+	#define setSizeT         setSizeT_M
+	#define setIsEmptyT      setIsEmptyT_M
+	#define setIsMemberT     setIsMemberT_M
 #else /* Optimization has been disabled. */
 	/* Macros for hash table represented sets. */
-	#define setInitH     setInitH_O
-	#define setFreeH     setFreeH_O
-	#define setCreateH   setCreateH_O
-	#define setDeleteH   setDeleteH_O
-	#define setSizeH     setSizeH_O
-	#define setIsEmptyH  setIsEmptyH_O
-	#define setIsMemberH setIsMemberH_O
+	#define setInitH         setInitH_O
+	#define setFreeH         setFreeH_O
+	#define setCreateH       setCreateH_O
+	#define setDeleteH       setDeleteH_O
+	#define setSizeH         setSizeH_O
+	#define setIsEmptyH      setIsEmptyH_O
+	#define setIsMemberH     setIsMemberH_O
+	#define setTraverseItemH setTraverseItemH_O
 	/* Macros for binary search tree represented sets. */
-	#define setInitT     setInitT_O
-	#define setFreeT     setFreeT_O
-	#define setCreateT   setCreateT_O
-	#define setDeleteT   setDeleteT_O
-	#define setSizeT     setSizeT_O
-	#define setIsEmptyT  setIsEmptyT_O
-	#define setIsMemberT setIsMemberT_O
+	#define setInitT         setInitT_O
+	#define setFreeT         setFreeT_O
+	#define setCreateT       setCreateT_O
+	#define setDeleteT       setDeleteT_O
+	#define setSizeT         setSizeT_O
+	#define setIsEmptyT      setIsEmptyT_O
+	#define setIsMemberT     setIsMemberT_O
 #endif
 
 #endif

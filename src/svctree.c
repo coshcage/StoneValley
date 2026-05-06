@@ -212,7 +212,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 			}
 		}
 		else
-		{	/* Set unique symbol for one-root-node-tree. */
+		{	/* Set unique symbol for one-root-node tree. */
 			psi->Symbol.bits = 1;
 			psi->Symbol.sgnb = 0;
 		}

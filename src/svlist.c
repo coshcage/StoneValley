@@ -132,7 +132,7 @@ int _strCBFCompareNodeDataD(void * pitem, size_t param)
  *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return.
- * Tip:           An element of a circular linked-lists is suitable to be a parameter of this function.
+ * Tip:           An element of a circular linked-list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_R(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -160,7 +160,7 @@ int strTraverseLinkedListSC_R(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
- * Tip:           An element of a circular linked-lists is suitable to be a parameter of this function.
+ * Tip:           An element of a circular linked-list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -187,7 +187,7 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  *     cbftvs Pointer to a callback function.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
- * Tip:           An element of a circular linked-lists is suitable to be a parameter of this function.
+ * Tip:           An element of a circular linked-list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_N(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
 {

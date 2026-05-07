@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0331260805L02534
+ * File ID:     0809171737I0507260030L02551
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -702,11 +702,12 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 #define _NODE_COLOR(pnode, act_type) (*(act_type *)&(pnode)->bstn.param)
 
 /* File level function declarations. */
-int  _treCBFFreeNodeRBT (void * pitem, size_t    param);
-void _treRBRotate       (P_RBT  prbt,  P_RBTNODE x,    bool      bleft);
-void _treRBInsertFixup  (P_RBT  prbt,  P_RBTNODE z);
-void _treRBTransplant   (P_RBT  prbt,  P_RBTNODE u,    P_RBTNODE v);
-void _treRBDeleteFixup  (P_RBT  prbt,  P_RBTNODE x);
+P_RBTNODE _treCopyRBTPuppet  (P_RBTNODE pnode, P_RBTNODE proot, size_t    size);
+int       _treCBFFreeNodeRBT (void *    pitem, size_t    param);
+void      _treRBRotate       (P_RBT     prbt,  P_RBTNODE x,     bool      bleft);
+void      _treRBInsertFixup  (P_RBT     prbt,  P_RBTNODE z);
+void      _treRBTransplant   (P_RBT     prbt,  P_RBTNODE u,     P_RBTNODE v);
+void      _treRBDeleteFixup  (P_RBT     prbt,  P_RBTNODE x);
 
 /* Function name: treInitRBTNode
  * Description:   Initialize a node of red black tree.
@@ -848,6 +849,30 @@ void treDeleteRBT(P_RBT prbt)
 	free(prbt);
 }
 
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treCopyRBTPuppet
+ * Description:   This function is used by function treCopyRBT to copy a red black tree.
+ * Parameters:
+ *      pnode Pointer to the root node of the original RBT.
+ *      proot This parameter is used to store the root node of pnode.
+ *            Assign NULL to proot at the beginning of duplication.
+ *       size Size of each element in the original RBT.
+ * Return value:  Pointer to the new root node.
+ * Caution:       Address of pnode Must Be Allocated first.
+ */
+P_RBTNODE _treCopyRBTPuppet(P_RBTNODE pnode, P_RBTNODE proot, size_t size)
+{
+	REGISTER P_RBTNODE pp; /* Whose daddy is pp? Oh my! */
+	if (NULL == pnode)
+		return NULL;
+	if (NULL != (pp = treCreateRBTNode(pnode->bstn.knot.pdata, size, _NODE_COLOR(pnode, const RBTColor), proot)))
+	{
+		prbtchild(pp)[LEFT]  = _treCopyRBTPuppet(prbtchild(pnode)[LEFT],  pp, size);
+		prbtchild(pp)[RIGHT] = _treCopyRBTPuppet(prbtchild(pnode)[RIGHT], pp, size);
+	}
+	return pp;
+}
+
 /* Function name: treCopyRBT
  * Description:   Copy a red black tree.
  * Parameters:
@@ -858,15 +883,7 @@ void treDeleteRBT(P_RBT prbt)
  */
 P_RBTNODE treCopyRBT(P_RBTNODE proot, size_t size)
 {
-	REGISTER P_RBTNODE pp;
-	if (NULL == proot)
-		return NULL;
-	if (NULL != (pp = treCreateRBTNode(proot->bstn.knot.pdata, size, _NODE_COLOR(proot, const RBTColor), prbtparent(proot))))
-	{
-		prbtchild(pp)[LEFT]  = treCopyRBT(prbtchild(proot)[LEFT],  size);
-		prbtchild(pp)[RIGHT] = treCopyRBT(prbtchild(proot)[RIGHT], size);
-	}
-	return pp;
+	return _treCopyRBTPuppet(proot, NULL, size);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

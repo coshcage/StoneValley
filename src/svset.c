@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0505260720L00957
+ * File ID:     0901171620L0506262200L00987
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -111,6 +111,36 @@ void setDeleteH_O(P_SET_H pset)
 {
 	if (NULL != pset)
 		hshDeleteC(pset);
+}
+
+/* Function name: setCopyH
+ * Description:   Make a duplication of a hash table set.
+ * Parameters:
+ *       pset Pointer to the hash table set you want to copy.
+ *       size Size of each element in the original set.
+ * Return value:  Pointer to the copy set.
+ * Caution:       Address of pset Must Be Allocated first.
+ */
+P_SET_H setCopyH(P_SET_H pset, size_t size)
+{
+	P_SET_H prtn = setCreateH(strLevelArrayZ(pset));
+	
+	if (NULL != prtn)
+	{
+		REGISTER size_t i;
+		
+		for (i = 0; i < strLevelArrayZ(pset); ++i)
+		{
+			REGISTER P_NODE_S pnode = *(P_NODE_S *)strLocateItemArrayZ(pset, sizeof(P_NODE_S), i);
+			
+			if (NULL != pnode)
+			{
+				*(P_NODE_S *)strLocateItemArrayZ(prtn, sizeof(P_NODE_S), i) = strCopyLinkedListSC(pnode, size);
+			}
+		}
+	}
+	
+	return prtn;
 }
 
 /* Function name: setSizeH_O

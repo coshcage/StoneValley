@@ -92,7 +92,7 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
  *      parrz Pointer to the sized array you want to allocate.
  *        num Number of elements.
  *       size Size of each element.
- *            If size equaled to 0, function would return a NULL after deallocating the array.
+ *            If size equaled to 0, function would return a NULL after retracting the array.
  * Return value:  Pointer to new allocated buffer.
  * Caution:       Address of parrz Must Be Allocated first.
  */
@@ -141,7 +141,7 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
 }
 
 /* Function name: strFreeArrayZ_O
- * Description:   Deallocate an array of which is allocated by function strInitArrayZ.
+ * Description:   Retract an array of which is allocated by function strInitArrayZ.
  * Parameter:
  *     parrz Pointer to the sized array you want to delete.
  * Return value:  N/A.
@@ -210,9 +210,9 @@ P_NODE_S strCreateNodeS(const void * pval, size_t size)
 }
 
 /* Function name: strFreeNodeS_O
- * Description:   Deallocate a NODE_S of which is allocated by function strInitNodeS.
+ * Description:   Retract a NODE_S of which is allocated by function strInitNodeS.
  * Parameter:
- *     pnode Pointer to that node you want to deallocate.
+ *     pnode Pointer to that node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named strFreeNodeS_M is available.
@@ -225,7 +225,7 @@ void strFreeNodeS_O(P_NODE_S pnode)
 /* Function name: strDeleteNodeS_O
  * Description:   Delete a NODE_S of which is allocated by function strCreateNodeS.
  * Parameter:
- *     pnode Pointer to that node you want to deallocate.
+ *     pnode Pointer to that node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named strDeleteNodeS_M is available.
@@ -277,9 +277,9 @@ P_NODE_D strCreateNodeD(const void * pval, size_t size)
 }
 
 /* Function name: strFreeNodeD_O
- * Description:   Deallocate a NODE_D of which is allocated by function strCreateNodeD.
+ * Description:   Retract a NODE_D of which is allocated by function strCreateNodeD.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named strFreeNodeD_M is available.
@@ -292,7 +292,7 @@ void strFreeNodeD_O(P_NODE_D pnode)
 /* Function name: strDeleteNodeD_O
  * Description:   Delete a NODE_D of which is allocated by function strCreateNodeD.
  * Parameter:
- *     pnode Pointer to that node you want to deallocate.
+ *     pnode Pointer to that node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named strDeleteNodeD_M is available.

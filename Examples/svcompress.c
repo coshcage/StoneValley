@@ -103,7 +103,7 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 		rtn = SVC_COMPRESS;
 		goto Lbl_Compress_Error;
 	}
-	/* Free in-buffer-array. */
+	/* Free in-buffer array. */
 	strFreeArrayZ(&arrInBuffer);
 
 	/* // In testing case, print decoded text out to show correctness.

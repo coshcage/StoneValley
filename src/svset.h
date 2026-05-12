@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0506262200L00182
+ * File ID:     0901171620T0511260722L00195
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -29,14 +29,27 @@
 
 /* Definition of sets using chaining hash tables. */
 typedef HSHTBL_C SET_H, * P_SET_H;
+
 /* Definition of sets using binary search trees. */
 typedef BST SET_T, * P_SET_T;
 
-/* These following two macros are used to switch between BSTs. */
-#define _setInsertBST treBSTInsertAA /* treBSTInsertAVL */
-#define _setRemoveBST treBSTRemoveAA /* treBSTRemoveAVL */
+/* Define macros to switch set between trees. */
+#define SET_TREE_AA     0x1
+#define SET_TREE_AVL    0x2
 
-/* Functions for hash-table style sets. */
+/* Tree set method switch. Alter the following one macro to alter set implementation. */
+#define SET_TREE_USING (SET_TREE_AA)
+
+/* These following two macros are used to switch between BSTs. */
+#if   SET_TREE_USING == SET_TREE_AA
+	#define _setInsertBST treBSTInsertAA
+	#define _setRemoveBST treBSTRemoveAA
+#elif SET_TREE_USING == SET_TREE_AVL
+	#define _setInsertBST treBSTInsertAVL
+	#define _setRemoveBST treBSTRemoveAVL
+#endif
+
+/* Functions for hash table style sets. */
 bool     setInitH_O             (P_SET_H pset,   size_t       buckets);
 void     setFreeH_O             (P_SET_H pset);
 P_SET_H  setCreateH_O           (size_t  buckets);

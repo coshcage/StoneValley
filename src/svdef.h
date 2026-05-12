@@ -2,7 +2,7 @@
  * Name:        svdef.c
  * Description: Common definitions.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306171808Z0331260805L00099
+ * File ID:     0306171808Z0512260000L00100
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -28,7 +28,7 @@
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.3.1.1"
+#define SV_LIB_VER "1.3.1.4"
 
 /* Callback function returning values. */
 #define CBF_TERMINATE true
@@ -88,10 +88,11 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 #define ALIGN_SIZET(size) (((size) + sizeof(size_t) - 1) & -(ptrdiff_t)sizeof(size_t))
 
 /* Macros for library optimization. */
-#define SV_OPT_DISABLED (0x00)
-#define SV_OPT_MINISIZE (0x01)
-#define SV_OPT_MAXSPEED (0x02)
-#define SV_OPT_FULLOPTM (0x03)
+#define SV_OPT_DISABLED  0x00
+#define SV_OPT_MINISIZE  0x01
+#define SV_OPT_MAXSPEED  0x02
+#define SV_OPT_FULLOPTM  0x03
+
 /* Library optimization switch. */
 #define SV_OPTIMIZATION (SV_OPT_DISABLED)
 

@@ -94,8 +94,8 @@ size_t     hshCBFHashString (const void * pstr);
  * pdata:
  * [0x0000FFF1][0x00000000][0x00000000] : This is an array that used to store buckets.
  *      |                                 A NULL value indicates an empty bucket.
- * [0x0000FFF2][0x0000FFF3]->[0x65] : This is a NODE_S of a single linked-list.
- *      |                             A bucket is made of a single linked-list.
+ * [0x0000FFF2][0x0000FFF3]->[0x65] : This is a NODE_S of a single linked list.
+ *      |                             A bucket is made of a single linked list.
  * [0x00000000][0x0000FFF4]->[0x66]
  *     pnode      pdata      Real data.
  * ______________________________________________________________________________

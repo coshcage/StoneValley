@@ -1,6 +1,6 @@
 //
 //  exp_2018-09-26_1.c
-//  Sorting for linked-lists.
+//  Sorting for linked lists.
 //  Created by cosh.cage#hotmail.com on 09/26/18.
 //  License:  LGPLv3
 //  Platform: Cross Platform.
@@ -42,27 +42,27 @@ int cbftvs_print(void * pitem, size_t param)
 }
 
 // Function: cbftvs_copy_1
-// Desc:     Copy data between a single linked-list and an array.
+// Desc:     Copy data between a single linked list and an array.
 // Param:    pitem: pointer to each node in a list. param: a size_t[2] array.
 // Return:   CBF_CONTINUE only.
 int cbftvs_copy_1(void * pitem, size_t param)
 {
-	if (0[(size_t *)param]) /* Linked-list -> array. */
+	if (0[(size_t *)param]) /* linked list -> array. */
 		*((*(char **)1[(size_t *)param])++) = (char)(size_t)((P_NODE_S)pitem)->pdata;
-	else /* Array -> linked-list. */
+	else /* Array -> linked list. */
 		((P_NODE_S)pitem)->pdata = (PUCHAR)(size_t)*((*(char **)1[(size_t *)param])++);
 	return CBF_CONTINUE;
 }
 
 // Function: cbftvs_copy_2
-// Desc:     Copy data between a doubly linked-list and an array.
+// Desc:     Copy data between a doubly linked list and an array.
 // Param:    pitem: pointer to each node in a list. param: a size_t[2] array.
 // Return:   CBF_CONTINUE only.
 int cbftvs_copy_2(void * pitem, size_t param)
 {
-	if (0[(size_t *)param]) /* Linked-list -> array. */
+	if (0[(size_t *)param]) /* linked list -> array. */
 		*((*(int **)1[(size_t *)param])++) = *(int *)((P_NODE_D)pitem)->pdata;
-	else /* Array -> linked-list. */
+	else /* Array -> linked list. */
 		*(int *)((P_NODE_D)pitem)->pdata = *((*(int **)1[(size_t *)param])++);
 	return CBF_CONTINUE;
 }
@@ -140,7 +140,7 @@ bool SortLinkedListDC(P_NODE_D plist, CBF_COMPARE cbfcmp, bool brev)
 	a[0] = false;
 	a[1] = (size_t)&pint;
 	strTraverseLinkedListDC_A(plist, NULL, cbftvs_copy_2, (size_t)a, brev);
-	// Deallocate array.
+	// Retract array.
 	strDeleteArrayZ(parr);
 	return true;
 }
@@ -156,7 +156,7 @@ int main(void)
 	LIST_D list2, pnoded;
 	char * pstr = "helloworld";
 	strInitLinkedListDC(&list2);
-	// Assemble single-linked list 1.
+	// Assemble single linked list 1.
 	list1[0].pdata = (PUCHAR)(size_t)(*pstr++);
 	for (i = 1; i < LIST1_LEN; ++i)
 	{
@@ -174,7 +174,7 @@ int main(void)
 		puts("List 1 after sorting:"), strTraverseLinkedListSC_A(list1, NULL, cbftvs_print, ENT_SINGLE);
 	else
 		puts("Error occurred while sorting list 1.");
-	// Assemble doubly-pointer-linked list 2.
+	// Assemble doubly-pointer linked list 2.
 	srand((unsigned int)&n);
 	n = rand() % 99 + 1;
 	list2 = strCreateNodeD(&n, sizeof(int));

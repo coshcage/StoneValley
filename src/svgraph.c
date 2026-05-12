@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0503260300L02306
+ * File ID:     0905171125M0511260200L02787
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -22,7 +22,7 @@
  */
 
 #include <stdlib.h> /* Using function free. */
-#include <string.h> /* Using function memcpy. */
+#include <string.h> /* Using function memcpy, memset. */
 #include "svgraph.h"
 #include "svqueue.h"
 #include "svstack.h"
@@ -57,10 +57,42 @@ typedef struct _st_EDGEREC {
 	size_t flag;    /* Values flag true or false to determine whether this edge is valid or not. */
 } _EDGEREC, * _P_EDGEREC;
 
+/* Label structure for max flow algorithm. */
+typedef struct _st_MaxFlowLabel {
+	size_t vidc; /* Current vertex ID. */
+	size_t vidp; /* Previous vertex ID. */
+	bool   bdir; /* false: Out flow; true: In flow. */
+	size_t theta;
+} _MXFLWLBL, * _P_MXFLWLBL;
+
+/* An enumeration of label direction. */
+typedef enum _st_FFMFLDirection {
+	_EDIR_OUT = false, /* Set Va to Vb. */
+	_EDIR_IN  = true   /* Set Vb to Va. */
+} _FFMFLDirection;
+
+/* An enumeration of parameter IDs. */
+typedef enum _en_FFMFLParamID {
+	_EGID_0_P_GRAPH_L_CAP, /* Capacity. */
+	_EGID_1_P_GRAPH_L_FLW, /* Flow. */
+	_EGID_2_P_SET_T_VA,
+	_EGID_3_P_SET_T_VB,
+	_EGID_4_P_MXFLWLBL,
+	_EGID_5_VIDS,
+	_EGID_6_VIDE,
+	_EGID_7_VIDT,
+	_EGID_8_BOOL_VIDE,     /* true: Found end vertex.  */
+	_EGID_9_BOOL_NVTX,     /* true: Found new vertex.  */
+	_EGID_10_BOOL_ERR,     /* true: An error occurred. */
+	_EGID_11_MAX
+} _FFMFLParamID;
+
+/* A macro to fetch an item of parameter array. */
+#define _FFMFL_PARAM_ARRAY(_idx) ((_idx)[(size_t *)param])
+
 /* File level function declarations go here. */
 extern int _strCBFNodesCounter                (void * pitem, size_t param);
 int        _grpCBFCompareInteger              (const void * px, const void * py);
-P_VERTEX_L _grpGetVertexByID                  (P_GRAPH_L pgrp, size_t vid);
 int        _grpCBFFindEdgeInList              (void * pitem, size_t param);
 int        _grpCBFFindEdgeInListReturnsWeight (void * pitem, size_t param);
 int        _grpCBFTraversePuppet              (void * pitem, size_t param);
@@ -92,6 +124,17 @@ void       _grpDisjointSetFree                (P_ARRAY_Z parrz);
 int        _grpCBFTSFillVertexArray           (void * pitem, size_t param);
 int        _grpCBFTSInitQ                     (void * pitem, size_t param);
 int        _grpCBFTSReduceIndegree            (void * pitem, size_t param);
+/* Function declarations for maximum flow algorithm. */
+size_t *   _grpGetFirstWeightL                (P_GRAPH_L pgrp, size_t vidx, size_t vidy);
+int        _grpCBFEdgesIsomorphicL            (void * pitem, size_t param);
+int        _grpCBFFFMFLFillVb                 (void * pitem, size_t param);
+int        _grpCBFFFMFLFindOutEdgesPuppet     (void * pitem, size_t param);
+int        _grpCBFFFMFLFindOutEdges           (void * pitem, size_t param);
+int        _grpCBFFFMFLFindInEdgesPuppet      (void * pitem, size_t param);
+int        _grpCBFFFMFLFindInEdges            (void * pitem, size_t param);
+int        _grpCBFFFMFLFindMinimalTheta       (void * pitem, size_t param);
+int        _grpCBFFFMFLReduceFlowValue        (void * pitem, size_t param);
+int        _grpCBFFFMFLFillMinCutSet          (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCompareInteger
@@ -109,8 +152,7 @@ int _grpCBFCompareInteger(const void * px, const void * py)
 	return 0;
 }
 
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _grpGetVertexByID
+/* Function name: grpGetVertexByID
  * Description:   This function is used to get the pointer to the specific vertex in a graph.
  * Parameters:
  *       pgrp Pointer to a graph.
@@ -119,7 +161,7 @@ int _grpCBFCompareInteger(const void * px, const void * py)
  *                If function returned NULL, it should indicate vertex vid does not exist.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-P_VERTEX_L _grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
+P_VERTEX_L grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
 {
 	REGISTER P_BSTNODE pnode;
 	if (! setIsEmptyT(pgrp) && NULL != (pnode = treBSTFindData_A(*pgrp, &vid, _grpCBFCompareInteger)))
@@ -204,7 +246,7 @@ int _grpCBFEdgesCountPuppet(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFFreePuppet
- * Description:   This function is used to free linked-list.
+ * Description:   This function is used to free linked list.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in a list.
  *      param N/A.
@@ -284,7 +326,7 @@ int _grpCBFRemoveEdge(void * pitem, size_t param)
 	size_t a[2];
 	a[0] = param;
 	a[1] = (size_t)pitem;
-	/* An inverse traversal for linked-list is required here. */
+	/* An inverse traversal for linked list is required here. */
 	strTraverseLinkedListSC_R(((P_VERTEX_L)pitem)->adjlist, NULL, _grpCBFRemoveEdgePuppet, (size_t)a);
 	return CBF_CONTINUE;
 }
@@ -300,7 +342,7 @@ int _grpCBFRemoveEdge(void * pitem, size_t param)
  */
 bool grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
 {
-	return NULL == _grpGetVertexByID(pgrp, vid) ? false : true;
+	return NULL == grpGetVertexByID(pgrp, vid) ? false : true;
 }
 
 /* Function name: grpTraverseVerticesL
@@ -319,7 +361,7 @@ int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param)
 	si.cbftvs = cbftvs;
 	si.param  = param;
 	si.bedge  = false;
-	/* Only post order traversal is needed here. */
+	/* Only post-order traversal is needed here. */
 	return setTraverseT(pgrp, _grpCBFTraversePuppet, (size_t)&si, ETM_POSTORDER);
 }
 
@@ -337,7 +379,7 @@ int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param)
 int grpTraverseVertexEdgesL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vid)))
+	if (NULL != (pvtx = grpGetVertexByID(pgrp, vid)))
 	{
 		_DATINF si;
 		si.cbftvs = cbftvs;
@@ -362,9 +404,9 @@ void grpInitL_O(P_GRAPH_L pgrp)
 }
 
 /* Function name: grpFreeL
- * Description:   Deallocate a graph of which is allocated by function grpInitL.
+ * Description:   Retract a graph of which is allocated by function grpInitL.
  * Parameter:
- *      pgrp Pointer to the graph you want to deallocate.
+ *      pgrp Pointer to the graph you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
@@ -389,7 +431,7 @@ P_GRAPH_L grpCreateL_O(void)
 /* Function name: grpDeleteL
  * Description:   Delete a graph of which is allocated by function grpCreateL.
  * Parameter:
- *      pgrp Pointer to the graph you want to deallocate.
+ *      pgrp Pointer to the graph you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteBY_M is available.
@@ -442,7 +484,7 @@ size_t grpEdgesCountL(P_GRAPH_L pgrp)
 bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bweight, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
+	if (NULL != (pvtx = grpGetVertexByID(pgrp, vidx)))
 	{
 		_FIEDG fd;
 		fd.bweight       = bweight;
@@ -472,7 +514,7 @@ bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bwei
 int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVERSE cbftvs, size_t param)
 {
 	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vidx)))
+	if (NULL != (pvtx = grpGetVertexByID(pgrp, vidx)))
 	{
 		_FIEDG fd;
 		fd.bweight       = true;
@@ -514,7 +556,7 @@ size_t grpIndegreeVertexL(P_GRAPH_L pgrp, size_t vid)
 size_t grpOutdegreeVertexL(P_GRAPH_L pgrp, size_t vid)
 {
 	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = _grpGetVertexByID(pgrp, vid)))
+	if (NULL != (pvtx = grpGetVertexByID(pgrp, vid)))
 	{
 		size_t l = 0;
 		strTraverseLinkedListSC_A(pvtx->adjlist, NULL, _strCBFNodesCounter, (size_t)&l);
@@ -559,7 +601,7 @@ bool grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
 bool grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
-	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vidx)))
+	if (NULL == (pvtx = grpGetVertexByID(pgrp, vidx)))
 		return false; /* Can not find vertex vidx. */
 	else
 	{
@@ -606,7 +648,7 @@ bool grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
 {
 	REGISTER P_VERTEX_L pvtx;
 	/* First find the vertex identified by vid. */
-	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vid)))
+	if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
 		return false; /* Can not find vertex vid. */
 	else
 	{	/* Remove every edge that contains vertex vid. */
@@ -633,7 +675,7 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 {
 	REGISTER P_VERTEX_L pvtx;
 	/* Find the vertex identified by vid first. */
-	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vidx)))
+	if (NULL == (pvtx = grpGetVertexByID(pgrp, vidx)))
 		return false; /* Can not find vertex vidx. */
 	else
 	{
@@ -762,7 +804,7 @@ int _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param
 {
 	REGISTER P_VERTEX_L pvtx;
 	/* Find the current vertex. */
-	if (NULL == (pvtx = _grpGetVertexByID(pgrp, vid)))
+	if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
 		return CBF_TERMINATE; /* Can not find vertex vid. */
 	else
 	{
@@ -843,7 +885,7 @@ int grpBFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		if (! setIsMemberT(&vstset, &vid, _grpCBFCompareInteger))
 		{	/* Vertex has not been visited. */
 			REGISTER P_VERTEX_L pvtx;
-			if (NULL == (pvtx = _grpGetVertexByID(pgrp, vid)))
+			if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
 			{	/* Can not find vertex vid. */
 				rtn = CBF_TERMINATE;
 				goto Lbl_BFS_Clear;
@@ -986,7 +1028,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
  *                Each element of the returned sized array is a VTXREC structure.
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           Users may use function strDeleteArrayZ to deallocate grpShortestPathL returned arrays.
+ * Tip:           Users may use function strDeleteArrayZ to retract grpShortestPathL returned arrays.
  */
 P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 {
@@ -1118,7 +1160,7 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 	
 	if (setIsMemberT((P_SET_T)1[(size_t *)param], &pedg->vid, _grpCBFCompareInteger))
 	{
-		REGISTER P_BSTNODE pnode = treBSTFindData_R((P_BSTNODE)*(P_SET_T)3[(size_t *)param], &4[(size_t *)param], _grpCBFCompareInteger);
+		REGISTER P_BSTNODE pnode = treBSTFindData_X((P_BSTNODE)*(P_SET_T)3[(size_t *)param], &4[(size_t *)param], _grpCBFCompareInteger);
 		_SPTREC rec, t;
 		
 		rec.vid  = pedg->vid;
@@ -1726,7 +1768,446 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	return prtn;
 }
 
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpGetFirstWeightL
+ * Description:   This function is used to get the pointer to the first weight of an edge that connects vidx and vidy.
+ * Parameters:
+ *       pgrp Pointer to a graph.
+ *       vidx Vertex ID.
+ *       vidy Another vertex ID.
+ * Return value:  Pointer to a size_t integer which stores the first weight of an edge.
+ *                If function returned NULL, it should indicate finding failure.
+ * Caution:       Address of pgrp Must Be Allocated first.
+ */
+size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
+{
+	REGISTER P_VERTEX_L pvtx;
+	_FIEDG fd;
+	
+	fd.bweight       = false;
+	fd.pnode         = NULL;
+	fd.vertex.vid    = vidy;
+	fd.vertex.weight = 0;
+	fd.cbftvs        = NULL;
+	fd.param         = 0;
+	
+	pvtx = grpGetVertexByID(pgrp, vidx);
+	if (NULL != pvtx && CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
+		return &((P_EDGE)fd.pnode->pdata)->weight;
+	
+	return NULL;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFEdgesIsomorphicL
+ * Description:   This function is used to test whether two graphs are mutually isomorphic.
+ * Parameters:
+ *      pitem Pointer to each P_NODE_S in the adjacency list.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  If two graphs were isomorphic, function would return value CNF_CONTINUE,
+ *                otherwise function would return value CBF_TERMINATE.
+ */
+int _grpCBFEdgesIsomorphicL(void * pitem, size_t param)
+{
+	if
+	(
+		! grpAreAdjacentVerticesL
+		(
+			(P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_1_P_GRAPH_L_FLW),
+			_FFMFL_PARAM_ARRAY(_EGID_7_VIDT),
+			((P_EDGE)((P_NODE_S)pitem)->pdata)->vid,
+			false,
+			0
+		)
+	)
+		return CBF_TERMINATE;
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFEdgesIsomorphicL
+ * Description:   This function is used to fill set Vb.
+ * Parameters:
+ *      pitem Pointer to each VERTEX_L structure of a graph of capacities.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  If filling succeeded, function would return value CBF_CONTINUE,
+ *                otherwise function would return value CBF_TERMINATE.
+ */
+int _grpCBFFFMFLFillVb(void * pitem, size_t param)
+{
+	REGISTER P_VERTEX_L pvtx = (P_VERTEX_L)pitem;
+	
+	/* Check every connected pair to determine whether graph C and graph F are isomorphic. */
+	_FFMFL_PARAM_ARRAY(_EGID_7_VIDT) = pvtx->vid;
+	if (CBF_CONTINUE != strTraverseLinkedListSC_N(pvtx->adjlist, NULL, _grpCBFEdgesIsomorphicL, param))
+		return CBF_TERMINATE;
+	
+	/* Fill set Vb. */
+	if (pvtx->vid != _FFMFL_PARAM_ARRAY(_EGID_5_VIDS))
+	{
+		if
+		(
+			NULL == 
+			(
+				*(P_SET_T)_FFMFL_PARAM_ARRAY(_EGID_3_P_SET_T_VB) = _setInsertBST
+				(
+					*(P_SET_T)_FFMFL_PARAM_ARRAY(_EGID_3_P_SET_T_VB),
+					&((P_VERTEX_L)pitem)->vid,
+					sizeof(size_t),
+					_grpCBFCompareInteger
+				)
+			)
+		)
+			return CBF_TERMINATE;
+	}
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLFindOutEdgesPuppet
+ * Description:   This function is used to cooperate with function _grpCBFFFMFLFindOutEdges to
+ *                find vertex and label it between two sets Va and Vb by outer orientation.
+ * Parameters:
+ *      pitem Pointer to each EDGE structure of a vertex.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depends on the specific situation.
+ */
+int _grpCBFFFMFLFindOutEdgesPuppet(void * pitem, size_t param)
+{
+	REGISTER P_EDGE pedg = (P_EDGE)pitem;
+	
+	if (setIsMemberT((P_SET_T)_FFMFL_PARAM_ARRAY(_EGID_3_P_SET_T_VB), &pedg->vid, _grpCBFCompareInteger))
+	{
+		REGISTER size_t * pa, * pb, t;
+		
+		pa = _grpGetFirstWeightL((P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_0_P_GRAPH_L_CAP), _FFMFL_PARAM_ARRAY(_EGID_7_VIDT), pedg->vid);
+		pb = _grpGetFirstWeightL((P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_1_P_GRAPH_L_FLW), _FFMFL_PARAM_ARRAY(_EGID_7_VIDT), pedg->vid);
+		
+		if (NULL == pa || NULL == pb)
+		{
+			_FFMFL_PARAM_ARRAY(_EGID_10_BOOL_ERR) = (size_t)true;
+			return CBF_TERMINATE; /* Irrational flow network. */
+		}
+		
+		if (*pa < *pb)
+		{
+			_FFMFL_PARAM_ARRAY(_EGID_10_BOOL_ERR) = (size_t)true;
+			return CBF_TERMINATE; /* Irrational flow network. */
+		}
+		
+		t = *pa - *pb;
+		
+		if (0 != t) /* Determine whether an out flow is not saturated. */
+		{
+			REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)_FFMFL_PARAM_ARRAY(_EGID_4_P_MXFLWLBL);
+			
+			if (! _FFMFL_PARAM_ARRAY(_EGID_9_BOOL_NVTX))
+				_FFMFL_PARAM_ARRAY(_EGID_9_BOOL_NVTX) = (size_t)true;  /* Found next vertex. */
+			
+			if ((const size_t)_FFMFL_PARAM_ARRAY(_EGID_6_VIDE) != plbl->vidc)
+			{
+				plbl->vidc  = pedg->vid;
+				plbl->vidp  = _FFMFL_PARAM_ARRAY(_EGID_7_VIDT);
+				plbl->bdir  = _EDIR_OUT;
+				plbl->theta = t;
+				
+				if ((const size_t)_FFMFL_PARAM_ARRAY(_EGID_6_VIDE) == plbl->vidc && ! _FFMFL_PARAM_ARRAY(_EGID_8_BOOL_VIDE)) /* Found vide. */
+					_FFMFL_PARAM_ARRAY(_EGID_8_BOOL_VIDE) = (size_t)true;
+			}
+			return CBF_TERMINATE;
+		}
+	}
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLFindOutEdges
+ * Description:   This function is used to find vertex and label it between two sets Va and Vb by outer orientation.
+ * Parameters:
+ *      pitem Pointer to each BSTNODE in the SET_T Va.
+ *            Notice that each element in this set is a _MXFLWLBL structure.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  The same value as function _grpCBFFFMFLFindOutEdgesPuppet returns.
+ */
+int _grpCBFFFMFLFindOutEdges(void * pitem, size_t param)
+{
+	_FFMFL_PARAM_ARRAY(_EGID_7_VIDT) = ((_P_MXFLWLBL)P2P_BSTNODE(pitem)->knot.pdata)->vidc;
+	return grpTraverseVertexEdgesL
+	(
+		(P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_0_P_GRAPH_L_CAP),
+		_FFMFL_PARAM_ARRAY(_EGID_7_VIDT),
+		_grpCBFFFMFLFindOutEdgesPuppet,
+		param
+	);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLFindInEdgesPuppet
+ * Description:   This function is used to cooperate with function _grpCBFFFMFLFindInEdges to
+ *                find vertex and label it between two sets Va and Vb by inner orientation.
+ * Parameters:
+ *      pitem Pointer to each EDGE structure of a vertex.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depends on the specific situation.
+ */
+int _grpCBFFFMFLFindInEdgesPuppet(void * pitem, size_t param)
+{
+	REGISTER P_EDGE pedg = (P_EDGE)pitem;
+	
+	if (setIsMemberT((P_SET_T)_FFMFL_PARAM_ARRAY(_EGID_2_P_SET_T_VA), &pedg->vid, _grpCBFCompareInteger))
+	{
+		REGISTER size_t * p = _grpGetFirstWeightL((P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_1_P_GRAPH_L_FLW), _FFMFL_PARAM_ARRAY(_EGID_7_VIDT), pedg->vid);
+		
+		if (NULL == p)
+		{
+			_FFMFL_PARAM_ARRAY(_EGID_10_BOOL_ERR) = (size_t)true;
+			return CBF_TERMINATE; /* Irrational flow network. */
+		}
+		
+		if (0 != *p) /* Determine whether an in flow is not zero. */
+		{
+			REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)_FFMFL_PARAM_ARRAY(_EGID_4_P_MXFLWLBL);
+			
+			if (! _FFMFL_PARAM_ARRAY(_EGID_9_BOOL_NVTX))
+				_FFMFL_PARAM_ARRAY(_EGID_9_BOOL_NVTX) = (size_t)true; /* Found next vertex. */
+			
+			if ((const size_t)_FFMFL_PARAM_ARRAY(_EGID_6_VIDE) != plbl->vidc)
+			{
+				plbl->vidc  = _FFMFL_PARAM_ARRAY(_EGID_7_VIDT);
+				plbl->vidp  = pedg->vid;
+				plbl->bdir  = _EDIR_IN;
+				plbl->theta = *p;
+				
+				if ((const size_t)_FFMFL_PARAM_ARRAY(_EGID_6_VIDE) == plbl->vidc && ! _FFMFL_PARAM_ARRAY(_EGID_8_BOOL_VIDE)) /* Found vide. */
+					_FFMFL_PARAM_ARRAY(_EGID_8_BOOL_VIDE) = (size_t)true;
+			}
+			return CBF_TERMINATE;
+		}
+	}
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFEdgesIsomorphicL
+ * Description:   This function is used to find vertex and label it between two sets Va and Vb by inner orientation.
+ * Parameters:
+ *      pitem Pointer to each BSTNODE in a SET_T.
+ *            Notice that each element in this set is a size_t integer.
+ *      param Pointer to an array.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array.
+ * Return value:  The same value as function _grpCBFFFMFLFindOutEdgesPuppet returns.
+ */
+int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
+{
+	_FFMFL_PARAM_ARRAY(_EGID_7_VIDT) = *(size_t *)P2P_BSTNODE(pitem)->knot.pdata;
+	return grpTraverseVertexEdgesL
+	(
+		(P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_1_P_GRAPH_L_FLW),
+		_FFMFL_PARAM_ARRAY(_EGID_7_VIDT),
+		_grpCBFFFMFLFindInEdgesPuppet,
+		param
+	);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLFindMinimalTheta
+ * Description:   This function is used to find the minimal theta value of a single linked list of a queue.
+ * Parameters:
+ *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
+ *      param Pointer to a size_t[2] array of which
+ *            ap[0] Stores the minimal value.
+ *            ap[1] Stores a pointer to a GRAPH_L of flows.
+ * Return value:  Only CBF_CONTINUE will be returned.
+ */
+int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
+{
+	REGISTER _P_MXFLWLBL plbl  = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
+	
+	if (plbl->theta < 0[(size_t *)param])
+		0[(size_t *)param] = plbl->theta;
+	
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLReduceFlowValue
+ * Description:   This function is used to reduce flow value of a graph by the order of an augmenting path.
+ * Parameters:
+ *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
+ *      param Pointer to a size_t[2] array of which
+ *            ap[0] Stores the minimal value.
+ *            ap[1] Stores a pointer to a GRAPH_L of flows.
+ * Return value:  Only CBF_CONTINUE will be returned.
+ */
+int _grpCBFFFMFLReduceFlowValue(void * pitem, size_t param)
+{
+	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
+	
+	if (plbl->vidc != plbl->vidp)
+	{
+		REGISTER size_t * p = plbl->bdir == _EDIR_OUT ?
+			_grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidp, plbl->vidc) :
+			_grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidc, plbl->vidp);
+		
+		if (NULL != p)
+			*p -= 0[(size_t *)param];
+	}
+	
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFFFMFLFillMinCutSet
+ * Description:   This function is used to fill a minimal cut set.
+ * Parameters:
+ *      pitem Pointer to each BSTNODE in set Va of the caller function.
+ *      param Pointer to the SET_T to be filled.
+ * Return value:  Only CBF_CONTINUE will be returned.
+ */
+int _grpCBFFFMFLFillMinCutSet(void * pitem, size_t param)
+{
+	*(P_SET_T)param = _setInsertBST
+	(
+		*(P_SET_T)param,
+		&((_P_MXFLWLBL)P2P_BSTNODE(pitem)->knot.pdata)->vidc,
+		sizeof(size_t),
+		_grpCBFCompareInteger
+	);
+	return CBF_CONTINUE;
+}
+
+/* Function name: grpFordFulkersonMaxFlowL
+ * Description:   Solve the maximum flow of two graphs from starting vertex to end vertex by Ford Fulkerson algorithm.
+ * Parameters:
+ *    ppsmcut Returns a pointer to a SET_T to store the minimal cut of vertices.
+ *            Set this parameter to NULL to omit this set.
+ *      pgrpc Pointer to a graph to store capacities.
+ *      pgrpf Pointer to a graph to store feasible flows.
+ *       vids Starting vertex ID that you want to start searching.
+ *       vide End vertex ID.
+ * Return value:  true:  Successfully found maximum flow to pgrpf.
+ *                false: Failed to find maximum flow and minimal cut.
+ * Caution:       Address of pgrpc and pgrpf Must Be Allocated first.
+ * Tip:           Tips of use:
+ *                Notice that vids shall not equal to vide.
+ */
+bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrpf, size_t vids, size_t vide)
+{
+	SET_T     va, vb; /* Va: labeled vertices set. Vb: unlabeled vertices set. */
+	_MXFLWLBL label;
+	QUEUE_L   qlbl;   /* The queue contains augmenting path after looping. */
+	size_t    a[_EGID_11_MAX];
+	size_t    ap[2];
+	
+	if (vids == vide)
+		return false; /* No flow at all. */
+	
+	memset(a, 0, sizeof(a));
+	
+	a[_EGID_0_P_GRAPH_L_CAP] = (size_t)pgrpc;
+	a[_EGID_1_P_GRAPH_L_FLW] = (size_t)pgrpf;
+	a[_EGID_2_P_SET_T_VA]    = (size_t)&va;
+	a[_EGID_3_P_SET_T_VB]    = (size_t)&vb;
+	a[_EGID_4_P_MXFLWLBL]    = (size_t)&label;
+	a[_EGID_5_VIDS]          = vids;
+	a[_EGID_6_VIDE]          = vide;
+	
+	for ( ;; )
+	{
+		setInitT(&va);
+		setInitT(&vb);
+		queInitL(&qlbl);
+		
+	/* Phase 1. */
+		label.vidc  = label.vidp = vids;
+		label.bdir  = _EDIR_OUT;
+		label.theta = ~(size_t)0;
+
+		/* Enqueue. */
+		queInsertL(&qlbl, &label, sizeof(_MXFLWLBL));
+		
+		va = _setInsertBST(va, &label, sizeof(_MXFLWLBL), _grpCBFCompareInteger);
+		
+		if (CBF_TERMINATE == grpTraverseVerticesL(pgrpc, _grpCBFFFMFLFillVb, (size_t)a))
+			goto Lbl_FFMFL_Failed;
+	
+		for ( ;; )
+		{
+		/* Phase 2. */
+			a[_EGID_8_BOOL_VIDE] = a[_EGID_9_BOOL_NVTX] = (size_t)false;
+			
+			a[_EGID_10_BOOL_ERR] = (size_t)false;
+			if (CBF_CONTINUE != setTraverseTDispatch(&va, _grpCBFFFMFLFindOutEdges, (size_t)a, treTraverseBYIn) && a[_EGID_10_BOOL_ERR])
+				goto Lbl_FFMFL_Failed; /* Irrational flow network. Flow is larger than capacity. */
+			
+			if (! a[_EGID_9_BOOL_NVTX] && ! a[_EGID_8_BOOL_VIDE])
+			{
+				a[_EGID_10_BOOL_ERR] = (size_t)false;
+				if (CBF_CONTINUE != setTraverseTDispatch(&vb, _grpCBFFFMFLFindInEdges, (size_t)a, treTraverseBYIn) && a[_EGID_10_BOOL_ERR])
+					goto Lbl_FFMFL_Failed; /* Irrational flow network. */
+			}
+
+		/* Phase 3. */
+			/* Enqueue. */
+			queInsertL(&qlbl, &label, sizeof(_MXFLWLBL));
+
+			/* Remove vidc from Vb. */
+			if (setRemoveT(&vb, &label.vidc, sizeof(size_t), _grpCBFCompareInteger))
+				va = _setInsertBST(va, &label, sizeof(_MXFLWLBL), _grpCBFCompareInteger); /* Insert label into Va. */
+		
+		/* Phase 4. */
+			if (a[_EGID_8_BOOL_VIDE])
+				break; /* If vide has been labeled, we got an augmenting path, then do path reconstruction. */
+			
+			if (! a[_EGID_9_BOOL_NVTX])
+				goto Lbl_FFMFL_Solve; /* If vide has not been labeled or cannot label other vertex, algorithm succeeded. */
+		}
+	
+	/* Phase 5. */
+		/* Path reconstruction. */
+		if (! queIsEmptyL(&qlbl))
+		{
+			ap[0] = ((_P_MXFLWLBL)qlbl.pfront->pdata)->theta;
+			ap[1] = (size_t)pgrpf;
+			
+			strTraverseLinkedListSC_N(qlbl.pfront->pnode, NULL, _grpCBFFFMFLFindMinimalTheta, (size_t)ap);
+			strTraverseLinkedListSC_N(qlbl.pfront,        NULL, _grpCBFFFMFLReduceFlowValue,  (size_t)ap);
+		}
+		
+		setFreeT(&va);
+		setFreeT(&vb);
+		queFreeL(&qlbl);
+	}
+
+Lbl_FFMFL_Solve:
+	if (NULL != ppsmcut && ! setIsEmptyT(&va)) /* Fill minimal cut set. */
+	{
+		REGISTER P_SET_T psmc = setCreateT();
+		if (NULL != psmc)
+			setTraverseTDispatch(&va, _grpCBFFFMFLFillMinCutSet, (size_t)psmc, treMorrisTraverseBYIn);
+			
+		*ppsmcut = psmc; /* Output the pointer of minimal cut set. */
+	}
+	
+	setFreeT(&va);
+	setFreeT(&vb);
+	queFreeL(&qlbl);
+	return true;
+	
+Lbl_FFMFL_Failed:
+	setFreeT(&va);
+	setFreeT(&vb);
+	queFreeL(&qlbl);
+	return false;
+}
+
 /* Code section for adjacent matrix representation of graphs. */
+
 /* Sectional function declarations go here. */
 int _grpCBFFillVertexMappingTable     (void * pitem, size_t param);
 int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param);
@@ -1749,9 +2230,9 @@ void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
 }
 
 /* Function name: grpFreeM_O
- * Description:   Deallocate a graph of which is allocated by function grpInitM.
+ * Description:   Retract a graph of which is allocated by function grpInitM.
  * Parameter:
- *      pgrp Pointer to the graph you want to deallocate.
+ *      pgrp Pointer to the graph you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function called grpFreeM_M is available.
@@ -1809,7 +2290,7 @@ bool grpCopyM_O(P_GRAPH_M pdest, P_GRAPH_M psrc)
  * Parameter:
  *      pgrp Pointer to a matrix graph.
  * Return value:  If function returned 0, it would indicate an error.
- *                Otherwise, this function would return the number of vertice in the matrix graph.
+ *                Otherwise, this function would return the number of vertices in the matrix graph.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function called grpGetDimensionM_M is available.
  */

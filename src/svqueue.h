@@ -53,7 +53,7 @@ bool       queIsInitialAC_O (P_QUEUE_A  pqueac);
 size_t     queUsageAC_O     (P_QUEUE_A  pqueac);
 void       queInsertAC_O    (P_QUEUE_A  pqueac, const void * pitem, size_t     size);
 void       queRemoveAC_O    (void *     pitem,  size_t       size,  P_QUEUE_A  pqueac);
-/* Functions for queues that implemented with single linked-lists. */
+/* Functions for queues that implemented with single linked lists. */
 void       queInitL_O       (P_QUEUE_L  pquel);
 void       queFreeL         (P_QUEUE_L  pquel);
 P_QUEUE_L  queCreateL       (void);
@@ -62,7 +62,7 @@ bool       queIsEmptyL_O    (P_QUEUE_L  pquel);
 size_t     queUsageL_O      (P_QUEUE_L  pquel);
 bool       queInsertL       (P_QUEUE_L  pquel,  const void * pitem, size_t     size);
 bool       queRemoveL       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
-/* Functions for queues that implemented with doubly linked-lists. */
+/* Functions for queues that implemented with doubly linked lists. */
 void       queInitDL_O      (P_DEQUE_DL pdeque);
 void       queFreeDL        (P_DEQUE_DL pdeque);
 P_DEQUE_DL queCreateDL      (void);
@@ -90,13 +90,13 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	memcpy((pitem_M), (pqueac_M)->arr.pdata + (pqueac_M)->front * (size_M), (size_M)); \
 	(pqueac_M)->front = ((pqueac_M)->front + 1) % (pqueac_M)->arr.num; \
 } while (0)
-/* Macros for single linked-list queues. */
+/* Macros for single linked list queues. */
 #define queInitL_M(pquel_M) do { \
 	(pquel_M)->pfront = (pquel_M)->prear = NULL; \
 } while (0)
 #define queIsEmptyL_M(pquel_M) (!(pquel_M)->pfront)
 #define queUsageL_M(pquel_M) (strLevelLinkedListSC((pquel_M)->pfront))
-/* Macros for doubly linked-list queues. */
+/* Macros for doubly linked list queues. */
 #define queInitDL_M(pdeque_M) do { \
 	(pdeque_M)->pfirst = (pdeque_M)->plast = NULL; \
 } while (0)
@@ -117,11 +117,11 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queUsageAC     queUsageAC_M
 	#define queInsertAC    queInsertAC_O
 	#define queRemoveAC    queRemoveAC_O
-	/* Macros for single linked-list queues. */
+	/* Macros for single linked list queues. */
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
-	/* Macros for doubly linked-list queues. */
+	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
 	#define queUsageDL     queUsageDL_M
@@ -134,11 +134,11 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queUsageAC     queUsageAC_M
 	#define queInsertAC    queInsertAC_M
 	#define queRemoveAC    queRemoveAC_M
-	/* Macros for single linked-list queues. */
+	/* Macros for single linked list queues. */
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
-	/* Macros for doubly linked-list queues. */
+	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
 	#define queUsageDL     queUsageDL_M
@@ -151,11 +151,11 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queUsageAC     queUsageAC_M
 	#define queInsertAC    queInsertAC_M
 	#define queRemoveAC    queRemoveAC_M
-	/* Macros for single linked-list queues. */
+	/* Macros for single linked list queues. */
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
-	/* Macros for doubly linked-list queues. */
+	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
 	#define queUsageDL     queUsageDL_M
@@ -167,11 +167,11 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queUsageAC     queUsageAC_O
 	#define queInsertAC    queInsertAC_O
 	#define queRemoveAC    queRemoveAC_O
-	/* Macros for single linked-list queues. */
+	/* Macros for single linked list queues. */
 	#define queInitL       queInitL_O
 	#define queIsEmptyL    queIsEmptyL_O
 	#define queUsageL      queUsageL_O
-	/* Macros for doubly linked-list queues. */
+	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_O
 	#define queIsEmptyDL   queIsEmptyDL_O
 	#define queUsageDL     queUsageDL_O

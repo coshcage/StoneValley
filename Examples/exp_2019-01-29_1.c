@@ -76,7 +76,7 @@ int main(void)
 	if (NULL == strInitArrayZ(&n, N_, sizeof(MYTYPE)))
 		return 1; /* Allocation failure. */
 	if (NULL == strInitArrayZ(&r, R_, sizeof(MYTYPE)))
-	{	/* Another alocation failure. */
+	{	/* Another allocation failure. */
 		i = 2;
 		goto Lbl_Bad_Allocation;
 	}
@@ -91,7 +91,7 @@ int main(void)
 	do
 	{	/* Generate all permutations of the current subset for combination. */
 		while
-		(	/* Some versions of GCCs would mis-parse the following sentence while VC won't. */
+		(	/* Some versions of GCCs would mistakenly parse the following sentence while VC won't. */
 			printf(paste("%", numerize(N_), "d:\t"), ++i),
 			PrintArrayZ(&r, sizeof(MYTYPE), (bool)q),
 			strPermuteArrayZ(&r, &t, sizeof(MYTYPE), cbfcmp, true)

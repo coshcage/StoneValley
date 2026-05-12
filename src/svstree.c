@@ -59,9 +59,9 @@ void * treInitBSTNode(P_BSTNODE pnode, const void * pitem, size_t size, size_t p
 }
 
 /* Function name: treFreeBSTNode_O
- * Description:   Deallocate a node of which is allocated by function treInitBSTNode.
+ * Description:   Retract a node of which is allocated by function treInitBSTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named treFreeBSTNode_M is available.
@@ -96,9 +96,9 @@ P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 }
 
 /* Function name: treDeleteBSTNode_O
- * Description:   Deallocate a node of which is allocated by function treCreateBSTNode.
+ * Description:   Retract a node of which is allocated by function treCreateBSTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteBSTNode_M is available.
@@ -138,9 +138,9 @@ void treInitBST_O(P_BST pbst)
 }
 
 /* Function name: treFreeBST
- * Description:   Deallocate a binary search tree of which is allocated by function treInitBST_O.
+ * Description:   Retract a binary search tree of which is allocated by function treInitBST_O.
  * Parameter:
- *      pbst Pointer to the binary search tree you want to deallocate.
+ *      pbst Pointer to the binary search tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbst Must Be Allocated first.
  */
@@ -169,9 +169,9 @@ P_BST treCreateBST(void)
 }
 
 /* Function name: treDeleteBST_O
- * Description:   Deallocate a binary search tree of which is allocated by function treCreateBST.
+ * Description:   Retract a binary search tree of which is allocated by function treCreateBST.
  * Parameter:
- *      pbst Pointer to the tree you want to deallocate.
+ *      pbst Pointer to the tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbst Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteBST_M is available.
@@ -728,9 +728,9 @@ void * treInitRBTNode(P_RBTNODE pnode, const void * pitem, size_t size, RBTColor
 }
 
 /* Function name: treFreeRBTNode
- * Description:   Deallocate a node of which is allocated by function treInitRBTNode.
+ * Description:   Retract a node of which is allocated by function treInitRBTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
@@ -763,9 +763,9 @@ P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RB
 }
 
 /* Function name: treDeleteRBTNode_O
- * Description:   Deallocate a node of which is allocated by function treCreateRBTNode.
+ * Description:   Retract a node of which is allocated by function treCreateRBTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteRBTNode_M is available.
@@ -805,9 +805,9 @@ void treInitRBT_O(P_RBT prbt)
 }
 
 /* Function name: treFreeRBT
- * Description:   Deallocate a red black tree of which is allocated by function treInitRBT_O.
+ * Description:   Retract a red black tree of which is allocated by function treInitRBT_O.
  * Parameter:
- *      prbt Pointer to the red black tree you want to deallocate.
+ *      prbt Pointer to the red black tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of prbt Must Be Allocated first.
  */
@@ -836,9 +836,9 @@ P_RBT treCreateRBT(void)
 }
 
 /* Function name: treDeleteRBT_O
- * Description:   Deallocate a red black tree of which is allocated by function treCreateRBT.
+ * Description:   Retract a red black tree of which is allocated by function treCreateRBT.
  * Parameter:
- *      prbt Pointer to the tree you want to deallocate.
+ *      prbt Pointer to the tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of prbt Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteRBT_M is available.
@@ -1227,9 +1227,9 @@ void _treInitBPTInfo_O(_P_BPT_INFO pbi)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treFreeBPTInfo
- * Description:   Deallocate a _BPT_INFO structure of which is allocated by function _treInitBPTInfo_O.
+ * Description:   Retract a _BPT_INFO structure of which is allocated by function _treInitBPTInfo_O.
  * Parameter:
- *       pbi Pointer to the _BPT_INFO structure you want to deallocate.
+ *       pbi Pointer to the _BPT_INFO structure you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbi Must Be Allocated first.
  */
@@ -1256,9 +1256,9 @@ _P_BPT_INFO _treCreateBPTInfo(void)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treDeleteBPTInfo_O
- * Description:   Deallocate a _BPT_INFO structure of which is allocated by function _treCreateBPTInfo.
+ * Description:   Retract a _BPT_INFO structure of which is allocated by function _treCreateBPTInfo.
  * Parameter:
- *       pbi Pointer to the _BPT_INFO structure you want to deallocate.
+ *       pbi Pointer to the _BPT_INFO structure you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbi Must Be Allocated first.
  * Tip:           A macro version of this function named _treDeleteBYPTInfo_M is available.
@@ -1287,9 +1287,9 @@ void * treInitBPTNode(P_BPTNODE pnode, P_TNODE_BY parent, P_TNODE_BY pnext)
 }
 
 /* Function name: treFreeBPTNode
- * Description:   Deallocate a node of which is allocated by function treInitBPTNode.
+ * Description:   Retract a node of which is allocated by function treInitBPTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
@@ -1324,9 +1324,9 @@ P_BPTNODE treCreateBPTNode(P_BPTNODE parent, P_BPTNODE pnext)
 }
 
 /* Function name: treDeleteBPTNode
- * Description:   Deallocate a node of which is allocated by function treCreateBPTNode.
+ * Description:   Retract a node of which is allocated by function treCreateBPTNode.
  * Parameter:
- *     pnode Pointer to the node you want to deallocate.
+ *     pnode Pointer to the node you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
@@ -1431,9 +1431,9 @@ void _treFreeBPTPuppet(P_QUEUE_L pquelx, P_QUEUE_L pquely)
 }
 
 /* Function name: treFreeBPT
- * Description:   Deallocate a B-plus indexing tree of which is allocated by function treInitBPT_O.
+ * Description:   Retract a B-plus indexing tree of which is allocated by function treInitBPT_O.
  * Parameter:
- *      pbpt Pointer to the binary search tree you want to deallocate.
+ *      pbpt Pointer to the binary search tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
@@ -1469,9 +1469,9 @@ P_BPT treCreateBPT(void)
 }
 
 /* Function name: treDeleteBPT
- * Description:   Deallocate a B-plus indexing tree of which is allocated by function treCreateBPT.
+ * Description:   Retract a B-plus indexing tree of which is allocated by function treCreateBPT.
  * Parameter:
- *      pbpt Pointer to the tree you want to deallocate.
+ *      pbpt Pointer to the tree you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
@@ -1786,7 +1786,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
  * Description:   Make a leaf key chain for B-plus trees.
  *                This function is used to cooperate with function treBulkLoadBPT.
  * Parameters:
- *      pquel Pointer to a linked-list queue that used to save leaf nodes.
+ *      pquel Pointer to a linked list queue that used to save leaf nodes.
  *      pprev Pointer to a pointer that pointed the previously created node.
  *     ppkeys Pointer to a pointer to an array of keys.
  *        num Number of keys in new leaf node's array.
@@ -1841,7 +1841,7 @@ bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  * Return value:  true  Loading succeeded.
  *                false Loading failed.
  * Caution:       (*) The address of pbpt pointed must be allocated first and (*pbpt) shall equal to value NULL.
- *                (*) Users need to sort pointers in the array that pkeys pointed and let the 1st pointer points to the smallest value,
+ *                (*) Users need to sort pointers in the array that pkeys pointed and let the first pointer points to the smallest value,
  *                and the last pointer in this array shall point to the biggest value.
  * Tip:           Please use bulk loading function like this way:
  *                int a[5] = { 2,1,3,4,5 }; PUCHAR keys[5]; P_BPT pbpt = treCreateBPT();
@@ -1919,7 +1919,7 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 				pki->pkey = ((_P_BPT_KEY_INFO)((_P_BPT_INFO)pnode->pdata)->keyarr.pdata)->pkey;
 				pnode->ppnode[PARENTPTR] = pnew;
 			}
-			/* Insert new created node into the 2nd. queue. */
+			/* Insert new created node into the second one. queue. */
 			queInsertL(pqb, &pnew, sizeof(P_BPTNODE));
 			if (queIsEmptyL(pqa))
 				svSwap(&pqa, &pqb, &pqt, sizeof(P_BPTNODE));
@@ -1929,7 +1929,7 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 		return true;
 Lbl_Allocation_Failure:
 		treDeleteBPT(pbpt);
-		/* Move contents of the 2nd. queue to the 1st. queue. */
+		/* Move contents of the second queue to the first queue. */
 		while (!queIsEmptyL(pqb))
 		{
 			queRemoveL(&pnode, sizeof(P_BPTNODE), pqb);
@@ -2009,7 +2009,7 @@ void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, bool bright)
 	P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
 	P_ARRAY_Z parrz1 = &((_P_BPT_INFO)pnode->pdata)->keyarr;
 	P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
-	/* Reallocate mem-space for array in pnode. */
+	/* Reallocate memory spaces for array in pnode. */
 	strResizeArrayZ(parrz1, 1, sizeof(_BPT_KEY_INFO));
 	/* Locate entry in parent. */
 	for (i = 0; i < strLevelArrayZ(parrz0); ++i)
@@ -2267,7 +2267,7 @@ void treInitTrieA_O(P_TRIE_A ptrie)
  * Function name: _treFreeTrieNode
  * Description:   This function is used to free array implemented nodes in a trie.
  * Parameters:
- *      ptrie Pointer to a trie you want to deallocate.
+ *      ptrie Pointer to a trie you want to retract.
  *       size Size of an element in the string which had been inserted into trie before.
  * Return value:  N/A.
  * Caution:       Address of ptrie Must Be Allocated first.
@@ -2290,9 +2290,9 @@ void _treFreeTrieNode(P_TRIE_A ptrie, size_t size)
 }
 
 /* Function name: treFreeTrieA_O
- * Description:   Deallocate a trie which is allocated by function treInitTrieA_O.
+ * Description:   Retract a trie which is allocated by function treInitTrieA_O.
  * Parameters:
- *      ptrie Pointer to a trie you want to deallocate.
+ *      ptrie Pointer to a trie you want to retract.
  *       size Size of an element in the string which had been inserted into trie before.
  * Return value:  N/A.
  * Caution:       Address of ptrie Must Be Allocated first.

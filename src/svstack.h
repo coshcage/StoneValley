@@ -46,7 +46,7 @@ void *    stkPushA_O    (P_STACK_A pstka, const void * pitem, size_t    size);
 void      stkPopA_O     (void *    pitem, size_t       size,  P_STACK_A pstka);
 void      stkPeepA_O    (void *    pitem, size_t       size,  P_STACK_A pstka);
 size_t    stkLevelA_O   (P_STACK_A pstka);
-/* Functions for linked-list represented stacks. */
+/* Functions for linked list represented stacks. */
 void      stkInitL_O    (P_STACK_L pstkl);
 void      stkFreeL_O    (P_STACK_L pstkl);
 P_STACK_L stkCreateL_O  (void);
@@ -69,7 +69,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	memcpy((pitem_M), (pstka_M)->arr.pdata + ((pstka_M)->top - 1) * (size_M), (size_M)); \
 } while (0)
 #define stkLevelA_M(pstka_M) ((pstka_M)->top)
-/* Macros for linked-list represented stacks. */
+/* Macros for linked list represented stacks. */
 #define stkInitL_M(pstkl_M) do { \
 	strInitLinkedListSC(pstkl_M); \
 } while (0)
@@ -95,7 +95,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPopA     stkPopA_M
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
-	/* Macros for linked-list represented stacks. */
+	/* Macros for linked list represented stacks. */
 	#define stkInitL    stkInitL_M
 	#define stkFreeL    stkFreeL_M
 	#define stkCreateL  strCreateLinkedListSC
@@ -112,7 +112,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPopA     stkPopA_M
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
-	/* Macros for linked-list represented stacks. */
+	/* Macros for linked list represented stacks. */
 	#define stkInitL    stkInitL_M
 	#define stkFreeL    stkFreeL_M
 	#define stkCreateL  strCreateLinkedListSC
@@ -129,7 +129,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPopA     stkPopA_M
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
-	/* Macros for linked-list represented stacks. */
+	/* Macros for linked list represented stacks. */
 	#define stkInitL    stkInitL_M
 	#define stkFreeL    stkFreeL_M
 	#define stkCreateL  strCreateLinkedListSC
@@ -145,7 +145,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPopA     stkPopA_O
 	#define stkPeepA    stkPeepA_O
 	#define stkLevelA   stkLevelA_O
-	/* Macros for linked-list represented stacks. */
+	/* Macros for linked list represented stacks. */
 	#define stkInitL    stkInitL_O
 	#define stkFreeL    stkFreeL_O
 	#define stkCreateL  strCreateLinkedListSC

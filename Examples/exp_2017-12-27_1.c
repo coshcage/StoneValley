@@ -40,14 +40,14 @@ typedef struct st_Operator {
 
 /* Operator table. */
 static const OPERATOR oprTable[OPR_MAX] = {
-	'+', 1,
-	'-', 1,
-	'*', 2,
-	'/', 2,
-	'%', 2,
-	'^', 3,
-	'+', 4,
-	'-', 4
+	{ '+', 1 },
+	{ '-', 1 },
+	{ '*', 2 },
+	{ '/', 2 },
+	{ '%', 2 },
+	{ '^', 3 },
+	{ '+', 4 },
+	{ '-', 4 }
 };
 
 /* A structure describes elements in expression. */
@@ -63,7 +63,7 @@ static P_QUEUE_L queRPNExpr  = NULL; /* A queue used to build an execution seque
 static P_STACK_L stkOperand  = NULL; /* Operand stack used to hold operands. */
 static P_STACK_L stkOperator = NULL; /* Operator stack used to handle precedence. */
 
-static char * strException = "Unhandled exception while pushing an operator into stack.\n";
+static char * strException = "Untreated exception while pushing an operator into stack.\n";
 
 // Function: PrintInfo.
 // Desc:     Print helping information.
@@ -74,11 +74,10 @@ void PrintInfo(int b)
 	if (!b)
 	{
 		void svPrintVersion(void);
-		printf("############################\n\
-#      Expression Tool     #\n");
-		printf("#    "); svPrintVersion(); printf("   #\n");
-		printf("#    exp_2017-12-26_2.c    #\n\
-############################\n");
+		printf("########################\n\
+#    Expression Tool   #\n");
+		printf("#  exp_2017-12-26_2.c  #\n\
+########################\n"); svPrintVersion();
 	}
 	else
 	{

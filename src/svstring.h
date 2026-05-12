@@ -68,7 +68,7 @@ typedef enum en_NodeType {
 	ENT_SINGLE
 } NodeType;
 
-/* Definition of bit-stream. */
+/* Definition of bit stream. */
 typedef struct st_BITSTREAM {
 	ARRAY_Z arrz; /* Array that contains the stream data. */
 	size_t  bilc; /* Number of bits in the last char. */
@@ -84,14 +84,14 @@ typedef struct st_MATRIX {
  * This function should return either CBF_CONTINUE or CBF_TERMINATE.
  * If callback algebraic function returned CBF_TERMINATE,
  *   caller would be interrupted,
- *     unless callee should return CBF_CONTINUE to calculate continually.
+ *     unless the callee should return CBF_CONTINUE to calculate continually.
  */
 typedef CBF_COMPARE CBF_ALGEBRA;
 
-/* Definition of bit-matrix structure. */
+/* Definition of bit matrix structure. */
 typedef MATRIX BITMAT, * P_BITMAT;
 
-/* Definition of sparse-matrix structure. */
+/* Definition of sparse matrix structure. */
 typedef struct st_SPAMAT {
 	ARRAY_Z bita;  /* Fenwick tree/Binary indexed tree array. */
 	BITMAT bmask;  /* Data bit mask. */
@@ -144,7 +144,7 @@ bool        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    size_t     (*nxtrnd)(void));
 int         strKMPSearchArrayZ             (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
 int         strZSearchArrayZ               (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
-/* Functions for single pointer linked-lists. */
+/* Functions for singlar pointer linked lists. */
 int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_N      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
@@ -165,7 +165,7 @@ P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     
 P_NODE_S    strReverseLinkedListSC         (LIST_S       phead);
 void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
 LIST_S      strQuickSortLinkedListS        (LIST_S       phead,    CBF_COMPARE  cbfcmp);
-/* Functions for doubly linked-lists. */
+/* Functions for doubly linked lists. */
 int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  bool        brev);
 int         strTraverseLinkedListDC_A      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  bool        brev);
 int         strTraverseLinkedListDC_N      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  bool        brev);
@@ -182,11 +182,11 @@ P_NODE_D    strLocateItemDC_N              (P_NODE_D     pnode,    ptrdiff_t    
 P_NODE_D    strInsertItemLinkedListDC      (P_NODE_D     pdest,    P_NODE_D     pnode,     bool         bafter);
 P_NODE_D    strRemoveItemLinkedListDC      (P_NODE_D     pnode);
 void        strSwapItemLinkedListD         (P_NODE_D     pnodex,   P_NODE_D     pnodey);
-/* Functions for both linked-list_S and linked-list_D. */
+/* Functions for both single linked lists and doubly linked lists. */
 void        strSwapContentLinkedListSD     (void *       pnodex,   size_t       sizex,     void *       pnodey,  size_t       sizey,  NodeType    bnodes);
 void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       bool         brev);
 void *      strMergeSortLinkedListSDC      (void *       list,     bool         bCircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
-/* Functions for bit-streams. */
+/* Functions for bit streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
 void        strFreeBitStream               (P_BITSTREAM  pbstm);
 P_BITSTREAM strCreateBitStream             (void);
@@ -214,7 +214,7 @@ bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
-/* Functions for bit-matrices. */
+/* Functions for bit matrices. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);
 P_BITMAT    strCreateBMap                  (size_t       ln,       size_t       col,     bool         val);
@@ -327,7 +327,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
 	#define strSortArrayZ             strSortArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
-	/* Macros for linked-lists. */
+	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
 	#define strInitLinkedListSC       strInitLinkedListSC_M
 	#define strDeleteLinkedListSC     strDeleteLinkedListSC_O
@@ -363,7 +363,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
 	#define strSortArrayZ             strSortArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
-	/* Macros for linked-lists. */
+	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_N
 	#define strInitLinkedListSC       strInitLinkedListSC_M
 	#define strDeleteLinkedListSC     strDeleteLinkedListSC_M
@@ -399,7 +399,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
 	#define strSortArrayZ             strSortArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
-	/* Macros for linked-lists. */
+	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
 	#define strInitLinkedListSC       strInitLinkedListSC_M
 	#define strDeleteLinkedListSC     strDeleteLinkedListSC_M
@@ -433,7 +433,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strLocateItemArrayZ       strLocateItemArrayZ_O
 	#define strSortArrayZ             strSortArrayZ_O
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_O
-	/* Macros for linked-lists. */
+	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
 	#define strInitLinkedListSC       strInitLinkedListSC_O
 	#define strDeleteLinkedListSC     strDeleteLinkedListSC_O

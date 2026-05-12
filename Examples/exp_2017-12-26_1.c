@@ -20,28 +20,30 @@
 // If not, see <https://www.gnu.org/licenses/>.
 //
 #include <stdio.h>
-#include <string.h>
+#include <limits.h>
 #include "svstring.h"
 #include "svtree.h"
 
+/* Define a character string. */
 #define SZ_STR "I am the architect of StoneValley. I love this library."
 
 /* This function illustrates how to use Huffman algorithm to compress data. */
 int main(void)
 {
 	P_ARRAY_Z ptbl = NULL; /* Used to store a symbol table. */
-	P_BITSTREAM pbsout, pbsin; /* Bit-streams that used to contain data. */
+	P_BITSTREAM pbsout, pbsin; /* Bit streams that used to contain data. */
 	/* Encode string. Caution that table is important for decoding. */
-	if (NULL == (ptbl = treCreateHuffmanTable(SZ_STR, strlen(SZ_STR) + 1)))
+	if (NULL == (ptbl = treCreateHuffmanTable((const PUCHAR)SZ_STR, sizeof(SZ_STR))))
 	{
 		fprintf(stderr, "Error! Can create symbol table.\n");
 		return __LINE__;
 	}
-	if (NULL == (pbsin = treHuffmanEncoding(ptbl, SZ_STR, strlen(SZ_STR) + 1)))
+	if (NULL == (pbsin = treHuffmanEncoding(ptbl, (const PUCHAR)SZ_STR, sizeof(SZ_STR))))
 	{
 		fprintf(stderr, "Error! Can not Encode.\n");
 		return __LINE__;
 	}
+	printf("%zd/%zd bits.\n", CHAR_BIT * (strLevelArrayZ(&pbsin->arrz) - 1) + pbsin->bilc, CHAR_BIT * sizeof(SZ_STR));
 	if (NULL == (pbsout = treHuffmanDecoding(ptbl, pbsin)))
 	{
 		fprintf(stderr, "Error! Can not Decode.\n");
@@ -49,7 +51,7 @@ int main(void)
 	}
 	/* Print the original string. */
 	printf("%s\n", (char *)pbsout->arrz.pdata);
-	/* Don't forget to free bit-streams and symbol table after use. */
+	/* Don't forget to free bit streams and symbol table after use. */
 	strDeleteBitStream(pbsout);
 	strDeleteBitStream(pbsin);
 	strDeleteArrayZ(ptbl);

@@ -1,6 +1,6 @@
 //
 //  exp_2019-01-22_1.c
-//  A doubly-pointer linked-list solution to Josephus's ring.
+//  A doubly-pointer linked list solution to Josephus's ring.
 //  Created by cosh.cage#hotmail.com on 01/22/19.
 //  License:  LGPLv3
 //  Platform: Cross Platform.
@@ -23,7 +23,7 @@
 #include "svstring.h"
 
 // Function: cbftvs_print_list
-// Desc:     Print item number in linked-list.
+// Desc:     Print item number in a linked list.
 // Param:    pitem: pointer to each node in a list. param: N/A.
 // Return:   CBF_CONTINUE only.
 int cbftvs_print_list(void * pitem, size_t param)

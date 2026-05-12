@@ -30,7 +30,7 @@ int _setCBFIntersectionHPuppet (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _setCBFIsSubsetHPuppet
- * Description:   This function is used to check the sub-set property of a set.
+ * Description:   This function is used to check the sub set property of a set.
  * Parameters:
  *      pitem Pointer to each NODE_S in hash table.
  *      param Pointer to a size_t[3] array.
@@ -73,9 +73,9 @@ bool setInitH_O(P_SET_H pset, size_t buckets)
 }
 
 /* Function name: setFreeH_O
- * Description:   Deallocate the set of which is allocated by function setInitH_O.
+ * Description:   Retract the set of which is allocated by function setInitH_O.
  * Parameter:
- *      pset Pointer to the set you want to deallocate.
+ *      pset Pointer to the set you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setFreeH_M is available.
@@ -102,7 +102,7 @@ P_SET_H setCreateH_O(size_t buckets)
 /* Function name: setDeleteH_O
  * Description:   Delete the set of which is allocated by function setCreateH_O.
  * Parameter:
- *      pset Pointer to the set you want to deallocate.
+ *      pset Pointer to the set you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setDeleteH_M is available.
@@ -491,9 +491,9 @@ void setInitT_O(P_SET_T pset)
 }
 
 /* Function name: setFreeT_O
- * Description:   Deallocate the set of which is allocated by function setInitT_O.
+ * Description:   Retract the set of which is allocated by function setInitT_O.
  * Parameter:
- *      pset Pointer to the set you want to deallocate.
+ *      pset Pointer to the set you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setFreeT_M is available.
@@ -517,7 +517,7 @@ P_SET_T setCreateT_O(void)
 /* Function name: setDeleteT_O
  * Description:   Delete the set of which is allocated by function setCreateT_O.
  * Parameter:
- *      pset Pointer to the set you want to deallocate.
+ *      pset Pointer to the set you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setDeleteT_M is available.
@@ -588,7 +588,7 @@ bool setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _setCBFIsSubsetTPuppet
- * Description:   This function is used to check the sub-set property of a set.
+ * Description:   This function is used to check the sub set property of a set.
  * Parameters:
  *      pitem Pointer to each NODE_S in the tree.
  *      param Pointer to a size_t[2] array.

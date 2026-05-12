@@ -119,7 +119,7 @@ int main(void)
 		stkDeleteA(pstk);
 	}
 	printf("Through this map, we can not only know how many characters in a string, \n\
-but also the frequency of each character and which place they dwelled in.\nA charming fancy clarity!\n");
+but also the frequency of each character and which place they dwelt in.\nA charming fancy clarity!\n");
 	// Don't forget to revoke set spaces.
 	setDeleteH(pseta);
 	return 0;

@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0503260630L00202
+ * File ID:     0901171625S0511260200L00204
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -33,7 +33,7 @@ typedef struct st_VERTEX_L {
 	LIST_S adjlist; /* Adjacency list. */
 } VERTEX_L, * P_VERTEX_L;
 
-/* Edge data in adjacency-lists. */
+/* Edge data in adjacency lists. */
 typedef struct st_EDGE {
 	size_t vid;    /* Index of the adjacent vertex. */
 	size_t weight; /* Edge weight. */
@@ -51,48 +51,50 @@ typedef SET_T GRAPH_L, * P_GRAPH_L;
 /* Adjacent matrix representation of graphs. */
 typedef MATRIX GRAPH_M, * P_GRAPH_M;
 
-/* Functions for linked-list graphs. */
-bool       grpVertexExistsL         (P_GRAPH_L pgrp,  size_t       vid);
-int        grpTraverseVerticesL     (P_GRAPH_L pgrp,  CBF_TRAVERSE cbftvs,  size_t       param);
-int        grpTraverseVertexEdgesL  (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+/* Functions for linked list graphs. */
+P_VERTEX_L grpGetVertexByID         (P_GRAPH_L pgrp,    size_t       vid);
+bool       grpVertexExistsL         (P_GRAPH_L pgrp,    size_t       vid);
+int        grpTraverseVerticesL     (P_GRAPH_L pgrp,    CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpTraverseVertexEdgesL  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 void       grpInitL_O               (P_GRAPH_L pgrp);
 void       grpFreeL                 (P_GRAPH_L pgrp);
 P_GRAPH_L  grpCreateL_O             (void);
 void       grpDeleteL               (P_GRAPH_L pgrp);
 size_t     grpVerticesCountL_O      (P_GRAPH_L pgrp);
 size_t     grpEdgesCountL           (P_GRAPH_L pgrp);
-bool       grpAreAdjacentVerticesL  (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   bool         bweight, size_t weight);
-int        grpTraverseEdgesWeightL  (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   CBF_TRAVERSE cbftvs,  size_t param);
-size_t     grpIndegreeVertexL       (P_GRAPH_L pgrp,  size_t       vid);
-size_t     grpOutdegreeVertexL      (P_GRAPH_L pgrp,  size_t       vid);
-bool       grpInsertVertexL         (P_GRAPH_L pgrp,  size_t       vid);
-bool       grpInsertEdgeL           (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   size_t       weight);
-bool       grpRemoveVertexL         (P_GRAPH_L pgrp,  size_t       vid);
-bool       grpRemoveEdgeL           (P_GRAPH_L pgrp,  size_t       vidx,    size_t       vidy,   size_t       weight);
+bool       grpAreAdjacentVerticesL  (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   bool         bweight, size_t weight);
+int        grpTraverseEdgesWeightL  (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   CBF_TRAVERSE cbftvs,  size_t param);
+size_t     grpIndegreeVertexL       (P_GRAPH_L pgrp,    size_t       vid);
+size_t     grpOutdegreeVertexL      (P_GRAPH_L pgrp,    size_t       vid);
+bool       grpInsertVertexL         (P_GRAPH_L pgrp,    size_t       vid);
+bool       grpInsertEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   size_t       weight);
+bool       grpRemoveVertexL         (P_GRAPH_L pgrp,    size_t       vid);
+bool       grpRemoveEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   size_t       weight);
 P_GRAPH_L  grpCopyL                 (P_GRAPH_L pgrp);
-int        grpDFSL                  (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
-int        grpBFSL                  (P_GRAPH_L pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
-P_ARRAY_Z  grpShortestPathFastL     (P_GRAPH_L pgrp,  size_t       vidx);
-P_LIST_D   grpDijkstraShortestPathL (P_GRAPH_L pgrp,  size_t       vids,    size_t       vide);
+int        grpDFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+int        grpBFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+P_ARRAY_Z  grpShortestPathFastL     (P_GRAPH_L pgrp,    size_t       vidx);
+P_LIST_D   grpDijkstraShortestPathL (P_GRAPH_L pgrp,    size_t       vids,    size_t       vide);
 bool       grpMinimalSpanningTreeL  (P_GRAPH_L pgrp);
 P_ARRAY_Z  grpTopologicalSortL      (P_GRAPH_L pgrp);
+bool       grpFordFulkersonMaxFlowL (P_SET_T * ppsmcut, P_GRAPH_L    pgrpc,   P_GRAPH_L    pgrpf,  size_t       vids,    size_t vide);
 /* Functions for adjacent matrix representation of graphs. */
-void *     grpInitM                 (P_GRAPH_M pgrp,  size_t       vtxc);
+void *     grpInitM                 (P_GRAPH_M pgrp,    size_t       vtxc);
 void       grpFreeM_O               (P_GRAPH_M pgrp);
 P_GRAPH_M  grpCreateM               (size_t    vtxc);
 void       grpDeleteM_O             (P_GRAPH_M pgrp);
-bool       grpCopyM_O               (P_GRAPH_M pdest, P_GRAPH_M    psrc);
+bool       grpCopyM_O               (P_GRAPH_M pdest,   P_GRAPH_M    psrc);
 size_t     grpGetDimensionM_O       (P_GRAPH_M pgrp);
-bool       grpResizeM               (P_GRAPH_M pgrp,  size_t       vtxc);
-size_t     grpGetEdgeWeightM        (P_GRAPH_M pgrp,  size_t *     pweight, size_t       vidx,    size_t       vidy);
-bool       grpSetEdgeWeightM        (P_GRAPH_M pgrp,  size_t       vidx,    size_t       vidy,    size_t       weight);
-int        grpTraverseVertexEdgesM  (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
-bool       grpAreAdjacentVerticesM_O(P_GRAPH_M pgrp,  size_t       vidx,    size_t       vidy);
+bool       grpResizeM               (P_GRAPH_M pgrp,    size_t       vtxc);
+size_t     grpGetEdgeWeightM        (P_GRAPH_M pgrp,    size_t *     pweight, size_t       vidx,    size_t       vidy);
+bool       grpSetEdgeWeightM        (P_GRAPH_M pgrp,    size_t       vidx,    size_t       vidy,    size_t       weight);
+int        grpTraverseVertexEdgesM  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+bool       grpAreAdjacentVerticesM_O(P_GRAPH_M pgrp,    size_t       vidx,    size_t       vidy);
 size_t     grpEdgesCountM           (P_GRAPH_M pgrp);
-size_t     grpIndegreeVertexM       (P_GRAPH_M pgrp,  size_t       vid);
-size_t     grpOutdegreeVertexM      (P_GRAPH_M pgrp,  size_t       vid);
-int        grpDFSM                  (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
-int        grpBFSM                  (P_GRAPH_M pgrp,  size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+size_t     grpIndegreeVertexM       (P_GRAPH_M pgrp,    size_t       vid);
+size_t     grpOutdegreeVertexM      (P_GRAPH_M pgrp,    size_t       vid);
+int        grpDFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpBFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
 /* Functions for both adjacent matrix representation of graphs and adjacent list representation of graphs. */
 P_GRAPH_L  grpCreateLFromM          (P_GRAPH_M pgrpm);
 P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);

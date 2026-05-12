@@ -137,7 +137,7 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 	{
 		P_TNODE_BY pnode1, pnode2, ptemp;
 		REGISTER _P_HFMNOD phnode1, phnode2;
-		/* Pop two node-pointers from heap. */
+		/* Pop two node pointers from heap. */
 		treRemoveHeapA(&pnode1, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, false);
 		treRemoveHeapA(&pnode2, &ptemp, sizeof(P_TNODE_BY), &heap, _treCBFHFMCompareSymbolFreqInNode, false);
 
@@ -297,14 +297,14 @@ Lbl_Failed:
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
  *          s The buffer you want to encode.
  *          n Number of elements in the buffer. The unit of n is sizeof(unsigned char).
- * Return value:  Pointer to a new created bit-stream. This bit-stream stores encoded string.
+ * Return value:  Pointer to a new created bit stream. This bit stream stores encoded string.
  *                If any error occurred during encoding, 
  *                function would be interrupted and return a NULL pointer.
  * Tip:           Symbol table is important for decoding. You may need to store the symbol table onto an external disk.
  *                This function can encode sub string but use the symbol table of a whole string.
  * Usage:         // #include <stdio.h> // Invoke function printf.
  *                // #define STR1 "This is a test, and that is another test."
- *                // #define STR2 "This" // Sub-string.
+ *                // #define STR2 "This" // Sub string.
  *                // P_ARRAY_Z par = treCreateHuffmanTable(STR1, strlen(STR1) + 1);
  *                // P_BITSTREAM pbi = treHuffmanEncoding(par, STR2, strlen(STR2) + 1);
  *                // P_BITSTREAM pbo = treHuffmanDecoding(par, pbi);
@@ -342,7 +342,7 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
 			for (i = 0; i < n; ++i)
 			{
 				psi = (_P_SMBINF)strLocateItemArrayZ(pltbl, sizeof(_SMBINF), s[i]);
-				/* Fill bit-stream. */
+				/* Fill bit stream. */
 				for (j = 1; j <= psi->Symbol.bits; ++j)
 					strBitStreamAdd(pbstm, ((size_t)1 << (psi->Symbol.bits - j)) & psi->Symbol.sgnb);
 			}
@@ -422,14 +422,14 @@ Lbl_Building_Failed:
  * Parameters:
  *     ptable Pointer to a symbol table which is used to decode.
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
- *          s The encoded bit-stream you want to decode.
- * Return value:  Pointer to a new created bit-stream. This bit-stream stores the decoded string.
+ *          s The encoded bit stream you want to decode.
+ * Return value:  Pointer to a new created bit stream. This bit stream stores the decoded string.
  *                If any error occurred during decoding, function would be interrupted and return a NULL.
  * Caution:       ptable must NOT be value NULL.
- *                (*) if users called this function, parameter bit-stream s would be altered to empty.
+ *                (*) if users called this function, parameter bit stream s would be altered to empty.
  * Tip:           You could get a symbol table from invoking function treHuffmanEncoding.
  *                A symbol table will output from the parameter pptable of function treHuffmanEncoding.
- *                You may either get a bit-stream as the parameter of function treHuffmanDecoding from
+ *                You may either get a bit stream as the parameter of function treHuffmanDecoding from
  *                the return value of function treHuffmanEncoding.
  */
 P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
@@ -450,11 +450,11 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 					if (NULL == pnode->ppnode[LEFT] && NULL == pnode->ppnode[RIGHT]) /* Searching reaches at a leaf node. */
 					{
 						if (i >= strLevelArrayZ(&pbout->arrz))
-						{	/* Increase the length of bit-stream. */
+						{	/* Increase the length of bit stream. */
 							if (NULL == strResizeArrayZ(&pbout->arrz, strLevelArrayZ(&pbout->arrz) + BUFSIZ, sizeof(UCHART)))
 								goto Lbl_Decoding_Failure;
 						}
-						/* Assign symbol to bit-stream. */
+						/* Assign symbol to bit stream. */
 						pbout->arrz.pdata[i] = ((_P_HFMNOD)pnode->pdata)->NodeData.psb->name;
 						pnode = proot;
 						++i;
@@ -477,7 +477,7 @@ P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 			{
 				if (NULL != pbout)
 					strDeleteBitStream(pbout);
-				pbout = NULL; /* Can not resize bit-stream. */
+				pbout = NULL; /* Can not resize bit stream. */
 			}
 			treFreeBY(&proot);
 			return pbout;

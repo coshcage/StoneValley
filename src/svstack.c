@@ -41,9 +41,9 @@ void * stkInitA(P_STACK_A pstka, size_t num, size_t size)
 }
 
 /* Function name: stkFreeA
- * Description:   Deallocate a stack of which is allocated by function stkInitA.
+ * Description:   Retract a stack of which is allocated by function stkInitA.
  * Parameter:
- *     pstka Pointer to the stack you want to deallocate.
+ *     pstka Pointer to the stack you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pstka->arr.pdata Must Be Allocated first.
  */
@@ -172,7 +172,7 @@ size_t stkLevelA_O(P_STACK_A pstka)
 }
 
 /* Function name: stkInitL_O
- * Description:   Initialize a linked-list stack.
+ * Description:   Initialize a linked list stack.
  * Parameters:
  *      pstkl Pointer to the stack you want to create.
  *       size Size of each element in the stack.
@@ -187,9 +187,9 @@ void stkInitL_O(P_STACK_L pstkl)
 }
 
 /* Function name: stkFreeL_O
- * Description:   Deallocate a linked-list stack of which is allocated by function stkInitL.
+ * Description:   Retract a linked list stack of which is allocated by function stkInitL.
  * Parameter:
- *     pstkl Pointer to the stack you want to deallocate.
+ *     pstkl Pointer to the stack you want to retract.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated first.
  * Tip:           This function can be inline for better performance.
@@ -201,9 +201,9 @@ void stkFreeL_O(P_STACK_L pstkl)
 }
 
 /* Function name: stkCreateL_O
- * Description:   Create a new pointer with a new allocated Linked-list stack.
+ * Description:   Create a new pointer with a new allocated linked list stack.
  * Parameter:     N/A.
- * Return value:  A pointer to a new allocated linked-list stack.
+ * Return value:  A pointer to a new allocated linked list stack.
  * Tip:           This function can be inline for better performance.
  */
 P_STACK_L stkCreateL_O(void)
@@ -212,9 +212,9 @@ P_STACK_L stkCreateL_O(void)
 }
 
 /* Function name: stkDeleteL_O
- * Description:   Destroy a linked-list stack of which is allocated by function stkCreateL.
+ * Description:   Destroy a linked list stack of which is allocated by function stkCreateL.
  * Parameter:
- *     pstkl Pointer to the stack you want to delete from the main-memory.
+ *     pstkl Pointer to the stack you want to delete from the main memory.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated By Function stkCreateL at first.
  * Tip:           This function can be inline for better performance.

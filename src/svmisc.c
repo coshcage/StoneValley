@@ -76,13 +76,13 @@ void svSwap(void * pleft, void * pright, void * ptemp, size_t size)
 	memcpy(pright, ptemp, size);
 }
 
-/* Functions for bit-streams. */
+/* Functions for bit streams. */
 
 /* Function name: strInitBitStream
- * Description:   Initialize a bit-stream.
+ * Description:   Initialize a bit stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate with.
- * Return value:  Pointer to the buffer of bit-stream.
+ *     pbstm Pointer to the bit stream you want to operate with.
+ * Return value:  Pointer to the buffer of bit stream.
  *                NULL indicates that initialization failed.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
@@ -94,9 +94,9 @@ void * strInitBitStream(P_BITSTREAM pbstm)
 }
 
 /* Function name: strFreeBitStream
- * Description:   Deallocate the buffer of bit-stream.
+ * Description:   Retract the buffer of bit stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
+ *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  N/A.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
@@ -107,10 +107,10 @@ void strFreeBitStream(P_BITSTREAM pbstm)
 }
 
 /* Function name: strCreateBitStream
- * Description:   Create a bit-stream.
+ * Description:   Create a bit stream.
  * Parameter:     N/A.
- * Return value:  Pointer to the new created bit-stream.
- *                NULL indicates that bit-stream creation failed.
+ * Return value:  Pointer to the new created bit stream.
+ *                NULL indicates that bit stream creation failed.
  */
 P_BITSTREAM strCreateBitStream(void)
 {
@@ -127,9 +127,9 @@ P_BITSTREAM strCreateBitStream(void)
 }
 
 /* Function name: strDeleteBitStream
- * Description:   Deallocate a bit-stream.
+ * Description:   Retract a bit stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
+ *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  N/A.
  * Caution:       Address of pbstm Must Be Allocated by function strCreateBitStream first.
  */
@@ -140,7 +140,7 @@ void strDeleteBitStream(P_BITSTREAM pbstm)
 }
 
 /* Function name: strCopyBitStream
- * Description:   Copy a bit-stream from source to destination.
+ * Description:   Copy a bit stream from source to destination.
  * Parameters:
  *      pdest Pointer to the destination stream whose content is to be copied.
  *       psrc Pointer to the source of stream to be copied.
@@ -162,11 +162,11 @@ void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
 }
 
 /* Function name: strBitStreamIsEmpty_O
- * Description:   Test a bit-stream. Check Whether the bit-stream is empty or not.
+ * Description:   Test a bit stream. Check Whether the bit stream is empty or not.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
- * Return value:  true indicates that the bit-stream is empty.
- *                false indicates that the bit-stream is NOT empty.
+ *     pbstm Pointer to the bit stream you want to operate on.
+ * Return value:  true indicates that the bit stream is empty.
+ *                false indicates that the bit stream is NOT empty.
  * Caution:       Address of pbstm Must Be Allocated first.
  * Tip:           A macro version of this function named strBitStreamIsEmpty_M is available.
  */
@@ -178,7 +178,7 @@ bool strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
 /* Function name: strBitStreamPush
  * Description:   Push a bit onto the start of the stream.
  * Parameters:
- *      pbstm Pointer to the bit-stream you want to operate on.
+ *      pbstm Pointer to the bit stream you want to operate on.
  *      value A bit value you are about to push into.
  * Return value:  true indicates that no error has been occurred.
  *                false indicates that error occurred while pushing bit onto the stream.
@@ -213,12 +213,12 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 /* Function name: strBitStreamPop
  * Description:   Pop a bit from the start of the stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
+ *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  Popped bit. Converted to bool. Values true 1 or false 0.
  * Caution:       Use this function on a bit stream which is not empty.
  *                Address of pbstm Must Be Allocated first.
  * Tip:           Use function strBitStreamIsEmpty first
- *                To check whether bit-stream is empty.
+ *                To check whether bit stream is empty.
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
@@ -248,7 +248,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 /* Function name: strBitStreamAdd
  * Description:   Add a bit to the end of the stream.
  * Parameters:
- *      pbstm Pointer to the bit-stream you want to operate on.
+ *      pbstm Pointer to the bit stream you want to operate on.
  *      value A bit value you are about to add.
  * Return value:  true indicates that no error has been occurred.
  *                false indicates that error occurred while adding bit to the stream.
@@ -281,12 +281,12 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 /* Function name: strBitStreamExtract
  * Description:   Extract a bit from the end of the stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
+ *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  Extracted bit. Converted to bool. Values true 1 or false 0.
  * Caution:       Use this function on a bit stream that is not empty.
  *                Address of pbstm Must Be Allocated first.
  * Tip:           Use function strBitStreamIsEmpty firstly
- *                to check whether the bit-stream is empty.
+ *                to check whether the bit stream is empty.
  */
 bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
@@ -305,7 +305,7 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
 /* Function name: strBitStreamLocate
  * Description:   Locate a bit in the stream by index.
  * Parameters:
- *      pbstm Pointer to the bit-stream you want to operate on.
+ *      pbstm Pointer to the bit stream you want to operate on.
  *      index Index value to be evaluated. Starts from 0.
  * Return value:  true or false.
  * Caution:       Address of pbstm Must Be Allocated first.
@@ -322,14 +322,14 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 }
 
 /* Function name: strBitStreamReverse
- * Description:   Reverse bits in bit-stream.
+ * Description:   Reverse bits in bit stream.
  * Parameter:
- *     pbstm Pointer to the bit-stream you want to operate on.
+ *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  N/A.
  * Caution:       Used only if the bit stream is not empty.
  *                Address of pbstm Must Be Allocated first.
  * Tip:           Use function strBitStreamIsEmpty first
- *                to check whether bit-stream is empty.
+ *                to check whether bit stream is empty.
  *                Use this function to calculate bitwise NOT pbstm.
  */
 void strBitStreamReverse(P_BITSTREAM pbstm)

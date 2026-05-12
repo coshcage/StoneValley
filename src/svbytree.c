@@ -323,9 +323,9 @@ void treInitBY_O(P_BYTREE ptreb)
 }
 
 /* Function name: treFreeBY
- * Description:   Deallocate a binary tree of which is allocated by function treInitBY_O.
+ * Description:   Retract a binary tree of which is allocated by function treInitBY_O.
  * Parameter:
- *     ptreb Pointer to the binary tree that you want to deallocate.
+ *     ptreb Pointer to the binary tree that you want to retract.
  * Return value:  N/A.
  * Caution:       Address of ptreb Must Be Allocated first.
  */
@@ -409,7 +409,7 @@ P_TNODE_BY treInsertRightBY(P_TNODE_BY pnode, const void * pitem, size_t size)
  * Parameter:
  *     pnode Pointer to the parent node which contains the left child node that you want to remove.
  * Return value:  N/A.
- * Caution:       The whole sub tree that left child node of pnode holds will be deallocated!
+ * Caution:       The whole sub tree that left child node of pnode holds will be retracted!
  */
 void treRemoveLeftBY(P_TNODE_BY pnode)
 {
@@ -422,7 +422,7 @@ void treRemoveLeftBY(P_TNODE_BY pnode)
  * Parameter:
  *     pnode Pointer to the parent node which contains the right child node that you want to remove.
  * Return value:  N/A.
- * Caution:       The whole sub tree that right child node of pnode holds will be deallocated!
+ * Caution:       The whole sub tree that right child node of pnode holds will be retracted!
  */
 void treRemoveRightBY(P_TNODE_BY pnode)
 {
@@ -541,7 +541,7 @@ bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
  *     pright Pointer to the right sub node.
  * Return value:  proot will return.
  *                NULL would return if function could not create a new node.
- * Caution:       Both pleft and pright shall not appear in the same sub-tree.
+ * Caution:       Both pleft and pright shall not appear in the same sub tree.
  *                pleft shall not equal to pright.
  */
 P_TNODE_BY treMergeNodesBY(P_TNODE_BY proot, const void * pitem, size_t size, P_TNODE_BY pleft, P_TNODE_BY pright)
@@ -567,7 +567,7 @@ P_TNODE_BY treMergeNodesBY(P_TNODE_BY proot, const void * pitem, size_t size, P_
  * Return value:  If swapping succeeded, function would return pnode2,
  *                otherwise function would return a NULL.
  * Caution:       proot1 may equal to pnode2.
- *                Both pnode1 and pnode2 shall not appear in the same sub-tree.
+ *                Both pnode1 and pnode2 shall not appear in the same sub tree.
  */
 P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot2, P_TNODE_BY pnode2)
 {

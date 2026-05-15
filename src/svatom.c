@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0201251300L00305
+ * File ID:     0306170948A0515260941L00325
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -37,14 +37,20 @@
  */
 void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 {
-	if (NULL == (parrz->pdata = (PUCHAR) malloc(num * size)))
+	REGISTER size_t s = num * size;
+	if (0 == s)
 	{
 		parrz->num = 0;
-		parrz->pdata = NULL;
+		return (void *)(parrz->pdata = NULL);
 	}
 	else
-		parrz->num = num;
-	return parrz->pdata;
+	{
+		if (NULL == (parrz->pdata = (PUCHAR) malloc(s)))
+			parrz->num = 0;
+		else
+			parrz->num = num;
+		return parrz->pdata;
+	}
 }
 
 /* Function name: strCreateArrayZ
@@ -98,18 +104,32 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
  */
 void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 {
-	PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, num * size);
-	if (NULL == pnew)
-	{	/* Reallocation failure. */
-		parrz->num = 0;
-		parrz->pdata = NULL;
+	REGISTER size_t s = num * size;
+	if (0 == s)
+	{
+		if (NULL != parrz->pdata)
+		{
+			free(parrz->pdata);
+			parrz->num = 0;
+		}
+		return (void *)(parrz->pdata = NULL);
 	}
 	else
 	{
-		parrz->num = num;
-		parrz->pdata = pnew;
+		if (NULL != parrz->pdata)
+		{
+			REGISTER PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, s);
+			if (NULL == pnew)
+				return NULL; /* Reallocation failure. luc0x61@codeberg.net */
+			else
+			{
+				parrz->num = num;
+				return (void *)(parrz->pdata = pnew);
+			}
+		}
+		else
+			return strInitArrayZ(parrz, num, size);
 	}
-	return parrz->pdata;
 }
 
 /* Function name: strResizeBufferedArrayZ

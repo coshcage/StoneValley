@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0416261730L00860
+ * File ID:     0306170948B0515260922L00855
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -22,7 +22,7 @@
  */
 
 #include <stdio.h>  /* Using macro BUFSIZ. */
-#include <stdlib.h> /* Using function malloc, calloc, realloc, free. */
+#include <stdlib.h> /* Using function malloc, calloc, free. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
 
@@ -305,17 +305,12 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 	) ?
 	true : /* Both destination and source are in increasing order. */
 	false; /* Both destination and source are in decreasing order. */
-
-	PUCHAR pnew = (PUCHAR) realloc(pdest->pdata, (strLevelArrayZ(pdest) + strLevelArrayZ(psrc)) * size);
+	
+	PUCHAR pnew = (PUCHAR) strResizeBufferedArrayZ(pdest, size, + strLevelArrayZ(psrc));
 	if (NULL == pnew)
-	{
-		pdest->num = 0;
-		pdest->pdata = NULL;
-	}
+		return NULL;
 	else
 	{
-		pdest->pdata = pnew;
-
 		/* Assume we have two arrays to merge,
 		 *   di (di + 1)
 		 *    \   /

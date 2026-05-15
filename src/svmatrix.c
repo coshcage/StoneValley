@@ -156,7 +156,7 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 	const size_t k = size * col;
 	if (ln * col > ol * oc) /* Matrix becomes bigger. */
 	{
-		if (strResizeArrayZ(&pmtx->arrz, ln * col, size))
+		if (NULL != strResizeArrayZ(&pmtx->arrz, ln * col, size))
 		{
 			for (i = ol; i > 1; --i)
 			{
@@ -177,7 +177,7 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 			j = (i - 1) * size;
 			memmove(&pmtx->arrz.pdata[j * col], &pmtx->arrz.pdata[j * oc], k);
 		}
-		if (strResizeArrayZ(&pmtx->arrz, ln * col, size))
+		if (NULL != strResizeArrayZ(&pmtx->arrz, ln * col, size))
 		{
 			pmtx->ln = ln;
 			pmtx->col = col;

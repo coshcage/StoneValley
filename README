@@ -63,7 +63,7 @@ iv  Scenario
 	[   __   {        }   __   {{
 	[__{{ }__{__    __}__{{ }__{{     UU
 	[           {__}}
-	 Rather than portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishing functions into parts shows the real formation of StoneValley with less unpleasant. Users could always add their own appliances manque for StoneValley.
+	 Rather to portray a fuzzy calling relationship between procedures and subroutines in StoneValley, a plot distinguishing functions into parts shows the real formation of StoneValley with less unpleasant. Users could always add their own appliances manque for StoneValley.
 
 	Inquiring deeper inside this library, string is a collection of linear data structures that contain array, single linked list, doubly linked list, bit stream, common matrix, bit matrix and sparse matrix. Functions that operate on these linear data structures were distributed into file "svstring.h". Furthermore, files "svatom.c", "svarray.c", "svlist.c", "svmatrix.c" and "svmisc.c" stored definitions of these functions.
 
@@ -87,7 +87,7 @@ v  The naming of library functions and types
 
 	+__Category__________________________Type_________Location___+ [Figure 2]
 	|strING______________________________|___________<svstring.h>|
-	|    + fixed size array              :ARRAY_Z:    svarray.c  |
+	|    + Fixed size array              :ARRAY_Z:    svarray.c  |
 	|    + Single linked list            :LIST_S:     svlist.c   |
 	|    + Doubly linked list            :LIST_D:      ditto.    |
 	|    + Bit stream                    :BITSTREAM:  svmisc.c   |
@@ -159,7 +159,7 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 		Most optimizing compilers will automatically expand inline functions for better performance. In general, library users could [NEGLECT] those warnings when compilers were attempting to expand inline functions. To [TURN] the library optimization switch at file "svdef.h" into value 'SV_OPT_DISABLED' could avoid any errors which caused by inline macros.
 
 	3) Warnings of type casting and structure alignment.
-		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping the 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers to warn users of precision loss and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed length while they need padding bytes to alter the original structure, compilers may warn users either way. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
+		Some compilers set strict type checking rules, when users tried to compile StoneValley through these compilers, these compilers would generate warnings. For instance, first, casting a variable from type (const void *) to (void *) may emit a warning of dropping the 'const' qualifier. Second, to truncate an (int) integer to (unsigned char) may lead compilers to warn users of precision loss and sign missing. Third, when compilers are attempting to align member variables in structures with a fixed length while they need padding bytes to alter the original structure, compilers may warn users in either way. If these warnings did not involve bad results for user programs, library users could [IGNORE] them.
 
 	4) Warnings of library function returns.
 		Some compilers installed with code analysis techniques would check return values of functions in the C standard library. For example, it would check if the "realloc" function might return a NULL pointer to its left-hand-side expression. Library users could [IGNORE] these types of warnings.

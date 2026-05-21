@@ -59,7 +59,9 @@ int main(void)
 	for ( ;; )
 	{
 		printf("%s", "ix/r/h/q> ");
-		scanf("%c%c", &m, &c);
+		//scanf("%c%c", &m, &c);
+		m = (char)fgetc(stdin);
+		c = (char)fgetc(stdin);
 		switch (m)
 		{
 			case 'i': /* Insertion. */
@@ -91,7 +93,6 @@ int main(void)
 			default:
 				printf("Bad command: \'%c\'. Type \'h\' or \'?\' for help.\n\n", m);
 		}
-		fflush(stdin);
 	}
 Lbl_Exit:
 	queDeleteAC(pque);

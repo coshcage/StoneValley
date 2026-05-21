@@ -175,7 +175,7 @@ int main(void)
 	else
 		puts("Error occurred while sorting list 1.");
 	// Assemble doubly-pointer linked list 2.
-	srand((unsigned int)&n);
+	srand((unsigned int)(size_t)&n);
 	n = rand() % 99 + 1;
 	list2 = strCreateNodeD(&n, sizeof(int));
 	for (i = 0, pnoded = list2; n = rand() % 99 + 1, i < (LIST2_LEN - 1); ++i)

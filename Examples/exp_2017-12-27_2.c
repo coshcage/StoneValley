@@ -59,9 +59,7 @@ int main(void)
 	for ( ;; )
 	{
 		printf("%s", "ix/r/h/q> ");
-		//scanf("%c%c", &m, &c);
-		m = (char)fgetc(stdin);
-		c = (char)fgetc(stdin);
+		scanf("%c%c", &m, &c);
 		switch (m)
 		{
 			case 'i': /* Insertion. */

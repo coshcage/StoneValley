@@ -35,7 +35,7 @@ int main(void)
 	/* Encode string. Caution that table is important for decoding. */
 	if (NULL == (ptbl = treCreateHuffmanTable((const PUCHAR)SZ_STR, sizeof(SZ_STR))))
 	{
-		fprintf(stderr, "Error! Can create symbol table.\n");
+		fprintf(stderr, "Error! Can not create symbol table.\n");
 		return __LINE__;
 	}
 	if (NULL == (pbsin = treHuffmanEncoding(ptbl, (const PUCHAR)SZ_STR, sizeof(SZ_STR))))

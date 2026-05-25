@@ -257,7 +257,7 @@ void strDeleteNodeS_O(P_NODE_S pnode)
 }
 
 /* Function name: strInitNodeD
- * Description:   Initiate a node which has has two pointers.
+ * Description:   Initiate a node which has has two directive pointers.
  * Parameters:
  *      pnode Pointer to the node you want to initiate.
  *       pval Pointer to the value you want to set into the new node.
@@ -276,7 +276,7 @@ void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
 }
 
 /* Function name: strCreateNodeD
- * Description:   Dynamically allocate a node which has two pointers.
+ * Description:   Dynamically allocate a node which has two directive pointers.
  * Parameters:
  *       pval Pointer to the value you want to set into the new node.
  *       size Size of the data of that node.

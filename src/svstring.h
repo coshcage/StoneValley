@@ -144,7 +144,7 @@ bool        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    size_t     (*nxtrnd)(void));
 int         strKMPSearchArrayZ             (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
 int         strZSearchArrayZ               (P_ARRAY_Z    parrtxt,  P_ARRAY_Z    parrptn,   size_t       size,    CBF_TRAVERSE cbftvs, size_t      param);
-/* Functions for singlar pointer linked lists. */
+/* Functions for singular pointer linked lists. */
 int         strTraverseLinkedListSC_R      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_A      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);
 int         strTraverseLinkedListSC_N      (LIST_S       list,     P_NODE_S     pnil,      CBF_TRAVERSE cbftvs,  size_t       param);

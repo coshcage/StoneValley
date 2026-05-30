@@ -260,7 +260,7 @@ void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 /* Function name: treFreeTNodeG
  * Description:   Retract a node of which is allocated by function treInitTNodeG.
  * Parameter:
- *     ptreb Pointer to the node you want to retract.
+ *     ptreb Pointer to the node you want to release.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
  */
@@ -319,7 +319,7 @@ void treInitG_O(P_GTREE ptreg)
 /* Function name: treFreeG
  * Description:   Retract a generic tree of which is allocated by function treInitG_O.
  * Parameter:
- *     ptreb Pointer to the generic tree you want to retract.
+ *     ptreb Pointer to the generic tree you want to release.
  * Return value:  N/A.
  * Caution:       Address of ptreb Must Be Allocated first.
  */

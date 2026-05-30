@@ -406,7 +406,7 @@ void grpInitL_O(P_GRAPH_L pgrp)
 /* Function name: grpFreeL
  * Description:   Retract a graph of which is allocated by function grpInitL.
  * Parameter:
- *      pgrp Pointer to the graph you want to retract.
+ *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
@@ -431,7 +431,7 @@ P_GRAPH_L grpCreateL_O(void)
 /* Function name: grpDeleteL
  * Description:   Delete a graph of which is allocated by function grpCreateL.
  * Parameter:
- *      pgrp Pointer to the graph you want to retract.
+ *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteBY_M is available.
@@ -1028,7 +1028,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
  *                Each element of the returned sized array is a VTXREC structure.
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           Users may use function strDeleteArrayZ to retract grpShortestPathL returned arrays.
+ * Tip:           Users may use function strDeleteArrayZ to release grpShortestPathL returned arrays.
  */
 P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 {
@@ -2232,7 +2232,7 @@ void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
 /* Function name: grpFreeM_O
  * Description:   Retract a graph of which is allocated by function grpInitM.
  * Parameter:
- *      pgrp Pointer to the graph you want to retract.
+ *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function called grpFreeM_M is available.

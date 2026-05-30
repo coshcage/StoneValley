@@ -140,7 +140,7 @@ bool hshInitC(P_HSHTBL_C pht, size_t buckets)
 /* Function name: hshFreeC
  * Description:   Retract a separate chaining hash table of which is allocated by function hshInitC.
  * Parameter:
- *       pht Pointer to the hash table you want to retract.
+ *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Address of pht Must Be Allocated first.
  */
@@ -170,7 +170,7 @@ P_HSHTBL_C hshCreateC(size_t buckets)
 /* Function name: hshDeleteC
  * Description:   Delete a separate chaining hash table of which is allocated by function hshCreateC.
  * Parameter:
- *       pht Pointer to the hash table you want to retract.
+ *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Parameter pht Must Be Allocated first.
  */
@@ -183,7 +183,7 @@ void hshDeleteC(P_HSHTBL_C pht)
 /* Function name: hshSizeC
  * Description:   Check how many items there are stored in a separate chaining hash table.
  * Parameter:
- *       pht Pointer to the hash table you want to retract.
+ *       pht Pointer to the hash table you want to release.
  * Return value:  Number of items.
  * Caution:       Parameter pht Must Be Allocated first.
  */
@@ -402,7 +402,7 @@ bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
 /* Function name: hshFreeA_O
  * Description:   Retract an open addressing hash table of which is allocated by function hshInitA.
  * Parameter:
- *       pht Pointer to the hash table you want to retract.
+ *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Address of pht Must Be Allocated first.
  * Tip:           A macro version of this function named hshFreeA_M is available.
@@ -434,7 +434,7 @@ P_HSHTBL_A hshCreateA(size_t slots, size_t size)
 /* Function name: hshDeleteA_O
  * Description:   Delete an open addressing hash table of which is allocated by function hshCreateA.
  * Parameter:
- *       pht Pointer to the hash table you want to retract.
+ *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Parameter pht Must Be Allocated first.
  * Tip:           A macro version of this function named hshDeleteA_M is available.
@@ -447,7 +447,7 @@ void hshDeleteA_O(P_HSHTBL_A pht)
 /* Function name: hshSizeA
  * Description:   Check how many items there are stored in an open addressing hash table.
  * Parameters:
- *        pht Pointer to the hash table you want to retract.
+ *        pht Pointer to the hash table you want to release.
  *       size Size of each element in the table.
  * Return value:  Number of items.
  * Caution:       Parameter pht Must Be Allocated first.

@@ -51,7 +51,7 @@ void * strInitMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 /* Function name: strFreeMatrix_O
  * Description:   Retract a matrix that is allocated by function strInitMatrix.
  * Parameter:
- *      pmtx Pointer to a matrix you want to retract.
+ *      pmtx Pointer to a matrix you want to release.
  * Return value:  N/A.
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           A macro version of this function named strFreeMatrix_M is available.
@@ -561,7 +561,7 @@ P_BITMAT strCreateBMap(size_t ln, size_t col, bool val)
 /* Function name: strDeleteBMap_O
  * Description:   Delete a bit matrix.
  * Parameter:
- *       pbm Pointer to a bit matrix you want to retract.
+ *       pbm Pointer to a bit matrix you want to release.
  * Return value:  N/A.
  * Caution:       Address of pbm Must Be Allocated first.
  * Tip:           A macro version of this function named strDeleteBMap_M is available.
@@ -703,7 +703,7 @@ bool strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
 /* Function name: strFreeSparseMatrix
  * Description:   Retract a sparse matrix that is allocated by function strInitSparseMatrix.
  * Parameter:
- *      pmtx Pointer to a sparse matrix you want to retract.
+ *      pmtx Pointer to a sparse matrix you want to release.
  * Return value:  N/A.
  * Caution:       Address of pmtx Must Be Allocated first.
  */

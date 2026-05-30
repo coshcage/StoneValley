@@ -46,7 +46,7 @@ void * queInitAC(P_QUEUE_A pqueac, size_t num, size_t size)
 /* Function name: queFreeAC
  * Description:   Retract the circular queue of which is allocated by function queInitAC.
  * Parameter:
- *    pqueac Pointer to the circular queue you want to retract.
+ *    pqueac Pointer to the circular queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pqueac Must Be Allocated first.
  */
@@ -81,7 +81,7 @@ P_QUEUE_A queCreateAC(size_t num, size_t size)
 /* Function name: queDeleteAC
  * Description:   Delete the circular queue of which is allocated by function queCreateAC.
  * Parameter:
- *    pqueac Pointer to the circular queue you want to retract.
+ *    pqueac Pointer to the circular queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pqueac Must Be Allocated first.
  */
@@ -174,7 +174,7 @@ void queInitL_O(P_QUEUE_L pquel)
 /* Function name: queFreeL
  * Description:   Retract a linked list queue of which is allocated by function queInitL.
  * Parameter:
- *     pquel Pointer to the linked list queue you want to retract.
+ *     pquel Pointer to the linked list queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pquel Must Be Allocated first.
  */
@@ -201,7 +201,7 @@ P_QUEUE_L queCreateL(void)
 /* Function name: queDeleteL
  * Description:   Delete a linked list queue of which is allocated by function queCreateL.
  * Parameter:
- *     pquel Pointer to the linked list queue you want to retract.
+ *     pquel Pointer to the linked list queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pquel Must Be Allocated first.
  */
@@ -310,7 +310,7 @@ void queInitDL_O(P_DEQUE_DL pdeque)
 /* Function name: queFreeDL
  * Description:   Retract a doubly linked list queue of which is allocated by function queInitDL.
  * Parameter:
- *    pdeque Pointer to the doubly linked list queue you want to retract.
+ *    pdeque Pointer to the doubly linked list queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pdeque Must Be Allocated first.
  */
@@ -337,7 +337,7 @@ P_DEQUE_DL queCreateDL(void)
 /* Function name: queDeleteDL
  * Description:   Delete a doubly linked list queue of which is allocated by function queCreateDL.
  * Parameter:
- *    pdeque Pointer to the linked list queue you want to retract.
+ *    pdeque Pointer to the linked list queue you want to release.
  * Return value:  N/A.
  * Caution:       Address of pdeque Must Be Allocated first.
  */

@@ -75,7 +75,7 @@ bool setInitH_O(P_SET_H pset, size_t buckets)
 /* Function name: setFreeH_O
  * Description:   Retract the set of which is allocated by function setInitH_O.
  * Parameter:
- *      pset Pointer to the set you want to retract.
+ *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setFreeH_M is available.
@@ -102,7 +102,7 @@ P_SET_H setCreateH_O(size_t buckets)
 /* Function name: setDeleteH_O
  * Description:   Delete the set of which is allocated by function setCreateH_O.
  * Parameter:
- *      pset Pointer to the set you want to retract.
+ *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setDeleteH_M is available.
@@ -493,7 +493,7 @@ void setInitT_O(P_SET_T pset)
 /* Function name: setFreeT_O
  * Description:   Retract the set of which is allocated by function setInitT_O.
  * Parameter:
- *      pset Pointer to the set you want to retract.
+ *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setFreeT_M is available.
@@ -517,7 +517,7 @@ P_SET_T setCreateT_O(void)
 /* Function name: setDeleteT_O
  * Description:   Delete the set of which is allocated by function setCreateT_O.
  * Parameter:
- *      pset Pointer to the set you want to retract.
+ *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setDeleteT_M is available.

@@ -537,7 +537,7 @@ P_NODE_S strInsertItemLinkedListSC(LIST_S list, P_NODE_S pdest, P_NODE_S pnode, 
  * Return value:  The same pointer as pnode.
  * Caution:       You may need to alter the header node when list == pnode.
  * Tip:           No dead cycles for circular linked lists.
- *                Function will NOT retract the address of pnode.
+ *                Function will NOT release the address of pnode.
  *                Use strFreeNodeS(strRemoveItemLinkedListSC(list, pnode)); to free a removed node.
  */
 P_NODE_S strRemoveItemLinkedListSC(LIST_S list, P_NODE_S pnode)
@@ -1127,7 +1127,7 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
  *     pnode Pointer to a double link node you want to remove.
  * Return value:  The same pointer as pnode.
  * Tip:           No dead cycles for circular linked lists.
- *                Function will NOT retract the address of pnode rather than put two pointers in pnode into value NULL.
+ *                Function will NOT release the address of pnode rather than put two pointers in pnode into value NULL.
  *                Use strFreeNodeD(strRemoveItemLinkedListDC(pnode)); to free a removed node.
  *                Use strDeleteNodeD(strRemoveItemLinkedListDC(pnode)); to delete an allocated node from list.
  */

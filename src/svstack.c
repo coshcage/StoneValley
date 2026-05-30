@@ -43,7 +43,7 @@ void * stkInitA(P_STACK_A pstka, size_t num, size_t size)
 /* Function name: stkFreeA
  * Description:   Retract a stack of which is allocated by function stkInitA.
  * Parameter:
- *     pstka Pointer to the stack you want to retract.
+ *     pstka Pointer to the stack you want to release.
  * Return value:  N/A.
  * Caution:       Address of pstka->arr.pdata Must Be Allocated first.
  */
@@ -189,7 +189,7 @@ void stkInitL_O(P_STACK_L pstkl)
 /* Function name: stkFreeL_O
  * Description:   Retract a linked list stack of which is allocated by function stkInitL.
  * Parameter:
- *     pstkl Pointer to the stack you want to retract.
+ *     pstkl Pointer to the stack you want to release.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated first.
  * Tip:           This function can be inline for better performance.

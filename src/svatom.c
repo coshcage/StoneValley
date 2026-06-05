@@ -37,15 +37,15 @@
  */
 void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 {
-	REGISTER size_t s = num * size;
-	if (0 == s)
+	REGISTER size_t sum = num * size;
+	if (0 == sum)
 	{
 		parrz->num = 0;
 		return (void *)(parrz->pdata = NULL);
 	}
 	else
 	{
-		if (NULL == (parrz->pdata = (PUCHAR) malloc(s)))
+		if (NULL == (parrz->pdata = (PUCHAR) malloc(sum)))
 			parrz->num = 0;
 		else
 			parrz->num = num;
@@ -104,8 +104,8 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
  */
 void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 {
-	REGISTER size_t s = num * size;
-	if (0 == s)
+	REGISTER size_t sum = num * size;
+	if (0 == sum)
 	{
 		if (NULL != parrz->pdata)
 		{
@@ -118,7 +118,7 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 	{
 		if (NULL != parrz->pdata)
 		{
-			REGISTER PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, s);
+			REGISTER PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, sum);
 			if (NULL == pnew)
 				return NULL; /* Reallocation failure. luc0x61@codeberg.net */
 			else

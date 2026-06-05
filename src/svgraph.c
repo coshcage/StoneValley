@@ -2000,7 +2000,7 @@ int _grpCBFFFMFLFindInEdgesPuppet(void * pitem, size_t param)
  *            Notice that each element in this set is a size_t integer.
  *      param Pointer to an array.
  *            Please refer to _en_FFMFLParamID enumeration to see this array.
- * Return value:  The same value as function _grpCBFFFMFLFindOutEdgesPuppet returns.
+ * Return value:  The same value as function _grpCBFFFMFLFindInEdgesPuppet returns.
  */
 int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
 {

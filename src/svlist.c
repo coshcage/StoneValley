@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0331260805L01424
+ * File ID:     0306170948C0331260805L01423
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -223,8 +223,7 @@ void strInitLinkedListSC_O(P_LIST_S plist)
 }
 
 /* Function name: strFreeLinkedListSC
- * Description:   Retract a single-pointer-node linked list
- *                of which is allocated by function strInitLinkedListSC.
+ * Description:   Retract a single-pointer-node linked list of which is allocated by function strInitLinkedListSC.
  * Parameter:
  *     plist Pointer to the plist you want to free.
  * Return value:  N/A.

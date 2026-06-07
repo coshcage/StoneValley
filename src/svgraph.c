@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0607260423L02777
+ * File ID:     0905171125M0607260430L02775
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -738,8 +738,7 @@ int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCopyEdges
- * Description:   This function is used to cooperate with function grpCopyL
- *                to copy edges of a graph.
+ * Description:   This function is used to cooperate with function grpCopyL to copy edges of a graph.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure.
  *      param Pointer to a size_t[2] array.
@@ -924,8 +923,7 @@ int _grpCBFSPLFillVertices(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFSPLInitVtxrecArray
- * Description:   This function is used to cooperate with function _grpSPLInitArray to initialize
- *                VTXREC structure in an array.
+ * Description:   This function is used to cooperate with function _grpSPLInitArray to initialize a VTXREC structure in an array.
  * Parameters:
  *      pitem Pointer to a VTXREC structure.
  *      param Pointer to a value to initialize the VTXREC structure.

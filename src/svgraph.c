@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0511260200L02787
+ * File ID:     0905171125M0607260423L02777
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -702,8 +702,7 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCopyVertices
- * Description:   This function is used to cooperate with function grpCopyL
- *                to copy vertices of a graph.
+ * Description:   This function is used to cooperate with function grpCopyL to copy vertices of a graph.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure.
  *      param Pointer to the destination graph.
@@ -720,8 +719,7 @@ int _grpCBFCopyVertices(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCopyEdgesPuppet
- * Description:   This function is used to cooperate with function _grpCBFCopyEdges
- *                to copy edges of a graph.
+ * Description:   This function is used to cooperate with function _grpCBFCopyEdges to copy edges of a graph.
  * Parameters:
  *      pitem Pointer to an EDGE structure.
  *      param Pointer to a size_t[2] array.
@@ -845,8 +843,7 @@ int grpDFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFOutputVertexByID
- * Description:   This function is used to cooperate with grpBFSL
- *                to gather vertex ID in edges of a vertex into a queue.
+ * Description:   This function is used to cooperate with grpBFSL to gather vertex ID in edges of a vertex into a queue.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the edge list.
  *      param Pointer to a queue.
@@ -912,8 +909,7 @@ Lbl_BFS_Clear:
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFSPLFillVertices
- * Description:   This function is used to cooperate with function _grpSPLInitArray to fill
- *                VTXREC structures with vertex IDs in an array.
+ * Description:   This function is used to cooperate with function _grpSPLInitArray to fill VTXREC structures with vertex IDs in an array.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure of a vertex.
  *      param Pointer to a pointer to the start of an array.
@@ -1353,8 +1349,7 @@ Lbl_Cleanup:
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFMSTInsertEdges
- * Description:   This function is used to cooperate with function _grpCBFMSTScanVertices
- *                to insert edges into array.
+ * Description:   This function is used to cooperate with function _grpCBFMSTScanVertices to insert edges into array.
  * Parameters:
  *      pitem Pointer to a NODE_S structure of an edge.
  *      param Pointer to a size_t[2] array.
@@ -1391,8 +1386,7 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFMSTScanVertices
- * Description:   This function is used to cooperate with function grpMinimalSpanningTreeL
- *                to scan vertices of a graph.
+ * Description:   This function is used to cooperate with function grpMinimalSpanningTreeL to scan vertices of a graph.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure.
  *      param Pointer to a size_t[2] array.
@@ -1438,8 +1432,7 @@ int _grpCBFMSTScanVertices(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpDisjointSetSearch
- * Description:   Search vertex x and y in an array represented disjoint set and
- *                determine whether x and y can be inserted in to set.
+ * Description:   Search vertex x and y in an array represented disjoint set and determine whether x and y can be inserted in to set.
  * Parameters:
  *      parrz Pointer to an array represented disjoint set.
  *          x The first vertex ID for an edge.
@@ -1614,8 +1607,7 @@ Lbl_Cleanup:
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFTSFillVertexArray
- * Description:   This function is used to cooperate with function grpTopologicalSortL
- *                to fill an vertex array.
+ * Description:   This function is used to cooperate with function grpTopologicalSortL to fill an vertex array.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure.
  *      param Pointer to a size_t[2] array.
@@ -1637,8 +1629,7 @@ int _grpCBFTSFillVertexArray(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFTSInitQ
- * Description:   This function is used to cooperate with function grpTopologicalSortL
- *                to initialize a queue.
+ * Description:   This function is used to cooperate with function grpTopologicalSortL to initialize a queue.
  * Parameters:
  *      pitem Pointer to a VTXREC structure.
  *      param Pointer to a size_t[3] array.
@@ -1665,8 +1656,7 @@ int _grpCBFTSInitQ(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFTSReduceIndegree
- * Description:   This function is used to cooperate with function grpTopologicalSortL
- *                to reduce in-degrees of vertices.
+ * Description:   This function is used to cooperate with function grpTopologicalSortL to reduce in-degrees of vertices.
  * Parameters:
  *      pitem Pointer to an EDGE structure.
  *      param Pointer to a size_t[4] array.

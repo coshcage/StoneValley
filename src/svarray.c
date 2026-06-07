@@ -786,7 +786,7 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
 	}
 }
 
-/* Function name: strCreateZSearchArrayZ
+/* Function name: strZSearchArrayZ
  * Description:   Match pattern in text by using Z algorithm.
  * Parameters:
  *    parrtxt Pointer to the sized array you want to search.

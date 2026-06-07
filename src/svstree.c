@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0507260030L02551
+ * File ID:     0809171737I0607260707L02567
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -702,12 +702,13 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 #define _NODE_COLOR(pnode, act_type) (*(act_type *)&(pnode)->bstn.param)
 
 /* File level function declarations. */
-P_RBTNODE _treCopyRBTPuppet  (P_RBTNODE pnode, P_RBTNODE proot, size_t    size);
-int       _treCBFFreeNodeRBT (void *    pitem, size_t    param);
-void      _treRBRotate       (P_RBT     prbt,  P_RBTNODE x,     bool      bleft);
-void      _treRBInsertFixup  (P_RBT     prbt,  P_RBTNODE z);
-void      _treRBTransplant   (P_RBT     prbt,  P_RBTNODE u,     P_RBTNODE v);
-void      _treRBDeleteFixup  (P_RBT     prbt,  P_RBTNODE x);
+P_RBTNODE _treCopyRBTPuppet       (P_RBTNODE pnode, P_RBTNODE proot, size_t    size);
+int       _treCBFFreeNodeRBT      (void *    pitem, size_t    param);
+void      _treRBRotate            (P_RBT     prbt,  P_RBTNODE x,     bool      bleft);
+void      _treRBInsertFixupPuppet (P_RBT     prbt,  P_RBTNODE z,     bool      B);
+void      _treRBInsertFixup       (P_RBT     prbt,  P_RBTNODE z);
+void      _treRBTransplant        (P_RBT     prbt,  P_RBTNODE u,     P_RBTNODE v);
+void      _treRBDeleteFixup       (P_RBT     prbt,  P_RBTNODE x);
 
 /* Function name: treInitRBTNode
  * Description:   Initialize a node of red black tree.
@@ -935,8 +936,46 @@ void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bleft)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treRBInsertFixupPuppet
+ * Description:   This function is used to cooperate with function _treRBInsertFixup to balance a red black tree.
+ * Parameters:
+ *       prbt Pointer to a red black tree.
+ *          z Pointer to a red black tree node.
+ *          B This parameter can either be LEFT or RIGHT.
+ * Return value:  N/A.
+ */
+void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool B)
+{
+	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[B];
+			
+	if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
+	{
+		/* Case 1. */
+		_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
+		_NODE_COLOR(y, RBTColor) = BLACK;
+		_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
+		z = prbtparent(prbtparent(z));
+	}
+	else
+	{
+		if (z == prbtchild(prbtparent(z))[B])
+		{
+			/* Case 2. */
+			z = prbtparent(z);
+			_treRBRotate(prbt, z, RIGHT == B ? true : false);
+		}
+		
+		/* Case 3. */
+		_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
+		_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
+		
+		_treRBRotate(prbt, prbtparent(prbtparent(z)), RIGHT == B ? false : true);
+	}
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treRBInsertFixup
- * Description:   This function is used balance a red black tree after insertion.
+ * Description:   This function is used to balance a red black tree after insertion.
  * Parameters:
  *       prbt Pointer to a red black tree.
  *          z Pointer to a red black tree node.
@@ -948,33 +987,10 @@ void _treRBInsertFixup(P_RBT prbt, P_RBTNODE z)
 	{
 		while (RED == _NODE_COLOR(prbtparent(z), const RBTColor))
 		{
-			REGISTER bool B;
-			REGISTER P_RBTNODE y;
-			
 			if (prbtparent(z) == prbtchild(prbtparent(prbtparent(z)))[LEFT])
-				B = RIGHT;
+				_treRBInsertFixupPuppet(prbt, z, RIGHT);
 			else
-				B = LEFT;
-			
-			y = prbtchild(prbtparent(prbtparent(z)))[B];
-			
-			if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
-			{
-				_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
-				_NODE_COLOR(y, RBTColor) = BLACK;
-				_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
-				z = prbtparent(prbtparent(z));
-			}
-			else if (z == prbtchild(prbtparent(z))[B])
-			{
-				z = prbtparent(z);
-				_treRBRotate(prbt, z, true);
-			}
-			
-			_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
-			_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
-			
-			_treRBRotate(prbt, prbtparent(prbtparent(z)), false);
+				_treRBInsertFixupPuppet(prbt, z, LEFT);
 		}
 	}
 	_NODE_COLOR(*prbt, RBTColor) = BLACK;

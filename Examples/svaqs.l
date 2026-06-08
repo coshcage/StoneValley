@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0608260445L00581
+ * File ID:     0608260445A0608260540L00581
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -140,7 +140,7 @@ static int cbfcmpstr(const void * px, const void * py)
 
 %%
 
-^{L}+({S}|\*)+{L}+\(.*$ { if (false == bIsInComment) { if (';' != yytext[strlen(yytext) - 2]) { DissectAComment(); gfc.prototype = strdup(yytext); treInsertRBT(pdb, &gfc, sizeof(gfc), cbfcmpstr); } } if (true == bIsFunc) bIsFunc = false; }
+^{L}+({S}|\*)+{I}+\(.*$ { if (false == bIsInComment) { if (';' != yytext[strlen(yytext) - 2]) { DissectAComment(); gfc.prototype = strdup(yytext); treInsertRBT(pdb, &gfc, sizeof(gfc), cbfcmpstr); } } if (true == bIsFunc) bIsFunc = false; }
 \/\* { if (false == bIsInComment) bIsInComment = true; pbuf = arrbuf.pdata; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
 \*\/ { if (true == bIsInComment) bIsInComment = false; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
 "Function name: " { if (false == bIsFunc) bIsFunc = true; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }

@@ -50,10 +50,8 @@ I ({L}+|{D}+)
 #include "svset.h"
 
 bool bIsInComment = false;
-bool bIsDesc = false;
-bool bIsFunc = false;
-
-FILE * fpout = NULL;
+bool bIsDesc      = false;
+bool bIsFunc      = false;
 
 ARRAY_Z arrbuf;
 PUCHAR  pbuf;

@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0607260707L02567
+ * File ID:     0809171737I0307260615L02592
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -404,50 +404,75 @@ enum _en_AVLBalanceFactor {
 typedef ptrdiff_t _en_BalanceFactor; /* Useless for redefine it for lower C standards. */
 
 /* Sub-section function declarations for AVL-tree. */
-ptrdiff_t _treBSTGetBalanceFactorAVL  (P_BSTNODE pnode);
-ptrdiff_t _treBSTMaxBalanceFactorAVL  (ptrdiff_t lbf,  ptrdiff_t rbf);
-ptrdiff_t _treBSTReadBalanceFactorAVL (P_BSTNODE pnode);
-P_BSTNODE _treBSTRightRotateAVL       (P_BSTNODE pnode);
-P_BSTNODE _treBSTLeftRotateAVL        (P_BSTNODE pnode);
+ptrdiff_t _treBSTGetBalanceFactorAVL_O  (P_BSTNODE pnode);
+ptrdiff_t _treBSTMaxBalanceFactorAVL_O  (ptrdiff_t lbf,  ptrdiff_t rbf);
+ptrdiff_t _treBSTReadBalanceFactorAVL_O (P_BSTNODE pnode);
+P_BSTNODE _treBSTRightRotateAVL         (P_BSTNODE pnode);
+P_BSTNODE _treBSTLeftRotateAVL          (P_BSTNODE pnode);
+
+/* Inline function macros are defined here. */
+#define _treBSTGetBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : _NODE_PARAM((pnode_M), const ptrdiff_t))
+#define _treBSTMaxBalanceFactorAVL_M(lbf_M, rbf_M) ((lbf_M) > (rbf_M) ? (lbf_M) : (rbf_M))
+#define _treBSTReadBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : \
+	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[LEFT]) -\
+	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[RIGHT]))
+
+#if   SV_OPTIMIZATION == SV_OPT_MINISIZE
+	#define _treBSTGetBalanceFactorAVL  _treBSTGetBalanceFactorAVL_M
+	#define _treBSTMaxBalanceFactorAVL  _treBSTMaxBalanceFactorAVL_M
+	#define _treBSTReadBalanceFactorAVL _treBSTReadBalanceFactorAVL_M
+#elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
+	#define _treBSTGetBalanceFactorAVL  _treBSTGetBalanceFactorAVL_M
+	#define _treBSTMaxBalanceFactorAVL  _treBSTMaxBalanceFactorAVL_M
+	#define _treBSTReadBalanceFactorAVL _treBSTReadBalanceFactorAVL_M
+#elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
+	#define _treBSTGetBalanceFactorAVL  _treBSTGetBalanceFactorAVL_M
+	#define _treBSTMaxBalanceFactorAVL  _treBSTMaxBalanceFactorAVL_M
+	#define _treBSTReadBalanceFactorAVL _treBSTReadBalanceFactorAVL_M
+#else /* Optimization has been disabled. */
+	#define _treBSTGetBalanceFactorAVL  _treBSTGetBalanceFactorAVL_O
+	#define _treBSTMaxBalanceFactorAVL  _treBSTMaxBalanceFactorAVL_O
+	#define _treBSTReadBalanceFactorAVL _treBSTReadBalanceFactorAVL_O
+#endif
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTGetBalanceFactorAVL
+ * Function name: _treBSTGetBalanceFactorAVL_O
  * Description:   Get a node's balance factor.
  * Parameter:
  *     pnode Pointer to a node of an AVL-tree.
  * Return value:  Balance factor.
  */
-ptrdiff_t _treBSTGetBalanceFactorAVL(P_BSTNODE pnode)
+ptrdiff_t _treBSTGetBalanceFactorAVL_O(P_BSTNODE pnode)
 {
 	return NULL == pnode ? _ABF_BALANCED : _NODE_PARAM(pnode, const ptrdiff_t);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTMaxBalanceFactorAVL
+ * Function name: _treBSTMaxBalanceFactorAVL_O
  * Description:   Get the maximize value from two balance factors.
  * Parameters:
  *        lbf A balance factor.
  *        rbf Another balance factor.
  * Return value:  The max value.
  */
-ptrdiff_t _treBSTMaxBalanceFactorAVL(ptrdiff_t lbf, ptrdiff_t rbf)
+ptrdiff_t _treBSTMaxBalanceFactorAVL_O(ptrdiff_t lbf, ptrdiff_t rbf)
 {
 	return lbf > rbf ? lbf : rbf;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTReadBalanceFactorAVL
+ * Function name: _treBSTReadBalanceFactorAVL_O
  * Description:   Read the difference of a node's children's balance factor.
  * Parameter:
  *     pnode Pointer to a node of an AVL-tree.
  * Return value:  The difference between left child's and right child's balance factor.
  */
-ptrdiff_t _treBSTReadBalanceFactorAVL(P_BSTNODE pnode)
+ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
 {
 	/* Check if node exists, if so then it applies the difference between it's children's heights. */
 	return NULL == pnode ? _ABF_BALANCED :
-		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]) -
-		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT]);
+		_treBSTGetBalanceFactorAVL_O(pbstchild(pnode)[LEFT]) -
+		_treBSTGetBalanceFactorAVL_O(pbstchild(pnode)[RIGHT]);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

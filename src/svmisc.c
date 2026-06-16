@@ -57,7 +57,7 @@ stdiv_t stdiv(size_t numerator, size_t denominator)
 	return result;
 }
 
-/* Function name: svSwapMemory
+/* Function name: svSwap
  * Description:   Swap contents of two memory blocks.
  * Parameters:
  *      pleft Pointer to the left block you want to swap with the block of pright pointed.

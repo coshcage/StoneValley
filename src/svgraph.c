@@ -1693,7 +1693,7 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
  * Return value:  Pointer to a sized array which contain the sequence after running topological sort algorithm.
- *                Each element in this array is a size_t integer that indicate the ID of a vertex.
+ *                Each element in this array is a size_t integer that indicates the ID of a vertex.
  *                If this function returned NULL, it would indicate topological sorting failed.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);
@@ -1764,7 +1764,7 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
  *       vidx Vertex ID.
  *       vidy Another vertex ID.
  * Return value:  Pointer to a size_t integer which stores the first weight of an edge.
- *                If function returned NULL, it should indicate finding failure.
+ *                If function returned NULL, it should indicate a finding failure.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
@@ -1792,8 +1792,8 @@ size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the adjacency list.
  *      param Pointer to an array.
- *            Please refer to _en_FFMFLParamID enumeration to see this array.
- * Return value:  If two graphs were isomorphic, function would return value CNF_CONTINUE,
+ *            Please refer to the _en_FFMFLParamID enumeration to understand this array.
+ * Return value:  If two graphs were isomorphic, function would return value CBF_CONTINUE,
  *                otherwise function would return value CBF_TERMINATE.
  */
 int _grpCBFEdgesIsomorphicL(void * pitem, size_t param)

@@ -26,7 +26,7 @@
 #include "svtree.h"
 
 /* A macro that defines symbol table length. */
-#define _SMB_TBL_LEN (UCHAR_MAX + 1)
+#define _SMB_TBL_LEN ((size_t)(UCHAR_MAX + 1))
 
  /* Symbol information of Huffman trees. */
 typedef struct _st_SMBINF {

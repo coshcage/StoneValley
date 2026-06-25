@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0307260615L02592
+ * File ID:     0809171737I0307260615L02593
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -417,6 +417,7 @@ P_BSTNODE _treBSTLeftRotateAVL          (P_BSTNODE pnode);
 	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[LEFT]) -\
 	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[RIGHT]))
 
+/* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
 	#define _treBSTGetBalanceFactorAVL  _treBSTGetBalanceFactorAVL_M
 	#define _treBSTMaxBalanceFactorAVL  _treBSTMaxBalanceFactorAVL_M

@@ -365,7 +365,7 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
 	REGISTER size_t g, gap;
 	/* Using Marcin Ciura's gap sequence. */
 	size_t gaps[] = { 701, 301, 132, 57, 23, 10, 4, 1 };
-	for (g = 0; g < sizeof(gaps) / sizeof(gaps[0]); ++g)
+	for (g = 0; g < (const size_t)(sizeof(gaps) / sizeof(gaps[0])); ++g)
 	{
 		REGISTER size_t i, j, k;
 		gap = gaps[g];

@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0331260805L01423
+ * File ID:     0306170948C0331260805L01425
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -83,7 +83,8 @@ int _strCBFCompareNodeDataS(void * pitem, size_t param)
 {
 	/* The type of param is P_FindingInfo. */
 	if
-	(0 == memcmp
+	(
+		0 == memcmp
 		(
 			((P_NODE_S)     pitem)->pdata,
 			((P_FindingInfo)param)->pitem,
@@ -110,7 +111,8 @@ int _strCBFCompareNodeDataD(void * pitem, size_t param)
 {
 	/* The type of param is P_FindingInfo. */
 	if
-	(0 == memcmp
+	(
+		0 == memcmp
 		(
 			((P_NODE_D)     pitem)->pdata,
 			((P_FindingInfo)param)->pitem,

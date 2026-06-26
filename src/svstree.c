@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0307260615L02593
+ * File ID:     0809171737I0626260015L02563
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -405,10 +405,9 @@ typedef ptrdiff_t _en_BalanceFactor; /* Useless for redefine it for lower C stan
 
 /* Sub-section function declarations for AVL-tree. */
 ptrdiff_t _treBSTGetBalanceFactorAVL_O  (P_BSTNODE pnode);
-ptrdiff_t _treBSTMaxBalanceFactorAVL_O  (ptrdiff_t lbf,  ptrdiff_t rbf);
+ptrdiff_t _treBSTMaxBalanceFactorAVL_O  (ptrdiff_t lbf,   ptrdiff_t rbf);
 ptrdiff_t _treBSTReadBalanceFactorAVL_O (P_BSTNODE pnode);
-P_BSTNODE _treBSTRightRotateAVL         (P_BSTNODE pnode);
-P_BSTNODE _treBSTLeftRotateAVL          (P_BSTNODE pnode);
+P_BSTNODE _treBSTRotateAVL              (P_BSTNODE pnode, bool      bleft);
 
 /* Inline function macros are defined here. */
 #define _treBSTGetBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : _NODE_PARAM((pnode_M), const ptrdiff_t))
@@ -477,51 +476,22 @@ ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTRightRotateAVL
- * Description:   Right rotate pnode.
+ * Function name: _treBSTRotateAVL
+ * Description:   Rotate AVL-tree nodes.
  * Parameters:
- *      pnode Pointer to a node of an AVL-tree.
+ *      pnode Pointer to a node of an AVL tree.
+ *      bleft true  for left  rotate.
+ *            false for right rotate.
  * Return value:  Pointer to the rotated node in an AVL-tree.
  */
-P_BSTNODE _treBSTRightRotateAVL(P_BSTNODE pnode)
+P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bleft)
 {
-	P_BSTNODE pnodex = pbstchild(pnode)[LEFT];
-	P_BSTNODE pnodey = pbstchild(pnodex)[RIGHT];
+	P_BSTNODE pnodex = pbstchild(pnode)[bleft ? RIGHT : LEFT];
+	P_BSTNODE pnodey = pbstchild(pnodex)[bleft ? LEFT : RIGHT];
 
 	/* Adjust pointers. */
-	pbstchild(pbstchild(pnode)[LEFT])[RIGHT] = pnode;
-	pbstchild(pnode)[LEFT] = pnodey;
-
-	/* Recalculating Balance Factors. */
-	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
-		(
-			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
-			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
-		);
-	_NODE_PARAM(pnodex, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
-		(
-			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[LEFT]),
-			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[RIGHT])
-		);
-
-	return pnodex;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _treBSTLeftRotateAVL
- * Description:   Left rotate pnode.
- * Parameters:
- *      pnode Pointer to a node of an AVL-tree.
- * Return value:  Pointer to the rotated node in an AVL-tree.
- */
-P_BSTNODE _treBSTLeftRotateAVL(P_BSTNODE pnode)
-{
-	P_BSTNODE pnodex = pbstchild(pnode)[RIGHT];
-	P_BSTNODE pnodey = pbstchild(pnodex)[LEFT];
-
-	/* Adjust pointers. */
-	pbstchild(pbstchild(pnode)[RIGHT])[LEFT] = pnode;
-	pbstchild(pnode)[RIGHT] = pnodey;
+	pbstchild(pbstchild(pnode)[bleft ? RIGHT : LEFT])[bleft ? LEFT : RIGHT] = pnode;
+	pbstchild(pnode)[bleft ? RIGHT : LEFT] = pnodey;
 
 	/* Recalculating Balance Factors */
 	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
@@ -580,24 +550,24 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 	/* Left left case. */
 	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) <= 0)
-		return _treBSTRightRotateAVL(pnode);
+		return _treBSTRotateAVL(pnode, false);
 
 	/* Right right case. */
 	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) >= 0)
-		return _treBSTLeftRotateAVL(pnode);
+		return _treBSTRotateAVL(pnode, true);
 
 	/* Right left case. */
 	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) <= 0)
 	{
-		pbstchild(pnode)[RIGHT] = _treBSTRightRotateAVL(pbstchild(pnode)[RIGHT]);
-		return _treBSTLeftRotateAVL(pnode);
+		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], false);
+		return _treBSTRotateAVL(pnode, true);
 	}
 
 	/* Left right case. */
 	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) >= 0)
 	{
-		pbstchild(pnode)[LEFT] = _treBSTLeftRotateAVL(pbstchild(pnode)[LEFT]);
-		return _treBSTRightRotateAVL(pnode);
+		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], true);
+		return _treBSTRotateAVL(pnode, false);
 	}
 
 	return pnode;
@@ -683,24 +653,24 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 	/* Left left case. */
 	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) >= _ABF_BALANCED)
-		return _treBSTRightRotateAVL(pnode);
+		return _treBSTRotateAVL(pnode, false);
 
 	/* Right right case. */
 	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) <= _ABF_BALANCED)
-		return _treBSTLeftRotateAVL(pnode);
+		return _treBSTRotateAVL(pnode, true);
 
 	/* Right left case. */
 	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) >= _ABF_BALANCED)
 	{
-		pbstchild(pnode)[RIGHT] = _treBSTRightRotateAVL(pbstchild(pnode)[RIGHT]);
-		return _treBSTLeftRotateAVL(pnode);
+		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], false);
+		return _treBSTRotateAVL(pnode, true);
 	}
 
 	/* Left right case. */
 	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) <= _ABF_BALANCED)
 	{
-		pbstchild(pnode)[LEFT] = _treBSTLeftRotateAVL(pbstchild(pnode)[LEFT]);
-		return _treBSTRightRotateAVL(pnode);
+		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], true);
+		return _treBSTRotateAVL(pnode, false);
 	}
 
 	return pnode;

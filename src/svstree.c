@@ -1050,7 +1050,7 @@ void _treRBTransplant(P_RBT prbt, P_RBTNODE u, P_RBTNODE v)
 	else if (u == prbtchild(prbtparent(u))[LEFT])
 		prbtchild(prbtparent(u))[LEFT] = v;
 	else
-		prbtchild(prbtparent(u))[RIGHT] = v;	
+		prbtchild(prbtparent(u))[RIGHT] = v;
 	if (NULL != v)
 		prbtparent(v) = prbtparent(u);
 }

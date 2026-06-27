@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0331260805L01425
+ * File ID:     0306170948C0331260805L01428
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -335,7 +335,7 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *      listy Another linked list to be compared.
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always pdata of listx
- *            and the second one points to pdata of listy. Both of them are type-cast to (const void *).
+ *            and the second one points to pdata of listy. Both of them are type cast to (const void *).
  * Return value:   1: listx is greater than listy.
  *                 0: listx equal to listy.
  *                -1: listx is less than listy.
@@ -346,6 +346,10 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *                abcde  abcde      0
  *                abc    abcd      -1
  *                abcd   abc        1
+ *                b      acd        1
+ *                acd    b         -1
+ *                a      bcd       -1
+ *                bcd    a          1
  * Caution:       Data in each node of two linked lists must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */
@@ -620,15 +624,15 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 		return phead;
 	else
 	{
-		REGISTER P_NODE_S pivot = phead;
-		REGISTER P_NODE_S pleft = NULL;
+		REGISTER P_NODE_S pivot  = phead;
+		REGISTER P_NODE_S pleft  = NULL;
 		REGISTER P_NODE_S pright = NULL;
-		REGISTER P_NODE_S pnode = phead->pnode;
+		REGISTER P_NODE_S pnode  = phead->pnode;
 		REGISTER P_NODE_S ptemp;
 
 		while (NULL != pnode)
 		{
-			P_NODE_S pcur = pnode;
+			REGISTER P_NODE_S pcur = pnode;
 			pnode = pnode->pnode;
 
 			if (cbfcmp(pcur->pdata, pivot->pdata) < 0)
@@ -643,7 +647,7 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 			}
 		}
 
-		pleft = strQuickSortLinkedListS(pleft, cbfcmp);
+		pleft  = strQuickSortLinkedListS(pleft,  cbfcmp);
 		pright = strQuickSortLinkedListS(pright, cbfcmp);
 
 		pivot->pnode = pright;
@@ -652,9 +656,8 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 
 		ptemp = pleft;
 		while (NULL != ptemp->pnode)
-		{
 			ptemp = ptemp->pnode;
-		}
+		
 		ptemp->pnode = pivot;
 
 		return pleft;
@@ -934,7 +937,7 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, bool brev)
  *     listy The second linked list to be compared.
  *     cbfcmp Pointer to a function that compares two elements in a NODE_D.
  *            Comparison takes two pointers as arguments, the first one is always the pdata of listx
- *            and the second one points to pdata of listy. Both of them are type-cast to (const void *) pointer.
+ *            and the second one points to pdata of listy. Both of them are type cast to a (const void *) pointer.
  *       brev If brev equaled true, function would do comparison from current node to the next node.
  *            If brev equaled false, function would perform comparison reversely.
  * Return value:   1: listx is greater than listy.

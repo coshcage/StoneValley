@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0607260430L02775
+ * File ID:     0905171125M0607260430L02776
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2090,7 +2090,6 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 	_MXFLWLBL label;
 	QUEUE_L   qlbl;   /* The queue contains augmenting path after looping. */
 	size_t    a[_EGID_11_MAX];
-	size_t    ap[2];
 	
 	if (vids == vide)
 		return false; /* No flow at all. */
@@ -2160,6 +2159,8 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 		/* Path reconstruction. */
 		if (! queIsEmptyL(&qlbl))
 		{
+			size_t ap[2];
+			
 			ap[0] = ((_P_MXFLWLBL)qlbl.pfront->pdata)->theta;
 			ap[1] = (size_t)pgrpf;
 			

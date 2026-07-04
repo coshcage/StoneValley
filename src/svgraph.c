@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0607260430L02776
+ * File ID:     0905171125M0607260430L02766
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2073,7 +2073,9 @@ int _grpCBFFFMFLFillMinCutSet(void * pitem, size_t param)
  * Description:   Solve the maximum flow of two graphs from starting vertex to end vertex by Ford Fulkerson algorithm.
  * Parameters:
  *    ppsmcut Returns a pointer to a SET_T to store the minimal cut of vertices.
- *            Set this parameter to NULL to omit this set.
+ *            Set this parameter into NULL to omit this set.
+ *            Each element of this set is a size_t integer which represents a vertex ID.
+ *            (*) Users may use function setDeleteT to free this set after using.
  *      pgrpc Pointer to a graph to store capacities.
  *      pgrpf Pointer to a graph to store feasible flows.
  *       vids Starting vertex ID that you want to start searching.
@@ -2212,7 +2214,7 @@ int _grpCBFTraverseEdgesAndFillM      (void * pitem, size_t param);
  */
 void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
 {
-	void * pr = strInitMatrix(pgrp, vtxc, vtxc, sizeof(size_t));
+	REGISTER void * pr = strInitMatrix(pgrp, vtxc, vtxc, sizeof(size_t));
 	if(NULL != pr)
 		memset(pr, 0, vtxc * vtxc * sizeof(size_t));
 	return pr;
@@ -2239,7 +2241,7 @@ void grpFreeM_O(P_GRAPH_M pgrp)
  */
 P_GRAPH_M grpCreateM(size_t vtxc)
 {
-	P_GRAPH_M pgrp = (P_GRAPH_M) strCreateMatrix(vtxc, vtxc, sizeof(size_t));
+	REGISTER P_GRAPH_M pgrp = (P_GRAPH_M) strCreateMatrix(vtxc, vtxc, sizeof(size_t));
 	if (NULL != pgrp && NULL != pgrp->arrz.pdata)
 		memset(pgrp->arrz.pdata, 0, vtxc * vtxc * sizeof(size_t));
 	return pgrp;
@@ -2317,20 +2319,12 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 			size_t o = 0;
 
 			for (i = 0; i < ov; ++i)
-			{
 				for (j = ov; j < vtxc; ++j)
-				{
 					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
-				}
-			}
 
 			for (i = ov; i < vtxc; ++i)
-			{
 				for (j = 0; j < vtxc; ++j)
-				{
 					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
-				}
-			}
 		}
 		return true;
 	}
@@ -2449,10 +2443,8 @@ size_t grpIndegreeVertexM(P_GRAPH_M pgrp, size_t vid)
 	
 	k = 0;
 	for (i = 0; i < pgrp->ln; ++i)
-	{
 		if (grpAreAdjacentVerticesM(pgrp, i, vid))
 			++k;
-	}
 	
 	return k;
 }
@@ -2471,10 +2463,8 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
 	
 	k = 0;
 	for (i = 0; i < pgrp->col; ++i)
-	{
 		if (grpAreAdjacentVerticesM(pgrp, vid, i))
 			++k;
-	}
 	
 	return k;
 }
@@ -2485,7 +2475,7 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
  *        pgrp Pointer to a graph.
  *         vid Vertex ID that you want to start your searching with it.
  *      cbftvs Pointer to a callback function.
- *             The pitem parameter of the callback function is the current vid cast into (void *).
+ *             The pitem parameter of the callback function is the current vid size_t integer cast into (void *).
  *       param Additional information for each vertex.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -2550,7 +2540,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  *       pgrp Pointer to a graph.
  *        vid Vertex ID that you want to start your searching.
  *     cbftvs Pointer to a callback function.
- *            The pitem parameter of the callback function is the current vid cast into (void *).
+ *            The pitem parameter of the callback function is the current vid size_t integer cast into (void *).
  *      param Additional information for each vertex.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.

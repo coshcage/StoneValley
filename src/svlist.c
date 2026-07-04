@@ -1285,7 +1285,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
  * Description:   Merge sort a linked list.
  * Parameters:
  *       list Pointer to the first node of the linked list to be sorted, cast into void *.
- *  bCircular true for circular linked list, false for NON-circular linked list.
+ *  bCircular true for circular linked list, false for Non-circular linked list.
  *        ntp Determine whether this is a doubly linked list or a single linked list.
  *            Please refer to NodeType enumeration at svstring.h.
  *     cbfcmp Pointer to a function that compares two elements in nodes.

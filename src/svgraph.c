@@ -1052,7 +1052,7 @@ P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 		REGISTER P_VTXREC prec;
 		size_t a[4];
 
-		/* Take the front vertex from Queue. */
+		/* Take the front vertex from queue. */
 		queRemoveL(&vidx, sizeof(size_t), &q);
 		prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 		if (NULL != prec)
@@ -1198,7 +1198,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *       vide End vertex ID.
  * Return value:  Pointer of a doubly linked list that contains each vertex ID and distance from vids to that vide.
  *                Each element of the returned doubly linked list is a VTXREC structure.
- *                If function returned NULL, it should either indicate searching failure or vids could not reach at vide.
+ *                If function returned NULL, it should either indicate a searching failure or vids could not reach at vide.
  *                (*) Especially, If a graph had only one vertex and this vertex looped back to itself,
  *                    when this function starts on this vertex and ends at the same vertex,
  *                    no matter what weight of loop back edge this vertex has, this function would return NULL.

@@ -139,9 +139,9 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 {
 	size_t tptr;
 	REGISTER size_t i;
-	_P_GTreeCopy ptc = (_P_GTreeCopy)param;
-	P_TNODE_G pcur = (P_TNODE_G)pitem;
-	P_TNODE_G pnew = treCreateTNodeG(pcur->pdata, ptc->size);
+	_P_GTreeCopy ptc  = (_P_GTreeCopy)param;
+	P_TNODE_G    pcur = (P_TNODE_G)pitem;
+	P_TNODE_G    pnew = treCreateTNodeG(pcur->pdata, ptc->size);
 	if (NULL == pnew)
 		goto Lbl_Allocation_Failure;
 	/* Set new root. */
@@ -496,8 +496,8 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 	QUEUE_L q;
 	queInitL(&q);
 	tp.pnroot = NULL;
-	tp.pquel = &q;
-	tp.size = size;
+	tp.pquel  = &q;
+	tp.size   = size;
 	treTraverseGLevel(proot, _treCBFCopyTreeNodeG, (size_t)&tp);
 	/* Do not forget to delete the queue. */
 	queFreeL(&q);

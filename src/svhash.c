@@ -369,7 +369,7 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
 	return NULL ==
 		hshInsertA
 		(
-			(P_HSHTBL_A) 0[(size_t *)param],
+			(P_HSHTBL_A)0[(size_t *)param],
 			(CBF_HASH)1[(size_t *)param],
 			(CBF_HASH)2[(size_t *)param],
 			pitem,

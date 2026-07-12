@@ -226,7 +226,7 @@ int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 		return CBF_CONTINUE;
 	else
 	{
-		REGISTER P_TNODE_BY pcur = pnode;
+		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
 
 		while (NULL != pcur)
@@ -279,7 +279,7 @@ int treMorrisTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 		return CBF_CONTINUE;
 	else
 	{
-		REGISTER P_TNODE_BY pcur = pnode;
+		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
 
 		while (NULL != pcur)

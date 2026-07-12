@@ -151,7 +151,7 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
 	REGISTER size_t i, j;
 	REGISTER int r;
 	j = pheap->irear++;
-	/* Put new element onto the end of array. */
+	/* Put new element at the end of array. */
 	memcpy(pheap->hdarr.pdata + j * size, pitem, size);
 	while (j != 0)
 	{

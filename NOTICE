@@ -195,6 +195,8 @@ _______________________________________________________________________________
 	Bugs for AA tree has been eradicated.
 06-07-2026:
 	A bug for red black tree has been eradicated.
+07-15-2026:
+	Bugs for function grpFordFulkersonMaxFlowL at file 'svgraph.c' have been purged. (Yes for pesticide!)
 _______________________________________________________________________________
 Currently we have a small developing team at https://savannah.nongnu.org/projects/stonevalley/ which includes:
 John Cage                   cosh dot cage at hotmail dot com

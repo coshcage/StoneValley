@@ -28,7 +28,7 @@
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.3.1.8"
+#define SV_LIB_VER "1.3.1.9"
 
 /* Callback function returning values. */
 #define CBF_TERMINATE true

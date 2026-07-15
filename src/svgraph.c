@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0607260430L02766
+ * File ID:     0905171125M0715261305L02778
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2014,11 +2014,13 @@ int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
  */
 int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
 {
-	REGISTER _P_MXFLWLBL plbl  = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
-	
-	if (plbl->theta < 0[(size_t *)param])
-		0[(size_t *)param] = plbl->theta;
-	
+	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
+	if (2[(size_t *)param] == plbl->vidc)
+	{
+		if (plbl->theta < 0[(size_t *)param])
+			0[(size_t *)param] = plbl->theta;
+		2[(size_t *)param] = plbl->vidp;
+	}
 	return CBF_CONTINUE;
 }
 
@@ -2035,17 +2037,26 @@ int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
 int _grpCBFFFMFLReduceFlowValue(void * pitem, size_t param)
 {
 	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
-	
-	if (plbl->vidc != plbl->vidp)
+	if (2[(size_t *)param] == plbl->vidc)
 	{
-		REGISTER size_t * p = plbl->bdir == _EDIR_OUT ?
-			_grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidp, plbl->vidc) :
-			_grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidc, plbl->vidp);
-		
-		if (NULL != p)
-			*p -= 0[(size_t *)param];
+		if (plbl->vidc != plbl->vidp)
+		{
+			REGISTER size_t * p;
+			if (plbl->bdir == _EDIR_OUT)
+			{
+				p = _grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidp, plbl->vidc);
+				if (NULL != p)
+					*p += 0[(size_t *)param];
+			}
+			else
+			{
+				p = _grpGetFirstWeightL((P_GRAPH_L)1[(size_t *)param], plbl->vidc, plbl->vidp);
+				if (NULL != p)
+					*p -= 0[(size_t *)param];
+			}
+		}
+		2[(size_t *)param] = plbl->vidp;
 	}
-	
 	return CBF_CONTINUE;
 }
 
@@ -2124,7 +2135,7 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 		
 		if (CBF_TERMINATE == grpTraverseVerticesL(pgrpc, _grpCBFFFMFLFillVb, (size_t)a))
 			goto Lbl_FFMFL_Failed;
-	
+		
 		for ( ;; )
 		{
 		/* Phase 2. */
@@ -2161,13 +2172,15 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 		/* Path reconstruction. */
 		if (! queIsEmptyL(&qlbl))
 		{
-			size_t ap[2];
+			size_t ap[3];
 			
 			ap[0] = ((_P_MXFLWLBL)qlbl.pfront->pdata)->theta;
 			ap[1] = (size_t)pgrpf;
+			ap[2] = ((_P_MXFLWLBL)qlbl.prear->pdata)->vidc;
 			
-			strTraverseLinkedListSC_N(qlbl.pfront->pnode, NULL, _grpCBFFFMFLFindMinimalTheta, (size_t)ap);
-			strTraverseLinkedListSC_N(qlbl.pfront,        NULL, _grpCBFFFMFLReduceFlowValue,  (size_t)ap);
+			strTraverseLinkedListSC_R(qlbl.pfront->pnode, NULL, _grpCBFFFMFLFindMinimalTheta, (size_t)ap);
+			ap[2] = ((_P_MXFLWLBL)qlbl.prear->pdata)->vidc; /* We have to reassign ap[2] here, because ap[2] has been mutated after previous invoking. */
+			strTraverseLinkedListSC_R(qlbl.pfront,        NULL, _grpCBFFFMFLReduceFlowValue,  (size_t)ap);
 		}
 		
 		setFreeT(&va);
@@ -2181,7 +2194,6 @@ Lbl_FFMFL_Solve:
 		REGISTER P_SET_T psmc = setCreateT();
 		if (NULL != psmc)
 			setTraverseTDispatch(&va, _grpCBFFFMFLFillMinCutSet, (size_t)psmc, treMorrisTraverseBYIn);
-			
 		*ppsmcut = psmc; /* Output the pointer of minimal cut set. */
 	}
 	

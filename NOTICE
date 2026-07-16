@@ -197,6 +197,8 @@ _______________________________________________________________________________
 	A bug for red black tree has been eradicated.
 07-15-2026:
 	Bugs for function grpFordFulkersonMaxFlowL at file 'svgraph.c' have been purged. (Yes for pesticide!)
+07-16-2026:
+	Stable version 1.3.2.1.
 _______________________________________________________________________________
 Currently we have a small developing team at https://savannah.nongnu.org/projects/stonevalley/ which includes:
 John Cage                   cosh dot cage at hotmail dot com

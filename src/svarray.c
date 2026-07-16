@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0716260844L00860
+ * File ID:     0306170948B0716261520L00857
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -494,7 +494,7 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_CO
  */
 void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bshrink)
 {
-	REGISTER size_t i, j;
+	REGISTER size_t i,  j;
 	REGISTER PUCHAR px, py;
 	for (i = 0, px = parrz->pdata; i < strLevelArrayZ(parrz); ++i, px += size)
 	{
@@ -524,7 +524,7 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
 bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bnext)
 {
 	if (strLevelArrayZ(parrz) > 1 && size > 0) /* Worth permuting. */
-	{	/* ptrl Always points the last element. */
+	{	/* ptrl always points the last element. */
 		REGISTER PUCHAR ptrl = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
 		REGISTER PUCHAR ptri, ptrj;
 		for (ptri = ptrl - size, ptrj = ptrl;; ptri -= size, ptrj -= size)
@@ -624,12 +624,9 @@ Lbl_End_Combination:
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrnd)(void))
 {
-	REGISTER size_t i, j;
-	
-	switch (strLevelArrayZ(parrz))
+	if (strLevelArrayZ(parrz) >= 2) /* It is worth to shuffle the array. */
 	{
-	case 0: case 1: return; /* Why should I shuffle nothing or one thing? */
-	default:
+		REGISTER size_t i, j;
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
 		{
 			j = nxtrnd() % (i + 1);

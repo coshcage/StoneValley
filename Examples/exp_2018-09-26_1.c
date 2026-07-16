@@ -105,7 +105,7 @@ bool SortLinkedListSC(P_NODE_S plist, CBF_COMPARE cbfcmp)
 	a[0] = true;
 	a[1] = (size_t)&pstr;
 	strTraverseLinkedListSC_A(plist, NULL, cbftvs_copy_1, (size_t)a);
-	strSortArrayZ(parr, sizeof(char), cbfcmp);
+	strSortArrayZ(parr, sizeof(char), cbfcmp, false);
 	// Copy data back to list.
 	pstr = (char *)parr->pdata;
 	a[0] = false;
@@ -134,7 +134,7 @@ bool SortLinkedListDC(P_NODE_D plist, CBF_COMPARE cbfcmp, bool brev)
 	a[0] = true;
 	a[1] = (size_t)&pint;
 	strTraverseLinkedListDC_A(plist, NULL, cbftvs_copy_2, (size_t)a, brev);
-	strSortArrayZ(parr, sizeof(int), cbfcmp);
+	strSortArrayZ(parr, sizeof(int), cbfcmp, false);
 	// Copy data back to list.
 	pint = (int *)parr->pdata;
 	a[0] = false;

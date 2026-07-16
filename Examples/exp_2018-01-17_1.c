@@ -92,7 +92,7 @@ int main(void)
 		// Traverse the whole set. And push each element in set onto stack.
 		hshTraverseC(pseta, cbftvs, (size_t)pstk);
 		// Sort the array in the stack.
-		strSortArrayZ(&pstk->arr, sizeof(char), cbfcmp);
+		strSortArrayZ(&pstk->arr, sizeof(char), cbfcmp, false);
 		// Print the stack.
 		while (!stkIsEmptyA(pstk))
 		{

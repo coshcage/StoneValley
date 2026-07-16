@@ -96,16 +96,17 @@ static int cbfcmpfreq(const void * px, const void * py)
 
 int main(int argc, char * argv[])
 {
-	int c;
-	long i, j = 0, k = 0;
+	int i, c;
+	size_t j = 0, k = 0;
 	bool bCase = false, bSort = false;
-	ARRAY_Z arrbuf = { 0 };
-	ARRAY_Z arrz   = { 0 };
+	ARRAY_Z arrbuf, arrz;
 	P_TRIE_A ptrie;
 	
 	if (NULL == strInitArrayZ(&arrbuf, BUFSIZ, sizeof(char)))
 		return 1;
+	
 	arrbuf.pdata[0] = '\0';
+	
 	if (NULL == (ptrie = treCreateTrieA()))
 	{
 		strFreeArrayZ(&arrbuf);
@@ -159,7 +160,7 @@ int main(int argc, char * argv[])
 			{
 				size_t * presult;
 				P_VOCABULARY pvol;
-				size_t bufferLen = strlen(arrbuf.pdata);
+				size_t bufferLen = strlen((const char *)arrbuf.pdata);
 				/* Search word in the buffer at the Trie. */
 				if (NULL == (presult = treSearchTrieA(ptrie, arrbuf.pdata, bufferLen, sizeof(char), cbfcmpchar)))
 				{
@@ -196,7 +197,7 @@ int main(int argc, char * argv[])
 	}
 	strResizeArrayZ(&arrz, k, sizeof(P_VOCABULARY));
 	if (bSort)
-		strSortArrayZ(&arrz, sizeof(P_VOCABULARY), cbfcmpfreq);
+		strSortArrayZ(&arrz, sizeof(P_VOCABULARY), cbfcmpfreq, true);
 	strTraverseArrayZ(&arrz, sizeof(P_VOCABULARY), CbfPrintResult, 0, false);
 	DestoryArray(&arrz);
 	treDeleteTrieA(ptrie, sizeof(char));

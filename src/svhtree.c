@@ -165,7 +165,7 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
 			svSwap(px, py, ptemp, size);
 			j = i;
 		}
-		else /* j <= i in max heap. */
+		else /* j <= i in a max heap. */
 			break;
 	}
 }

@@ -270,7 +270,7 @@ P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
 			treFreeBY(&proot);
 			
 			/* Sort symbol table by its frequency if possible, so that we can retrieve them much faster in the next decoding time. */
-			strSortArrayZ(stbl, sizeof(_SMBINF), _treCBFHFMCompareSymbolFreq);
+			strSortArrayZ(stbl, sizeof(_SMBINF), _treCBFHFMCompareSymbolFreq, false);
 			
 			/* Convert symbol table. */
 			if (NULL != (otbl = strCreateArrayZ(strLevelArrayZ(stbl), sizeof(HFM_SYMBOL))))

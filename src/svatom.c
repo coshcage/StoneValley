@@ -87,8 +87,8 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
  */
 void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
 {
-	REGISTER size_t i = strLevelArrayZ(parrz), j = 0;
-	for ( ; i >= 1; --i, j += size)
+	REGISTER size_t i, j;
+	for (i = strLevelArrayZ(parrz), j = 0; i >= 1; --i, j += size)
 		memcpy(parrz->pdata + j, pval, size);
 }
 
@@ -120,7 +120,7 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 		{
 			REGISTER PUCHAR pnew = (PUCHAR) realloc(parrz->pdata, sum);
 			if (NULL == pnew)
-				return NULL; /* Reallocation failure. luc0x61@codeberg.net */
+				return NULL; /* Reallocation failure. Refer to luc0x61@codeberg.net */
 			else
 			{
 				parrz->num = num;

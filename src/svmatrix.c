@@ -250,7 +250,7 @@ void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, si
 }
 
 /* Function name: strTransposeMatrix
- * Description:   Transpose a matrix. Swap line and column index for each element in a matrix.
+ * Description:   Transpose a matrix that is to swap line and column index for each element in a matrix.
  * Parameters:
  *       pmtx Pointer to a matrix.
  *       size Size of each element in the matrix.

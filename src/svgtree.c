@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0328260650L00572
+ * File ID:     0809171737H0328260650L00573
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -506,13 +506,14 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treG2BYConvertPuppet
- * Description:   This function is used to convert a generic tree into a binary tree.
+ * Description:   This function is used to cooperate with function treG2BYConvert to
+ *                convert a generic tree into a possible equivalent binary tree.
  * Parameters:
  *      ppnil Pointer to pnode of the caller function.
  *      pnode Pointer to a node of the original generic tree.
  *       size Size of data in node.
  *        pql Pointer to a queue.
- * Return value:  Pointer to a TNODE_BY.
+ * Return value:  Pointer to a TNODE_BY node.
  */
 P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
 {

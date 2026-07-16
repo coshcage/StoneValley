@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0328260437L00735
+ * File ID:     0306170948D0716260855L00730
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -256,7 +256,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
  */
 bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 {
-	size_t j;
+	REGISTER size_t j;
 	PUCHAR pt;
 	if (++pbstm->bilc > CHAR_BIT)
 	{	/* Need to reallocate. */
@@ -290,7 +290,7 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
-	UCHART r = (UCHART)(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc)));
+	REGISTER UCHART r = (UCHART)(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc)));
 	if (--pbstm->bilc < 1)
 	{	/* Need to reallocate. */
 		if (strLevelArrayZ(&pbstm->arrz) > 1)
@@ -299,7 +299,7 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
 				pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return false != r;
+	return false != (bool)r;
 }
 
 /* Function name: strBitStreamLocate
@@ -391,8 +391,6 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
  *                otherwise, this function would return value NULL.
- * Tip:           Alter macro strSortArrayZ_M at file svstring.h,
- *                and replace qsort with svQuickSort to make this function in charge.
  */
 void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -469,8 +467,6 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
  *                otherwise, this function would return value NULL.
- * Tip:           Alter macro strSortArrayZ_M at file svstring.h,
- *                and replace qsort with svMergeSort to make this function in charge.
  */
 void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -529,8 +525,7 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
  *                otherwise, this function would return value NULL.
- * Tip:           Alter macro strSortArrayZ_M at file svstring.h,
- *                and replace qsort with svMergeSort to make this function in charge.
+ * Tip:           The complexity of quick sort flows between O(n^2) and O(n*log n), while heap sort gives us a constant complexity. 
  *                This algorithm takes O(1) space and O(n log n) time complexity.
  *                Notice that heap sort is not stable.
  */

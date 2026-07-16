@@ -243,8 +243,8 @@ P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t s
  */
 bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
-	P_NODE_S * ppnode = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
-	P_NODE_S pnew = strCreateNodeS(pkey, size);
+	REGISTER P_NODE_S * ppnode = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
+	REGISTER P_NODE_S pnew = strCreateNodeS(pkey, size);
 	if (NULL == pnew)
 		return false; /* Allocation failure. */
 	if (NULL == *ppnode) /* Bucket is empty. */
@@ -271,8 +271,8 @@ bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  */
 bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
-	P_NODE_S * pphead = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
-	P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, size);
+	REGISTER P_NODE_S * pphead = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
+	REGISTER P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, size);
 	if (NULL == pphead || NULL == *pphead || NULL == pnode)
 		return false;
 	if (*pphead == pnode) /* Put next item into bucket. */
@@ -326,7 +326,7 @@ int _hshCBFCopyOPuppet     (void * pitem, size_t param);
  */
 int _hshCBFCountSlots(void * pitem, size_t param)
 {
-	if (false != *(_P_FLAG)pitem)
+	if (false != (bool)*(_P_FLAG)pitem)
 		++(*(size_t *)param);
 	return CBF_CONTINUE;
 }
@@ -345,7 +345,7 @@ int _hshCBFCountSlots(void * pitem, size_t param)
  */
 int _hshCBFTraverseOPuppet(void * pitem, size_t param)
 {
-	if (false != *(_P_FLAG)pitem)
+	if (false != (bool)*(_P_FLAG)pitem)
 		return ((CBF_TRAVERSE)0[(size_t *)param])((PUCHAR)pitem + _FLAG_SIZE, 1[(size_t *)param]);
 	return CBF_CONTINUE;
 }
@@ -370,8 +370,8 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
 		hshInsertA
 		(
 			(P_HSHTBL_A)0[(size_t *)param],
-			(CBF_HASH)1[(size_t *)param],
-			(CBF_HASH)2[(size_t *)param],
+			(CBF_HASH)  1[(size_t *)param],
+			(CBF_HASH)  2[(size_t *)param],
 			pitem,
 			3[(size_t *)param] /* This parameter Must Be Aligned initially. */
 		)
@@ -492,7 +492,7 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
  */
 void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
 {
-	_P_FLAG pflag;
+	REGISTER _P_FLAG pflag;
 	REGISTER size_t i, j;
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
@@ -523,7 +523,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  */
 void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
 {
-	_P_FLAG pflag;
+	REGISTER _P_FLAG pflag;
 	REGISTER size_t i, j;
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
@@ -553,7 +553,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  */
 bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
 {
-	_P_FLAG pflag;
+	REGISTER _P_FLAG pflag;
 	REGISTER size_t i, j;
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{

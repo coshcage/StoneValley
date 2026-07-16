@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0516261206L00855
+ * File ID:     0306170948B0716260844L00860
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -42,7 +42,7 @@ char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
 	parrz->num = 0;
 	while (pstr[parrz->num])
 		++(parrz->num);
-	/* While this is not an efficient implementation. */
+	/* While this is not an efficient implementation but a concise one to get string length. */
 	/* parrz->num = strlen(pstr). */
 	parrz->pdata = (PUCHAR) malloc(strLevelArrayZ(parrz));
 	if (NULL == parrz->pdata)
@@ -181,7 +181,7 @@ void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
  *       size Size of an element.
  *       brev Input true  to search array in reverse.
  *            Input false to search array in order. That means to search the element from index 0 to the end of array.
- * Return value:  (*) Index of element + 1. If function returned 0, it should mean pitem could not found.
+ * Return value:  (*) Index of element + 1. If function returned 0, it should mean pitem could not be found.
  * Caution:       Address of parrz Must Be Allocated first.
  */
 size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, bool brev)
@@ -207,7 +207,7 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, b
 }
 
 /* Function name: strInsertItemArrayZ
- * Description:   Insert an item into an array by index.
+ * Description:   Insert an item into an array by a given index.
  * Parameters:
  *      parrz Pointer to a sized array.
  *      pitem Pointer to an element that to be inserting.
@@ -261,20 +261,25 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrin
 	}
 }
 
-/* Function name: strSortArrayZ_O
- * Description:   Sort an array.
+/* Function name: strSortArrayZ
+ * Description:   Sort an array as fast as possible.
  * Parameters:
  *      parrz Pointer to a sized array.
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  N/A.
+ *    bstable Input [true]  to sort an array by using stable   sort algorithm.
+ *            Input [false] to sort an array by using unstable sort algorithm.
+ * Return value:  If sorting succeeded, this function would return a pointer to the first element to the array,
+ *                otherwise, this function would return value NULL.
  * Caution:       Address of parrz Must Be Allocated first.
- * Tip:           A macro version of this function named strSortArrayZ_M is available.
  */
-void strSortArrayZ_O(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp)
+void * strSortArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bstable)
 {
-	svQuickSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
+	if (bstable)
+		return svMergeSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
+	else
+		return svQuickSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
 }
 
 /* Function name: strMergeSortedArrayZ
@@ -701,7 +706,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 
 	while (i < parrtxt->num)
 	{
-		if (memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size) == 0)
+		if (0 == memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size))
 		{
 			++j;
 			++i;

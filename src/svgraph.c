@@ -1536,7 +1536,7 @@ bool _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 			if (NULL == strResizeArrayZ(parr1, i + strLevelArrayZ(parr2), sizeof(size_t)))
 				return false;
 			memcpy(&i[(size_t *)parr1->pdata], parr2->pdata, sizeof(size_t) * strLevelArrayZ(parr2));
-			strSortArrayZ(parr1, sizeof(size_t), _grpCBFCompareInteger);
+			strSortArrayZ(parr1, sizeof(size_t), _grpCBFCompareInteger, false);
 			strRemoveItemArrayZ(parrz, sizeof(P_ARRAY_Z), iy, true);
 		}
 	}
@@ -1731,7 +1731,7 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	/* Fill vertex array. */
 	grpTraverseVerticesL(pgrp, _grpCBFTSFillVertexArray, (size_t)a, ETM_INORDER_MORRIS);
 	/* Sort vertex array. */
-	strSortArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFCompareInteger);
+	strSortArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFCompareInteger, false);
 	/* Initialize the queue. */
 	i = 0;
 	a[0] = (size_t)&i;

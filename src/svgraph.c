@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0715261305L02778
+ * File ID:     0905171125M0715262303L02784
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -352,17 +352,24 @@ bool grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
  *     cbftvs Pointer to a callback function.
  *            The first parameter of cbftvs points to each VERTEX_L structure.
  *      param Additional information for each vertex.
- * Return value:  The same value as callback function returns.
+ *         tm Choose a way to traverse vertices in an order of:
+ *            ETM_PREORDER
+ *            ETM_INORDER
+ *            ETM_POSTORDER
+ *            ETM_LEVELORDER
+ *            ETM_PREORDER_MORRIS
+ *            ETM_INORDER_MORRIS
+ *            Please refer to enumeration en_TvsMtd at file svtree.h for more details.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param)
+int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 {
 	_DATINF si;
 	si.cbftvs = cbftvs;
 	si.param  = param;
 	si.bedge  = false;
 	/* Only post-order traversal is needed here. */
-	return setTraverseT(pgrp, _grpCBFTraversePuppet, (size_t)&si, ETM_POSTORDER);
+	return setTraverseT(pgrp, _grpCBFTraversePuppet, (size_t)&si, tm);
 }
 
 /* Function name: grpTraverseVertexEdgesL
@@ -412,7 +419,7 @@ void grpInitL_O(P_GRAPH_L pgrp)
  */
 void grpFreeL(P_GRAPH_L pgrp)
 {
-	grpTraverseVerticesL(pgrp, _grpCBFFreePuppet, 0);
+	grpTraverseVerticesL(pgrp, _grpCBFFreePuppet, 0, ETM_POSTORDER);
 	treFreeBST(pgrp);
 }
 
@@ -465,7 +472,7 @@ size_t grpVerticesCountL_O(P_GRAPH_L pgrp)
 size_t grpEdgesCountL(P_GRAPH_L pgrp)
 {
 	size_t l = 0;
-	grpTraverseVerticesL(pgrp, _grpCBFEdgesCountPuppet, (size_t)&l);
+	grpTraverseVerticesL(pgrp, _grpCBFEdgesCountPuppet, (size_t)&l, ETM_INORDER_MORRIS);
 	return l;
 }
 
@@ -541,7 +548,7 @@ size_t grpIndegreeVertexL(P_GRAPH_L pgrp, size_t vid)
 	size_t a[2];
 	a[0] = 0;
 	a[1] = vid;
-	grpTraverseVerticesL(pgrp, _grpCBFIndegreeVertex, (size_t)a);
+	grpTraverseVerticesL(pgrp, _grpCBFIndegreeVertex, (size_t)a, ETM_INORDER_MORRIS);
 	return a[0];
 }
 
@@ -652,7 +659,7 @@ bool grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
 		return false; /* Can not find vertex vid. */
 	else
 	{	/* Remove every edge that contains vertex vid. */
-		grpTraverseVerticesL(pgrp, _grpCBFRemoveEdge, vid);
+		grpTraverseVerticesL(pgrp, _grpCBFRemoveEdge, vid, ETM_INORDER_MORRIS);
 		/* Remove the vertex. */
 		strFreeLinkedListSC(&pvtx->adjlist);
 		setRemoveT(pgrp, &vid, sizeof(VERTEX_L), _grpCBFCompareInteger);
@@ -768,12 +775,12 @@ P_GRAPH_L grpCopyL(P_GRAPH_L pgrp)
 	size_t a[2];
 	P_GRAPH_L prtn = grpCreateL();
 	/* Copy all vertices. */
-	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyVertices, (size_t)prtn))
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyVertices, (size_t)prtn, ETM_INORDER_MORRIS))
 		goto Lbl_Allocation_Failure;
 	/* Copy each edge. */
 	a[0] = (size_t)pgrp;
 	a[1] = (size_t)prtn;
-	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyEdges, (size_t)a))
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFCopyEdges, (size_t)a, ETM_INORDER_MORRIS))
 		goto Lbl_Allocation_Failure;
 	goto Lbl_Finish;
 Lbl_Allocation_Failure:
@@ -949,9 +956,8 @@ int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
 bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 {
 	P_VTXREC prec = (P_VTXREC)parrz->pdata;
-	/* Fill vertices into array and sort array. */
-	grpTraverseVerticesL(pgrp, _grpCBFSPLFillVertices, (size_t)&prec);
-	strSortArrayZ(parrz, sizeof(VTXREC), _grpCBFCompareInteger);
+	/* Fill vertices into an array in an increasing order. */
+	grpTraverseVerticesL(pgrp, _grpCBFSPLFillVertices, (size_t)&prec, ETM_INORDER_MORRIS);
 	/* Fill distance into array. Pick the specific value off the array and sign it.
 	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
 	 */
@@ -1244,7 +1250,7 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	/* Insert all vertices' vid into Vb except vid start's vid. */
 	a[0] = vids;
 	a[1] = (size_t)&vb;
-	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a))
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a, ETM_INORDER_MORRIS))
 	{
 		/* Allocation failure. Cleanup.*/
 		strDeleteLinkedListDC(prl, false);
@@ -1578,7 +1584,7 @@ bool grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 	setarr.pdata = NULL;
 	a[0] = (size_t)&vtxarr;
 	/* Traverse each vertex in the graph and insert edges into an array. */
-	grpTraverseVerticesL(pgrp, _grpCBFMSTScanVertices, (size_t)a);
+	grpTraverseVerticesL(pgrp, _grpCBFMSTScanVertices, (size_t)a, ETM_INORDER_MORRIS);
 	/* Pick edges from array. */
 	for (i = 0; i < vtxarr.num; ++i)
 	{
@@ -1723,7 +1729,7 @@ P_ARRAY_Z grpTopologicalSortL(P_GRAPH_L pgrp)
 	a[0] = (size_t)&prec;
 	a[1] = (size_t)pgrp;
 	/* Fill vertex array. */
-	grpTraverseVerticesL(pgrp, _grpCBFTSFillVertexArray, (size_t)a);
+	grpTraverseVerticesL(pgrp, _grpCBFTSFillVertexArray, (size_t)a, ETM_INORDER_MORRIS);
 	/* Sort vertex array. */
 	strSortArrayZ(&arrvtx, sizeof(VTXREC), _grpCBFCompareInteger);
 	/* Initialize the queue. */
@@ -2133,7 +2139,7 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 		
 		va = _setInsertBST(va, &label, sizeof(_MXFLWLBL), _grpCBFCompareInteger);
 		
-		if (CBF_TERMINATE == grpTraverseVerticesL(pgrpc, _grpCBFFFMFLFillVb, (size_t)a))
+		if (CBF_TERMINATE == grpTraverseVerticesL(pgrpc, _grpCBFFFMFLFillVb, (size_t)a, ETM_INORDER_MORRIS))
 			goto Lbl_FFMFL_Failed;
 		
 		for ( ;; )
@@ -2765,7 +2771,7 @@ P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 
 	a[0] = (size_t)pr;
 	a[2] = (size_t)pgrpl;
-	if (CBF_CONTINUE != grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a))
+	if (CBF_CONTINUE != grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a, ETM_INORDER_MORRIS))
 	{
 		strDeleteArrayZ(pmt);
 		grpDeleteM(pr);

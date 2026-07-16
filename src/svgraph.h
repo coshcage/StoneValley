@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0511260200L00204
+ * File ID:     0901171625S0715262250L00204
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -54,7 +54,7 @@ typedef MATRIX GRAPH_M, * P_GRAPH_M;
 /* Functions for linked list graphs. */
 P_VERTEX_L grpGetVertexByID         (P_GRAPH_L pgrp,    size_t       vid);
 bool       grpVertexExistsL         (P_GRAPH_L pgrp,    size_t       vid);
-int        grpTraverseVerticesL     (P_GRAPH_L pgrp,    CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpTraverseVerticesL     (P_GRAPH_L pgrp,    CBF_TRAVERSE cbftvs,  size_t       param,  TvsMtd       tm);
 int        grpTraverseVertexEdgesL  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 void       grpInitL_O               (P_GRAPH_L pgrp);
 void       grpFreeL                 (P_GRAPH_L pgrp);

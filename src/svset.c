@@ -971,7 +971,7 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
  *            (treTraverseBYPost)
  *            (treTraverseBYLevel)
  *            (treMorrisTraverseBYPre)
- *            (treMorrisTraverseBYIn).
+ *            (treMorrisTraverseBYIn)
  * Return value:  The same value as callback function cbftvs returns or CBF_CONTINUE.
  * Tip:           Example of usage:
  *                setTraverseTDispatch(pset, cbftvs, param, treTraverseBYPre);

@@ -28,7 +28,7 @@
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.3.1.9"
+#define SV_LIB_VER "1.3.2.0"
 
 /* Callback function returning values. */
 #define CBF_TERMINATE true
@@ -73,7 +73,7 @@ void svPrintVersion(void);
 stdiv_t stdiv(size_t numerator, size_t denominator);
 
 /* Disable warning C4100 for Visual C/C++ compiler.
- * As for gcc/clang, please alter the following macro as DWC4100(param) // Nothing appears at tail.
+ * As for gcc/clang, without using this macro, compiler would warn users for unused parameter.
  */
 #define DWC4100(param) (void)(param)
 
@@ -81,7 +81,7 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 #define REGISTER register
 
 /* A macro that is used to align size to the multiply of sizeof(size_t)
- * with a little bit alteration to prevent Visual C 19.0 compiler to trigger C4146 error.
+ * with a little bit alteration to prevent Visual C 19.0 compiler to trigger a C4146 error.
  * Users may watch this technique on the book Hacker's Delight written by Henry S. Warren.
  * With ISBN 0-201-91465-4. Chapter 3-1.
  */

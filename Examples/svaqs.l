@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0608260540L00581
+ * File ID:     0608260445A0715262324L00629
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -138,21 +138,71 @@ static int cbfcmpstr(const void * px, const void * py)
 
 %%
 
-^{L}+({S}|\*)+{I}+\(.*$ { if (false == bIsInComment) { if (';' != yytext[strlen(yytext) - 2]) { DissectAComment(); gfc.prototype = strdup(yytext); treInsertRBT(pdb, &gfc, sizeof(gfc), cbfcmpstr); } } if (true == bIsFunc) bIsFunc = false; }
-\/\* { if (false == bIsInComment) bIsInComment = true; pbuf = arrbuf.pdata; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
-\*\/ { if (true == bIsInComment) bIsInComment = false; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
-"Function name: " { if (false == bIsFunc) bIsFunc = true; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
-"Description" { if (false == bIsDesc) bIsDesc = true; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
-"Parameter" { if (true == bIsDesc) bIsDesc = false; len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); }
-. { if (true == bIsInComment) { len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); } }
-\n|\r { if (true == bIsInComment) { len = sprintf((char *)pbuf, "%s", yytext); CheckBufferSize(len); } }
+^{L}+({S}|\*)+{I}+\(.*$ {
+	if (false == bIsInComment)
+	{
+		if (';' != yytext[strlen(yytext) - 2])
+		{
+			DissectAComment();
+			gfc.prototype = strdup(yytext);
+			treInsertRBT(pdb, &gfc, sizeof(gfc), cbfcmpstr);
+		}
+	}
+	if (true == bIsFunc)
+		bIsFunc = false;
+}
+\/\* {
+	if (false == bIsInComment)
+		bIsInComment = true;
+	pbuf = arrbuf.pdata;
+	len = sprintf((char *)pbuf, "%s", yytext);
+	CheckBufferSize(len);
+}
+\*\/ {
+	if (true == bIsInComment)
+		bIsInComment = false;
+	len = sprintf((char *)pbuf, "%s", yytext);
+	CheckBufferSize(len);
+}
+"Function name: " {
+	if (false == bIsFunc)
+		bIsFunc = true;
+	len = sprintf((char *)pbuf, "%s", yytext);
+	CheckBufferSize(len);
+}
+"Description" {
+	if (false == bIsDesc)
+		bIsDesc = true;
+	len = sprintf((char *)pbuf, "%s", yytext);
+	CheckBufferSize(len);
+}
+"Parameter" {
+	if (true == bIsDesc)
+		bIsDesc = false;
+	len = sprintf((char *)pbuf, "%s", yytext);
+	CheckBufferSize(len);
+}
+. {
+	if (true == bIsInComment)
+	{
+		len = sprintf((char *)pbuf, "%s", yytext);
+		CheckBufferSize(len);
+	}
+}
+\n|\r {
+	if (true == bIsInComment)
+	{
+		len = sprintf((char *)pbuf, "%s", yytext);
+		CheckBufferSize(len);
+	}
+}
 
 %%
 
 extern int _grpCBFCompareInteger(const void * px, const void * py);
 
 /* StoneValley source file name array. */
-const char * SZFILE[] = 
+const char * SZCFILE[] =
 {
 	"svatom.c",
 	"svarray.c",
@@ -532,9 +582,9 @@ int main(int argc, char * argv[])
 	strInitArrayZ(&arrbuf, BUFSIZ, sizeof(char));
 	pbuf = arrbuf.pdata;
 	
-	for (i = 0; i < sizeof(SZFILE) / sizeof(SZFILE[0]); ++i)
+	for (i = 0; i < sizeof(SZCFILE) / sizeof(SZCFILE[0]); ++i)
 	{
-		fpin = fopen(SZFILE[i], "r");
+		fpin = fopen(SZCFILE[i], "r");
 		
 		if (NULL != fpin)
 		{
@@ -544,7 +594,7 @@ int main(int argc, char * argv[])
 			fpin = NULL;
 		}
 		else
-			printf("WARNING: Cannot open file \"%s\"!\n", SZFILE[i]);
+			printf("WARNING: Cannot open file \"%s\"!\n", SZCFILE[i]);
 	}
 	
 	strFreeArrayZ(&arrbuf);

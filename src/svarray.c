@@ -718,7 +718,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 			lps[j - 1] = j;
 		}
 		
-		else if (i < parrtxt->num && (memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size) != 0))
+		else if (i < parrtxt->num && 0 != memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size))
 		{
 			if (0 != j)
 				j = lps[j - 1];

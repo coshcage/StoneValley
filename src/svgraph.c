@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0715262303L02784
+ * File ID:     0905171125M0715262303L02786
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2013,9 +2013,10 @@ int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
  * Description:   This function is used to find the minimal theta value of a single linked list of a queue.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
- *      param Pointer to a size_t[2] array of which
+ *      param Pointer to a size_t[3] array of which
  *            ap[0] Stores the minimal value.
  *            ap[1] Stores a pointer to a GRAPH_L of flows.
+ *            ap[2] Stores the next vertex identifier to be visited.
  * Return value:  Only CBF_CONTINUE will be returned.
  */
 int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
@@ -2035,9 +2036,10 @@ int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
  * Description:   This function is used to reduce flow value of a graph by the order of an augmenting path.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
- *      param Pointer to a size_t[2] array of which
+ *      param Pointer to a size_t[3] array of which
  *            ap[0] Stores the minimal value.
  *            ap[1] Stores a pointer to a GRAPH_L of flows.
+ *            ap[2] Stores the next vertex identifier to be visited.
  * Return value:  Only CBF_CONTINUE will be returned.
  */
 int _grpCBFFFMFLReduceFlowValue(void * pitem, size_t param)
@@ -2145,9 +2147,8 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 		for ( ;; )
 		{
 		/* Phase 2. */
-			a[_EGID_8_BOOL_VIDE] = a[_EGID_9_BOOL_NVTX] = (size_t)false;
+			a[_EGID_10_BOOL_ERR] = a[_EGID_8_BOOL_VIDE] = a[_EGID_9_BOOL_NVTX] = (size_t)false;
 			
-			a[_EGID_10_BOOL_ERR] = (size_t)false;
 			if (CBF_CONTINUE != setTraverseTDispatch(&va, _grpCBFFFMFLFindOutEdges, (size_t)a, treTraverseBYIn) && a[_EGID_10_BOOL_ERR])
 				goto Lbl_FFMFL_Failed; /* Irrational flow network. Flow is larger than capacity. */
 			
@@ -2184,6 +2185,7 @@ bool grpFordFulkersonMaxFlowL(P_SET_T * ppsmcut, P_GRAPH_L pgrpc, P_GRAPH_L pgrp
 			ap[1] = (size_t)pgrpf;
 			ap[2] = ((_P_MXFLWLBL)qlbl.prear->pdata)->vidc;
 			
+			/* During path reconstructing, a backward search for an augmenting path is needed. */
 			strTraverseLinkedListSC_R(qlbl.pfront->pnode, NULL, _grpCBFFFMFLFindMinimalTheta, (size_t)ap);
 			ap[2] = ((_P_MXFLWLBL)qlbl.prear->pdata)->vidc; /* We have to reassign ap[2] here, because ap[2] has been mutated after previous invoking. */
 			strTraverseLinkedListSC_R(qlbl.pfront,        NULL, _grpCBFFFMFLReduceFlowValue,  (size_t)ap);

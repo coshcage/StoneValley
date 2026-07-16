@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0513250808L00490
+ * File ID:     0914171200J0513250808L00486
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -253,7 +253,7 @@ P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
 	REGISTER P_ARRAY_Z otbl = NULL;
 	if
 	(	/* Both buffer and its length are not empty. */
-		NULL != s && n != 0 &&
+		NULL != s && 0 != n &&
 		NULL != stbl
 	)
 	{
@@ -316,15 +316,11 @@ Lbl_Failed:
  */
 P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
 {
-	if (NULL != s && n != 0 && NULL != ptable)
+	if (NULL != s && 0 != n && NULL != ptable)
 	{	/* Both buffer and it's length are not empty. */
 		REGISTER P_BITSTREAM pbstm = strCreateBitStream();
 		REGISTER P_ARRAY_Z   pltbl = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
-		if
-		(
-			NULL != pbstm &&
-			NULL != pltbl
-		)
+		if (NULL != pbstm && NULL != pltbl)
 		{
 			REGISTER size_t i, j;
 			REGISTER _P_SMBINF psi;

@@ -194,8 +194,8 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  */
 int strTraverseLinkedListSC_N(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER P_NODE_S pcur = list;
-	for ( ; NULL != pcur; pcur = pcur->pnode)
+	REGISTER P_NODE_S pcur;
+	for (pcur = list; NULL != pcur; pcur = pcur->pnode)
 	{
 		/* Break at the header of a circular list. */
 		if (NULL != pnil && pcur == list)
@@ -332,7 +332,7 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
 /* Function name: strCompareLinkedListSC
  * Description:   Compares linked list X to linked list Y.
  * Parameters:
- *      listx a linked list to be compared.
+ *      listx A linked list to be compared.
  *      listy Another linked list to be compared.
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always pdata of listx
@@ -476,7 +476,7 @@ P_NODE_S strLocateLastItemSC(LIST_S list)
  */
 P_NODE_S strLocateItemSC_R(P_NODE_S pnode, size_t incmtl)
 {
-	if (NULL != pnode && incmtl != 0)
+	if (NULL != pnode && 0 != incmtl)
 		return strLocateItemSC_R(pnode->pnode, --incmtl);
 	return pnode;
 }
@@ -762,8 +762,8 @@ int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
  */
 int strTraverseLinkedListDC_N(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
-	REGISTER P_NODE_D pcur = list;
-	for ( ; NULL != pcur; pcur = (brev ? pcur->ppnode[PREV] : pcur->ppnode[NEXT]))
+	REGISTER P_NODE_D pcur;
+	for (pcur = list; NULL != pcur; pcur = (brev ? pcur->ppnode[PREV] : pcur->ppnode[NEXT]))
 	{
 		/* Break at the header of a circular list. */
 		if (NULL != pnil && pcur == list)
@@ -958,7 +958,7 @@ int strCompareLinkedListDC(LIST_D listx, LIST_D listy, CBF_COMPARE cbfcmp, bool 
 	int rtn = 0;
 	REGISTER P_NODE_D pstatx = listx;
 	REGISTER P_NODE_D pstaty = listy;
-	while ((NULL != listx) && (NULL != listy))
+	while (NULL != listx && NULL != listy)
 	{
 		if (0 != (rtn = cbfcmp(listx->pdata, listy->pdata)))
 			break;
@@ -1029,7 +1029,7 @@ P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, boo
  */
 P_NODE_D strLocateItemDC_R(P_NODE_D pnode, ptrdiff_t incmtl)
 {
-	if (NULL != pnode && incmtl != 0)
+	if (NULL != pnode && 0 != incmtl)
 	{
 		if (incmtl > 0)
 			return strLocateItemDC_R(pnode->ppnode[NEXT], --incmtl);
@@ -1090,7 +1090,7 @@ P_NODE_D strLocateItemDC_N(P_NODE_D pnode, ptrdiff_t incmtl)
  */
 P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 {
-	REGISTER P_NODE_D ptmp = NULL;
+	REGISTER P_NODE_D ptmp  = NULL;
 	REGISTER P_NODE_D plast = pnode;
 	if (NULL == pnode)
 		return NULL;
@@ -1185,12 +1185,12 @@ void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size
 	switch (ntp)
 	{
 	case ENT_SINGLE:
-		pdatax = (((P_NODE_S)pnodex)->pdata);
-		pdatay = (((P_NODE_S)pnodey)->pdata);
+		pdatax = ((P_NODE_S)pnodex)->pdata;
+		pdatay = ((P_NODE_S)pnodey)->pdata;
 		break;
 	case ENT_DOUBLE:
-		pdatax = (((P_NODE_D)pnodex)->pdata);
-		pdatay = (((P_NODE_D)pnodey)->pdata);
+		pdatax = ((P_NODE_D)pnodex)->pdata;
+		pdatay = ((P_NODE_D)pnodey)->pdata;
 		break;
 	default:
 		return;
@@ -1227,17 +1227,17 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 #define _P2P_NODE_S(pnode) ((P_NODE_S)(pnode)) /* Cast a pointer to P_NODE_S. */
 #define _P2P_NODE_D(pnode) ((P_NODE_D)(pnode)) /* Cast a pointer to P_NODE_D. */
 	REGISTER void * plast = pfirst;
-	REGISTER void * ptmp = NULL;
+	REGISTER void * ptmp  = NULL;
 	if (NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp))
 	{
 		while
 		(
 			(ENT_SINGLE == ntp) ?
-			((NULL != _P2P_NODE_S(plast)->pnode) && (pfirst != _P2P_NODE_S(plast)->pnode)) :
+			(NULL != _P2P_NODE_S(plast)->pnode && pfirst != _P2P_NODE_S(plast)->pnode) :
 			(
 				brev ?
-				((NULL != _P2P_NODE_D(plast)->ppnode[PREV]) && (pfirst != _P2P_NODE_D(plast)->ppnode[PREV])) :
-				((NULL != _P2P_NODE_D(plast)->ppnode[NEXT]) && (pfirst != _P2P_NODE_D(plast)->ppnode[NEXT]))
+				(NULL != _P2P_NODE_D(plast)->ppnode[PREV] && pfirst != _P2P_NODE_D(plast)->ppnode[PREV]) :
+				(NULL != _P2P_NODE_D(plast)->ppnode[NEXT] && pfirst != _P2P_NODE_D(plast)->ppnode[NEXT])
 			)
 		)
 		{

@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0331260805L01428
+ * File ID:     0306170948C0715262337L01430
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -128,6 +128,7 @@ int _strCBFCompareNodeDataD(void * pitem, size_t param)
 
 /* Function name: strTraverseLinkedListSC_R
  * Description:   Recursively traverse a single-pointer-node linked list.
+ *                The order of traversal of this function is reversely form list head.
  * Parameters:
  *       list Pointer to the first NODE_S element while traversal.
  *       pnil Please Leave It As NULL.
@@ -664,10 +665,11 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 	}
 }
 
-/* Section for doubly-pointer-node linked list started bellow.  */
+/* The section for double-pointer-node linked list began bellow.  */
 
 /* Function name: strTraverseLinkedListDC_R
- * Description:   Recursively traverse a doubly-pointer-node linked list.
+ * Description:   Recursively traverse a double-pointer-node linked list.
+ *                The order of traversal of this function is reversely form parameter list to its pointed node.
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL.
@@ -706,7 +708,7 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strTraverseLinkedListDC_A
- * Description:   Recursively traverse a doubly-pointer-node linked list.
+ * Description:   Recursively traverse a double-pointer-node linked list.
  *                The order of traversal is opposite of strTraverseLinkedListDC_R.
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
@@ -808,7 +810,7 @@ void strFreeLinkedListDC(P_LIST_D plist, bool brev)
 }
 
 /* Function name: strCreateLinkedListDC
- * Description:   Create a new doubly-pointer-node linked list.
+ * Description:   Create a new double-pointer-node linked list.
  * Parameter:     N/A.
  * Return value:  Pointer to the new list.
  */
@@ -822,7 +824,7 @@ P_LIST_D strCreateLinkedListDC(void)
 }
 
 /* Function name: strDeleteLinkedListDC_O
- * Description:   Delete a doubly-pointer-node linked list.
+ * Description:   Delete a double-pointer-node linked list.
  * Parameter:
  *     plist Pointer to the list you want to delete.
  * Return value:  N/A.

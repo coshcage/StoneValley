@@ -153,7 +153,7 @@ void treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t siz
 	j = pheap->irear++;
 	/* Put new element at the end of array. */
 	memcpy(pheap->hdarr.pdata + j * size, pitem, size);
-	while (j != 0)
+	while (0 != j)
 	{
 		/* Fetch parent node of new element. */
 		i = (j - 1) >> 1;

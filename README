@@ -136,9 +136,9 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	 _________________________________________________________________
 	|o               # BEFORE COMPILING CHECK LIST #                 o|\ [Figure 3]
 	|_____[ITEM]___________[TYPE]_____[LINES]_____[FILE]_____[MARK]___|\
-	| [_] DWC4100           MACRO       78         SVDEF.H    ALTER   |\
-	| [_] REGISTER          MACRO       81         SVDEF.H    CONFIRM |\
-	| [_] SV_OPTIMIZATION   MACRO       97         SVDEF.H    ALTER   |\
+	| [_] DWC4100           MACRO       80         SVDEF.H    ALTER   |\
+	| [_] REGISTER          MACRO       83         SVDEF.H    CONFIRM |\
+	| [_] SV_OPTIMIZATION   MACRO       99         SVDEF.H    ALTER   |\
 	|                                                                 |\
 	| ALTER:   Alter item if necessary.                               |\
 	| CONFIRM: Confirm item before compilation.           StoneValley |\
@@ -322,7 +322,7 @@ ix  Limitations
 		Despite some of the fundamental functions in StoneValley are able to run without The C Standard Library, most parts of this library need dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
 	
 	Conflicts:
-		Caution that to avoid any undefined behavior in functions while inline macros, do NOT use prefix and suffix '++'/'--' operators more than once on a same variable or left value expression. Such fun(a++, ++a); is strictly prohibited while programming with StoneValley.
+		Caution that to avoid any undefined behavior in library functions while inline macros, do NOT use prefix and suffix '++'/'--' operators more than once on a same variable or left value expression. Such invoking fun(a++, ++a); is strictly prohibited while programming with StoneValley.
 
 	Addressing:
 		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which is derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.

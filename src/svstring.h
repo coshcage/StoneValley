@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0716260846L00481
+ * File ID:     0306170921Y0717261017L00481
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -137,7 +137,7 @@ void *      strSortArrayZ                  (P_ARRAY_Z    parrz,    size_t       
 void *      strMergeSortedArrayZ           (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size,    CBF_COMPARE  cbfcmp);
 void *      strBinarySearchArrayZ_O        (P_ARRAY_Z    parrz,    const void * pkey,      size_t       size,    CBF_COMPARE  cbfcmp);
 void        strReverseArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size);
-void *      strGetLimitationArrayZ         (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, bool        bmax);
+void *      strGetLimitationArrayZ         (P_ARRAY_Z    parrz,    size_t       size,      CBF_COMPARE  cbfcmp,  bool         bmax,   bool        brev);
 void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, bool        bshrink);
 bool        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, bool        bnext);
 bool        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);

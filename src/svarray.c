@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0716261520L00857
+ * File ID:     0306170948B0717261105L00870
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -25,6 +25,12 @@
 #include <stdlib.h> /* Using function malloc, calloc, realloc, free. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
+
+/* File level macro definitions go here. */
+/* Macro _P_ARRAY_Z_ITEM_M gives us a method to fetch the pointer of an item without checking index's bound.
+ * It is the library programmer's duty to ensure index_M is in the range of an array.
+ */
+#define _P_ARRAY_Z_ITEM_M(parrz_M, size_M, index_M) ((parrz_M)->pdata + (size_M) * (index_M))
 
 /* File level function declarations here. */
 void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size);
@@ -192,13 +198,13 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, b
 		REGISTER PUCHAR p;
 		if (brev)
 		{
-			for (i = strLevelArrayZ(parrz), p = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size; i >= 1; --i, p -= size)
+			for (i = strLevelArrayZ(parrz), p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1); i >= 1; --i, p -= size)
 				if (0 == memcmp(p, pitem, size))
 					return i;
 		}
 		else
 		{
-			for (i = 1, p = parrz->pdata; i <= strLevelArrayZ(parrz); ++i, p += size)
+			for (i = 0, p = parrz->pdata; i < strLevelArrayZ(parrz); ++i, p += size)
 				if (0 == memcmp(p, pitem, size))
 					return i;
 		}
@@ -248,9 +254,7 @@ void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, siz
  */
 void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrink)
 {
-	if (index >= strLevelArrayZ(parrz))
-		return; /* Index out of range. */
-	else
+	if (index < strLevelArrayZ(parrz))
 	{
 		if (0 != --parrz->num)
 			memmove(parrz->pdata + index * size,
@@ -288,7 +292,7 @@ void * strSortArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bsta
  *      pdest Pointer to the destination array that you want to merge.
  *       psrc Pointer to the source array.
  *       size Size of each element in two arrays.
- *            Each item in these two sorted arrays shall be in the same size.
+ *            (*) Each item in these two sorted arrays shall be in the same size.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition of CBF_COMPARE in svdef.h.
  * Return value:  If merging succeeded, function would return (pdest->pdata),
@@ -299,20 +303,18 @@ void * strSortArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bsta
  */
 void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_COMPARE cbfcmp)
 {
-#define _P_ARRAY_Z_ITEM(parrz, index) ((parrz)->pdata + (index) * (size))
-
 	REGISTER size_t di = 0, si = 0, sj = 0, t;
 	REGISTER int r0, r1;
 	REGISTER bool binc =
 	(
-		cbfcmp(pdest->pdata, _P_ARRAY_Z_ITEM(pdest, strLevelArrayZ(pdest) - 1)) <= 0 &&
-		cbfcmp(psrc->pdata,  _P_ARRAY_Z_ITEM(psrc,  strLevelArrayZ(psrc)  - 1)) <= 0
+		cbfcmp(pdest->pdata, _P_ARRAY_Z_ITEM_M(pdest, size, strLevelArrayZ(pdest) - 1)) <= 0 &&
+		cbfcmp(psrc->pdata,  _P_ARRAY_Z_ITEM_M(psrc,  size, strLevelArrayZ(psrc)  - 1)) <= 0
 	) ?
 	true : /* Both destination and source are in increasing order. */
 	false; /* Both destination and source are in decreasing order. */
 	
-	PUCHAR pnew = (PUCHAR) realloc(pdest->pdata, (strLevelArrayZ(pdest) + strLevelArrayZ(psrc)) * size); /* We have to use realloc here. */
-	if (NULL == pnew)
+	t = strLevelArrayZ(pdest);
+	if (NULL == strResizeBufferedArrayZ(pdest, size, +strLevelArrayZ(psrc)))
 		return NULL;
 	else
 	{
@@ -328,10 +330,10 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 		 * When merging, the separator scan through the destination to find a place to hold a collection that
 		 * numbers in this collection of source array can be inserted into destination.
 		 */
-
+		pdest->num = t;
 		while
 		(
-			(r0 = cbfcmp(_P_ARRAY_Z_ITEM(psrc, sj), pdest->pdata)),
+			(r0 = cbfcmp(_P_ARRAY_Z_ITEM_M(psrc, size, sj), pdest->pdata)),
 			(binc ? r0 <= 0 : r0 >= 0)
 		)
 		{
@@ -342,7 +344,7 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 		}
 		if (sj)
 		{
-			memmove(_P_ARRAY_Z_ITEM(pdest, sj), pdest->pdata, size * pdest->num);
+			memmove(_P_ARRAY_Z_ITEM_M(pdest, size, sj), pdest->pdata, size * pdest->num);
 			memmove(pdest->pdata, psrc->pdata, size * sj);
 			pdest->num += sj;
 			t = pdest->num - 1;
@@ -355,8 +357,8 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 			for ( ;; )
 			{
 				t = si + sj;
-				r0 = cbfcmp(_P_ARRAY_Z_ITEM(psrc, t), _P_ARRAY_Z_ITEM(pdest, di + 1));
-				r1 = cbfcmp(_P_ARRAY_Z_ITEM(psrc, t), _P_ARRAY_Z_ITEM(pdest, di));
+				r0 = cbfcmp(_P_ARRAY_Z_ITEM_M(psrc, size, t), _P_ARRAY_Z_ITEM_M(pdest, size, di + 1));
+				r1 = cbfcmp(_P_ARRAY_Z_ITEM_M(psrc, size, t), _P_ARRAY_Z_ITEM_M(pdest, size, di));
 				if (binc ? r0 <= 0 && r1 >= 0 : r0 >= 0 && r1 <= 0)
 					++sj;
 				else
@@ -364,8 +366,8 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 					if (sj)
 					{
 						t = di + 1;
-						memmove(_P_ARRAY_Z_ITEM(pdest, t + sj), _P_ARRAY_Z_ITEM(pdest, t), (pdest->num - t) * size);
-						memmove(_P_ARRAY_Z_ITEM(pdest, t), _P_ARRAY_Z_ITEM(psrc, si), sj * size);
+						memmove(_P_ARRAY_Z_ITEM_M(pdest, size, t + sj), _P_ARRAY_Z_ITEM_M(pdest, size, t), (pdest->num - t) * size);
+						memmove(_P_ARRAY_Z_ITEM_M(pdest, size, t), _P_ARRAY_Z_ITEM_M(psrc, size, si), sj * size);
 						pdest->num += sj;
 						si += sj;
 						di += sj;
@@ -379,18 +381,17 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 			}
 			if
 			(
-				(r0 = cbfcmp(_P_ARRAY_Z_ITEM(pdest, di), _P_ARRAY_Z_ITEM(psrc, si))),
+				(r0 = cbfcmp(_P_ARRAY_Z_ITEM_M(pdest, size, di), _P_ARRAY_Z_ITEM_M(psrc, size, si))),
 				(binc ? r0 <= 0 : r0 >= 0)
 			)
 			{
 				t = psrc->num - si;
-				memmove(_P_ARRAY_Z_ITEM(pdest, di + 1), _P_ARRAY_Z_ITEM(psrc, si), t * size);
+				memmove(_P_ARRAY_Z_ITEM_M(pdest, size, di + 1), _P_ARRAY_Z_ITEM_M(psrc, size, si), t * size);
 				pdest->num += t;
 			}
 		}
 	}
-	return pdest->pdata;
-#undef _P_ARRAY_Z_ITEM
+	return (void *)pdest->pdata;
 }
 
 /* Function name: strBinarySearchArrayZ_O
@@ -439,25 +440,23 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 }
 
 /* Function name: strGetLimitationArrayZ
- * Description:   Get the maximum or minimum value in an array.
+ * Description:   Get the first maximum or minimum value in an array.
  * Parameters:
  *      parrz Pointer to a sized array.
- *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares any two elements in the array.
- *       bmax If bmax were not zero, function would return the maximum value of an array,
+ *       bmax If bmax were true, function would return the maximum value of an array,
  *            otherwise, function would return the minimum value of an array.
+ *       brev If brev were true, function would search the limitation from array's tail to head,
+ *            otherwise, function would search for the limitation from head to tail.
  * Return value:  Pointer to the limit in array and cast the pointer to (void *).
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
- *                The size of the buffer of ptemp pointed shall equal to parameter size.
- * Tip:           After invoking, the buffer that ptemp pointed stored the limit value.
- *                To get the index of maximum value in fixed-size array arr, use following sentences:
- *                size_t index; PUCHAR ptr = strGetLimitationArrayZ(&arr, ptemp, size, cbfcmp, true);
- *                if (NULL != ptr) index = (ptr == parrz->pdata ? 0 : (ptr - arr.pdata) / size - 1);
- *
+ * Tip:           To get the index of maximum value in fixed-size array arr, use the following sentences:
+ *                size_t index = 0; PUCHAR ptr = (PUCHAR)strGetLimitationArrayZ(&arr, size, cbfcmp, true);
+ *                if (NULL != ptr) index = (ptr - arr.pdata) / size;
  */
-void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bmax)
+void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bmax, bool brev)
 {
 	REGISTER void * prtn = NULL;
 	if (strLevelArrayZ(parrz) > 0)
@@ -465,15 +464,29 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_CO
 		REGISTER size_t i;
 		REGISTER PUCHAR p;
 		REGISTER int r;
-		/* If there were only one element in array, the limit would be the first one. */
-		prtn = parrz->pdata;
-		/* Copy the first element in array to the temporary buffer. */
-		memcpy(ptemp, parrz->pdata, size);
-		for (i = 0, p = parrz->pdata; i < strLevelArrayZ(parrz); ++i, p += size)
+		
+		if (brev)
 		{
-			r = cbfcmp(p, ptemp);
-			if (bmax ? r > 0 : r < 0)
-				memcpy(ptemp, prtn = p, size);
+			prtn = p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1);
+			if (strLevelArrayZ(parrz) > 1)
+			{
+				for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i, p -= size)
+				{
+					r = cbfcmp(p, prtn);
+					if (bmax ? r > 0 : r < 0)
+						prtn = p;
+				}
+			}
+		}
+		else
+		{
+			prtn = parrz->pdata;
+			for (i = 1, p = parrz->pdata + size; i < strLevelArrayZ(parrz); ++i, p += size)
+			{
+				r = cbfcmp(p, prtn);
+				if (bmax ? r > 0 : r < 0)
+					prtn = p;
+			}
 		}
 	}
 	return prtn;
@@ -681,7 +694,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 		
 		while (k < parrptn->num)
 		{
-			if (memcmp(strLocateItemArrayZ(parrptn, size, k), strLocateItemArrayZ(parrptn, size, len), size) == 0)
+			if (memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, len), size) == 0)
 			{
 				lps[k] = ++len;
 				++k;
@@ -703,7 +716,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 
 	while (i < parrtxt->num)
 	{
-		if (0 == memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size))
+		if (0 == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 		{
 			++j;
 			++i;
@@ -720,7 +733,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 			lps[j - 1] = j;
 		}
 		
-		else if (i < parrtxt->num && 0 != memcmp(strLocateItemArrayZ(parrptn, size, j), strLocateItemArrayZ(parrtxt, size, i), size))
+		else if (i < parrtxt->num && 0 != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 		{
 			if (0 != j)
 				j = lps[j - 1];
@@ -761,7 +774,7 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
 			 * For example, for "ababab" and i == 1, the value of r remains 0 and z[i] becomes 0.
 			 * For string "aaaaaa" and i = 1, z[i] and r become 5.
 			 */
-			while (r < n && 0 == memcmp(strLocateItemArrayZ(parrz, size, r - l), strLocateItemArrayZ(parrz, size, r), size))
+			while (r < n && 0 == memcmp(_P_ARRAY_Z_ITEM_M(parrz, size, r - l), _P_ARRAY_Z_ITEM_M(parrz, size, r), size))
 				++r;
 			z[i] = r - l;
 			--r;
@@ -779,7 +792,7 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
 			{
 				/* Start from r and check manually. */
 				l = i;
-				while (r < n && 0 == memcmp(strLocateItemArrayZ(parrz, size, r - l), strLocateItemArrayZ(parrz, size, r), size))
+				while (r < n && 0 == memcmp(_P_ARRAY_Z_ITEM_M(parrz, size, r - l), _P_ARRAY_Z_ITEM_M(parrz, size, r), size))
 					++r;
 				z[i] = r - l;
 				--r;

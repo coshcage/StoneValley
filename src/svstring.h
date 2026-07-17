@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0717261017L00481
+ * File ID:     0306170921Y0717261324L00496
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -106,6 +106,7 @@ void *      svMergeSort                    (void *       pbase,    size_t       
 void *      svHeapSort                     (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svBinarySearch                 (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 void *      svBinarySearchDispatch         (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp, BSearch method);
+ptrdiff_t   svIndexOf_O                    (const void * pbase,    const void * pitem,     size_t       size);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
@@ -130,6 +131,7 @@ int         strTraverseArrayZ              (P_ARRAY_Z    parrz,    size_t       
 void *      strCopyArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
 void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
 void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,      size_t       index);
+ptrdiff_t   strIndexOfArrayZ_O             (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size);
 size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    bool         brev);
 void *      strInsertItemArrayZ            (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    size_t       index);
 void        strRemoveItemArrayZ            (P_ARRAY_Z    parrz,    size_t       size,      size_t       index,   bool         bshrink);
@@ -233,6 +235,8 @@ void *      strSetValueSparseMatrix        (P_SPAMAT     pmtx,     size_t       
 bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     psrc,    size_t       size);
 
 /* Macros for function inline to accelerate execution speed. */
+/* Functions in svmisc.c. */
+#define svIndexOf_M(pbase_M, pitem_M, size_M) ((ptrdiff_t)((ptrdiff_t)(pitem_M) - (ptrdiff_t)(pbase_M)) / (ptrdiff_t)(size_M))
 /* Functions in svatom.c. */
 #define strFreeArrayZ_M(parrz_M) do { \
 	free((parrz_M)->pdata); \
@@ -263,9 +267,12 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #define strCopyArrayZ_M(pdest_M, psrc_M, size_M) (memcpy((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strMoveArrayZ_M(pdest_M, psrc_M, size_M) (memmove((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strLocateItemArrayZ_M(parrz_M, size_M, index_M) ((index_M) < strLevelArrayZ(parrz_M) ? (parrz_M)->pdata + (index_M) * (size_M) : NULL)
-#define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) ( \
-	svBinarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)) \
+#define strIndexOfArrayZ_M(parrz_M, pitem, size) ( \
+	((size_t)(pitem_M) >= (size_t)(parrz_M)->pdata && (size_t)(pitem_M) <= (size_t)&(parrz_M)->pdata[(size_M) * (strLevelArrayZ(parrz_M) - 1)]) ? \
+	svIndexOf((parrz_M)->pdata, (pitem_M), (size_M)) : \
+	-1 \
 )
+#define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) (svBinarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)))
 /* Functions in svlist.c */
 #define strInitLinkedListSC_M(plist_M) do { \
 	*(plist_M) = NULL; \
@@ -309,6 +316,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
 	#include <string.h> /* Using function memcpy. */
 	/* Macros for miscellaneous data structures. */
+	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
 	#define strFreeArrayZ             strFreeArrayZ_O
@@ -322,6 +330,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strCopyArrayZ             strCopyArrayZ_M
 	#define strMoveArrayZ             strMoveArrayZ_M
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
+	#define strIndexOfArrayZ          strIndexOfArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
@@ -344,6 +353,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#include <stdlib.h> /* Using function free. */
 	#include <string.h> /* Using function memcpy. */
 	/* Macros for miscellaneous data structures. */
+	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
 	#define strFreeArrayZ             strFreeArrayZ_M
@@ -357,6 +367,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strCopyArrayZ             strCopyArrayZ_M
 	#define strMoveArrayZ             strMoveArrayZ_M
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
+	#define strIndexOfArrayZ          strIndexOfArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_N
@@ -379,6 +390,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#include <stdlib.h> /* Using function free. */
 	#include <string.h> /* Using function memcpy. */
 	/* Macros for miscellaneous data structures. */
+	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
 	#define strFreeArrayZ             strFreeArrayZ_M
@@ -392,6 +404,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strCopyArrayZ             strCopyArrayZ_M
 	#define strMoveArrayZ             strMoveArrayZ_M
 	#define strLocateItemArrayZ       strLocateItemArrayZ_M
+	#define strIndexOfArrayZ          strIndexOfArrayZ_M
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
@@ -412,6 +425,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strCopyBMap               strCopyBMap_M
 #else /* Optimization has been disabled. */
 	/* Macros for miscellaneous data structures. */
+	#define svIndexOf                 svIndexOf_O
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_O
 	/* Macros for atomic structures. */
 	#define strFreeArrayZ             strFreeArrayZ_O
@@ -425,6 +439,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strCopyArrayZ             strCopyArrayZ_O
 	#define strMoveArrayZ             strMoveArrayZ_O
 	#define strLocateItemArrayZ       strLocateItemArrayZ_O
+	#define strIndexOfArrayZ          strIndexOfArrayZ_O
 	#define strBinarySearchArrayZ     strBinarySearchArrayZ_O
 	/* Macros for linked lists. */
 	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A

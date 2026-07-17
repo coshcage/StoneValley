@@ -28,7 +28,9 @@
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */
-#define SV_LIB_VER "1.3.2.2"
+#define SV_LIB_VER "1.3.2.3"
+/* This following macro turns library version string into a size_t integer to be calculated by users. */
+#define SV_LIB_VER_VAL ((size_t)((SV_LIB_VER[0] - '0') * 1000UL + (SV_LIB_VER[2] - '0') * 100UL + (SV_LIB_VER[4] - '0') * 10UL + (SV_LIB_VER[6] - '0')))
 
 /* Callback function returning values. */
 #define CBF_TERMINATE true
@@ -73,7 +75,7 @@ void svPrintVersion(void);
 stdiv_t stdiv(size_t numerator, size_t denominator);
 
 /* Disable warning C4100 for Visual C/C++ compiler.
- * As for gcc/clang, without using this macro, compiler would warn users for unused parameter.
+ * As for gcc/clang, use this macro to disable compiler warning for unused parameter.
  */
 #define DWC4100(param) (void)(param)
 

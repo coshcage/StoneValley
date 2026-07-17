@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0715262303L02786
+ * File ID:     0905171125M0717261325L02783
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1375,15 +1375,20 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 		parrz,
 		&rec,
 		sizeof(_EDGEREC),
-		((PUCHAR)svBinarySearchDispatch
+		(size_t)svIndexOf
 		(
-			&rec.weight,
 			parrz->pdata,
-			strLevelArrayZ(parrz),
-			sizeof(_EDGEREC),
-			_grpCBFCompareInteger,
-			EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
-		) - parrz->pdata) / sizeof(_EDGEREC) + 1
+			svBinarySearchDispatch
+			(
+				&rec.weight,
+				parrz->pdata,
+				strLevelArrayZ(parrz),
+				sizeof(_EDGEREC),
+				_grpCBFCompareInteger,
+				EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+			),
+			sizeof(_EDGEREC)
+		) + 1
 	);
 	return CBF_CONTINUE;
 }
@@ -1410,7 +1415,7 @@ int _grpCBFMSTScanVertices(void * pitem, size_t param)
  * together such that E=(u,v), an disjoint set should absorb a pair of vertex
  * that an edge connected to them.
  * When another edge comes into the disjoint set, if one of the two vertices that
- * the new edge connected were in the set, the set would suck the extra vertex into it.
+ * the new edge connected were in the same set, the set would suck the extra vertex into it.
  * Otherwise, the set would expel vertices both that had already inserted in a same slot.
  * If such two vertices separated in different slots in the set, disjoint insertion
  * would combine two slots together to make a union.
@@ -1436,7 +1441,7 @@ int _grpCBFMSTScanVertices(void * pitem, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpDisjointSetSearch
- * Description:   Search vertex x and y in an array represented disjoint set and determine whether x and y can be inserted in to set.
+ * Description:   Search vertex x and y in an array represented disjoint set and determine whether x and y can or cannot be inserted in to set.
  * Parameters:
  *      parrz Pointer to an array represented disjoint set.
  *          x The first vertex ID for an edge.
@@ -1511,22 +1516,14 @@ bool _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 				pvarr = (ix - 1)[(P_ARRAY_Z *)parrz->pdata];
 				x = y;
 			}
-			i = ((PUCHAR)svBinarySearchDispatch
-			(
-				&x,
-				pvarr->pdata,
-				strLevelArrayZ(pvarr),
-				sizeof(size_t),
-				_grpCBFCompareInteger,
-				EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
-			) - pvarr->pdata) / sizeof(size_t) + 1;
+			i = (size_t)svIndexOf(pvarr->pdata, svBinarySearchDispatch(&x, pvarr->pdata, strLevelArrayZ(pvarr), sizeof(size_t), _grpCBFCompareInteger, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY), sizeof(size_t)) + 1;
 			if (NULL == strResizeArrayZ(pvarr, strLevelArrayZ(pvarr) + 1, sizeof(P_ARRAY_Z)))
 				return false; /* Allocation failure. */
 			strInsertItemArrayZ(pvarr, &x, sizeof(size_t), i);
 		}
 		else /* Combine two sets. */
 		{	/* Since searching function gives a result whether x and y can be inserted or not, insertion
-			 * needs the conclusion and the situation that x and y are in the same slot cannot appear.
+			 * needs this conclusion and the situation that x and y are in the same slot cannot appear.
 			 * In this case, x != y != 0. It means x and y had been distributed into two different slots.
 			 */
 			REGISTER P_ARRAY_Z parr1, parr2;
@@ -1568,7 +1565,7 @@ void _grpDisjointSetFree(P_ARRAY_Z parrz)
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  *                (*) After generating the graph that pgrp pointed will be altered into its minimum spanning tree.
  * Tip:           Kruskal algorithm works on undirected graph. Since users need to insert an edge into adjacency-list
- *                represented graph from a vertex to another, this function ignore directions for edges while searching the list.
+ *                represented graph from a vertex to another, this function ignores directions for edges while searching the list.
  */
 bool grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 {

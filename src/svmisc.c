@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0716260855L00730
+ * File ID:     0306170948D0717261323L00744
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -726,5 +726,19 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		break;
 	}
 	return NULL; /* Argument error. */
+}
+
+/* Function name: svIndexOf_O
+ * Description:   Return the index of an object starting from pbase in a consecutive memory space.
+ * Parameters:
+ *      pbase Pointer to the starting address.
+ *      pitem Pointer to the address of the object to be calculated.
+ *       size Size in bytes of each element in the array memory.
+ * Return value:  The offset of the item in an array.
+ * Tip:           A macro version of this function named svIndexOf_M is available.
+ */
+ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
+{
+	return (ptrdiff_t)((ptrdiff_t)pitem - (ptrdiff_t)pbase) / (ptrdiff_t)size;
 }
 

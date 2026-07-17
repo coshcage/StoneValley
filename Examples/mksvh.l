@@ -2,7 +2,7 @@
  * Name:        mksvh.l
  * Description: Make one StoneValley header tool.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0709250909A0709251044L00128
+ * File ID:     0709250909A0709251044L00129
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -69,6 +69,7 @@ FILE * fpout = NULL;
 %%
 
 (" "|\t)*#include(" "|\t)+\"sv.*
+"extern"(" "|\t)+
 . { fprintf(fpout, "%s", yytext); }
 
 %%

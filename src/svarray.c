@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0717261105L00870
+ * File ID:     0306170948B0717261324L00887
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -80,7 +80,7 @@ P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
 	return parrz;
 }
 
-/* Function name: strLevelArrayZ
+/* Function name: strLevelArrayZ_O
  * Description:   Return how many items there are stored in a sized array.
  * Parameter:
  *     parrz Pointer to a sized array.
@@ -91,6 +91,23 @@ P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
 size_t strLevelArrayZ_O(P_ARRAY_Z parrz)
 {
 	return parrz->num;
+}
+
+/* Function name: strIndexOfArrayZ_O
+ * Description:   Return the index of an object in a sized array by a given address.
+ * Parameters:
+ *      parrz Pointer to a sized array.
+ *      pitem Pointer to the address of the object in the sized array.
+ *       size Size in bytes of each element in the array.
+ * Return value:  The offset of the item in a sized array.
+ * Caution:       If the object that pitem pointed were not in the array whose pointer was parrz, this function would return -1 as an index.
+ * Tip:           A macro version of this function named strIndexOfArrayZ_M is available.
+ */
+ptrdiff_t strIndexOfArrayZ_O(P_ARRAY_Z parrz, const void * pitem, size_t size)
+{
+	return ((size_t)pitem >= (size_t)parrz->pdata && (size_t)pitem <= (size_t)&parrz->pdata[size * (strLevelArrayZ(parrz) - 1)]) ?
+		svIndexOf(parrz->pdata, pitem, size) :
+		-1;
 }
 
 /* Function name: strTraverseArrayZ

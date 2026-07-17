@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0626260015L02563
+ * File ID:     0809171737I0717261402L02565
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2256,8 +2256,10 @@ bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 
 /* A macro used to calculate the length of an element in a trie's array. */
 #define _ELESIZ(size) (ALIGN_SIZET(size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))
-/* Element consists of: ------data----next_trie------reference_counter--appendix---------flag. */
-/* We make the flag sign as size_t to further align structure to a suitable size. */
+/*                                 ^              ^                ^                ^                ^
+ * Element consists of: -----------data--------next_trie---reference_counter--------appendix---------flag.
+ * We make the flag sign as size_t to further align structure to a suitable size.
+ */
 
 /* File level function declarations. */
 void _treFreeTrieNode(P_TRIE_A ptrie, size_t size);
@@ -2432,7 +2434,7 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					cbfcmp,
 					EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
 				);
-				REGISTER size_t i = NULL == p ? 0 : (p - (*ptrie)->pdata) / _ELESIZ(size) + 1;
+				REGISTER size_t i = NULL == p ? 0 : (size_t)svIndexOf((*ptrie)->pdata, p, _ELESIZ(size)) + 1;
 				if (NULL == strResizeArrayZ(*ptrie, strLevelArrayZ(*ptrie) + 1, _ELESIZ(size)))
 					return false; /* Allocation failure. */
 				else
@@ -2538,7 +2540,7 @@ bool treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					(
 						eleset.trie,
 						_ELESIZ(size),
-						(eleset.pdat - eleset.trie->pdata) / _ELESIZ(size),
+						(size_t)svIndexOf(eleset.trie->pdata, eleset.pdat, _ELESIZ(size)),
 						true
 					);
 					/* If there are not exist elements in the set, then remove array entity either. */

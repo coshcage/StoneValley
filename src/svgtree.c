@@ -373,8 +373,8 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
 		return treCreateTNodeG(pitem, size);
 	else
 	{
-		P_TNODE_G pnew;
-		if (NULL == (pnew = treCreateTNodeG(pitem, size)))
+		P_TNODE_G pnew = treCreateTNodeG(pitem, size);
+		if (NULL == pnew)
 			return NULL; /* Initialized node allocation failed. */
 		if (NULL == strResizeArrayZ(&pnode->children, strLevelArrayZ(&pnode->children) + 1, sizeof(P_TNODE_G)))
 			return NULL; /* Reallocation for parent node failed. */

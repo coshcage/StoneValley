@@ -218,8 +218,8 @@ void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
  */
 P_NODE_S strCreateNodeS(const void * pval, size_t size)
 {
-	P_NODE_S pnode;
-	if (NULL == (pnode = (P_NODE_S) malloc(sizeof(NODE_S))))
+	REGISTER P_NODE_S pnode = (P_NODE_S) malloc(sizeof(NODE_S));
+	if (NULL == pnode)
 		return NULL;
 	if (NULL == strInitNodeS(pnode, pval, size)) /* Buffer creation failed. */
 	{
@@ -285,8 +285,8 @@ void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
  */
 P_NODE_D strCreateNodeD(const void * pval, size_t size)
 {
-	P_NODE_D pnode;
-	if (NULL == (pnode = (P_NODE_D) malloc(sizeof(NODE_D))))
+	REGISTER P_NODE_D pnode  = (P_NODE_D) malloc(sizeof(NODE_D));
+	if (NULL == pnode)
 		return NULL;
 	if (NULL == strInitNodeD(pnode, pval, size))
 	{

@@ -311,9 +311,9 @@ P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t si
 {
 	if (NULL != pseta || NULL != psetb)
 	{
-		REGISTER P_SET_H psetr;
 		size_t a[3];
-		if (NULL == (psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb))))
+		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
+		if (NULL == psetr)
 			return NULL;
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
@@ -389,9 +389,9 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 {
 	if (NULL != pseta || NULL != psetb)
 	{
-		REGISTER P_SET_H psetr;
 		size_t a[5];
-		if (NULL == (psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb))))
+		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
+		if (NULL == psetr)
 			return NULL;
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
@@ -433,9 +433,9 @@ P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size
 {
 	if (NULL != pseta)
 	{
-		REGISTER P_SET_H psetr;
+		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
 		size_t a[5];
-		if (NULL == (psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb))))
+		if (NULL == psetr)
 			return NULL;
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
@@ -977,7 +977,7 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into the callback function.
  *  cbftvsbyt Binary tree traversal callback function name or say function address.
- *            The value of cbftvsbyt can either be the following item:
+ *            The value of this parameter can either be one of the following items:
  *            (treTraverseBYPre)
  *            (treTraverseBYIn)
  *            (treTraverseBYPost)

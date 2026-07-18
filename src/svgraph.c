@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0718260912L02788
+ * File ID:     0905171125M0718261510L02785
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -385,8 +385,8 @@ int grpTraverseVerticesL(P_GRAPH_L pgrp, CBF_TRAVERSE cbftvs, size_t param, TvsM
  */
 int grpTraverseVertexEdgesL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = grpGetVertexByID(pgrp, vid)))
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vid);
+	if (NULL != pvtx)
 	{
 		_DATINF si;
 		si.cbftvs = cbftvs;
@@ -490,8 +490,8 @@ size_t grpEdgesCountL(P_GRAPH_L pgrp)
  */
 bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bweight, size_t weight)
 {
-	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = grpGetVertexByID(pgrp, vidx)))
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vidx);
+	if (NULL != pvtx)
 	{
 		_FIEDG fd;
 		fd.bweight       = bweight;
@@ -520,8 +520,8 @@ bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bwei
  */
 int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = grpGetVertexByID(pgrp, vidx)))
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vidx);
+	if (NULL != pvtx)
 	{
 		_FIEDG fd;
 		fd.bweight       = true;
@@ -562,8 +562,8 @@ size_t grpIndegreeVertexL(P_GRAPH_L pgrp, size_t vid)
  */
 size_t grpOutdegreeVertexL(P_GRAPH_L pgrp, size_t vid)
 {
-	REGISTER P_VERTEX_L pvtx;
-	if (NULL != (pvtx = grpGetVertexByID(pgrp, vid)))
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vid);
+	if (NULL != pvtx)
 	{
 		size_t l = 0;
 		strTraverseLinkedListSC_A(pvtx->adjlist, NULL, _strCBFNodesCounter, (size_t)&l);
@@ -607,8 +607,8 @@ bool grpInsertVertexL(P_GRAPH_L pgrp, size_t vid)
  */
 bool grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 {
-	REGISTER P_VERTEX_L pvtx;
-	if (NULL == (pvtx = grpGetVertexByID(pgrp, vidx)))
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vidx);
+	if (NULL == pvtx)
 		return false; /* Can not find vertex vidx. */
 	else
 	{
@@ -652,10 +652,9 @@ bool grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 bool grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
-{
-	REGISTER P_VERTEX_L pvtx;
-	/* First find the vertex identified by vid. */
-	if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
+{	/* First find the vertex identified by vid. */
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vid);
+	if (NULL == pvtx)
 		return false; /* Can not find vertex vid. */
 	else
 	{	/* Remove every edge that contains vertex vid. */
@@ -679,10 +678,9 @@ bool grpRemoveVertexL(P_GRAPH_L pgrp, size_t vid)
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
-{
-	REGISTER P_VERTEX_L pvtx;
-	/* Find the vertex identified by vid first. */
-	if (NULL == (pvtx = grpGetVertexByID(pgrp, vidx)))
+{	/* Find the vertex identified by vid first. */
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vidx);
+	if (NULL == pvtx)
 		return false; /* Can not find vertex vidx. */
 	else
 	{
@@ -805,10 +803,9 @@ Lbl_Finish:
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 int _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param, P_SET_T pvstset)
-{
-	REGISTER P_VERTEX_L pvtx;
-	/* Find the current vertex. */
-	if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
+{	/* Find the current vertex. */
+	REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vid);
+	if (NULL == pvtx)
 		return CBF_TERMINATE; /* Can not find vertex vid. */
 	else
 	{
@@ -887,8 +884,8 @@ int grpBFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		/* Check whether the vertex has been visited. */
 		if (! setIsMemberT(&vstset, &vid, _grpCBFCompareInteger))
 		{	/* Vertex has not been visited. */
-			REGISTER P_VERTEX_L pvtx;
-			if (NULL == (pvtx = grpGetVertexByID(pgrp, vid)))
+			REGISTER P_VERTEX_L pvtx = grpGetVertexByID(pgrp, vid);
+			if (NULL == pvtx)
 			{	/* Can not find vertex vid. */
 				rtn = CBF_TERMINATE;
 				goto Lbl_BFS_Clear;
@@ -2627,8 +2624,8 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  */
 P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
 {
-	REGISTER size_t k;
-	if (0 == (k = grpGetDimensionM(pgrpm)))
+	REGISTER size_t k = grpGetDimensionM(pgrpm);
+	if (0 == k)
 		return NULL;
 	else
 	{

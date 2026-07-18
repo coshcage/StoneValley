@@ -251,8 +251,8 @@ bool stkIsEmptyL_O(P_STACK_L pstkl)
  */
 P_NODE_S stkPushL(P_STACK_L pstkl, const void * pitem, size_t size)
 {
-	REGISTER P_NODE_S ptmp;
-	if (NULL != (ptmp = strCreateNodeS(pitem, size)))
+	REGISTER P_NODE_S ptmp = strCreateNodeS(pitem, size);
+	if (NULL != ptmp)
 	{
 		ptmp->pnode = *pstkl;
 		*pstkl = ptmp;

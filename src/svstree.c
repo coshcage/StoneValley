@@ -2500,8 +2500,8 @@ bool treRemoveTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 	/* Traverse trie to pick elements that to be deleted into a stack. */
 	while (NULL != *ptrie && 0 != num)
 	{
-		REGISTER PUCHAR pdat;
-		if (NULL == (pdat = (PUCHAR) strBinarySearchArrayZ(*ptrie, pbase, _ELESIZ(size), cbfcmp)))
+		REGISTER PUCHAR pdat = (PUCHAR) strBinarySearchArrayZ(*ptrie, pbase, _ELESIZ(size), cbfcmp);
+		if (NULL == pdat)
 			goto Lbl_Clear;
 		else
 		{

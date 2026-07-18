@@ -876,7 +876,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
 				++s;
-		if (false != (0x01 & u))
+		if (false != (bool)(0x01 & u))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))
 			{
@@ -897,8 +897,8 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		}
 		else if (NULL != pval && 0 != size) /* Insert new item. */
 		{
-			REGISTER P_NODE_S pnew;
-			if (NULL != (pnew = strCreateNodeS(pval, size)))
+			REGISTER P_NODE_S pnew = strCreateNodeS(pval, size);
+			if (NULL != pnew)
 			{
 				if (0 == s || NULL == pmtx->datlst) /* Assign new header. */
 				{

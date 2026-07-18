@@ -112,7 +112,7 @@ bool stkIsEmptyA_O(P_STACK_A pstka)
  */
 bool stkIsFullA_O(P_STACK_A pstka)
 {
-	return (pstka->arr.num == pstka->top);
+	return pstka->arr.num == pstka->top;
 }
 
 /* Function name: stkPushA_O
@@ -237,7 +237,7 @@ void stkDeleteL_O(P_STACK_L pstkl)
  */
 bool stkIsEmptyL_O(P_STACK_L pstkl)
 {
-	return !(*pstkl);
+	return NULL == *pstkl;
 }
 
 /* Function name: stkPushL

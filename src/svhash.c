@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0328260815L00619
+ * File ID:     0901171615K0718261327L00620
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -115,7 +115,8 @@ int _hshCBFCopyCPuppet(void * pitem, size_t param)
 			pitem,
 			2[(size_t *)param]
 		)
-		? CBF_TERMINATE : CBF_CONTINUE;
+		? CBF_TERMINATE :
+		CBF_CONTINUE;
 }
 
 /* Function name: hshInitC
@@ -375,7 +376,8 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
 			pitem,
 			3[(size_t *)param] /* This parameter Must Be Aligned initially. */
 		)
-		? CBF_TERMINATE : CBF_CONTINUE;
+		? CBF_TERMINATE :
+		CBF_CONTINUE;
 }
 
 /* Function name: hshInitA
@@ -600,13 +602,12 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 #undef _FLAG_SIZE
 
 /* Function name: hshCBFHashString
- * Description:   Hash a string.
+ * Description:   Hash a zero terminated character string.
  * Parameter:
  *      pstr Pointer to a char array.
  * Return value:  Hash result.
- * Notice:        This function comes from book Data Structures and Algorithm Analysis in C.
- *                The Author of this book is Mark Allen Weiss.
- *                DJB2 string hashing.
+ * Notice:        This function utilizes DJB2 string hashing to provide users
+ *                a function in the hope that it will be useful.
  */
 size_t hshCBFHashString(const void * pkey)
 {

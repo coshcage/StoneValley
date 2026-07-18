@@ -119,9 +119,7 @@ bool queIsInitialAC_O(P_QUEUE_A pqueac)
  */
 size_t queUsageAC_O(P_QUEUE_A pqueac)
 {
-	return (pqueac->front > pqueac->rear) ?
-		(pqueac->arr.num - pqueac->front + pqueac->rear) :
-		(pqueac->rear - pqueac->front);
+	return pqueac->front > pqueac->rear ? pqueac->arr.num - pqueac->front + pqueac->rear : pqueac->rear - pqueac->front;
 }
 
 /* Function name: queInsertAC_O
@@ -222,7 +220,7 @@ void queDeleteL(P_QUEUE_L pquel)
  */
 bool queIsEmptyL_O(P_QUEUE_L pquel)
 {
-	return !pquel->pfront;
+	return NULL == pquel->pfront;
 }
 
 /* Function name: queUsageL_O
@@ -249,8 +247,8 @@ size_t queUsageL_O(P_QUEUE_L pquel)
  */
 bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 {
-	REGISTER P_NODE_S ptail;
-	if (NULL == (ptail = strCreateNodeS(pitem, size)))
+	REGISTER P_NODE_S ptail = strCreateNodeS(pitem, size);
+	if (NULL == ptail)
 		return false;
 	/* Adjust the tail of queue. */
 	if (NULL != pquel->prear)
@@ -358,7 +356,7 @@ void queDeleteDL(P_DEQUE_DL pdeque)
  */
 bool queIsEmptyDL_O(P_DEQUE_DL pdeque)
 {
-	return !pdeque->pfirst;
+	return NULL == pdeque->pfirst;
 }
 
 /* Function name: queUsageDL_O
@@ -400,8 +398,8 @@ void queFirstDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
  */
 P_NODE_D quePushDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
 {
-	REGISTER P_NODE_D pnew;
-	if (NULL != (pnew = strCreateNodeD(pitem, size)))
+	REGISTER P_NODE_D pnew = strCreateNodeD(pitem, size);
+	if (NULL != pnew)
 	{
 		if (NULL != pdeque->pfirst)
 		{
@@ -433,7 +431,8 @@ P_NODE_D quePopDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
 			memcpy(pitem, ptmp->pdata, size);
 		ptmp = pdeque->pfirst->ppnode[NEXT];
 		strDeleteNodeD(pdeque->pfirst);
-		if (NULL != (pdeque->pfirst = ptmp))
+		pdeque->pfirst = ptmp;
+		if (NULL != ptmp)
 			ptmp->ppnode[PREV] = NULL;
 		else
 			pdeque->plast = NULL;
@@ -467,8 +466,8 @@ void queLastDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
  */
 P_NODE_D queInjectDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
 {
-	REGISTER P_NODE_D ptmp;
-	if (NULL != (ptmp = strCreateNodeD(pitem, size)))
+	REGISTER P_NODE_D ptmp = strCreateNodeD(pitem, size);
+	if (NULL != ptmp)
 	{
 		if (NULL != pdeque->plast)
 		{
@@ -500,7 +499,8 @@ P_NODE_D queEjectDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
 			memcpy(pitem, ptmp->pdata, size);
 		ptmp = pdeque->plast->ppnode[PREV];
 		strDeleteNodeD(pdeque->plast);
-		if (NULL != (pdeque->plast = ptmp))
+		pdeque->plast = ptmp;
+		if (NULL != ptmp)
 			ptmp->ppnode[NEXT] = NULL;
 		else
 			pdeque->pfirst = NULL;

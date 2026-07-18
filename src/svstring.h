@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0717261324L00496
+ * File ID:     0306170921Y0718261202L00504
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -98,6 +98,14 @@ typedef struct st_SPAMAT {
 	LIST_S datlst; /* Data list. */
 } SPAMAT, * P_SPAMAT;
 
+/* A structure describes finding information for nodes. */
+typedef struct st_FindingInfo {
+	void *       result; /* Finding result. */
+	const void * pitem;  /* Finding target. */
+	size_t       size;   /* Size of target. */
+	NodeType     ntp;    /* Type of target. */
+} FindingInfo, * P_FindingInfo;
+
 /* Miscellaneous functions for linear data structures. */
 void        svSwap                         (void *       pleft,    void *       pright,    void *       ptemp,   size_t       size);
 void        svShellSort                    (void *       pbase,    void *       ptemp,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
@@ -165,7 +173,7 @@ P_NODE_S    strLocateItemSC_N              (P_NODE_S     pnode,    size_t       
 P_NODE_S    strInsertItemLinkedListSC      (LIST_S       list,     P_NODE_S     pdest,     P_NODE_S     pnode,   bool         bafter);
 P_NODE_S    strRemoveItemLinkedListSC      (LIST_S       list,     P_NODE_S     pnode);
 P_NODE_S    strReverseLinkedListSC         (LIST_S       phead);
-void        strSwapItemLinkedListS         (P_NODE_S     pnodex,   P_NODE_S     pnodey);
+void        strSwapNodeItemLinkedListSC    (P_NODE_S     pnodex,   P_NODE_S     pnodey);
 LIST_S      strQuickSortLinkedListS        (LIST_S       phead,    CBF_COMPARE  cbfcmp);
 /* Functions for doubly linked lists. */
 int         strTraverseLinkedListDC_R      (LIST_D       list,     P_NODE_D     pnil,      CBF_TRAVERSE cbftvs,  size_t       param,  bool        brev);
@@ -183,10 +191,10 @@ P_NODE_D    strLocateItemDC_R              (P_NODE_D     pnode,    ptrdiff_t    
 P_NODE_D    strLocateItemDC_N              (P_NODE_D     pnode,    ptrdiff_t    incmtl);
 P_NODE_D    strInsertItemLinkedListDC      (P_NODE_D     pdest,    P_NODE_D     pnode,     bool         bafter);
 P_NODE_D    strRemoveItemLinkedListDC      (P_NODE_D     pnode);
-void        strSwapItemLinkedListD         (P_NODE_D     pnodex,   P_NODE_D     pnodey);
+void        strSwapNodeItemLinkedListDC    (P_NODE_D     pnodex,   P_NODE_D     pnodey);
 /* Functions for both single linked lists and doubly linked lists. */
-void        strSwapContentLinkedListSD     (void *       pnodex,   size_t       sizex,     void *       pnodey,  size_t       sizey,  NodeType    bnodes);
 void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       bool         brev);
+bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t  sizey, NodeType ntpy);
 void *      strMergeSortLinkedListSDC      (void *       list,     bool         bCircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
 /* Functions for bit streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
@@ -212,7 +220,7 @@ void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * 
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
 void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfcmp);
-bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,     size_t scol, size_t size);
+bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t  scol,  size_t   size);
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);

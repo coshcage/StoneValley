@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0331260805L00514
+ * File ID:     0809171737V0718261217L00523
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -42,38 +42,43 @@ typedef P_NODE_D   P_TNODE_BY; /* Pointer of tree nodes. */
 typedef P_NODE_D   BYTREE;     /* Binary tree. */
 typedef P_NODE_D * P_BYTREE;   /* Pointer to a binary tree. */
 
-/* Align a NODE_D structure on the head of BSTNODE structure,
- * then put the rest of node's information such as parent and param after NODE_D structure,
+/* It says a binary tree node is actually identical to a double pointer node.
+ * Use this macro to identify node types for a FindingInfo structure.
+ */
+#define ENT_TNODE_BY ENT_DOUBLE
+
+/* Align a NODE_D structure to the head of BSTNODE structure,
+ * then put the rest of node's information such as parameter and parent pointer after the NODE_D structure,
  * so that we are able to traverse a binary tree and cope with a BSTNODE structure simultaneously.
  */
-typedef struct st_BSTNODE { /* Binary node with additional information. */
-	TNODE_BY knot; /* Left and right children and data pointer. */
-	size_t  param; /* Parameter for a Treap node. */
+typedef struct st_BSTNODE { /* Binary node with additional information to from a binary search tree node. */
+	TNODE_BY knot;  /* Knot contains left and right children and the data pointer. */
+	size_t   param; /* Parameter for a Treap node. Color for a red black tree node. Balance factor for an AVL tree node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
 /* Binary search tree node with parent pointer for red black tree. */
 typedef struct st_RBTNODE {
-	BSTNODE             bstn;   /* BST block. */
-	struct st_RBTNODE * parent; /* Pointer to parent node. */
+	BSTNODE             bstn;   /* Binary search tree block. */
+	struct st_RBTNODE * parent; /* A pointer to parent node. */
 } RBTNODE, * P_RBTNODE, * RBT, ** P_RBT;
 
 #define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */
 #define P2P_BSTNODE(pnode)  ((P_BSTNODE) (pnode)) /* Cast a pointer to P_BSTNODE. */
 #define P2P_RBTNODE(pnode)  ((P_RBTNODE) (pnode)) /* Cast a pointer to P_RBTNODE. */
 
-/* Generic tree. */
+/* Types for generic tree nodes. */
 typedef struct st_TNODE_G {
 	ARRAY_Z children; /* An array for children pointers. */
 	PUCHAR  pdata;    /* Data pointer of a node. */
 } TNODE_G, * P_TNODE_G, * GTREE, ** P_GTREE;
 
-/* Heap tree using fixed array. */
+/* Heap tree uses a fixed array. */
 typedef struct st_HEAP_A {
 	ARRAY_Z hdarr; /* Heap data array. */
 	size_t  irear; /* Index of the last element. */
 } HEAP_A, * P_HEAP_A;
 
-/* Types for B-plus trees. */
+/* Types for in memory B-plus trees. */
 typedef NODE_D     BPTNODE;
 typedef P_NODE_D   P_BPTNODE;
 typedef P_NODE_D   BPT;
@@ -90,15 +95,19 @@ typedef enum en_TvsMtd {
 	ETM_PREORDER_MORRIS = 020,
 	ETM_INORDER_MORRIS  = 022
 } TvsMtd;
+/* WARNING: Do NOT embed any form of binary tree traversal in a Morris traversal.
+ * The reason why we cannot do this is that a Morris traversal would interrupt a tree structure during working.
+ * A Morris traversal can only be done as an ACID transaction/procedure with a whole.
+ */
 
 /* Binary tree traversal callback function type definition. This type is used by set facilities. */
 typedef int (* CBF_TRAVERSE_BYTREE) (P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param);
 
-/* This structure describes a symbol of Huffman coding trees. */
+/* This structure describes a symbol of a Huffman coding tree. */
 typedef struct st_HFM_SYMBOL {
+	size_t sgnb; /* Significant bits in the symbol name. */
 	UCHART name; /* Symbol name. */
 	UCHART bits; /* Number of bits in a symbol. */
-	size_t sgnb; /* Significant bits in the symbol name. */
 } HFM_SYMBOL, * P_HFM_SYMBOL;
 
 /* Types for array implemented tries. */

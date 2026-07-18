@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0328260433L00634
+ * File ID:     0809171737G0718261206L00637
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -26,11 +26,11 @@
 #include "svqueue.h"
 
 /* File-level function declarations here. */
-extern int _strCBFDeleteNode       (void * pitem, size_t param);
-extern int _strCBFNodesCounter     (void * pitem, size_t param);
-extern int _strCBFCompareNodeDataD (void * pitem, size_t param);
-int        _treCBFParentRetriever  (void * pitem, size_t param);
-int        _treCBFNodeLocator      (void * pitem, size_t param);
+extern int _strCBFDeleteNode        (void * pitem, size_t param);
+extern int _strCBFNodesCounter      (void * pitem, size_t param);
+extern int _strCBFCompareNodeDataSD (void * pitem, size_t param);
+int        _treCBFParentRetriever   (void * pitem, size_t param);
+int        _treCBFNodeLocator       (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFParentRetriever
@@ -71,7 +71,7 @@ int _treCBFNodeLocator(void * pitem, size_t param)
 	P_FindingInfo pfi = (P_FindingInfo)param;
 	if (pfi->pitem == pitem)
 	{
-		pfi->size = true;
+		pfi->result = pitem;
 		return CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
@@ -469,7 +469,7 @@ size_t treHeightBY(P_TNODE_BY pnode)
  * Description:   Locate parent node of pchild in a binary tree.
  * Parameters:
  *      proot Pointer to the root node of a binary tree.
- *     pchild Pointer to the child node (who lost its parent. Kidding kidding kidding...).
+ *     pchild Pointer to the child node whose parent is to be found.
  * Return value:  Pointer to parent node of pchild.
  */
 P_TNODE_BY treGetParentNodeBY(P_TNODE_BY proot, P_TNODE_BY pchild)
@@ -499,13 +499,16 @@ P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, size_t size, Tv
 	fi.result = NULL;
 	fi.pitem  = pitem;
 	fi.size   = size;
+	fi.ntp    = ENT_TNODE_BY;
 	switch (tm)
 	{
-	case ETM_PREORDER:   treTraverseBYPre  (pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
-	case ETM_INORDER:    treTraverseBYIn   (pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
-	case ETM_POSTORDER:  treTraverseBYPost (pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
-	case ETM_LEVELORDER: treTraverseBYLevel(pnode, _strCBFCompareNodeDataD, (size_t)&fi); break;
-	default:             fi.result = NULL;                                                break;
+	case ETM_PREORDER:   treTraverseBYPre  (pnode, _strCBFCompareNodeDataSD, (size_t)&fi); break;
+	case ETM_INORDER:    treTraverseBYIn   (pnode, _strCBFCompareNodeDataSD, (size_t)&fi); break;
+	case ETM_POSTORDER:  treTraverseBYPost (pnode, _strCBFCompareNodeDataSD, (size_t)&fi); break;
+	case ETM_LEVELORDER: treTraverseBYLevel(pnode, _strCBFCompareNodeDataSD, (size_t)&fi); break;
+	default:
+	fi.result = NULL;
+	break;
 	}
 	return (P_TNODE_BY)fi.result;
 }
@@ -524,10 +527,10 @@ bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
 	FindingInfo fi;
 	if (proot == pnode || NULL == proot || NULL == pnode)
 		return false;
+	fi.result = NULL;
 	fi.pitem = pnode;
-	fi.size  = false;
 	treTraverseBYPre(proot, _treCBFNodeLocator, (size_t)&fi);
-	return (bool)(fi.size ? true: false);
+	return fi.result != NULL;
 }
 
 /* Function name: treMergeNodesBY

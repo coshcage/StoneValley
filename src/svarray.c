@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0717261324L00887
+ * File ID:     0306170948B0718260935L00890
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -246,7 +246,7 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, b
  */
 void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, size_t index)
 {
-	return memcpy /* Give new item spaces and insert new item into array. */
+	return memcpy /* Give new item spaces and insert it into array. */
 	(
 		(PUCHAR)memmove
 		(
@@ -274,9 +274,12 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrin
 	if (index < strLevelArrayZ(parrz))
 	{
 		if (0 != --parrz->num)
-			memmove(parrz->pdata + index * size,
-					parrz->pdata + (index + 1) * size,
-					(strLevelArrayZ(parrz) - index) * size);
+			memmove
+			(
+				parrz->pdata + index * size,
+				parrz->pdata + (index + 1) * size,
+				(strLevelArrayZ(parrz) - index) * size
+			);
 		if (bshrink)
 			strResizeArrayZ(parrz, strLevelArrayZ(parrz), size);
 	}

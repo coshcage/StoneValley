@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0506262200L00988
+ * File ID:     0901171620L0718260740L00999
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -674,8 +674,16 @@ bool setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 {
 	if (setIsMemberT(pset, pitem, cbfcmp))
 		return false; /* Item has already existed. */
-	*pset = _setInsertBST(*pset, pitem, size, cbfcmp);
-	return true;
+	else
+	{
+		REGISTER P_BSTNODE pnode = _setInsertBST(*pset, pitem, size, cbfcmp);
+		if (NULL != pnode)
+		{
+			*pset = pnode;
+			return true;
+		}
+		return false; /* Allocation failure. */
+	}
 }
 
 /* Function name: setRemoveT
@@ -795,14 +803,17 @@ Lbl_Empty_Set:
  */
 int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 {
-	bool r = (NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
+	bool r =
+	(
+		NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
 		treBSTFindData_X
 		(
 			**(P_SET_T *)3[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
 			(CBF_COMPARE)1[(size_t *)param]
 		)
-		? false : true);
+		? false : true
+	);
 	if (r == (bool)4[(size_t *)param])
 	{
 		if
@@ -897,8 +908,8 @@ P_SET_T setCreateDifferenceT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMP
 		a[0] = (size_t)&psetr;
 		a[1] = (size_t)cbfcmp;
 		a[2] = size;
-		a[4] = false;
 		a[3] = (size_t)&psetb;
+		a[4] = false;
 		if (! setIsEmptyT(pseta))
 		{
 			if (setIsEmptyT(psetb)) /* R = A - 0. */

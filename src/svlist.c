@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0715262337L01430
+ * File ID:     0306170948C0718261205L01436
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -26,10 +26,9 @@
 #include "svstring.h"
 
 /* File level function declarations here. */
-int _strCBFDeleteNode       (void * pitem, size_t param);
-int _strCBFNodesCounter     (void * pitem, size_t param);
-int _strCBFCompareNodeDataS (void * pitem, size_t param);
-int _strCBFCompareNodeDataD (void * pitem, size_t param);
+int _strCBFDeleteNode        (void * pitem, size_t param);
+int _strCBFNodesCounter      (void * pitem, size_t param);
+int _strCBFCompareNodeDataSD (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _strCBFDeleteNode
@@ -47,7 +46,8 @@ int _strCBFDeleteNode(void * pitem, size_t param)
 	{
 	case ENT_SINGLE: strDeleteNodeS((P_NODE_S)pitem); break;
 	case ENT_DOUBLE: strDeleteNodeD((P_NODE_D)pitem); break;
-	default:                                          break;
+	default:
+	break;
 	}
 	return CBF_CONTINUE;
 }
@@ -71,58 +71,33 @@ int _strCBFNodesCounter(void * pitem, size_t param)
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strCBFCompareNodeDataS
- * Description:   Used to compare data of NODE_S.
+ * Function name: _strCBFCompareNodeDataSD
+ * Description:   Used to compare data of single pointer nodes and double pointer nodes.
  * Parameters:
- *      pitem Pointer to a NODE_S.
+ *      pitem Pointer to a NODE_S or NODE_D.
  *      param Pointer to FindingInfo.
  * Return value:  If data matched, function would return value CBF_TERMINATE,
  *                otherwise function would return value CBF_CONTINUE.
  */
-int _strCBFCompareNodeDataS(void * pitem, size_t param)
+int _strCBFCompareNodeDataSD(void * pitem, size_t param)
 {
-	/* The type of param is P_FindingInfo. */
-	if
-	(
-		0 == memcmp
-		(
-			((P_NODE_S)     pitem)->pdata,
-			((P_FindingInfo)param)->pitem,
-			((P_FindingInfo)param)->size
-		)
-	)
+	REGISTER P_FindingInfo pfi = (P_FindingInfo)param;
+	REGISTER void * pdata;
+	
+	switch (pfi->ntp)
 	{
-		((P_FindingInfo)param)->result = pitem;
+	case ENT_SINGLE: pdata = ((P_NODE_S)pitem)->pdata; break;
+	case ENT_DOUBLE: pdata = ((P_NODE_D)pitem)->pdata; break;
+	default:
+	return CBF_TERMINATE;
+	}
+	
+	if (0 == memcmp(pdata, pfi->pitem, pfi->size))
+	{
+		pfi->result = pitem;
 		return CBF_TERMINATE;
 	}
-	return CBF_CONTINUE;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strCBFCompareNodeDataD
- * Description:   Used to compare data of NODE_D.
- * Parameters:
- *      pitem Pointer to a NODE_S.
- *      param Pointer to FindingInfo.
- * Return value:  If data matched, function would return value CBF_TERMINATE,
- *                otherwise function would return value CBF_CONTINUE.
- */
-int _strCBFCompareNodeDataD(void * pitem, size_t param)
-{
-	/* The type of param is P_FindingInfo. */
-	if
-	(
-		0 == memcmp
-		(
-			((P_NODE_D)     pitem)->pdata,
-			((P_FindingInfo)param)->pitem,
-			((P_FindingInfo)param)->size
-		)
-	)
-	{
-		((P_FindingInfo)param)->result = pitem;
-		return CBF_TERMINATE;
-	}
+	
 	return CBF_CONTINUE;
 }
 
@@ -398,7 +373,8 @@ P_NODE_S strSearchLinkedListSC(LIST_S list, const void * pitem, size_t size)
 	fi.result = NULL;
 	fi.pitem  = pitem;
 	fi.size   = size;
-	strTraverseLinkedListSC_X(list, NULL, _strCBFCompareNodeDataS, (size_t)&fi);
+	fi.ntp    = ENT_SINGLE;
+	strTraverseLinkedListSC_X(list, NULL, _strCBFCompareNodeDataSD, (size_t)&fi);
 	return (P_NODE_S)fi.result;
 }
 
@@ -590,17 +566,17 @@ P_NODE_S strReverseLinkedListSC(LIST_S phead)
 	return prev;
 }
 
-/* Function name: strSwapItemLinkedListS
- * Description:   Swap data pointer between two nodes.
+/* Function name: strSwapNodeItemLinkedListSC
+ * Description:   Swap data pointers between two single linked nodes for a single linked list.
  * Parameters:
  *     pnodex Pointer to a node with a single link.
  *     pnodey Pointer to another node with a single link.
  * Return value:  N/A.
- * Tip:           This function only swap data pointer between two nodes.
- *                If you need to swap data that stored in the address of two pointers,
- *                please use function strSwapContentLinkedListSD.
+ * Tip:           This function only swap data pointers between two nodes.
+ *                If you need to swap data that stored in the addresses of two pointers,
+ *                please use function strSwapNodeContentLinkedListSDC.
  */
-void strSwapItemLinkedListS(P_NODE_S pnodex, P_NODE_S pnodey)
+void strSwapNodeItemLinkedListSC(P_NODE_S pnodex, P_NODE_S pnodey)
 {
 	if (pnodex->pdata != pnodey->pdata)
 	{	/* Worth swapping. */
@@ -1007,7 +983,8 @@ P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, boo
 	fi.result = NULL;
 	fi.pitem  = pitem;
 	fi.size   = size;
-	strTraverseLinkedListDC_X(list, NULL, _strCBFCompareNodeDataD, (size_t)&fi, brev);
+	fi.ntp    = ENT_DOUBLE;
+	strTraverseLinkedListDC_X(list, NULL, _strCBFCompareNodeDataSD, (size_t)&fi, brev);
 	return (P_NODE_D)fi.result;
 }
 
@@ -1147,16 +1124,16 @@ P_NODE_D strRemoveItemLinkedListDC(P_NODE_D pnode)
 	return pnode;
 }
 
-/* Function name: strSwapItemLinkedListD
- * Description:   Swap data pointer between two nodes.
+/* Function name: strSwapNodeItemLinkedListDC
+ * Description:   Swap data pointers between two doubly linked nodes for a double linked list.
  * Parameters:
  *     pnodex Pointer to a node with double pointers.
  *     pnodey Pointer to another node with double pointers.
  * Return value:  N/A.
  * Tip:           This function only swap data pointer between two nodes.
- *                If you wish to swap data stored in two pointers, please use strSwapContentLinkedListSD.
+ *                If you wish to swap data stored in two pointers, please use strSwapNodeContentLinkedListSDC.
  */
-void strSwapItemLinkedListD(P_NODE_D pnodex, P_NODE_D pnodey)
+void strSwapNodeItemLinkedListDC(P_NODE_D pnodex, P_NODE_D pnodey)
 {
 	if (pnodex->pdata != pnodey->pdata)
 	{	/* Worth swapping. */
@@ -1165,62 +1142,16 @@ void strSwapItemLinkedListD(P_NODE_D pnodex, P_NODE_D pnodey)
 	}
 }
 
-/* Function name: strSwapContentLinkedListSD
- * Description:   Swap data between two nodes.
- * Parameters:
- *     pnodex Pointer to a node with a single link.
- *      sizex Size of data in pnodex.
- *     pnodey Pointer to a node with a single link.
- *      sizey Size of data in pnodey.
- *        ntp Node type.
- *            Input ENT_DOUBLE for doubly linked list nodes. Cast P_NODE_D to (void *) as parameters.
- *            Input ENT_SINGLE for single linked list nodes. Cast P_NODE_S to (void *) as parameters.
- * Return value:  N/A.
- * Tip:           This function will swap content between two pointers in their nodes.
- */
-void strSwapContentLinkedListSD(void * pnodex, size_t sizex, void * pnodey, size_t sizey, NodeType ntp)
-{
-	REGISTER PUCHAR pdatax, pdatay;
-	REGISTER PUCHAR pbuf,   pnew;
-	switch (ntp)
-	{
-	case ENT_SINGLE:
-		pdatax = ((P_NODE_S)pnodex)->pdata;
-		pdatay = ((P_NODE_S)pnodey)->pdata;
-		break;
-	case ENT_DOUBLE:
-		pdatax = ((P_NODE_D)pnodex)->pdata;
-		pdatay = ((P_NODE_D)pnodey)->pdata;
-		break;
-	default:
-		return;
-	}
-	if (NULL == (pbuf = (PUCHAR) malloc(sizex)))
-		return;
-	memcpy(pbuf, pdatax, sizex);        /* t = a; */
-	if (NULL != (pnew = (PUCHAR) realloc(pdatax, sizey)))
-	{
-		pdatax = pnew;
-		memmove(pdatax, pdatay, sizey); /* a = b; */
-	}
-	if (NULL != (pnew = (PUCHAR) realloc(pdatay, sizex)))
-	{
-		pdatay = pnew;
-		memcpy(pdatay, pbuf, sizex);    /* b = t; */
-	}
-	free(pbuf);
-}
-
 /* Function name: strIsCircularLinkedListSD
- * Description:   Make a decision whether a linked list is circular or not.
+ * Description:   Make a decision to judge whether a linked list is circular or not.
  * Parameters:
  *     pfirst Pointer to the first node element while traversal.
  *        ntp Node type.
- *            Input ENT_DOUBLE for doubly linked list nodes. Cast P_NODE_D to (void *) as parameters.
- *            Input ENT_SINGLE for single linked list nodes. Cast P_NODE_S to (void *) as parameters.
+ *            Input ENT_DOUBLE for doubly linked list nodes. Cast P_NODE_D to (void *) as parameter to pfirst.
+ *            Input ENT_SINGLE for single linked list nodes. Cast P_NODE_S to (void *) as parameter to pfirst.
  *       brev Input true to search a linked list reversely.
  *            Input false to search a linked list orderly.
- * Return value:  Pointer of the last item of the linked list will be cast into (void *) and returned.
+ * Return value:  Pointer of the last item of the linked list and this pointer will be cast into (void *) and returned.
  */
 void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 {	/* Unfortunately, the pursuing of interchangeability made this function difficult to read. */
@@ -1281,6 +1212,81 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 		return NULL;
 #undef _P2P_NODE_S
 #undef _P2P_NODE_D
+}
+
+/* Function name: strSwapNodeContentLinkedListSDC
+ * Description:   Swap data between two nodes for linked lists.
+ * Parameters:
+ *     pnodex Pointer to a node namely node X.
+ *      sizex Size of data in pnodex.
+ *       ntpx Node type for node X.
+ *       pbuf Pointer to a buffer whose size equals sizex.
+ *     pnodey Pointer to another node called node Y.
+ *      sizey Size of data in pnodey.
+ *       ntpy Node type for node Y.
+ * Return value:  If swapping succeeded, function would return true.
+ *                Otherwise function would return false.
+ * Caution:       Both pnodex and pnodey were created by function strCreateNodeS or strCreateNodeD.
+ *                Static created nodes are not allowed to use for this function.
+ * Tip:           This function will swap contents for two pointers in their nodes.
+ *                Input ENT_DOUBLE to ntpx and ntpy for doubly linked list nodes.
+ *                Cast P_NODE_D to (void *) as parameters for pnodex and pnodey.
+ *                Input ENT_SINGLE to ntpx and ntpy for single linked list nodes.
+ *                Cast P_NODE_S to (void *) as parameters for pnodex and pnodey.
+ */
+bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx, void * pbuf, void * pnodey, size_t sizey, NodeType ntpy)
+{
+	REGISTER PUCHAR * ppdatax, * ppdatay;
+	
+	if (pnodex == pnodey)
+		return false;
+	
+	switch (ntpx)
+	{
+	case ENT_SINGLE: ppdatax = &((P_NODE_S)pnodex)->pdata; break;
+	case ENT_DOUBLE: ppdatax = &((P_NODE_D)pnodex)->pdata; break;
+	default: return false;
+	}
+	
+	switch (ntpy)
+	{
+	case ENT_SINGLE: ppdatay = &((P_NODE_S)pnodey)->pdata; break;
+	case ENT_DOUBLE: ppdatay = &((P_NODE_D)pnodey)->pdata; break;
+	default: return false;
+	}
+	
+	if (*ppdatax == *ppdatay)
+		return false;
+	
+	memcpy(pbuf, *ppdatax, sizex);              /* t = a; */
+	
+	if (sizex == sizey)
+	{
+		memmove(*ppdatax, *ppdatay, sizey);     /* a = b; */
+		memcpy(*ppdatay, pbuf, sizex);          /* b = t; */
+	}
+	else
+	{
+		REGISTER PUCHAR pnew;
+		
+		if (NULL != (pnew = (PUCHAR) realloc(*ppdatax, sizey)))
+		{
+			*ppdatax = pnew;
+			memmove(*ppdatax, *ppdatay, sizey); /* a = b; */
+		}
+		else
+			return false;
+		
+		if (NULL != (pnew = (PUCHAR) realloc(*ppdatay, sizex)))
+		{
+			*ppdatay = pnew;
+			memcpy(*ppdatay, pbuf, sizex);      /* b = t; */
+		}
+		else
+			return false;
+	}
+	
+	return true;
 }
 
 /* Function name: strMergeSortLinkedListSDC

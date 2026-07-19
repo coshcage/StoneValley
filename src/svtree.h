@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0718261217L00523
+ * File ID:     0809171737V0719260111L00523
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -43,16 +43,16 @@ typedef P_NODE_D   BYTREE;     /* Binary tree. */
 typedef P_NODE_D * P_BYTREE;   /* Pointer to a binary tree. */
 
 /* It says a binary tree node is actually identical to a double pointer node.
- * Use this macro to identify node types for a FindingInfo structure.
+ * Use this anonymous enumeration to identify node types for a FindingInfo structure.
  */
-#define ENT_TNODE_BY ENT_DOUBLE
+enum { ENT_TNODE_BY = ENT_DOUBLE };
 
 /* Align a NODE_D structure to the head of BSTNODE structure,
  * then put the rest of node's information such as parameter and parent pointer after the NODE_D structure,
  * so that we are able to traverse a binary tree and cope with a BSTNODE structure simultaneously.
  */
 typedef struct st_BSTNODE { /* Binary node with additional information to from a binary search tree node. */
-	TNODE_BY knot;  /* Knot contains left and right children and the data pointer. */
+	TNODE_BY knot;  /* A knot contains left and right children and the data pointer. */
 	size_t   param; /* Parameter for a Treap node. Color for a red black tree node. Balance factor for an AVL tree node. */
 } BSTNODE, * P_BSTNODE, * BST, ** P_BST;
 
@@ -92,13 +92,13 @@ typedef enum en_TvsMtd {
 	/* ETM_DEPTHFIRST = ETM_PREORDER + ETM_INORDER + ETM_POSTORDER, */
 	ETM_LEVELORDER      = 010, /* Breadth first. */
 	/* ETM_BREADTHFIRST = ETM_LEVELORDER */
-	ETM_PREORDER_MORRIS = 020,
+	/* WARNING: Do NOT embed any form of binary tree traversal inside a Morris traversal.
+	 * The reason why we cannot do this is that a Morris traversal would interrupt a tree structure during working.
+	 * A Morris traversal can only be done as an ACID transaction/procedure with a whole to a binary tree.
+	 */
+	ETM_PREORDER_MORRIS = 021,
 	ETM_INORDER_MORRIS  = 022
 } TvsMtd;
-/* WARNING: Do NOT embed any form of binary tree traversal in a Morris traversal.
- * The reason why we cannot do this is that a Morris traversal would interrupt a tree structure during working.
- * A Morris traversal can only be done as an ACID transaction/procedure with a whole.
- */
 
 /* Binary tree traversal callback function type definition. This type is used by set facilities. */
 typedef int (* CBF_TRAVERSE_BYTREE) (P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param);

@@ -649,7 +649,7 @@ size_t _strBITSum (size_t idx, P_ARRAY_Z parrz);
  * Description:   Update array item and add new value.
  * Parameters:
  *        idx Index of the binary indexed tree array.
- *        val Incremental value which shall be added to array item.
+ *        val Incremental value which shall be added onto array item.
  *      parrz Pointer to Fenwick tree which is an array of size_t integers.
  * Return value:  N/A.
  */
@@ -668,7 +668,7 @@ void _strBITAdd(size_t idx, ptrdiff_t val, P_ARRAY_Z parrz)
  *                Count the summary of [0, idx].
  * Parameters:
  *        idx Index of the binary indexed tree array.
- *      parrz Pointer to Fenwick tree which is an array of size_t integers.
+ *      parrz Pointer to a Fenwick tree which is an array of size_t integers.
  * Return value:  Summary value.
  */
 size_t _strBITSum(size_t idx, P_ARRAY_Z parrz)
@@ -938,7 +938,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
  */
 bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 {
-	if ((pdest->ln >= psrc->bmask.ln) && (pdest->col >= psrc->bmask.col))
+	if (pdest->ln >= psrc->bmask.ln && pdest->col >= psrc->bmask.col)
 	{
 		REGISTER P_NODE_S pnode = psrc->datlst;
 		REGISTER size_t i, j;

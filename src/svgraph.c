@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0718261510L02785
+ * File ID:     0905171125M0719261023L02786
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -173,7 +173,7 @@ P_VERTEX_L grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
  * Function name: _grpCBFFindEdgeInList
  * Description:   This function is used to find edges in a list.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the list.
+ *      pitem Pointer to each NODE_S in the list.
  *      param Pointer to a _FIEDG structure.
  * Return value:  If the specific edge were found, function would return value CBF_TERMINATE,
  *                otherwise function would return value CBF_CONTINUE.
@@ -201,7 +201,7 @@ Lbl_Found:
  * Function name: _grpCBFFindEdgeInListReturnsWeight
  * Description:   This function is used to find weights of edges in a list.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the list.
+ *      pitem Pointer to each NODE_S in the edge list.
  *      param Pointer to a _FIEDG structure.
  * Return value:  The same value as callback function returns.
  */
@@ -248,7 +248,7 @@ int _grpCBFEdgesCountPuppet(void * pitem, size_t param)
  * Function name: _grpCBFFreePuppet
  * Description:   This function is used to free linked list.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in a list.
+ *      pitem Pointer to each VERTEX_L in a single list node's data pointer.
  *      param N/A.
  * Return value:  CBF_CONTINUE only.
  */
@@ -263,7 +263,7 @@ int _grpCBFFreePuppet(void * pitem, size_t param)
  * Function name: _grpCBFIndegreeVertexPuppet
  * Description:   This function is used to cooperate with function _grpCBFIndegreeVertex.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in a list.
+ *      pitem Pointer to each NODE_S in a single pointer list.
  *      param Pointer to a size_t[2] array of which
  *            a[0] stores the in-degree value after calculation.
  *            a[1] stores the vertex ID to be handled.
@@ -280,7 +280,7 @@ int _grpCBFIndegreeVertexPuppet(void * pitem, size_t param)
  * Function name: _grpCBFIndegreeVertex
  * Description:   This function is used to calculate the in-degree of a vertex.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in a list.
+ *      pitem Pointer to each VERTEX_L in a single list node's data pointer.
  *      param Pointer to a size_t[2] array of which is declared in the caller.
  * Return value:  CBF_CONTINUE only.
  */
@@ -293,7 +293,7 @@ int _grpCBFIndegreeVertex(void * pitem, size_t param)
  * Function name: _grpCBFRemoveEdgePuppet
  * Description:   This function is used to cooperate with function _grpCBFRemoveEdge.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in a list.
+ *      pitem Pointer to each NODE_S in a list.
  *      param Pointer to a size_t[2] array of which
  *            a[0] Stores the vertex ID to search.
  *            a[1] Stores a pointer to VERTEX_L structure of each vertex.
@@ -335,7 +335,7 @@ int _grpCBFRemoveEdge(void * pitem, size_t param)
  * Description:   This function is used to check whether a vertex exists in a graph.
  * Parameters:
  *       pgrp Pointer to a graph.
- *       vid Vertex ID.
+ *        vid Vertex ID.
  * Return value:  true  Vertex vid exists.
  *                false Vertex vid does NOT exist.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -346,7 +346,7 @@ bool grpVertexExistsL(P_GRAPH_L pgrp, size_t vid)
 }
 
 /* Function name: grpTraverseVerticesL
- * Description:   Traverse all vertices of a vertex in a graph.
+ * Description:   Traverse all vertices in a graph by given order of a set of vertices.
  * Parameters:
  *       pgrp Pointer to a graph.
  *     cbftvs Pointer to a callback function.
@@ -512,10 +512,10 @@ bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bwei
  *        pgrp Pointer to a graph.
  *        vidx 1st Vertex ID.
  *        vidy 2nd Vertex ID.
- *      cbftvs Pointer to callback function.
- *             In the callback function, parameter pitem points to weight.
- *       param Parameter to be transferred into callback function.
- * Return value:  Same as callback function returns.
+ *      cbftvs Pointer to a callback function.
+ *             In the callback function, parameter pitem points to weight as a (size_t *) pointer.
+ *       param Parameter to be transferred into the callback function.
+ * Return value:  Same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVERSE cbftvs, size_t param)
@@ -532,11 +532,11 @@ int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVER
 		fd.param         = param;
 		return strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInListReturnsWeight, (size_t)&fd);
 	}
-	return CBF_CONTINUE; /* Can not find vertex vidx. */
+	return CBF_CONTINUE; /* Cannot find vertex vidx. */
 }
 
 /* Function name: grpIndegreeVertexL
- * Description:   Calculate the in-degree of a vertex.
+ * Description:   Tally the amount of in-degree of a vertex.
  * Parameters:
  *        pgrp Pointer to a graph.
  *         vid Vertex ID.
@@ -553,7 +553,7 @@ size_t grpIndegreeVertexL(P_GRAPH_L pgrp, size_t vid)
 }
 
 /* Function name: grpOutdegreeVertexL
- * Description:   Calculate the out-degree of a vertex.
+ * Description:   Tally the amount of out-degree of a vertex.
  * Parameters:
  *       pgrp Pointer to a graph.
  *        vid Vertex ID.
@@ -711,8 +711,8 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure.
  *      param Pointer to the destination graph.
- * Return value:  CBF_CONTINUE would be returned if succeeded,
- *                CBF_TERMINATE would be returned if failed to handle.
+ * Return value:  CBF_CONTINUE  would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if function failed to handle.
  */
 int _grpCBFCopyVertices(void * pitem, size_t param)
 {
@@ -728,10 +728,10 @@ int _grpCBFCopyVertices(void * pitem, size_t param)
  * Parameters:
  *      pitem Pointer to an EDGE structure.
  *      param Pointer to a size_t[2] array.
- *            a[0] Stores the starter vertex ID.
+ *            a[0] Stores the starting vertex ID.
  *            a[1] Stores a pointer to the source graph.
- * Return value:  CBF_CONTINUE would be returned if succeeded,
- *                CBF_TERMINATE would be returned if failed to handle.
+ * Return value:  CBF_CONTINUE  would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if function failed to handle.
  */
 int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
 {
@@ -749,8 +749,8 @@ int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
  *      param Pointer to a size_t[2] array.
  *            a[0] Stores a pointer to the source graph.
  *            a[1] Stores a pointer to the destination graph.
- * Return value:  CBF_CONTINUE would be returned if succeeded,
- *                CBF_TERMINATE would be returned if failed to handle.
+ * Return value:  CBF_CONTINUE  would be returned if succeeded,
+ *                CBF_TERMINATE would be returned if function failed to handle.
  */
 int _grpCBFCopyEdges(void * pitem, size_t param)
 {
@@ -848,7 +848,7 @@ int grpDFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  * Function name: _grpCBFOutputVertexByID
  * Description:   This function is used to cooperate with grpBFSL to gather vertex ID in edges of a vertex into a queue.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the edge list.
+ *      pitem Pointer to each NODE_S in the edge list.
  *      param Pointer to a queue.
  * Return value:  CBF_CONTINUE only.
  */
@@ -915,7 +915,7 @@ Lbl_BFS_Clear:
  * Description:   This function is used to cooperate with function _grpSPLInitArray to fill VTXREC structures with vertex IDs in an array.
  * Parameters:
  *      pitem Pointer to a VERTEX_L structure of a vertex.
- *      param Pointer to a pointer to the start of an array.
+ *      param Pointer to a P_VTXREC pointer to the start of an array.
  * Return value:  CBF_CONTINUE only.
  */
 int _grpCBFSPLFillVertices(void * pitem, size_t param)
@@ -948,7 +948,7 @@ int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
  *       vidx Vertex ID to start.
  *      barrd Input true to indicate initializing the distance array, false to initialize queue array.
  * Return value:  If initializing succeeded, function would return true,
- *                false would return if initializing failed.
+ *                false would be returned if initializing failed.
  */
 bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 {
@@ -978,7 +978,7 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
  *            a[2] Stores the pointer of a sized array to check whether a vertex is in the queue.
  *            a[3] Stores the pointer of a queue.
  * Return value:  If relaxation succeeded, function would return CBF_CONTINUE,
- *                CBF_TERMINATE would return if relaxation failed.
+ *                CBF_TERMINATE would be returned by this function if relaxation failed.
  */
 int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 {
@@ -1017,11 +1017,12 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 }
 
 /* Function name: grpShortestPathFastL
- * Description:   Solve the shortest path of a graph from starting by Shortest Path Faster algorithm.
+ * Description:   Solve the shortest path of a graph from starting vertex
+ *                to each reachable vertex by Shortest Path Faster algorithm.
  * Parameters:
  *       pgrp Pointer to a graph.
  *       vidx Vertex ID that you want to start searching.
- * Return value:  Pointer of a sized array that contains each vertex and weight from vidx to that vertex.
+ * Return value:  Pointer of a sized array which contains each vertex and weight from vidx to that vertex.
  *                Each element of the returned sized array is a VTXREC structure.
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -1090,14 +1091,14 @@ Lbl_Finish:
  * Description:   This function is used to fill set Vb of function grpDijkstraShortestPathL.
  * Parameters:
  *      pitem Pointer to each VERTEX_L structure in a graph tree set.
- *      param Pointer to a size_t[5] array of which:
+ *      param Pointer to a size_t[5] array of which
  *            a[0] Stores a pointer to a graph.
  *            a[1] Stores the pointer to set Vb.
  *            a[2] (Not used by this function) Stores the pointer of a heap.
  *            a[3] (Not used by this function) Stores the pointer to set Va.
  *            a[4] (Not used by this function) Stores the previous vid of a size_t integer.
  * Return value:  If filling succeeded, function would return CBF_CONTINUE,
- *                CBF_TERMINATE would return if filling failed.
+ *                CBF_TERMINATE would be returned if filling failed.
  */
 int _grpCBFDijkstraFillVb(void * pitem, size_t param)
 {
@@ -1145,14 +1146,14 @@ int _grpCBFCompareRecordDistance(const void * px, const void * py)
  * Description:   This function is used to cooperate with function _grpCBFDijkstraFindEdgesToVb to find edges between set Va and Vb.
  * Parameters:
  *      pitem Pointer to a EDGE structure of a single linked list of each vertex in a graph.
- *      param Pointer to a size_t[5] array of which:
+ *      param Pointer to a size_t[5] array of which
  *            a[0] (Not used by this function) Stores a pointer to a graph.
  *            a[1] Stores the pointer to set Vb.
  *            a[2] Stores the pointer of a heap.
  *            a[3] Stores the pointer to set Va.
  *            a[4] Stores the previous vid of a size_t integer.
  * Return value:  If finding succeeded, function would return CBF_CONTINUE,
- *                CBF_TERMINATE would return if finding failed.
+ *                CBF_TERMINATE would be returned if finding failed.
  */
 int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 {
@@ -1163,7 +1164,7 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 		REGISTER P_BSTNODE pnode = treBSTFindData_X((P_BSTNODE)*(P_SET_T)3[(size_t *)param], &4[(size_t *)param], _grpCBFCompareInteger);
 		_SPTREC rec, t;
 		
-		rec.vid  = pedg->vid;
+		rec.vid = pedg->vid;
 		
 		if (NULL != pnode)
 			rec.dist = pedg->weight + ((_P_SPTREC)pnode->knot.pdata)->dist;
@@ -1182,14 +1183,14 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
  * Description:   This function is used to find edges between set Va and Vb of function grpDijkstraShortestPathL.
  * Parameters:
  *      pitem Pointer to a TNODE_BY structure of a SET_T or say GRAPH_L.
- *      param Pointer to a size_t[5] array of which:
+ *      param Pointer to a size_t[5] array of which
  *            a[0] Stores a pointer to a graph.
  *            a[1] Stores the pointer to set Vb.
  *            a[2] Stores the pointer of a heap.
  *            a[3] Stores the pointer to set Va.
  *            a[4] Stores the previous vid of a size_t integer.
  * Return value:  If finding succeeded, function would return CBF_CONTINUE,
- *                CBF_TERMINATE would return if finding failed.
+ *                CBF_TERMINATE would be returned if finding failed.
  */
 int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
 {
@@ -1199,7 +1200,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
 }
 
 /* Function name: grpDijkstraShortestPathL
- * Description:   Solve the shortest path of a graph from starting to end by Dijkstra algorithm.
+ * Description:   Solve the shortest path of a graph from start to end by Dijkstra algorithm.
  * Parameters:
  *       pgrp Pointer to a graph.
  *       vids Starting vertex ID that you want to start searching.
@@ -1534,7 +1535,7 @@ void _grpDisjointSetFree(P_ARRAY_Z parrz)
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  *                (*) After generating the graph that pgrp pointed will be altered into its minimum spanning tree.
  * Tip:           Kruskal algorithm works on undirected graph. Since users need to insert an edge into adjacency-list
- *                represented graph from a vertex to another, this function ignores directions for edges while searching the list.
+ *                represented graph from a vertex to another, this function ignores directions for edges while searching the edge list.
  */
 bool grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 {
@@ -1667,14 +1668,14 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
 }
 
 /* Function name: grpTopologicalSortL
- * Description:   Generate the sequence after running topological sort algorithm.
+ * Description:   Generate a sequence of vertex IDs after running topological sort algorithm.
  * Parameter:
  *      pgrp Pointer to an adjacent list formed graph.
- * Return value:  Pointer to a sized array which contain the sequence after running topological sort algorithm.
+ * Return value:  Pointer to a sized array which contains the sequence after running topological sort algorithm.
  *                Each element in this array is a size_t integer that indicates the ID of a vertex.
  *                If this function returned NULL, it would indicate topological sorting failed.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
- *                Usually topological sort runs on directed acyclic graphics(DAGs).
+ *                Usually topological sort runs for directed acyclic graphics(DAGs).
  * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);
  *                // Users may use these following codes to detect whether a graph has a cycle.
  *                if (NULL != prtn && grpVerticesCountL(pgrp) > strLevelArrayZ(prtn))
@@ -1757,7 +1758,7 @@ size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
 	fd.param         = 0;
 	
 	pvtx = grpGetVertexByID(pgrp, vidx);
-	if (NULL != pvtx && CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
+	if (NULL != pvtx && CBF_TERMINATE == strTraverseLinkedListSC_N(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 		return &((P_EDGE)fd.pnode->pdata)->weight;
 	
 	return NULL;
@@ -1767,7 +1768,7 @@ size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
  * Function name: _grpCBFEdgesIsomorphicL
  * Description:   This function is used to test whether two graphs are mutually isomorphic.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the adjacency list.
+ *      pitem Pointer to each NODE_S in the adjacency list.
  *      param Pointer to an array.
  *            Please refer to the _en_FFMFLParamID enumeration to understand this array.
  * Return value:  If two graphs were isomorphic, function would return value CBF_CONTINUE,
@@ -1840,8 +1841,8 @@ int _grpCBFFFMFLFillVb(void * pitem, size_t param)
  * Parameters:
  *      pitem Pointer to each EDGE structure of a vertex.
  *      param Pointer to an array.
- *            Please refer to _en_FFMFLParamID enumeration to see this array.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depends on the specific situation.
+ *            Please refer to _en_FFMFLParamID enumeration to see this array in detail.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned that depends on a specific condition.
  */
 int _grpCBFFFMFLFindOutEdgesPuppet(void * pitem, size_t param)
 {
@@ -1921,7 +1922,7 @@ int _grpCBFFFMFLFindOutEdges(void * pitem, size_t param)
  *      pitem Pointer to each EDGE structure of a vertex.
  *      param Pointer to an array.
  *            Please refer to _en_FFMFLParamID enumeration to see this array.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depends on the specific situation.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depends on a specific situation.
  */
 int _grpCBFFFMFLFindInEdgesPuppet(void * pitem, size_t param)
 {
@@ -1986,7 +1987,7 @@ int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
  * Function name: _grpCBFFFMFLFindMinimalTheta
  * Description:   This function is used to find the minimal theta value of a single linked list of a queue.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
+ *      pitem Pointer to each NODE_S in the single linked list of a queue.
  *      param Pointer to a size_t[3] array of which
  *            ap[0] Stores the minimal value.
  *            ap[1] Stores a pointer to a GRAPH_L of flows.
@@ -2009,7 +2010,7 @@ int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
  * Function name: _grpCBFFFMFLReduceFlowValue
  * Description:   This function is used to reduce flow value of a graph by the order of an augmenting path.
  * Parameters:
- *      pitem Pointer to each P_NODE_S in the single linked list of a queue.
+ *      pitem Pointer to each NODE_S in the single linked list of a queue.
  *      param Pointer to a size_t[3] array of which
  *            ap[0] Stores the minimal value.
  *            ap[1] Stores a pointer to a GRAPH_L of flows.
@@ -2077,8 +2078,8 @@ int _grpCBFFFMFLFillMinCutSet(void * pitem, size_t param)
  *            (*) Users may use function setDeleteT to free this set after using.
  *      pgrpc Pointer to a graph to store capacities.
  *      pgrpf Pointer to a graph to store feasible flows.
- *       vids Starting vertex ID that you want to start searching.
- *       vide End vertex ID.
+ *       vids Starting vertex ID that flows out to a sink vertex.
+ *       vide End vertex ID that represents the sink.
  * Return value:  true:  Successfully found maximum flow to pgrpf.
  *                false: Failed to find maximum flow and minimal cut.
  * Caution:       Address of pgrpc and pgrpf Must Be Allocated first.
@@ -2227,7 +2228,7 @@ int _grpCBFTraverseEdgesAndFillM       (void * pitem, size_t param);
  * Description:   Initialize an adjacent matrix graph.
  * Parameters:
  *       pgrp Pointer to the graph you want to initialize.
- *       vtxc Number of vertices this graph contains.
+ *       vtxc Number of vertices that this graph contains.
  * Return value:  The memory buffer of matrix.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
@@ -2269,7 +2270,7 @@ P_GRAPH_M grpCreateM(size_t vtxc)
 /* Function name: grpDeleteM_O
  * Description:   Delete a graph of which is allocated by function grpCreateM.
  * Parameter:
- *      pgrp Pointer to the graph you want to delete from memory.
+ *      pgrp Pointer to the graph you want to delete from main memory.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function named grpDeleteM_M is available.
@@ -2296,11 +2297,11 @@ bool grpCopyM_O(P_GRAPH_M pdest, P_GRAPH_M psrc)
 }
 
 /* Function name: grpGetDimensionM_O
- * Description:   Return how many vertices there are in the graph.
+ * Description:   Return how many vertices there are in a graph.
  * Parameter:
  *      pgrp Pointer to a matrix graph.
  * Return value:  If function returned 0, it would indicate an error.
- *                Otherwise, this function would return the number of vertices in the matrix graph.
+ *                Otherwise, this function would return the number of vertices in a matrix graph.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           A macro version of this function called grpGetDimensionM_M is available.
  */
@@ -2313,7 +2314,7 @@ size_t grpGetDimensionM_O(P_GRAPH_M pgrp)
  * Description:   Resize a matrix graph and reallocate vertices weights.
  * Parameters:
  *       pgrp Pointer to the matrix graph.
- *       vtxc New number of vertices to be set. This value cannot be equal to 0.
+ *       vtxc New number of vertices to be set. This value cannot equal to 0.
  * Return value:  If function returned true,  it would indicate resizing succeeded.
  *                If function returned false, it would indicate a failure.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -2354,12 +2355,12 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
  * Description:   Return the weight of edge(x, y).
  * Parameters:
  *       pgrp Pointer to a matrix graph.
- *    pweight Pointer to the size_t integer of weight to be set. This weight will be got from the matrix.
+ *    pweight Pointer to the size_t integer of weight to be set. This weight will be gotten from the matrix.
  *            If this parameter equaled 0, this address would be omitted.
  *       vidx Vertex ID X.
  *       vidy Vertex ID Y.
  * Return value:  The equivalent size_t integer of weight of edge(x, y).
- *                If vertex IDs were out of range, this function would return 0.
+ *                (*) Especially, if vertex IDs were out of range, this function would return 0.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
 size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t vidy)
@@ -2376,7 +2377,7 @@ size_t grpGetEdgeWeightM(P_GRAPH_M pgrp, size_t * pweight, size_t vidx, size_t v
  *       pgrp Pointer to a matrix graph.
  *       vidx Vertex ID X.
  *       vidy Vertex ID Y.
- *     weight A size_t integer of weight to be set into the matrix graph.
+ *     weight A size_t integer of weight to be set into a matrix graph.
  * Return value:  true:  Function call succeeded.
  *                false: Function call failed.
  * Caution:       Address of pgrp Must Be Allocated first.
@@ -2396,7 +2397,7 @@ bool grpSetEdgeWeightM(P_GRAPH_M pgrp, size_t vidx, size_t vidy, size_t weight)
  *      param Additional information for each edge.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           Users shall filter 0 value by themselves in the callback function.
+ * Tip:           Users shall filter out 0 value by themselves in the callback function.
  */
 int grpTraverseVertexEdgesM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -2616,7 +2617,7 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 }
 
 /* Function name: grpCreateLFromM
- * Description:   Create a linked list graph by matrix graph.
+ * Description:   Create a linked list graph by a matrix graph.
  * Parameter:
  *     pgrpm Pointer to a matrix graph.
  * Return value:  The equivalent linked list graph of graph pgrpm.
@@ -2664,8 +2665,8 @@ P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
  * Function name: _grpCBFFillVertexMappingTable
  * Description:   This function is used to fill vertex mapping table for function grpCreateMFromL.
  * Parameters:
- *      pitem Pointer to each P_VERTEX_L in a GRAPH_L structure.
- *      param Pointer to a size_t[2] array whose contents are:
+ *      pitem Pointer to each TNODE_BY node in a GRAPH_L tree structure.
+ *      param Pointer to a size_t[2] array whose contents are
  *            a[0] A size_t integer represents the array index.
  *            a[1] Pointer to the vertex mapping table.
  * Return value:  CBF_CONTINUE only.
@@ -2682,7 +2683,7 @@ int _grpCBFFillVertexMappingTable(void * pitem, size_t param)
  * Description:   This function is used to fill the adjacent matrix for function _grpCBFTraverseEdgesAndFillM.
  * Parameters:
  *      pitem Pointer to each EDGE_L structure in a VERTEX_L structure.
- *      param Pointer to a size_t[4] array whose contents are:
+ *      param Pointer to a size_t[4] array whose contents are
  *            a[0] (Used By This Function) Pointer to a GRAPH_M who is the return value.
  *            a[1] (Used By This Function) Pointer to the vertex mapping table.
  *            a[2] Pointer to a GRAPH_L structure.
@@ -2725,7 +2726,7 @@ int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param)
  * Description:   This function is used to fill the adjacent matrix for function grpCreateMFromL.
  * Parameters:
  *      pitem Pointer to each VERTEX_L in a GRAPH_L structure.
- *      param Pointer to a size_t[4] array whose contents are:
+ *      param Pointer to a size_t[4] array whose contents are
  *            a[0] Pointer to a GRAPH_M who is the return value.
  *            a[1] Pointer to the vertex mapping table.
  *            a[2] (Used By This Function) Pointer to a GRAPH_L structure.

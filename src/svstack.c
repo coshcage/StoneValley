@@ -2,7 +2,7 @@
  * Name:        svstack.c
  * Description: Stacks.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318171803E0721260255L00321
+ * File ID:     0318171803E0721260821L00321
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -45,7 +45,7 @@ void * stkInitA(P_STACK_A pstka, size_t num, size_t size)
  * Parameter:
  *     pstka Pointer to the stack you want to release.
  * Return value:  N/A.
- * Caution:       Address of pstka->arr.pdata Must Be Allocated first.
+ * Caution:       Address of pstka Must Be Allocated first.
  */
 void stkFreeA(P_STACK_A pstka)
 {

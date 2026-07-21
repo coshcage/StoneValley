@@ -136,9 +136,9 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	 _________________________________________________________________
 	|o               # BEFORE COMPILING CHECK LIST #                 o|\ [Figure 3]
 	|_____[ITEM]___________[TYPE]_____[LINES]_____[FILE]_____[MARK]___|\
-	| [_] DWC4100           MACRO       73         SVDEF.H    ALTER   |\
-	| [_] REGISTER          MACRO       76         SVDEF.H    CONFIRM |\
-	| [_] SV_OPTIMIZATION   MACRO       92         SVDEF.H    ALTER   |\
+	| [_] DWC4100           MACRO       76         SVDEF.H    ALTER   |\
+	| [_] REGISTER          MACRO       79         SVDEF.H    CONFIRM |\
+	| [_] SV_OPTIMIZATION   MACRO       95         SVDEF.H    ALTER   |\
 	|                                                                 |\
 	| ALTER:   Alter item if necessary.                               |\
 	| CONFIRM: Confirm item before compilation.           StoneValley |\

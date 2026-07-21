@@ -132,12 +132,12 @@ void MoveMatrix(P_MATRIX pmtx, size_t x, size_t y, bool bundo)
 					/* Move bricks toward the space. */
 					if (i < x)
 						for (j = i; j < x; ++j)
-							svSwap(strGetValueMatrix(NULL, pmtx, j, y, sizeof(char)),
-							strGetValueMatrix(NULL, pmtx, j + 1, y, sizeof(char)), &c, sizeof(char));
+							svSwap(strGetValueMatrix(NULL, pmtx, j, y, sizeof(char)), &c,
+							strGetValueMatrix(NULL, pmtx, j + 1, y, sizeof(char)), sizeof(char));
 					else
 						for (j = i; j > x; --j)
-							svSwap(strGetValueMatrix(NULL, pmtx, j, y, sizeof(char)),
-							strGetValueMatrix(NULL, pmtx, j - 1, y, sizeof(char)), &c, sizeof(char));
+							svSwap(strGetValueMatrix(NULL, pmtx, j, y, sizeof(char)), &c,
+							strGetValueMatrix(NULL, pmtx, j - 1, y, sizeof(char)), sizeof(char));
 					return;
 				}
 			}
@@ -156,12 +156,12 @@ void MoveMatrix(P_MATRIX pmtx, size_t x, size_t y, bool bundo)
 					/* Move bricks toward the space. */
 					if (i < y)
 						for (j = i; j < y; ++j)
-							svSwap(strGetValueMatrix(NULL, pmtx, x, j, sizeof(char)),
-							strGetValueMatrix(NULL, pmtx, x, j + 1, sizeof(char)), &c, sizeof(char));
+							svSwap(strGetValueMatrix(NULL, pmtx, x, j, sizeof(char)), &c,
+							strGetValueMatrix(NULL, pmtx, x, j + 1, sizeof(char)), sizeof(char));
 					else
 						for (j = i; j > y; --j)
-							svSwap(strGetValueMatrix(NULL, pmtx, x, j, sizeof(char)),
-							strGetValueMatrix(NULL, pmtx, x, j - 1, sizeof(char)), &c, sizeof(char));
+							svSwap(strGetValueMatrix(NULL, pmtx, x, j, sizeof(char)), &c,
+							strGetValueMatrix(NULL, pmtx, x, j - 1, sizeof(char)), sizeof(char));
 					return;
 				}
 			}

@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0721260601L00739
+ * File ID:     0809171737G0721261119L00741
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -209,6 +209,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Description:   Traverse a binary tree by user defined order.
  * Parameters:
  *      order Three characters can be any combination of L/l, D/d and R/r representing left node, current node and right node.
+ *            Any other characters will end loop and execute callback function cbftvs3.
  *      pnode Pointer to the node that you want to start traversal in a tree.
  *    cbftvs1 Pointer to the first callback function which is called before directing to the first child node.
  *            Set this pointer to NULL to omit callback.
@@ -289,9 +290,10 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CB
 					return CBF_TERMINATE;
 				break;
 			default:
-				break;
+				goto Lbl_Final;
 			}
 		}
+	Lbl_Final:
 		if (NULL != cbftvs3 && CBF_CONTINUE != cbftvs3(pnode, param))
 			return CBF_TERMINATE;
 	}

@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T0511260722L00195
+ * File ID:     0901171620T0720261148L00195
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -54,7 +54,7 @@ bool     setInitH_O             (P_SET_H pset,   size_t       buckets);
 void     setFreeH_O             (P_SET_H pset);
 P_SET_H  setCreateH_O           (size_t  buckets);
 void     setDeleteH_O           (P_SET_H pset);
-P_SET_H  setCopyH               (P_SET_H pset,   size_t       size);
+P_SET_H  setCreateCopyH         (P_SET_H pset,   size_t       size);
 size_t   setSizeH_O             (P_SET_H pset);
 bool     setIsEmptyH_O          (P_SET_H pset);
 bool     setIsMemberH_O         (P_SET_H pset,   CBF_HASH     cbfhsh, const void * pitem,     size_t              size);
@@ -71,7 +71,7 @@ void     setInitT_O             (P_SET_T pset);
 void     setFreeT_O             (P_SET_T pset);
 P_SET_T  setCreateT_O           (void);
 void     setDeleteT_O           (P_SET_T pset);
-P_SET_T  setCopyT               (P_SET_T pset,   size_t       size);
+P_SET_T  setCreateCopyT         (P_SET_T pset,   size_t       size);
 size_t   setSizeT_O             (P_SET_T pset);
 bool     setIsEmptyT_O          (P_SET_T pset);
 bool     setIsMemberT_O         (P_SET_T pset,   const void * pitem,  CBF_COMPARE  cbfcmp);

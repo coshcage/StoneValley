@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0717261402L02565
+ * File ID:     0809171737I0720261836L02560
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -43,11 +43,11 @@ int _treCBFFreeNodeBST(void * pitem, size_t param);
  * Description:   Initialize a node of binary search tree.
  * Parameters:
  *      pnode Pointer to the node you want to initialize.
- *      pitem Pointer to the address of an element.
+ *      pitem Pointer to an element.
  *       size Size of the element.
  *      param Additional information of the current node.
- * Return value:  pdata pointer of NODE_D structure in the node.
- *                If function could not initialize a node, it would return a NULL.
+ * Return value:  knot.pdata pointer of a BSTNODE structure.
+ *                If function could not initialize a node, it would return NULL.
  * Caution:       Address of pnode Must Be Allocated first.
  */
 void * treInitBSTNode(P_BSTNODE pnode, const void * pitem, size_t size, size_t param)
@@ -59,7 +59,7 @@ void * treInitBSTNode(P_BSTNODE pnode, const void * pitem, size_t size, size_t p
 }
 
 /* Function name: treFreeBSTNode_O
- * Description:   Retract a node of which is allocated by function treInitBSTNode.
+ * Description:   Retract a node which is allocated by function treInitBSTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -69,17 +69,16 @@ void * treInitBSTNode(P_BSTNODE pnode, const void * pitem, size_t size, size_t p
 void treFreeBSTNode_O(P_BSTNODE pnode)
 {
 	strFreeNodeD(&pnode->knot);
-	pnode->knot.pdata = NULL;
 }
 
 /* Function name: treCreateBSTNode
- * Description:   Dynamically allocate a node of binary search tree.
+ * Description:   Dynamically allocate a node of a binary search tree.
  * Parameters:
- *      pitem Pointer to the address of an element.
+ *      pitem Pointer to an element.
  *       size Size of the element.
  *      param Additional information of the current node.
  * Return value:  Pointer to the new allocated node.
- *                If function could not create a node, it would return a NULL.
+ *                If function could not create a node, it would return NULL.
  */
 P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 {
@@ -96,7 +95,7 @@ P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 }
 
 /* Function name: treDeleteBSTNode_O
- * Description:   Retract a node of which is allocated by function treCreateBSTNode.
+ * Description:   Retract a node which is allocated by function treCreateBSTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -138,15 +137,14 @@ void treInitBST_O(P_BST pbst)
 }
 
 /* Function name: treFreeBST
- * Description:   Retract a binary search tree of which is allocated by function treInitBST_O.
+ * Description:   Retract a binary search tree which is allocated by function treInitBST_O.
  * Parameter:
  *      pbst Pointer to the binary search tree you want to release.
  * Return value:  N/A.
  * Caution:       Address of pbst Must Be Allocated first.
  */
 void treFreeBST(P_BST pbst)
-{
-	/* A post-order traversal is needed here.
+{	/* A post-order traversal is needed here.
 	 * Because we have to free nodes from crown to root.
 	 */
 	treTraverseBYPost(P2P_TNODE_BY(*pbst), _treCBFFreeNodeBST, 0);
@@ -157,11 +155,11 @@ void treFreeBST(P_BST pbst)
  * Description:   Dynamically allocate a binary search tree.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated tree.
- *                If function could not create a pointer, it would return a NULL.
+ *                If function could not create a pointer, it would return NULL.
  */
 P_BST treCreateBST(void)
 {
-	P_BST pbst = (P_BST) malloc(sizeof(BST));
+	REGISTER P_BST pbst = (P_BST) malloc(sizeof(BST));
 	if (NULL == pbst)
 		return NULL;
 	treInitBST(pbst);
@@ -169,7 +167,7 @@ P_BST treCreateBST(void)
 }
 
 /* Function name: treDeleteBST_O
- * Description:   Retract a binary search tree of which is allocated by function treCreateBST.
+ * Description:   Retract a binary search tree which is allocated by function treCreateBST.
  * Parameter:
  *      pbst Pointer to the tree you want to release.
  * Return value:  N/A.
@@ -183,7 +181,7 @@ void treDeleteBST_O(P_BST pbst)
 }
 
 /* Function name: treCopyBST
- * Description:   Copy a binary search tree.
+ * Description:   Copy a binary search tree recursively.
  * Parameters:
  *      proot Pointer to the root node of the original BST.
  *       size Size of each element in the original BST.
@@ -208,8 +206,9 @@ P_BSTNODE treCopyBST(P_BSTNODE proot, size_t size)
  * Parameters:
  *      proot Pointer to the root node.
  *      pitem Pointer to an element that contains the data you want to search.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the node that contains the data.
+ *                NULL indicates function cannot find the data that pitem pointed.
  * Caution:       Address of proot Must Be Allocated first.
  */
 P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfcmp)
@@ -223,12 +222,13 @@ P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 }
 
 /* Function name: treBSTFindData_A
- * Description:   Find data in a binary search tree using a cycle.
+ * Description:   Find data in a binary search tree using a loop.
  * Parameters:
  *      proot Pointer to the root node.
  *      pitem Pointer to an element that contains the data you want to search.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the node that contains the data.
+ *                NULL indicates function cannot find the data that pitem pointed.
  * Caution:       Address of proot Must Be Allocated first.
  */
 P_BSTNODE treBSTFindData_A(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfcmp)
@@ -243,7 +243,7 @@ P_BSTNODE treBSTFindData_A(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 	return NULL;
 }
 
-/* AA-tree implementation achieved in the following section. */
+/* AA-tree implementation is achieved in the following section. */
 
 /* Function declarations for AA-trees. */
 P_BSTNODE _treBSTSkewAA (P_BSTNODE pnode);
@@ -302,13 +302,13 @@ P_BSTNODE _treBSTSplitAA(P_BSTNODE pnode)
  *      pnode Pointer to the root node of an AA-tree.
  *      pitem Pointer to an element that contains the data you want to insert.
  *       size Size of the element.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the new root node of an AA-tree.
- * Caution:       Function would not insert pitem successful, if it met an allocation error.
- * Tip:           Usage:
- *                P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
- *                *pbst = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp);
- *                treDeleteBST(pbst); // Destroy AA-tree.
+ * Caution:       Function would not insert pitem successfully, if it met an allocation error.
+ * Usage:         P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
+ *                P_BSTNODE pnode = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp);
+ *                if (NULL != pnode) *pbst = pnode; // Assign new root for tree.
+ *                else treDeleteBST(pbst); // Destroy AA-tree in case of an allocation failure.
  */
 P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -333,11 +333,11 @@ P_BSTNODE treBSTInsertAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
  *      pnode Pointer to the root node of an AA-tree.
  *      pitem Pointer to an element that contains the data you want to remove.
  *       size Size of the element.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the new root node of an AA-tree.
- * Tip:           Usage:
- *                P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
- *                *pbst = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
+ * Usage:         P_BST pbst = treCreateBST(); // Create a new AA-binary-search tree.
+ *                P_BSTNODE pnode = treBSTInsertAA(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
+ *                if (NULL != pnode) *pbst = pnode; // Assign new root for tree.
  *                *pbst = treBSTRemoveAA(*pbst, &a, sizeof(a), cbfcmp); // Removal.
  *                treDeleteBST(pbst); // Destroy AA-tree.
  */
@@ -401,9 +401,9 @@ enum _en_AVLBalanceFactor {
 	_ABF_BALANCED = 00,
 	_ABF_HEAVY_LT = 01
 };
-typedef ptrdiff_t _en_BalanceFactor; /* Useless for redefine it for lower C standards. */
+typedef ptrdiff_t _en_BalanceFactor; /* Redefine it for lower C standards. */
 
-/* Sub-section function declarations for AVL-tree. */
+/* Sub section of function declarations for AVL-trees. */
 ptrdiff_t _treBSTGetBalanceFactorAVL_O  (P_BSTNODE pnode);
 ptrdiff_t _treBSTMaxBalanceFactorAVL_O  (ptrdiff_t lbf,   ptrdiff_t rbf);
 ptrdiff_t _treBSTReadBalanceFactorAVL_O (P_BSTNODE pnode);
@@ -413,7 +413,7 @@ P_BSTNODE _treBSTRotateAVL              (P_BSTNODE pnode, bool      bleft);
 #define _treBSTGetBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : _NODE_PARAM((pnode_M), const ptrdiff_t))
 #define _treBSTMaxBalanceFactorAVL_M(lbf_M, rbf_M) ((lbf_M) > (rbf_M) ? (lbf_M) : (rbf_M))
 #define _treBSTReadBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : \
-	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[LEFT]) -\
+	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[LEFT]) - \
 	_treBSTGetBalanceFactorAVL(pbstchild(pnode_M)[RIGHT]))
 
 /* Library optimal switch. */
@@ -437,7 +437,7 @@ P_BSTNODE _treBSTRotateAVL              (P_BSTNODE pnode, bool      bleft);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treBSTGetBalanceFactorAVL_O
- * Description:   Get a node's balance factor.
+ * Description:   Get an AVL node's balance factor.
  * Parameter:
  *     pnode Pointer to a node of an AVL-tree.
  * Return value:  Balance factor.
@@ -449,7 +449,7 @@ ptrdiff_t _treBSTGetBalanceFactorAVL_O(P_BSTNODE pnode)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treBSTMaxBalanceFactorAVL_O
- * Description:   Get the maximize value from two balance factors.
+ * Description:   Get the maximize value between two balance factors.
  * Parameters:
  *        lbf A balance factor.
  *        rbf Another balance factor.
@@ -469,7 +469,7 @@ ptrdiff_t _treBSTMaxBalanceFactorAVL_O(ptrdiff_t lbf, ptrdiff_t rbf)
  */
 ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
 {
-	/* Check if node exists, if so then it applies the difference between it's children's heights. */
+	/* Check if node existed, if so then it applies the difference between it's children's heights. */
 	return NULL == pnode ? _ABF_BALANCED :
 		_treBSTGetBalanceFactorAVL_O(pbstchild(pnode)[LEFT]) -
 		_treBSTGetBalanceFactorAVL_O(pbstchild(pnode)[RIGHT]);
@@ -486,7 +486,7 @@ ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
  */
 P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bleft)
 {
-	P_BSTNODE pnodex = pbstchild(pnode)[bleft ? RIGHT : LEFT];
+	P_BSTNODE pnodex = pbstchild(pnode) [bleft ? RIGHT : LEFT];
 	P_BSTNODE pnodey = pbstchild(pnodex)[bleft ? LEFT : RIGHT];
 
 	/* Adjust pointers. */
@@ -514,10 +514,9 @@ P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bleft)
  *      pnode Pointer to the root node of an AVL-tree.
  *      pitem Pointer to an element that contains the data you want to insert.
  *       size Size of the element.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the new root node of an AVL-tree.
- * Tip:           Usage:
- *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
+ * Usage:         P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
  *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
  *                treDeleteBST(pbst); // Destroy AVL-tree.
  */
@@ -579,10 +578,9 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
  *      pnode Pointer to the root node of an AVL-tree.
  *      pitem Pointer to an element that contains the data you want to remove.
  *       size Size of the element.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  Pointer to the new root node of an AVL-tree.
- * Tip:           Usage:
- *                P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
+ * Usage:         P_BST pbst = treCreateBST(); // Create a new AVL-binary-search tree.
  *                *pbst = treBSTInsertAVL(*pbst, &a, sizeof(a), cbfcmp); // Insertion.
  *                *pbst = treBSTRemoveAVL(*pbst, &a, sizeof(a), cbfcmp); // Removal.
  *                treDeleteBST(pbst); // Destroy AVL-tree.
@@ -686,7 +684,7 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
  * with ISBN 978-0-262-03384-8, page 174 to 191.
  */
 
-/* Fetch parent pointer for a red black tree node pointer. */
+/* Fetch the parent pointer for a red black tree node pointer. */
 #define prbtparent(pnode) ((pnode)->parent)
 
 /* A macro describes children nodes pointers of a RBT node. */
@@ -707,15 +705,15 @@ void      _treRBTransplant        (P_RBT     prbt,  P_RBTNODE u,     P_RBTNODE v
 void      _treRBDeleteFixup       (P_RBT     prbt,  P_RBTNODE x);
 
 /* Function name: treInitRBTNode
- * Description:   Initialize a node of red black tree.
+ * Description:   Initialize a node for red black tree.
  * Parameters:
  *      pnode Pointer to the node you want to initialize.
- *      pitem Pointer to the address of an element.
+ *      pitem Pointer to an element.
  *       size Size of the element.
  *      color Color of the current node.
  *     parent Pointer to parent node of the current node.
- * Return value:  pdata pointer of NODE_D structure in the node.
- *                If function could not initialize a node, it would return a NULL.
+ * Return value:  bstn.knot.pdata pointer of a RBTNODE structure.
+ *                If function could not initialize a node, it would return NULL.
  * Caution:       Address of pnode Must Be Allocated first.
  */
 void * treInitRBTNode(P_RBTNODE pnode, const void * pitem, size_t size, RBTColor color, P_RBTNODE parent)
@@ -725,7 +723,7 @@ void * treInitRBTNode(P_RBTNODE pnode, const void * pitem, size_t size, RBTColor
 }
 
 /* Function name: treFreeRBTNode
- * Description:   Retract a node of which is allocated by function treInitRBTNode.
+ * Description:   Retract a node which is allocated by function treInitRBTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -736,14 +734,14 @@ void treFreeRBTNode(P_RBTNODE pnode)
 	treFreeBSTNode(&pnode->bstn);
 }
 /* Function name: treCreateRBTNode
- * Description:   Dynamically allocate a node of red black tree.
+ * Description:   Dynamically allocate a node for red black tree.
  * Parameters:
- *      pitem Pointer to the address of an element.
+ *      pitem Pointer to an element.
  *       size Size of the element.
  *      color Color of the current node.
  *     parent Pointer to parent node of the current node.
  * Return value:  Pointer to the new allocated node.
- *                If function could not create a node, it would return a NULL.
+ *                If function could not create a node, it would return NULL.
  */
 P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RBTNODE parent)
 {
@@ -760,7 +758,7 @@ P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RB
 }
 
 /* Function name: treDeleteRBTNode_O
- * Description:   Retract a node of which is allocated by function treCreateRBTNode.
+ * Description:   Retract a node which is allocated by function treCreateRBTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -777,7 +775,7 @@ void treDeleteRBTNode_O(P_RBTNODE pnode)
  * Function name: _treCBFFreeNodeRBT
  * Description:   This function is used to free nodes in a red black tree.
  * Parameters:
- *      pitem Pointer to each node in the tree.
+ *      pitem Pointer to each RBTNODE node in the tree.
  *      param N/A.
  * Return value:  CBF_CONTINUE only.
  */
@@ -802,15 +800,14 @@ void treInitRBT_O(P_RBT prbt)
 }
 
 /* Function name: treFreeRBT
- * Description:   Retract a red black tree of which is allocated by function treInitRBT_O.
+ * Description:   Retract a red black tree which is allocated by function treInitRBT_O.
  * Parameter:
  *      prbt Pointer to the red black tree you want to release.
  * Return value:  N/A.
  * Caution:       Address of prbt Must Be Allocated first.
  */
 void treFreeRBT(P_RBT prbt)
-{
-	/* A post-order traversal is needed here.
+{	/* A post-order traversal is needed here.
 	 * Because we have to free nodes from crown to root.
 	 */
 	treTraverseBYPost(P2P_TNODE_BY(*prbt), _treCBFFreeNodeRBT, 0);
@@ -821,11 +818,11 @@ void treFreeRBT(P_RBT prbt)
  * Description:   Dynamically allocate a red black tree.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated tree.
- *                If function could not create a pointer, it would return a NULL.
+ *                If function could not create a pointer, it would return NULL.
  */
 P_RBT treCreateRBT(void)
 {
-	P_RBT prbt = (P_RBT) malloc(sizeof(RBT));
+	REGISTER P_RBT prbt = (P_RBT) malloc(sizeof(RBT));
 	if (NULL == prbt)
 		return NULL;
 	treInitRBT(prbt);
@@ -833,7 +830,7 @@ P_RBT treCreateRBT(void)
 }
 
 /* Function name: treDeleteRBT_O
- * Description:   Retract a red black tree of which is allocated by function treCreateRBT.
+ * Description:   Retract a red black tree which is allocated by function treCreateRBT.
  * Parameter:
  *      prbt Pointer to the tree you want to release.
  * Return value:  N/A.
@@ -998,11 +995,10 @@ void _treRBInsertFixup(P_RBT prbt, P_RBTNODE z)
  *       prbt Pointer to a red black tree.
  *      pitem Pointer to an element that contains the data you want to insert.
  *       size Size of the element.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  N/A.
- * Caution:       Function would not insert pitem successful, if it met an allocation error.
- * Tip:           Usage:
- *                P_RBT prbt = treCreateRBT(); // Create a new red black tree.
+ * Caution:       Function would not insert pitem successfully, if it met an allocation error.
+ * Usage:         P_RBT prbt = treCreateRBT(); // Create a new red black tree.
  *                treInsertRBT(prbt, &a, sizeof(a), cbfcmp);
  *                treDeleteRBT(prbt); // Destroy the red black tree.
  */
@@ -1119,10 +1115,9 @@ void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
  * Parameters:
  *       prbt Pointer to a red black tree.
  *      pitem Pointer to an element that contains the data you want to delete.
- *     cbfcmp Pointer to a callback function.
+ *     cbfcmp Pointer to a callback comparison function.
  * Return value:  N/A.
- * Tip:           Usage:
- *                P_RBT prbt = treCreateRBT(); // Create a new red black tree.
+ * Usage:         P_RBT prbt = treCreateRBT(); // Create a new red black tree.
  *                treInsertRBT(prbt, &a, sizeof a, cbfcmp);
  *                treRemoveRBT(prbt, &a, cbfcmp);
  *                treDeleteRBT(prbt); // Destroy the red black tree.
@@ -1188,9 +1183,9 @@ void treRemoveRBT(P_RBT prbt, const void * pitem, CBF_COMPARE cbfcmp)
 #define PARENTPTR 0
 #define NEXTPTR   1
 
-/* Additional info for BPTNODE of B-plus trees. */
+/* Additional information for BPTNODE of B-plus trees. */
 typedef struct _st_BPT_INFO {
-	ARRAY_Z   keyarr;  /* Array of keys and child pointers. */
+	ARRAY_Z   keyarr;  /* Array of keys and children pointers. */
 	P_BPTNODE headptr; /* The first child pointer of a node. */
 } _BPT_INFO, * _P_BPT_INFO;
 
@@ -1200,7 +1195,7 @@ typedef struct _st_BPT_KEY_INFO {
 	P_BPTNODE pchild; /* Child pointer. */
 } _BPT_KEY_INFO, * _P_BPT_KEY_INFO;
 
-/* File scope function declarations here. */
+/* File-scope function declarations go here. */
 void             _treInitBPTInfo_O           (_P_BPT_INFO      pbi);
 void             _treFreeBPTInfo             (_P_BPT_INFO      pbi);
 _P_BPT_INFO      _treCreateBPTInfo           (void);
@@ -1239,7 +1234,7 @@ void _treInitBPTInfo_O(_P_BPT_INFO pbi)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treFreeBPTInfo
- * Description:   Retract a _BPT_INFO structure of which is allocated by function _treInitBPTInfo_O.
+ * Description:   Retract a _BPT_INFO structure which is allocated by function _treInitBPTInfo_O.
  * Parameter:
  *       pbi Pointer to the _BPT_INFO structure you want to release.
  * Return value:  N/A.
@@ -1256,11 +1251,11 @@ void _treFreeBPTInfo(_P_BPT_INFO pbi)
  * Description:   Dynamically allocate a _BPT_INFO structure.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated structure.
- *                If function could not create a structure, it would return a NULL.
+ *                If function could not create a structure, it would return NULL.
  */
 _P_BPT_INFO _treCreateBPTInfo(void)
 {
-	_P_BPT_INFO pbi = (_P_BPT_INFO) malloc(sizeof(_BPT_INFO));
+	REGISTER _P_BPT_INFO pbi = (_P_BPT_INFO) malloc(sizeof(_BPT_INFO));
 	if (NULL != pbi)
 		_treInitBPTInfo(pbi);
 	return pbi;
@@ -1268,7 +1263,7 @@ _P_BPT_INFO _treCreateBPTInfo(void)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treDeleteBPTInfo_O
- * Description:   Retract a _BPT_INFO structure of which is allocated by function _treCreateBPTInfo.
+ * Description:   Retract a _BPT_INFO structure which is allocated by function _treCreateBPTInfo.
  * Parameter:
  *       pbi Pointer to the _BPT_INFO structure you want to release.
  * Return value:  N/A.
@@ -1285,10 +1280,10 @@ void _treDeleteBPTInfo_O(_P_BPT_INFO pbi)
  * Description:   Initialize a node of B-plus indexing tree.
  * Parameters:
  *      pnode Pointer to the node you want to initialize.
- *     parent Pointer to parent node.
+ *     parent Pointer to the parent node.
  *      pnext Pointer to the next node in key chain.
  * Return value:  pdata pointer in the node.
- *                If function could not initialize a node, it would return a NULL.
+ *                If function could not initialize a node, it would return NULL.
  * Caution:       Address of pnode Must Be Allocated first.
  */
 void * treInitBPTNode(P_BPTNODE pnode, P_TNODE_BY parent, P_TNODE_BY pnext)
@@ -1299,7 +1294,7 @@ void * treInitBPTNode(P_BPTNODE pnode, P_TNODE_BY parent, P_TNODE_BY pnext)
 }
 
 /* Function name: treFreeBPTNode
- * Description:   Retract a node of which is allocated by function treInitBPTNode.
+ * Description:   Retract a node which is allocated by function treInitBPTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -1317,11 +1312,11 @@ void treFreeBPTNode(P_BPTNODE pnode)
  *     parent Pointer to parent node.
  *      pnext Pointer to the next node in key chain.
  * Return value:  Pointer to the new allocated node.
- *                If function could not create a node, it would return a NULL.
+ *                If function could not create a node, it would return NULL.
  */
 P_BPTNODE treCreateBPTNode(P_BPTNODE parent, P_BPTNODE pnext)
 {
-	P_BPTNODE pnew = strCreateNodeD(_treCreateBPTInfo(), sizeof(_BPT_INFO));
+	REGISTER P_BPTNODE pnew = strCreateNodeD(_treCreateBPTInfo(), sizeof(_BPT_INFO));
 	if (NULL != pnew)
 	{
 		if (NULL == pnew->pdata)
@@ -1336,7 +1331,7 @@ P_BPTNODE treCreateBPTNode(P_BPTNODE parent, P_BPTNODE pnext)
 }
 
 /* Function name: treDeleteBPTNode
- * Description:   Retract a node of which is allocated by function treCreateBPTNode.
+ * Description:   Retract a node which is allocated by function treCreateBPTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
@@ -1349,7 +1344,7 @@ void treDeleteBPTNode(P_BPTNODE pnode)
 }
 
 /* Function name: _treGetParentBPTNode_O
- * Description:   Get parent node of a child node in a B-plus indexing tree.
+ * Description:   Get the pointer of parent node of its child in a B-plus indexing tree.
  * Parameter:
  *     pnode Pointer to the child node.
  * Return value:  Pointer to parent node.
@@ -1378,7 +1373,7 @@ P_BPTNODE _treGetNextBPTNode_O(P_BPTNODE pnode)
  * Description:   Check whether pnode is a leaf.
  * Parameter:
  *     pnode Pointer to a node you want to check.
- * Return value:  true pnode is a leaf and pnode is a root node.
+ * Return value:  true  pnode is a leaf node.
  *                false pnode is not a leaf.
  * Caution:       Address of pnode Must Be Allocated first.
  * Tip:           A macro version of this function named _treIsLeafBPTNode_M is available.
@@ -1409,7 +1404,7 @@ void treInitBPT_O(P_BPT pbpt)
  *     pquelx Pointer to a queue that used to contain pointers of nodes to be deleted.
  * Return value:  N/A.
  * Caution:       Address of pquelx and pquely Must Be Allocated first.
- * Tip:           Callers of this function shall manage two queues that parameters pquelx and pquely pointed on its own.
+ * Tip:           The caller of this function shall manage two queues that parameters pquelx and pquely pointed at.
  */
 void _treFreeBPTPuppet(P_QUEUE_L pquelx, P_QUEUE_L pquely)
 {
@@ -1443,7 +1438,7 @@ void _treFreeBPTPuppet(P_QUEUE_L pquelx, P_QUEUE_L pquely)
 }
 
 /* Function name: treFreeBPT
- * Description:   Retract a B-plus indexing tree of which is allocated by function treInitBPT_O.
+ * Description:   Retract a B-plus indexing tree which is allocated by function treInitBPT_O.
  * Parameter:
  *      pbpt Pointer to the binary search tree you want to release.
  * Return value:  N/A.
@@ -1470,18 +1465,18 @@ void treFreeBPT(P_BPT pbpt)
  * Description:   Dynamically allocate a B-plus indexing tree.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated tree.
- *                If function could not create a structure, it would return a NULL.
+ *                If function could not create a structure, it would return NULL.
  */
 P_BPT treCreateBPT(void)
 {
-	P_BPT pbpt = (P_BPT) malloc(sizeof(BPT));
+	REGISTER P_BPT pbpt = (P_BPT) malloc(sizeof(BPT));
 	if (NULL != pbpt)
 		treInitBPT(pbpt);
 	return pbpt;
 }
 
 /* Function name: treDeleteBPT
- * Description:   Retract a B-plus indexing tree of which is allocated by function treCreateBPT.
+ * Description:   Retract a B-plus indexing tree which is allocated by function treCreateBPT.
  * Parameter:
  *      pbpt Pointer to the tree you want to release.
  * Return value:  N/A.
@@ -1497,13 +1492,13 @@ void treDeleteBPT(P_BPT pbpt)
  * Function name: _treLocateKeyChainHeaderBPT
  * Description:   Locate the header of key chain in B-plus tree.
  * Parameter:
- *      pbpt Pointer to the B-plus tree.
- * Return value:  Pointer to the header node of key chain.
+ *      pbpt Pointer to a B-plus tree.
+ * Return value:  Pointer to the header node of key chain in a B-plus tree.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
 P_BPTNODE _treLocateKeyChainHeaderBPT(P_BPT pbpt)
 {
-	P_BPTNODE pnode = *pbpt;
+	REGISTER P_BPTNODE pnode = *pbpt;
 	while (NULL != pnode && (! _treIsLeafBPTNode(pnode)))
 		pnode = ((_P_BPT_INFO)pnode->pdata)->headptr;
 	return pnode;
@@ -1513,14 +1508,15 @@ P_BPTNODE _treLocateKeyChainHeaderBPT(P_BPT pbpt)
  * Description:   Traverse each key in key chain.
  * Parameters:
  *       pbpt Pointer to the B-plus tree.
- *     cbftvs Pointer to a callback function.
+ *     cbftvs Pointer to a callback function to traverse.
+ *            Parameter pitem holds the same value as the pointer to key in callback function.
  *      param A size_t value which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
 int treTraverseKeyBPT(P_BPT pbpt, CBF_TRAVERSE cbftvs, size_t param)
 {
-	P_BPTNODE pnode = _treLocateKeyChainHeaderBPT(pbpt);
+	REGISTER P_BPTNODE pnode = _treLocateKeyChainHeaderBPT(pbpt);
 	while (NULL != pnode)
 	{
 		REGISTER size_t i;
@@ -1540,21 +1536,19 @@ int treTraverseKeyBPT(P_BPT pbpt, CBF_TRAVERSE cbftvs, size_t param)
  *       pbpt Pointer to the B-plus tree.
  *       pkey A pointer value which stores the index key.
  *     cbfcmp Pointer to a callback function that compares the data in pkey and the data in the nodes of tree.
- * Return value:  A BPTNODE that contains the specific key.
+ * Return value:  A pointer to a BPTNODE structure that contains the specific key.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
 P_BPTNODE _treLocateKeyInLeafBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfcmp)
 {
-	P_BPTNODE pnode = *pbpt;
+	REGISTER P_BPTNODE pnode = *pbpt;
 	while (NULL != pnode && (! _treIsLeafBPTNode(pnode)))
 	{
-		REGISTER int r;
 		REGISTER size_t i;
 		_P_BPT_INFO pbni = (_P_BPT_INFO)pnode->pdata;
 		for (i = pbni->keyarr.num; i > 0; --i)
 		{
-			r = cbfcmp((i - 1)[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey, pkey);
-			if (r <= 0)
+			if (cbfcmp((i - 1)[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey, pkey) <= 0)
 			{
 				pnode = (i - 1)[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pchild;
 				break;
@@ -1571,14 +1565,14 @@ P_BPTNODE _treLocateKeyInLeafBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfc
  * Parameters:
  *       pbpt Pointer to B-plus indexing tree.
  *       pkey Pointer to an element in the memory.
- *     cbfcmp Pointer to a callback function that compares data size of pkey.
- * Return value:  pkey Found pkey in the B-plus tree.
+ *     cbfcmp Pointer to a callback function that compares data to pkey.
+ * Return value:  A valid pointer as pkey cast into (void *) means function found pkey in the B-plus tree.
  *                NULL Cannot find pkey.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
 void * treSearchDataBPT(P_BPT pbpt, const void * pkey, CBF_COMPARE cbfcmp)
 {
-	P_BPTNODE pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
+	REGISTER P_BPTNODE pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 	if (NULL != pnode)
 	{
 		REGISTER size_t i;
@@ -1627,7 +1621,7 @@ _P_BPT_KEY_INFO _treInsertKeyIntoArrayBPT(_P_BPT_INFO pbni, const void * pkey, P
  *       pbni Pointer to a _BPT_INFO structure in a node.
  *       pkey A pointer value which stores the index key.
  *     cbfcmp Pointer to a callback function that compares the data in pkey and the data in the nodes of a tree.
- * Return value:  Value of index + 1 of element which has been removed.
+ * Return value:  Value of index + 1 for element which has been removed.
  *                If function returned 0, that meant nothing had been deleted from array.
  * Caution:       Address of pbni Must Be Allocated first.
  */
@@ -1719,7 +1713,7 @@ bool _treSplitArrayInNodeBPT(_P_BPT_KEY_INFO pbki, P_BPTNODE pnew, P_BPTNODE pol
  */
 bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
-	P_BPTNODE pnode = *pbpt;
+	REGISTER P_BPTNODE pnode = *pbpt;
 	if (NULL == pnode)
 	{	/* Tree is empty. */
 		*pbpt = treCreateBPTNode(NULL, NULL);
@@ -1730,7 +1724,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 	}
 	else
 	{
-		bool bleaf = true; /* This variable is used to restrict operations on leaf nodes. */
+		bool bleaf = true; /* This variable is used to constrain operations on leaf nodes. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO)pnode->pdata, pkey, NULL, cbfcmp))
 			return false; /* Insertion failure. */
@@ -1799,8 +1793,8 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
  *                This function is used to cooperate with function treBulkLoadBPT.
  * Parameters:
  *      pquel Pointer to a linked list queue that used to save leaf nodes.
- *      pprev Pointer to a pointer that pointed the previously created node.
- *     ppkeys Pointer to a pointer to an array of keys.
+ *      pprev Pointer to a pointer that points to the previously created node.
+ *     ppkeys Pointer to an array of key pointers.
  *        num Number of keys in new leaf node's array.
  * Return value:  true  Allocation failure.
  *                false Making succeeded.
@@ -1866,10 +1860,10 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 	if (num > 0 && degree > 2)
 	{
 		QUEUE_L q1, q2;
-		P_BPTNODE pnew, pnode;
-		P_QUEUE_L pqa = &q1, pqb = &q2, pqt = NULL;
 		REGISTER size_t i;
 		P_BPTNODE prev = NULL;
+		P_BPTNODE pnew, pnode;
+		P_QUEUE_L pqa = &q1, pqb = &q2;
 		stdiv_t dr = stdiv(num, degree - 1);
 		/* Initialize queues. */
 		queInitL(&q1);
@@ -1886,8 +1880,9 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 		 */
 		while (! queIsEmptyL(pqa))
 		{
-			_P_BPT_INFO     pti;
-			_P_BPT_KEY_INFO pki;
+			P_QUEUE_L tmp;
+			REGISTER _P_BPT_INFO     pti;
+			REGISTER _P_BPT_KEY_INFO pki;
 			/* Get the number of nodes in the queue. */
 			i = strLevelLinkedListSC(pqa->pfront);
 			if (1 == i)
@@ -1934,7 +1929,7 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 			/* Insert new created node into the second one. queue. */
 			queInsertL(pqb, &pnew, sizeof(P_BPTNODE));
 			if (queIsEmptyL(pqa))
-				svSwap(&pqa, &pqb, &pqt, sizeof(P_BPTNODE));
+				svSwap(&pqa, &tmp, &pqb, sizeof(P_BPTNODE));
 		}
 		queFreeL(&q1);
 		queFreeL(&q2);
@@ -1967,7 +1962,7 @@ Lbl_Allocation_Failure:
  */
 P_BPTNODE _treGetSiblingNodeBPT(P_BPTNODE pnode, bool bright)
 {
-	P_BPTNODE parent = _treGetParentBPTNode(pnode);
+	REGISTER P_BPTNODE parent = _treGetParentBPTNode(pnode);
 	if (NULL != parent)
 	{
 		P_ARRAY_Z parrz = &((_P_BPT_INFO)parent->pdata)->keyarr;
@@ -2017,10 +2012,10 @@ P_BPTNODE _treGetSiblingNodeBPT(P_BPTNODE pnode, bool bright)
 void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, bool bright)
 {
 	REGISTER size_t i;
-	P_BPTNODE parent = _treGetParentBPTNode(pnode);
-	P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
-	P_ARRAY_Z parrz1 = &((_P_BPT_INFO)pnode->pdata)->keyarr;
-	P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
+	REGISTER P_BPTNODE parent = _treGetParentBPTNode(pnode);
+	REGISTER P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
+	REGISTER P_ARRAY_Z parrz1 = &((_P_BPT_INFO)pnode->pdata)->keyarr;
+	REGISTER P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
 	/* Reallocate memory spaces for array in pnode. */
 	strResizeArrayZ(parrz1, 1, sizeof(_BPT_KEY_INFO));
 	/* Locate entry in parent. */
@@ -2085,7 +2080,7 @@ void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, bool bright)
  *                This function is used to merge pnode and it's sibling.
  * Parameters:
  *      pnode Pointer to a node in B-plus tree.
- *       psib Pointer to the sibling node of pnode.
+ *       psib Pointer to the sibling node of ppnode.
  *      phead Pointer to the header of key chain in B-plus indexing tree.
  *     bright true  Get the right sibling of pnode.
  *            false Get the left sibling of pnode.
@@ -2094,10 +2089,10 @@ void _treRedistributeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, bool bright)
  */
 void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, bool bright)
 {
-	P_BPTNODE parent = _treGetParentBPTNode(pnode);
-	P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
-	P_ARRAY_Z parrz1 = &((_P_BPT_INFO)pnode->pdata)->keyarr;
-	P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
+	REGISTER P_BPTNODE parent = _treGetParentBPTNode(pnode);
+	REGISTER P_ARRAY_Z parrz0 = &((_P_BPT_INFO)parent->pdata)->keyarr;
+	REGISTER P_ARRAY_Z parrz1 = &((_P_BPT_INFO)pnode->pdata)->keyarr;
+	REGISTER P_ARRAY_Z parrz2 = &((_P_BPT_INFO)psib->pdata)->keyarr;
 	if (bright) /* Left toward fusing. */
 	{
 		bool b = false;
@@ -2181,7 +2176,7 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, bool br
  * Description:   This function is a callee for function treRemoveBPT.
  * Parameters:
  *       pbpt Pointer to B-plus indexing tree.
- *      pnode Pointer to the left-most leaf in a B-plus tree.
+ *      pnode Pointer to the left most leaf in a B-plus tree.
  *       hdeg The value of degree of node in B-plus indexing tree divide by 2.
  *       pkey Pointer to an element which is stored in the B-plus tree.
  *     cbfcmp Pointer to a callback function that compares data size of pkey.
@@ -2191,9 +2186,9 @@ void _treMergeNodesBPT(P_BPTNODE pnode, P_BPTNODE psib, P_BPTNODE phead, bool br
  */
 bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const void * pkey, CBF_COMPARE cbfcmp)
 {
-	size_t i;
-	P_BPTNODE phead  = _treLocateKeyChainHeaderBPT(pbpt);
-	P_ARRAY_Z parrz = &((_P_BPT_INFO)pnode->pdata)->keyarr;
+	REGISTER size_t i;
+	REGISTER P_BPTNODE phead = _treLocateKeyChainHeaderBPT(pbpt);
+	REGISTER P_ARRAY_Z parrz = &((_P_BPT_INFO)pnode->pdata)->keyarr;
 	/* Remove the entry. */
 	if (0 == (i = _treRemoveKeyFromArrayBPT((_P_BPT_INFO)pnode->pdata, pkey, cbfcmp)))
 		return false; /* Removal failure. */
@@ -2204,7 +2199,7 @@ bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 	}
 	else if (strLevelArrayZ(parrz) < hdeg)
 	{
-		bool d;
+		REGISTER bool d;
 		/* Fetch sibling node. */
 		P_BPTNODE psib = _treGetSiblingNodeBPT(pnode, (d = RIGHT));
 		if (NULL == psib)
@@ -2232,14 +2227,14 @@ bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
  *     degree Degree of nodes in B-plus indexing tree.
  *            Value of degree shall be greater than or equal to 3.
  *       pkey Pointer to an element which is stored in the B-plus tree.
- *     cbfcmp Pointer to a callback function that compares data size of pkey.
+ *     cbfcmp Pointer to a callback function that compares data in tree and pkey.
  * Return value:  true  Removal succeeded.
  *                false Removal failed.
  * Caution:       Address of pbpt Must Be Allocated first.
  */
 bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
-	P_BPTNODE pnode = *pbpt;
+	REGISTER P_BPTNODE pnode = *pbpt;
 	if (NULL != pnode)
 	{	/* Remove key when tree is not empty. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
@@ -2326,14 +2321,14 @@ void treFreeTrieA_O(P_TRIE_A ptrie, size_t size)
  */
 P_TRIE_A treCreateTrieA(void)
 {
-	P_TRIE_A ptrie = (P_TRIE_A) malloc(sizeof(TRIE_A));
+	REGISTER P_TRIE_A ptrie = (P_TRIE_A) malloc(sizeof(TRIE_A));
 	if (NULL != ptrie)
 		treInitTrieA(ptrie);
 	return ptrie;
 }
 
 /* Function name: treDeleteTrieA_O
- * Description:   Delete a trie of which is allocated by function treCreateTrieA.
+ * Description:   Delete a trie which is allocated by function treCreateTrieA.
  * Parameters:
  *      ptrie Pointer to a trie you want to allocate.
  *       size Size of an element in the string which had been inserted into trie before.
@@ -2351,15 +2346,15 @@ void treDeleteTrieA_O(P_TRIE_A ptrie, size_t size)
 /* Function name: treSearchTrieA
  * Description:   Search a string in a trie.
  * Parameters:
- *      ptrie Pointer to a trie that you wanna operate on.
- *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
+ *      ptrie Pointer to a trie of which you want to operate on.
+ *       pstr Pointer to the first element to a string and cast it into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
- *     cbfcmp Pointer a CBF_COMPARE callback function.
- *            Two parameters of this callback function may point to any element in the string.
+ *     cbfcmp Pointer to a callback comparison function.
+ *            Two parameters of this callback function may point to any element in the string and in the trie.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
  * Return value:  Pointer to the value that contains vapdx stored in a trie.
- *                If this function returned value NULL, it should indicate that the string pstr pointed cannot find.
+ *                If this function returned value NULL, it should indicate that the string pstr pointed cannot be found in trie.
  * Caution:       ptrie must be allocated first.
  * Tip:           The following codes may give you an example for the usage of tries:
  *                const char ptip[] = "lynx"; size_t apdx = (size_t)ptip; P_TRIE_A pt = treCreateTrieA();
@@ -2390,21 +2385,21 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
 /* Function name: treInsertTrieA
  * Description:   Insert a string into a trie.
  * Parameters:
- *      ptrie Pointer to a trie that you wanna operate on.
+ *      ptrie Pointer to a trie of which you want to operate on.
  *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
- *      vapdx An integer in size_t as an appendix that can store a pointer.
+ *      vapdx An integer in size_t as an appendix that can store a pointer in a trie.
  *            You may get a pointer to the value that contains vapdx stored in a trie after calling function treSearchTrieA.
- *     cbfcmp Pointer a CBF_COMPARE callback function.
- *            Two parameters of this callback function may point to any element in the string.
+ *     cbfcmp Pointer to a callback comparison function.
+ *            Two parameters of this callback function may point to any element in the string and in the trie.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
  * Return value:  true  Insertion succeeded.
  *                false Insertion failed.
  * Caution:       ptrie must be allocated first.
- * Tip:           Inserting the same string in multiple times is allowed for tries;
- *                Then deletion of the same string needs to be duplicated in the same times.
  *                Value vapdx that stored with a string in trie will be replaced if users insert the same string repeatedly.
+ * Tip:           Inserting the same string in multiple times is allowed for this trie implementation;
+ *                Then deletion of the same string needs to be perform on the same trie in the same times.
  */
 bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, size_t vapdx, CBF_COMPARE cbfcmp)
 {
@@ -2422,8 +2417,8 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 			}
 			else
 			{	/* Find the maximal value that is less than (*pbase) to index i.
-				 * This procedure would reduce the worst case of searching complexity to approximately O(lg N),
-				 * but not restricts to the worst case of O(N) by using linear search.
+				 * This procedure would reduce the worst case of searching complexity to approximately O(log n),
+				 * but not restrict to the worst case of O(n) by using linear search.
 				 */
 				REGISTER PUCHAR p = (PUCHAR)svBinarySearchDispatch
 				(
@@ -2476,12 +2471,12 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 /* Function name: treRemoveTrieA
  * Description:   Remove a string from a trie.
  * Parameters:
- *      ptrie Pointer to a trie that you wanna operate on.
+ *      ptrie Pointer to a trie that you want to operate on.
  *       pstr Pointer to the first element to a string and cast the pointer into (const void *).
  *        num Number of elements in the string.
  *       size Size of each element in the string.
- *     cbfcmp Pointer a CBF_COMPARE callback function.
- *            Two parameters of this callback function may point to any element in the string.
+ *     cbfcmp Pointer to a callback comparison function.
+ *            Two parameters of this callback function may point to any element in the string and in the trie.
  *            Please refer to the prototype of callback function CBF_COMPARE in file svdef.h.
  * Return value:  true  Removal succeeded.
  *                false Removal failed.

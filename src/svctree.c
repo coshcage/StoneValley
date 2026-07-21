@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0513250808L00486
+ * File ID:     0914171200J0719261401L00485
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -25,7 +25,7 @@
 #include <limits.h> /* Using macro UCHAR_MAX, CHAR_BIT. */
 #include "svtree.h"
 
-/* A macro that defines symbol table length. */
+/* A macro that defines the maximum symbol table length. */
 #define _SMB_TBL_LEN ((size_t)(UCHAR_MAX + 1))
 
  /* Symbol information of Huffman trees. */
@@ -40,7 +40,7 @@ typedef struct _st_HFMNOD {
 	union _ut_NodeData {  /* A union used to store both internal node data and leaf data. */
 		size_t    sbfreq; /* Frequency value for internal nodes. */
 		_P_SMBINF psbinf; /* Pointer to symbol info in symbol table for leaf nodes. */
-		P_HFM_SYMBOL psb; /* Pointer to a HFM_SYMBOL structure in outputted symbol table. */
+		P_HFM_SYMBOL psb; /* Pointer to a HFM_SYMBOL structure in an outputted symbol table. */
 	} NodeData;
 } _HFMNOD, * _P_HFMNOD;
 
@@ -54,12 +54,12 @@ P_TNODE_BY _treHFMRebuildHuffmanTree         (P_ARRAY_Z    stbl);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treHFMCreateSymbolTable
- * Description:   This function is used to create a symbol by frequency.
+ * Description:   This function is used to create a symbol by symbol frequency.
  * Parameters:
- *          s Pointer to the buffer you want to coding with.
+ *          s Pointer to the buffer you want to encoding with.
  *          n Length of the buffer.
- * Return value:  Pointer to a new created array.
- * Tip:           You need to free array after using.
+ * Return value:  Pointer to a newly created array as a large semi-product symbol table.
+ * Tip:           You need to delete array after using.
  */
 P_ARRAY_Z _treHFMCreateSymbolTable(PUCHAR s, size_t n)
 {
@@ -85,8 +85,8 @@ P_ARRAY_Z _treHFMCreateSymbolTable(PUCHAR s, size_t n)
  * Function name: _treCBFHFMCompareSymbolFreqInNode
  * Description:   Compare symbol by its frequency between nodes.
  * Parameters:
- *          x Pointer to any node pointer in array. Cast into (void *).
- *          y Pointer to any node pointer in array. Cast into (void *).
+ *          x Pointer to any node pointer in a heap array. Cast into (void *).
+ *          y Pointer to any node pointer in a heap array. Cast into (void *).
  * Return value:  Please refer to the type definition of CBF_COMPARE in svdef.h.
  */
 int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)
@@ -105,11 +105,12 @@ int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treHFMBuildHuffmanTree
- * Description:   This function is used to build a Huffman tree.
+ * Description:   This function is used to build a Huffman tree for generating a Huffman symbol table.
  * Parameter:
- *      stbl Pointer to a symbol table.
+ *      stbl Pointer to a primordial symbol table created by function _treHFMCreateSymbolTable.
+ *           This symbol table will further be compacted in function treCreateHuffmanTable.
  * Return value:  Pointer to the root node of a new created binary tree.
- * Tip:           You need to free binary tree after coding.
+ * Tip:           You need to free this binary tree after generating the final symbol table.
  */
 P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 {
@@ -181,16 +182,16 @@ Lbl_Allocation_Error:
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFHFMFillSymbolTable
- * Description:   Used to build symbol table from a Huffman tree.
+ * Description:   Fill symbol table from a Huffman tree.
  * Parameters:
  *      pitem Pointer to each node in the Huffman tree.
  *      param N/A.
  * Return value:  CBF_CONTINUE only.
  */
 int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
-{
-	/* Current node is an external node. */
+{	/* Current node is an external node. */
 	REGISTER P_TNODE_BY pnode = (P_TNODE_BY)pitem;
+	DWC4100(param); /* Disable warning. */
 	if (NULL == pnode->ppnode[LEFT] && NULL == pnode->ppnode[RIGHT])
 	{	/* Node is a leaf. */
 		REGISTER P_TNODE_BY parent = ((_P_HFMNOD)pnode->pdata)->parent;
@@ -200,8 +201,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 			psi->Symbol.bits = 0;
 			psi->Symbol.sgnb = 0;
 			while (NULL != parent)
-			{
-				/* Padding bit one onto value. */
+			{	/* Padding bit one onto value. */
 				if (parent->ppnode[RIGHT] == pnode)
 					psi->Symbol.sgnb |= (size_t)(1 << psi->Symbol.bits);
 				/* Increase number of bits. */
@@ -216,14 +216,13 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 			psi->Symbol.bits = 1;
 			psi->Symbol.sgnb = 0;
 		}
-		DWC4100(param); /* Disable warning. */
 	}
 	return CBF_CONTINUE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFHFMCompareSymbolFreq
- * Description:   Compare symbol by its frequency.
+ * Description:   Compare symbols by their frequencices.
  * Parameters:
  *          x Pointer to any symbol in array. And cast it into (void *).
  *          y Pointer to any symbol in array. And cast it into (void *).
@@ -244,7 +243,7 @@ int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
  *          n Number of symbols in the buffer. The unit of n is sizeof(unsigned char).
  * Return value:  Pointer to a new created sized array.
  *                Each element in the sized array that this function returned is a HFM_SYMBOL structure.
- *                If any error occurred during encoding, function would be interrupted and return a NULL.
+ *                If any error occurred during encoding, function would be interrupted and return NULL.
  * Tip:           Symbol table is important for decoding. You may need to store the symbol table onto an external disk.
  */
 P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
@@ -278,6 +277,7 @@ P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
 					*(ptbl++) = i[(_P_SMBINF)stbl->pdata].Symbol; /* Copy a structure once a time. */
 			else
 				goto Lbl_Failed;
+			
 			/* Resize output table. */
 			strResizeArrayZ(otbl, i, sizeof(HFM_SYMBOL));
 		}
@@ -297,21 +297,22 @@ Lbl_Failed:
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
  *          s The buffer you want to encode.
  *          n Number of elements in the buffer. The unit of n is sizeof(unsigned char).
- * Return value:  Pointer to a new created bit stream. This bit stream stores encoded string.
- *                If any error occurred during encoding, 
- *                function would be interrupted and return a NULL pointer.
- * Tip:           Symbol table is important for decoding. You may need to store the symbol table onto an external disk.
- *                This function can encode sub string but use the symbol table of a whole string.
- * Usage:         // #include <stdio.h> // Invoke function printf.
- *                // #define STR1 "This is a test, and that is another test."
- *                // #define STR2 "This" // Sub string.
- *                // P_ARRAY_Z par = treCreateHuffmanTable(STR1, strlen(STR1) + 1);
- *                // P_BITSTREAM pbi = treHuffmanEncoding(par, STR2, strlen(STR2) + 1);
- *                // P_BITSTREAM pbo = treHuffmanDecoding(par, pbi);
- *                // printf("%s\n", pbo->arrz.pdata);	
- *                // strDeleteBitStream(pbi);
- *                // strDeleteBitStream(pbo);
- *                // strDeleteArrayZ(par);
+ * Return value:  Pointer to a new created bit stream. This bit stream stores the encoded string.
+ *                If any error occurred during encoding, function would be interrupted and return a NULL pointer.
+ * Tip:           A symbol table is important for decoding.
+ *                You may get a symbol table after invoking function treCreateHuffmanTable by transferring
+ *                the same buffer s of treHuffmanEncoding into function treCreateHuffmanTable.
+ *                This function can encode sub string but uses the symbol table of a whole string.
+ * Usage:         #include <stdio.h> // Invoke function printf.
+ *                #define STR1 "This is a test, and that is another test."
+ *                #define STR2 "This" // Sub string.
+ *                P_ARRAY_Z par = treCreateHuffmanTable(STR1, strlen(STR1) + 1);
+ *                P_BITSTREAM pbi = treHuffmanEncoding(par, STR2, strlen(STR2) + 1);
+ *                P_BITSTREAM pbo = treHuffmanDecoding(par, pbi);
+ *                printf("%s\n", pbo->arrz.pdata);	
+ *                strDeleteBitStream(pbi);
+ *                strDeleteBitStream(pbo);
+ *                strDeleteArrayZ(par);
  *                Result: This
  */
 P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
@@ -363,9 +364,9 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treHFMRebuildHuffmanTree
- * Description:   This function is used to build a Huffman tree from symbol table.
+ * Description:   This function is used to build a Huffman tree from a given symbol table.
  * Parameter:
- *      stbl Pointer to a symbol table array.
+ *      stbl Pointer to a sized array for symbol table.
  * Return value:  Pointer to the root node of a new created binary tree.
  * Tip:           You need to free binary tree after decoding.
  */
@@ -420,13 +421,11 @@ Lbl_Building_Failed:
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
  *          s The encoded bit stream you want to decode.
  * Return value:  Pointer to a new created bit stream. This bit stream stores the decoded string.
- *                If any error occurred during decoding, function would be interrupted and return a NULL.
- * Caution:       ptable must NOT be value NULL.
- *                (*) if users called this function, parameter bit stream s would be altered to empty.
- * Tip:           You could get a symbol table from invoking function treHuffmanEncoding.
- *                A symbol table will output from the parameter pptable of function treHuffmanEncoding.
- *                You may either get a bit stream as the parameter of function treHuffmanDecoding from
- *                the return value of function treHuffmanEncoding.
+ *                If any error occurred during decoding, function would be interrupted and return NULL.
+ * Caution:       ptable must be allocated first.
+ * Tip:           You could get a symbol table from invoking function treCreateHuffmanTable by the same string you want to encode as a parameter.
+ *                You may either get a bit stream as the parameter of function treHuffmanDecoding to decode from the return value of function treHuffmanEncoding.
+ *                Please refer to function treHuffmanEncoding for more details of usages in advance.
  */
 P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 {

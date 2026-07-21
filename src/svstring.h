@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0718261202L00504
+ * File ID:     0306170921Y0721260731L00515
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -107,7 +107,7 @@ typedef struct st_FindingInfo {
 } FindingInfo, * P_FindingInfo;
 
 /* Miscellaneous functions for linear data structures. */
-void        svSwap                         (void *       pleft,    void *       pright,    void *       ptemp,   size_t       size);
+void        svSwap                         (void *       pleft,    void *       ptemp,     void *       pright,  size_t       size);
 void        svShellSort                    (void *       pbase,    void *       ptemp,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 void *      svQuickSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svMergeSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
@@ -138,6 +138,7 @@ size_t      strLevelArrayZ_O               (P_ARRAY_Z    parrz);
 int         strTraverseArrayZ              (P_ARRAY_Z    parrz,    size_t       size,      CBF_TRAVERSE cbftvs,  size_t       param,  bool        brev);
 void *      strCopyArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
 void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    psrc,      size_t       size);
+P_ARRAY_Z   strCreateCopyArrayZ            (P_ARRAY_Z    psrc,     size_t       size);
 void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,      size_t       index);
 ptrdiff_t   strIndexOfArrayZ_O             (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size);
 size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    bool         brev);
@@ -202,6 +203,7 @@ void        strFreeBitStream               (P_BITSTREAM  pbstm);
 P_BITSTREAM strCreateBitStream             (void);
 void        strDeleteBitStream             (P_BITSTREAM  pbstm);
 void *      strCopyBitStream               (P_BITSTREAM  pdest,    P_BITSTREAM  psrc);
+P_BITSTREAM strCreateCopyBitStream         (P_BITSTREAM  psrc);
 bool        strBitStreamIsEmpty_O          (P_BITSTREAM  pbstm);
 bool        strBitStreamPush               (P_BITSTREAM  pbstm,    bool         value);
 bool        strBitStreamPop                (P_BITSTREAM  pbstm);
@@ -215,6 +217,7 @@ void        strFreeMatrix_O                (P_MATRIX     pmtx);
 P_MATRIX    strCreateMatrix                (size_t       ln,       size_t       col,     size_t       size);
 void        strDeleteMatrix_O              (P_MATRIX     pmtx);
 void *      strCopyMatrix                  (P_MATRIX     pdest,    P_MATRIX     psrc,    size_t       size);
+P_MATRIX    strCreateCopyMatrix            (P_MATRIX     psrc,     size_t       size);
 void *      strResizeMatrix                (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * pval,    size_t       size);
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
@@ -224,12 +227,13 @@ bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
-/* Functions for bit matrices. */
-void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bval);
+/* Functions for bit matrices/maps. */
+void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);
-P_BITMAT    strCreateBMap                  (size_t       ln,       size_t       col,     bool         val);
+P_BITMAT    strCreateBMap                  (size_t       ln,       size_t       col,     bool         bini,    bool         val);
 void        strDeleteBMap_O                (P_BITMAT     pbm);
 void *      strCopyBMap_O                  (P_BITMAT     pdest,    P_BITMAT     psrc);
+P_BITMAT    strCreateCopyBMap              (P_BITMAT     psrc);
 bool        strGetBitBMap                  (P_BITMAT     pbm,      size_t       ln,      size_t       col);
 bool        strSetBitBMap                  (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bval);
 /* Functions for sparse matrices. */
@@ -238,6 +242,7 @@ void        strFreeSparseMatrix            (P_SPAMAT     pmtx);
 P_SPAMAT    strCreateSparseMatrix          (size_t       ln,       size_t       col);
 void        strDeleteSparseMatrix          (P_SPAMAT     pmtx);
 P_SPAMAT    strCopySparseMatrix            (P_SPAMAT     pdest,    P_SPAMAT     psrc,    size_t       size);
+P_SPAMAT    strCreateCopySparseMatrix      (P_SPAMAT     psrc,     size_t       size);
 void *      strGetValueSparseMatrix        (void *       pval,     P_SPAMAT     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueSparseMatrix        (P_SPAMAT     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
 bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     psrc,    size_t       size);
@@ -247,8 +252,10 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #define svIndexOf_M(pbase_M, pitem_M, size_M) ((ptrdiff_t)((ptrdiff_t)(pitem_M) - (ptrdiff_t)(pbase_M)) / (ptrdiff_t)(size_M))
 /* Functions in svatom.c. */
 #define strFreeArrayZ_M(parrz_M) do { \
-	free((parrz_M)->pdata); \
-	(parrz_M)->pdata = NULL; \
+	if (NULL != (parrz_M)->pdata) /* Circumvent freeing a NULL pointer. */ { \
+		free((parrz_M)->pdata); \
+		(parrz_M)->pdata = NULL; \
+	} \
 	(parrz_M)->num = 0; \
 } while (0)
 #define strDeleteArrayZ_M(parrz_M) do { \
@@ -257,14 +264,18 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 } while (0)
 /* Macros for nodes. */
 #define strFreeNodeS_M(pnode_M) do { \
-	free((pnode_M)->pdata); \
+	if (NULL != (pnode_M)->pdata) /* Circumvent freeing a NULL pointer. */ \
+		free((pnode_M)->pdata); \
+		(pnode_M)->pdata = NULL; \
 } while (0)
 #define strDeleteNodeS_M(pnode_M) do { \
 	strFreeNodeS_M(pnode_M); \
 	free(pnode_M); \
 } while (0)
 #define strFreeNodeD_M(pnode_M) do { \
-	free((pnode_M)->pdata); \
+	if (NULL != (pnode_M)->pdata) /* Circumvent freeing a NULL pointer. */ \
+		free((pnode_M)->pdata); \
+		(pnode_M)->pdata = NULL; \
 } while (0)
 #define strDeleteNodeD_M(pnode_M) do { \
 	strFreeNodeD_M(pnode_M); \

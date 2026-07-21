@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0719261023L02786
+ * File ID:     0905171125M0719261023L02776
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -281,7 +281,7 @@ int _grpCBFIndegreeVertexPuppet(void * pitem, size_t param)
  * Description:   This function is used to calculate the in-degree of a vertex.
  * Parameters:
  *      pitem Pointer to each VERTEX_L in a single list node's data pointer.
- *      param Pointer to a size_t[2] array of which is declared in the caller.
+ *      param Pointer to a size_t[2] array which is declared in the caller.
  * Return value:  CBF_CONTINUE only.
  */
 int _grpCBFIndegreeVertex(void * pitem, size_t param)
@@ -411,7 +411,7 @@ void grpInitL_O(P_GRAPH_L pgrp)
 }
 
 /* Function name: grpFreeL
- * Description:   Retract a graph of which is allocated by function grpInitL.
+ * Description:   Retract a graph which is allocated by function grpInitL.
  * Parameter:
  *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
@@ -436,7 +436,7 @@ P_GRAPH_L grpCreateL_O(void)
 }
 
 /* Function name: grpDeleteL
- * Description:   Delete a graph of which is allocated by function grpCreateL.
+ * Description:   Delete a graph which is allocated by function grpCreateL.
  * Parameter:
  *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
@@ -958,10 +958,10 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 	/* Fill distance into array. Pick the specific value off the array and sign it.
 	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
 	 */
-	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)((bool)barrd ? ~(size_t)0 : (size_t)false), false);
+	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)(barrd ? ~(size_t)0 : (size_t)false), false);
 	prec = (P_VTXREC)strBinarySearchArrayZ(parrz, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 	if (NULL != prec)
-		prec->dist = (bool)barrd ? (size_t)0 : (size_t)true;
+		prec->dist = barrd ? (size_t)0 : (size_t)true;
 	else
 		return false;
 	return true;
@@ -1218,24 +1218,24 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                    l = grpDijkstraShortestPathL(p, 1, 1); // Returns NULL.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           Tips of use:
- *                //#include <stdio.h>
- *                //#include "svgraph.h"
- *                //
- *                //int cbftvsprint(void * pitem, size_t param) {
- *                //	P_VTXREC p = (P_VTXREC)((P_NODE_D)pitem)->pdata;
- *                //	DWC4100(param);
- *                //	printf("vid = %zd, dist = %zd\n", p->vid, p->dist);
- *                //	return CBF_CONTINUE;
- *                //}
- *                //
- *                //P_GRAPH_L p = grpCreateL();
- *                //P_LIST_D pl;
- *                //pl = grpDijkstraShortestPathL(p, vids, vide);
- *                //if (pl) {
- *                //strTraverseLinkedListDC_N(*pl, NULL, cbftvsprint, 0, false);
- *                //strDeleteLinkedListDC(pl, false);
- *                //}
- *                //grpDeleteL(p);
+ *                #include <stdio.h>
+ *                #include "svgraph.h"
+ *                
+ *                int cbftvsprint(void * pitem, size_t param) {
+ *                	P_VTXREC p = (P_VTXREC)((P_NODE_D)pitem)->pdata;
+ *                	DWC4100(param);
+ *                	printf("vid = %zd, dist = %zd\n", p->vid, p->dist);
+ *                	return CBF_CONTINUE;
+ *                }
+ *                
+ *                P_GRAPH_L p = grpCreateL();
+ *                P_LIST_D pl;
+ *                pl = grpDijkstraShortestPathL(p, vids, vide);
+ *                if (pl) {
+ *                strTraverseLinkedListDC_N(*pl, NULL, cbftvsprint, 0, false);
+ *                strDeleteLinkedListDC(pl, false);
+ *                }
+ *                grpDeleteL(p);
  */
 P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 {
@@ -1469,7 +1469,7 @@ bool _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 		if (NULL == (pnarr = (strLevelArrayZ(parrz) - 1)[(P_ARRAY_Z *)parrz->pdata] = strCreateArrayZ(2, sizeof(size_t))))
 			return false; /* Allocation failure. */
 		if (x > y)
-			svSwap(&x, &y, &t, sizeof(size_t));
+			svSwap(&x, &t, &y, sizeof(size_t));
 		/* Arrange x and y in the array by increasing order. */
 		0[(size_t *)pnarr->pdata] = x;
 		1[(size_t *)pnarr->pdata] = y;
@@ -1677,7 +1677,7 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  *                Usually topological sort runs for directed acyclic graphics(DAGs).
  * Tip:           P_ARRAY_Z prtn = grpTopologicalSortL(pgrp);
- *                // Users may use these following codes to detect whether a graph has a cycle.
+ *                Users may use these following codes to detect whether a graph has a cycle.
  *                if (NULL != prtn && grpVerticesCountL(pgrp) > strLevelArrayZ(prtn))
  *                    printf("The graph pgrp has a cycle.");
  */
@@ -2241,7 +2241,7 @@ void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
 }
 
 /* Function name: grpFreeM_O
- * Description:   Retract a graph of which is allocated by function grpInitM.
+ * Description:   Retract a graph which is allocated by function grpInitM.
  * Parameter:
  *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
@@ -2268,7 +2268,7 @@ P_GRAPH_M grpCreateM(size_t vtxc)
 }
 
 /* Function name: grpDeleteM_O
- * Description:   Delete a graph of which is allocated by function grpCreateM.
+ * Description:   Delete a graph which is allocated by function grpCreateM.
  * Parameter:
  *      pgrp Pointer to the graph you want to delete from main memory.
  * Return value:  N/A.
@@ -2504,52 +2504,47 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col)
 	{
-		P_BITMAT pbmvist = strCreateBMap(1, pgrp->ln, false);
-		P_STACK_A pstk = stkCreateA(pgrp->ln, sizeof(size_t));
-		REGISTER size_t i;
 		size_t j;
-
-		if (NULL == pbmvist)
+		STACK_A stk;
+		BITMAT bmvist;
+		REGISTER size_t i;
+		
+		if (NULL == stkInitA(&stk, pgrp->ln, sizeof(size_t)))
+			return CBF_CONTINUE;
+		
+		if (NULL == strInitBMap(&bmvist, 1, pgrp->ln, true, false))
 		{
-			if (NULL != pstk)
-				stkDeleteA(pstk);
+			stkFreeA(&stk);
 			return CBF_CONTINUE;
 		}
 
-		if (NULL == pstk)
+		stkPushA(&stk, &vid, sizeof(size_t));
+
+		while (! stkIsEmptyA(&stk))
 		{
-			strDeleteBMap(pbmvist);
-			return CBF_CONTINUE;
-		}
+			stkPopA(&vid, sizeof(size_t), &stk);
 
-		stkPushA(pstk, &vid, sizeof(size_t));
-
-		while (! stkIsEmptyA(pstk))
-		{
-			stkPopA(&vid, sizeof(size_t), pstk);
-
-			if (! strGetBitBMap(pbmvist, 0, vid))
+			if (! strGetBitBMap(&bmvist, 0, vid))
 			{
 				if (CBF_CONTINUE != cbftvs((void *)vid, param))
 				{
-					strDeleteBMap(pbmvist);
-					stkDeleteA(pstk);
+					stkFreeA(&stk);
+					strFreeBMap(&bmvist);
 					return CBF_TERMINATE;
 				}
 				
-				strSetBitBMap(pbmvist, 0, vid, true);
+				strSetBitBMap(&bmvist, 0, vid, true);
 				
 				for (i = pgrp->ln; i > 0; --i)
 				{
 					j = i - 1;
 					if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, vid, j, sizeof(size_t)))
-						stkPushA(pstk, &j, sizeof(size_t));
+						stkPushA(&stk, &j, sizeof(size_t));
 				}
 			}
 		}
-
-		strDeleteBMap(pbmvist);
-		stkDeleteA(pstk);
+		stkFreeA(&stk);
+		strFreeBMap(&bmvist);
 	}
 	return CBF_CONTINUE;
 }
@@ -2567,51 +2562,46 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  */
 int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col)
+	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col) /* The adjacent matrix is valid. */
 	{
-		P_BITMAT pbmvist = strCreateBMap(1, pgrp->ln, false);
-		P_QUEUE_A pq = queCreateAC(pgrp->ln, sizeof(size_t));
 		size_t i;
+		QUEUE_A q;
+		BITMAT bmvist;
+		
+		if (NULL == queInitAC(&q, pgrp->ln, sizeof(size_t)))
+			return CBF_CONTINUE;
 
-		if (NULL == pbmvist)
+		if (NULL == strInitBMap(&bmvist, 1, pgrp->ln, true, false))
 		{
-			if (NULL != pq)
-				queDeleteAC(pq);
+			queFreeAC(&q);
 			return CBF_CONTINUE;
 		}
 
-		if (NULL == pq)
-		{
-			strDeleteBMap(pbmvist);
-			return CBF_CONTINUE;
-		}
+		queInsertAC(&q, &vid, sizeof(size_t));
+		strSetBitBMap(&bmvist, 0, vid, true);
 
-		queInsertAC(pq, &vid, sizeof(size_t));
-		strSetBitBMap(pbmvist, 0, vid, true);
-
-		while (! queIsInitialAC(pq))
+		while (! queIsInitialAC(&q))
 		{
-			queRemoveAC(&vid, sizeof(size_t), pq);
+			queRemoveAC(&vid, sizeof(size_t), &q);
 
 			if (CBF_TERMINATE == cbftvs((void *)vid, param))
 			{
-				strDeleteBMap(pbmvist);
-				queDeleteAC(pq);
+				queFreeAC(&q);
+				strFreeBMap(&bmvist);
 				return CBF_TERMINATE;
 			}			
 			
 			for (i = 0; i < pgrp->ln; ++i)
 			{
-				if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, vid, i, sizeof(size_t)) && ! strGetBitBMap(pbmvist, 0, i))
+				if (0 != *(size_t *)strGetValueMatrix(NULL, pgrp, vid, i, sizeof(size_t)) && ! strGetBitBMap(&bmvist, 0, i))
 				{
-					queInsertAC(pq, &i, sizeof(size_t));
-					strSetBitBMap(pbmvist, 0, i, true);
+					queInsertAC(&q, &i, sizeof(size_t));
+					strSetBitBMap(&bmvist, 0, i, true);
 				}
 			}
 		}
-
-		strDeleteBMap(pbmvist);
-		queDeleteAC(pq);
+		queFreeAC(&q);
+		strFreeBMap(&bmvist);
 	}
 	return CBF_CONTINUE;
 }

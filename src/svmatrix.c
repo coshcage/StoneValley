@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0221250535L00955
+ * File ID:     0213191430N0221250535L01057
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -33,7 +33,7 @@
  *         ln Number of lines in the matrix.
  *        col Number of columns in the matrix.
  *       size Size of each element in the matrix.
- * Return value:  Pointer to the buffer of a matrix.
+ * Return value:  Pointer to the memory buffer of a matrix.
  * Caution:       Address of pmtx Must Be Allocated first.
  */
 void * strInitMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
@@ -49,7 +49,7 @@ void * strInitMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 }
 
 /* Function name: strFreeMatrix_O
- * Description:   Retract a matrix that is allocated by function strInitMatrix.
+ * Description:   Retract a matrix in main memory that is allocated by function strInitMatrix.
  * Parameter:
  *      pmtx Pointer to a matrix you want to release.
  * Return value:  N/A.
@@ -108,26 +108,62 @@ void strDeleteMatrix_O(P_MATRIX pmtx)
  *                If function returned NULL, it indicated a duplicating failure.
  * Caution:       After calling, the size of pdest->arrz equaled to the size of psrc->arrz.
  *                Address of pdest and psrc Must Be Allocated first.
- *                Destination and source shall not overlap.
+ *                (*) The buffer of destination and source shall not overlap.
  */
 void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
 {
-	if
-	(
-		NULL !=
-		(	/* Destination has not been initialized yet. */
-			0 == strLevelArrayZ(&pdest->arrz) ?
-			strInitArrayZ(&pdest->arrz, psrc->arrz.num, size) :
-			strResizeArrayZ(&pdest->arrz, psrc->arrz.num, size)
-		)
-	)
+	if (strLevelArrayZ(&pdest->arrz) == strLevelArrayZ(&psrc->arrz)) /* Two matrices have length equivalent buffers respectively. */
 	{
 		pdest->ln  = psrc->ln;
 		pdest->col = psrc->col;
-		return strCopyArrayZ(&pdest->arrz, &psrc->arrz, size);
+		
+		if (pdest->arrz.pdata != psrc->arrz.pdata)
+			return strMoveArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
+		else
+			return (void *)pdest->arrz.pdata; /* Two matrices share a same buffer. */
 	}
-	strFreeMatrix(pdest);
+	else
+	{
+		if (pdest->arrz.pdata != psrc->arrz.pdata)
+		{
+			if
+			(
+				NULL !=
+				(	/* Destination has not been initialized yet. */
+					0 == strLevelArrayZ(&pdest->arrz) && NULL == pdest->arrz.pdata ?
+					strInitArrayZ  (&pdest->arrz, strLevelArrayZ(&psrc->arrz), size) :
+					strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), size)
+				)
+			)
+			{
+				pdest->ln  = psrc->ln;
+				pdest->col = psrc->col;
+				
+				return strMoveArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
+			}
+			/* Resize failed. The original buffer of pdest will be kept. */
+		}
+		else /* Two matrices share a same buffer with different sizes of element. */
+			return (void *)pdest->arrz.pdata; /* Leave this circumstance alone. */
+	}
 	return NULL;
+}
+
+/* Function name: strCreateCopyMatrix
+ * Description:   Make a copy of matrix from a template source.
+ * Parameters:
+ *       psrc Pointer to the template source matrix to copy from.
+ *       size Size of each element in both two matrices.
+ * Return value:  A pointer to the new copied matrix.
+ *                If function returned NULL, it indicated a duplicating failure.
+ * Caution:       Address of psrc Must Be Allocated first.
+ */
+P_MATRIX strCreateCopyMatrix(P_MATRIX psrc, size_t size)
+{
+	REGISTER P_MATRIX prtn = strCreateMatrix(psrc->ln, psrc->col, size);
+	if (NULL != prtn)
+		strCopyArrayZ(&prtn->arrz, &psrc->arrz, size);
+	return prtn;
 }
 
 /* Function name: strResizeMatrix
@@ -263,12 +299,12 @@ void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, si
  */
 void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
 {
-	MATRIX mtxt;
-	mtxt.arrz.num = 0;
+	MATRIX mtxt = { 0 };
 	if (NULL != strCopyMatrix(&mtxt, pmtx, size))
 	{
 		REGISTER size_t i, j, m, n;
 		REGISTER void * pa, * pb;
+		size_t t;
 		for (i = 0; i < mtxt.ln; ++i)
 		{
 			m = i * size;
@@ -281,7 +317,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
 					memcpy(pb, pa, size);
 			}
 		}
-		svSwap(&(pmtx->ln), &(pmtx->col), &(mtxt.ln), sizeof(size_t));
+		svSwap(&pmtx->ln, &t, &pmtx->col, sizeof(size_t));
 		strFreeMatrix(&mtxt);
 		return pmtx->arrz.pdata;
 	}
@@ -304,11 +340,11 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
  *                All line number dln, sln and column number dcol, scol start from 0.
  * Tip:           Assume that we have two matrices A and B, then a projection can be the following situation.
  *                strProjectMatrix(&A, 1, 1, &B, 1, 1);
- *                // Before projection:        : After projection:
- *                // A=| a b c d | B=| q r s | : A=| a b c d | B=| q r s |
- *                //   | e f g h |   | t u v | :   | e u.v.h |   | t u v |
- *                //   | i j k l |   | w x y | :   | i x.y.l |   | w x y |
- *                //   | m n o p |             :   | m n o p |
+ *                Before projection:        : After projection:
+ *                A=| a b c d | B=| q r s | : A=| a b c d | B=| q r s |
+ *                  | e f g h |   | t u v | :   | e u.v.h |   | t u v |
+ *                  | i j k l |   | w x y | :   | i x.y.l |   | w x y |
+ *                  | m n o p |             :   | m n o p |
  */
 bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, size_t sln, size_t scol, size_t size)
 {
@@ -445,9 +481,9 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *                strFreeMatrix(&mc);
  *                strFreeMatrix(&ma);
  *                strFreeMatrix(&mb);
- *                // | 1 2 3 |   | 3 2 |   | 20 26 |
- *                // | 4 5 6 | * | 1 6 | = | 47 62 |
- *                //             | 5 4 |
+ *                | 1 2 3 |   | 3 2 |   | 20 26 |
+ *                | 4 5 6 | * | 1 6 | = | 47 62 |
+ *                            | 5 4 |
  *                  __      _n_
  *                 /  \     \  |
  *                |      ==  >   a  b
@@ -506,11 +542,14 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  *        pbm Pointer to a bit matrix you want to initialize.
  *         ln Number of lines in the bit matrix.
  *        col Number of columns in the bit matrix.
+ *       bini true  to call memset to initialize the bit matrix as value bval.
+ *            This parameter enables bval.
+ *            false not to initialize the bit matrix to save execution time.
  *       bval Initialize all bits as true or false.
  * Return value:  Pointer to the buffer.
  * Caution:       Address of pbm Must Be Allocated first.
  */
-void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
+void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bini, bool bval)
 {
 	stdiv_t dr = stdiv(ln * col, CHAR_BIT); /* ln bit * col bit / CHAR_BIT. */
 	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(UCHART)))
@@ -518,9 +557,11 @@ void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 		pbm->ln = pbm->col = 0;
 		return NULL;
 	}
-	memset(pbm->arrz.pdata, bval ? UCHAR_MAX : false, sizeof(UCHART) * pbm->arrz.num);
+	if (bini)
+		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, sizeof(UCHART) * pbm->arrz.num);
+	
+	pbm->ln  = ln;
 	pbm->col = col;
-	pbm->ln = ln;
 	return pbm->arrz.pdata;
 }
 
@@ -542,15 +583,18 @@ void strFreeBMap_O(P_BITMAT pbm)
  * Parameters:
  *         ln Number of lines in a bit matrix.
  *        col Number of columns in a bit matrix.
+ *       bini true  to initialize the bit matrix as value bval.
+ *            This parameter enables bval.
+ *            false not to initialize the bit matrix to save execution time.
  *       bval Initialize all bits as value true or false.
  * Return value:  Pointer to a new created bit matrix.
  */
-P_BITMAT strCreateBMap(size_t ln, size_t col, bool val)
+P_BITMAT strCreateBMap(size_t ln, size_t col, bool bini, bool bval)
 {
 	P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
 	if (NULL == pbm)
 		return NULL;
-	if (NULL == strInitBMap(pbm, ln, col, val))
+	if (NULL == strInitBMap(pbm, ln, col, bini, bval))
 	{	/* Allocation failure. */
 		free(pbm);
 		return NULL;
@@ -574,8 +618,8 @@ void strDeleteBMap_O(P_BITMAT pbm)
 /* Function name: strCopyBMap_O
  * Description:   Copy a bit matrix from source to destination.
  * Parameters:
- *      pdest Pointer to the destination matrix whose content is to be copied.
- *       psrc Pointer to the source of matrix to be copied.
+ *      pdest Pointer to the destination bit map whose content is a copy of source.
+ *       psrc Pointer to the source of bit map to be copied.
  * Return value:  pdest->arrz.pdata
  *                If function returned NULL, it indicated a duplicating failure.
  * Caution:       After calling, the size of pdest->arrz equaled to the size of psrc->arrz.
@@ -586,6 +630,22 @@ void strDeleteBMap_O(P_BITMAT pbm)
 void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
 {
 	return strCopyMatrix(pdest, psrc, sizeof(UCHART));
+}
+
+/* Function name: strCreateCopyBMap
+ * Description:   Create a duplicate of a bit matrix/map from source.
+ * Parameter:
+ *      psrc Pointer to the source matrix to be copied.
+ * Return value:  A new pointer points to duplicate map.
+ *                If function returned NULL, it would indicate a duplicating failure.
+ * Caution:       Address of psrc Must Be Allocated first.
+ */
+P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
+{
+	REGISTER P_BITMAT prtn = strCreateBMap(psrc->ln, psrc->col, false, false);
+	if (NULL != prtn)
+		strCopyMatrix(prtn, psrc, sizeof(UCHART));
+	return prtn;
 }
 
 /* Function name: strGetBitBMap
@@ -697,7 +757,7 @@ bool strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
 	if (NULL != strInitArrayZ(&pmtx->bita, ln, sizeof(size_t)))
 		memset(pmtx->bita.pdata, 0, sizeof(size_t) * strLevelArrayZ(&pmtx->bita));
 	strInitLinkedListSC(&pmtx->datlst);
-	return (NULL != strInitBMap(&pmtx->bmask, ln, col, false));
+	return (NULL != strInitBMap(&pmtx->bmask, ln, col, true, false));
 }
 
 /* Function name: strFreeSparseMatrix
@@ -712,6 +772,7 @@ void strFreeSparseMatrix(P_SPAMAT pmtx)
 	strFreeArrayZ(&pmtx->bita);
 	strFreeBMap(&pmtx->bmask);
 	strFreeLinkedListSC(&pmtx->datlst);
+	pmtx->datlst = NULL;
 }
 
 /* Function name: strCreateSparseMatrix
@@ -745,9 +806,9 @@ void strDeleteSparseMatrix(P_SPAMAT pmtx)
 /* Function name: strCopySparseMatrix
  * Description:   Copy a sparse matrix from source to destination.
  * Parameters:
- *      pdest Pointer to the destination sparse matrix whose content is to be copied.
- *       psrc Pointer to the source of the sparse matrix to be copied.
- *       size Size of each element in both two sparse matrices.
+ *      pdest Pointer to the destination sparse matrix whose content is a copy of source.
+ *       psrc Pointer to the source of the sparse matrix as a template to be copied from.
+ *       size Size of each element in the source sparse matrix.
  * Return value:  If duplication succeeded, function would return the same pointer as pdest.
  *                If function returned NULL, it indicated a duplicating failure.
  * Caution:       Address of pdest and psrc Must Be Allocated first.
@@ -755,19 +816,60 @@ void strDeleteSparseMatrix(P_SPAMAT pmtx)
  */
 P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 {
-	if (NULL != strResizeArrayZ(&pdest->bita, strLevelArrayZ(&psrc->bita), sizeof(size_t)))
+	if (pdest == psrc)
+		return pdest;
+	else
 	{
-		if (NULL != strCopyArrayZ(&pdest->bita, &psrc->bita, size))
+		if (strLevelArrayZ(&pdest->bita) != strLevelArrayZ(&psrc->bita))
+			if (NULL == strResizeArrayZ(&pdest->bita, strLevelArrayZ(&psrc->bita), sizeof(size_t)))
+				return NULL; /* Can not resize Fenwick tree. */
+		
+		/* Copy embedded Fenwick tree in first step. */
+		if (0 != strLevelArrayZ(&psrc->bita) && 0 != strLevelArrayZ(&pdest->bita))
 		{
-			if (NULL != strCopyBMap(&pdest->bmask, &psrc->bmask))
-			{
+			if (NULL == strMoveArrayZ(&pdest->bita, &psrc->bita, sizeof(size_t)))
+				return NULL;
+		}
+		else
+			return NULL; /* A corrupted Fenwick tree makes further procedure impossible. */
+		
+		/* Then copy embedded bit map in case if the Fenwick tree is valid. */
+		if (NULL != strCopyBMap(&pdest->bmask, &psrc->bmask))
+		{	/* Finally copy data in list. */
+			if (pdest->datlst != psrc->datlst)
+			{	/* In case data lists are not overlapped. */
 				if (NULL != pdest->datlst)
+				{
 					strFreeLinkedListSC(&pdest->datlst); /* Free old data chain first. */
+					pdest->datlst = NULL; /* No data in source to be copied from. It is an invalid but sensible sparse matrix. */
+				}
 				if (NULL != psrc->datlst)
 					pdest->datlst = strCopyLinkedListSC(psrc->datlst, size);
-				return pdest;
 			}
+			return pdest;
 		}
+	}
+	return NULL;
+}
+
+/* Function name: strCreateCopySparseMatrix
+ * Description:   Create a copy of a sparse matrix from source.
+ * Parameters:
+ *       psrc Pointer to the source of the sparse matrix to copy from.
+ *       size Size of each element in the source sparse matrix.
+ * Return value:  A new pointer points to a new allocated sparse matrix as a copy from psrc.
+ *                If function returned NULL, it indicates a duplicating failure.
+ * Caution:       Address of psrc Must Be Allocated first.
+ */
+P_SPAMAT strCreateCopySparseMatrix(P_SPAMAT psrc, size_t size)
+{
+	REGISTER P_SPAMAT prtn = strCreateSparseMatrix(psrc->bmask.ln, psrc->bmask.col);
+	if (NULL != prtn)
+	{
+		if (NULL == strCopySparseMatrix(prtn, psrc, size))
+			strDeleteSparseMatrix(prtn); /* Failed to resize the Fenwick tree of return, return NULL. */
+		else
+			return prtn;
 	}
 	return NULL;
 }
@@ -876,7 +978,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 		for (i = l, j = 0; j < m; ++j)
 			if (pmtx->bmask.arrz.pdata[i] & (_CHAR_SIGN >> j))
 				++s;
-		if (false != (bool)(0x01 & u))
+		if (BOOLIZE(0x01 & u))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))
 			{

@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0717261323L00744
+ * File ID:     0306170948D0720260614L00813
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -61,19 +61,22 @@ stdiv_t stdiv(size_t numerator, size_t denominator)
  * Description:   Swap contents of two memory blocks.
  * Parameters:
  *      pleft Pointer to the left block you want to swap with the block of pright pointed.
- *     pright Pointer to the right block you want to swap with the block of pleft pointed.
- *      ptemp Pointer to a temporary buffer of which has a size that equals to parameter size.
+ *      ptemp Pointer to a temporary buffer which has a size that equals to parameter size.
  *            (*) Users shall manage this temporary buffer manually in the caller function.
+ *     pright Pointer to the right block you want to swap with the block of pleft pointed.
  *       size Size of memory that pleft, pright and ptemp pointed.
  * Return value:  N/A.
  * Caution:       Length of each memory that pleft, pright and ptemp pointed shall in the same size.
  *                (*) Memory blocks that pleft, pright and ptemp pointed shall not overlap.
  */
-void svSwap(void * pleft, void * pright, void * ptemp, size_t size)
+void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 {	/* Swap two elements. */
-	memcpy(ptemp,  pleft, size);
-	memcpy(pleft, pright, size);
-	memcpy(pright, ptemp, size);
+	if (pleft != pright)
+	{	/* It is worth to swap. */
+		memmove(ptemp,  pleft, size);
+		memmove(pleft, pright, size);
+		memmove(pright, ptemp, size);
+	}
 }
 
 /* Functions for bit streams. */
@@ -82,7 +85,7 @@ void svSwap(void * pleft, void * pright, void * ptemp, size_t size)
  * Description:   Initialize a bit stream.
  * Parameter:
  *     pbstm Pointer to the bit stream you want to operate with.
- * Return value:  Pointer to the buffer of bit stream.
+ * Return value:  Pointer to the buffer of the bit stream.
  *                NULL indicates that initialization failed.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
@@ -114,7 +117,7 @@ void strFreeBitStream(P_BITSTREAM pbstm)
  */
 P_BITSTREAM strCreateBitStream(void)
 {
-	P_BITSTREAM pbstm = (P_BITSTREAM) malloc(sizeof(BITSTREAM));
+	REGISTER P_BITSTREAM pbstm = (P_BITSTREAM) malloc(sizeof(BITSTREAM));
 	if (NULL != pbstm)
 	{
 		if (NULL == strInitBitStream(pbstm))
@@ -142,30 +145,69 @@ void strDeleteBitStream(P_BITSTREAM pbstm)
 /* Function name: strCopyBitStream
  * Description:   Copy a bit stream from source to destination.
  * Parameters:
- *      pdest Pointer to the destination stream whose content is to be copied.
- *       psrc Pointer to the source of stream to be copied.
+ *      pdest Pointer to the destination stream.
+ *       psrc Pointer to the source stream whose content is to be copied from.
  * Return value:  pdest->arrz.pdata
- *                If function returned NULL, it indicated a duplicating failure.
+ *                If function returned NULL, it indicates a duplicating failure.
  * Caution:       After calling, the size of pdest->arrz equaled to the size of psrc->arrz.
  *                Address of pdest and psrc Must Be Allocated first.
  *                Destination and source shall not overlap.
  */
 void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
 {
-	if (NULL != strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART)))
+	if (strLevelArrayZ(&pdest->arrz) != strLevelArrayZ(&psrc->arrz))
 	{
-		pdest->bilc = (NULL == strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(UCHART)) ? 0 : psrc->bilc);
-		return pdest->arrz.pdata;
+		if (NULL != strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART))) /* Balance buffer length. */
+		{
+			if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(UCHART)))
+			{
+				pdest->bilc = psrc->bilc;
+				return pdest->arrz.pdata;
+			}
+		}
+	}
+	else
+	{
+		if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(UCHART)))
+		{
+			pdest->bilc = psrc->bilc;
+			return pdest->arrz.pdata;
+		}
 	}
 	pdest->bilc = 0;
 	return NULL;
+}
+
+/* Function name: strCreateCopyBitStream
+ * Description:   Make a copy of a bit stream from source.
+ * Parameter:
+ *      psrc Pointer to the source stream whose content is to be copied from.
+ * Return value:  A new pointer to a bit stream that is identical to psrc.
+ *                If function returned NULL, it indicates a duplicating failure.
+ * Caution:       Address of psrc Must Be Allocated first.
+ */
+P_BITSTREAM strCreateCopyBitStream(P_BITSTREAM psrc)
+{
+	REGISTER P_BITSTREAM prtn = (P_BITSTREAM) malloc(sizeof(BITSTREAM));
+	if (NULL != prtn)
+	{
+		prtn->bilc = 0;
+		if (NULL == strInitArrayZ(&prtn->arrz, strLevelArrayZ(&psrc->arrz), sizeof(UCHART)))
+		{	/* Allocation failure. */
+			free(prtn);
+			prtn = NULL;
+		}
+		else
+			prtn->bilc = psrc->bilc;
+	}
+	return prtn;
 }
 
 /* Function name: strBitStreamIsEmpty_O
  * Description:   Test a bit stream. Check Whether the bit stream is empty or not.
  * Parameter:
  *     pbstm Pointer to the bit stream you want to operate on.
- * Return value:  true indicates that the bit stream is empty.
+ * Return value:  true  indicates that the bit stream is empty.
  *                false indicates that the bit stream is NOT empty.
  * Caution:       Address of pbstm Must Be Allocated first.
  * Tip:           A macro version of this function named strBitStreamIsEmpty_M is available.
@@ -179,9 +221,9 @@ bool strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
  * Description:   Push a bit onto the start of the stream.
  * Parameters:
  *      pbstm Pointer to the bit stream you want to operate on.
- *      value A bit value you are about to push into.
- * Return value:  true indicates that no error has been occurred.
- *                false indicates that error occurred while pushing bit onto the stream.
+ *      value A bit value you are about to push.
+ * Return value:  true  indicates that no error has been occurred.
+ *                false indicates that error occurred while pushing a bit onto the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
 bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
@@ -214,11 +256,10 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
  * Description:   Pop a bit from the start of the stream.
  * Parameter:
  *     pbstm Pointer to the bit stream you want to operate on.
- * Return value:  Popped bit. Converted to bool. Values true 1 or false 0.
+ * Return value:  Popped bit, converted to bool. valued true or false.
  * Caution:       Use this function on a bit stream which is not empty.
  *                Address of pbstm Must Be Allocated first.
- * Tip:           Use function strBitStreamIsEmpty first
- *                To check whether bit stream is empty.
+ * Tip:           Use function strBitStreamIsEmpty first to check whether the bit stream is empty.
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
@@ -250,8 +291,8 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
  * Parameters:
  *      pbstm Pointer to the bit stream you want to operate on.
  *      value A bit value you are about to add.
- * Return value:  true indicates that no error has been occurred.
- *                false indicates that error occurred while adding bit to the stream.
+ * Return value:  true  indicates that no error has been occurred.
+ *                false indicates that error occurred while adding a bit to the stream.
  * Caution:       Address of pbstm Must Be Allocated first.
  */
 bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
@@ -282,11 +323,10 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
  * Description:   Extract a bit from the end of the stream.
  * Parameter:
  *     pbstm Pointer to the bit stream you want to operate on.
- * Return value:  Extracted bit. Converted to bool. Values true 1 or false 0.
+ * Return value:  Extracted bit, converted to bool, valued true or false.
  * Caution:       Use this function on a bit stream that is not empty.
  *                Address of pbstm Must Be Allocated first.
- * Tip:           Use function strBitStreamIsEmpty firstly
- *                to check whether the bit stream is empty.
+ * Tip:           Use function strBitStreamIsEmpty firstly to check whether the bit stream is empty.
  */
 bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
@@ -299,38 +339,37 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
 				pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return false != (bool)r;
+	return BOOLIZE(r);
 }
 
 /* Function name: strBitStreamLocate
- * Description:   Locate a bit in the stream by index.
+ * Description:   Locate a bit in the stream by given index.
  * Parameters:
  *      pbstm Pointer to the bit stream you want to operate on.
- *      index Index value to be evaluated. Starts from 0.
- * Return value:  true or false.
+ *      index Index value to be evaluated. Index starts from 0.
+ * Return value:  true or false reflects the exact bit by given index.
  * Caution:       Address of pbstm Must Be Allocated first.
- *                If index exceeded the range, function would return false.
+ *                If index exceeded the range, function would always return false.
  */
 bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
 	if (index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc)
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
-		return false != (pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
+		return !!(pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
 	}
 	return false;
 }
 
 /* Function name: strBitStreamReverse
- * Description:   Reverse bits in bit stream.
+ * Description:   Reverse bits in a bit stream.
  * Parameter:
  *     pbstm Pointer to the bit stream you want to operate on.
  * Return value:  N/A.
  * Caution:       Used only if the bit stream is not empty.
  *                Address of pbstm Must Be Allocated first.
- * Tip:           Use function strBitStreamIsEmpty first
- *                to check whether bit stream is empty.
- *                Use this function to calculate bitwise NOT pbstm.
+ * Tip:           Use function strBitStreamIsEmpty first to check whether the bit stream is empty.
+ *                Use this function to calculate bitwise not to pbstm.
  */
 void strBitStreamReverse(P_BITSTREAM pbstm)
 {
@@ -359,6 +398,7 @@ void strBitStreamReverse(P_BITSTREAM pbstm)
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  N/A.
+ * Caution:       Shell sort is not stable.
  */
 void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -389,8 +429,11 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
- *                otherwise, this function would return value NULL.
+ * Return value:  If sorting succeeded, this function would return the same pointer to pbase,
+ *                otherwise, this function would return NULL.
+ * Caution:       Quick sort is not stable.
+ * Tip:           The complexity of quick sort flows between O(n^2) and O(n*log n),
+ *                however median of three partitioning and Hoare's method reduces O(n^2) upmost complexity in a greater extent.
  */
 void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -422,22 +465,22 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			REGISTER PUCHAR pc = (PUCHAR) pbase + size * r;
 			REGISTER PUCHAR pd = pc - size;
 			if (cbfcmp(pa, pb) > 0)
-				svSwap(pa, pb, ptemp, size);
+				svSwap(pa, ptemp, pb, size);
 			if (cbfcmp(pa, pc) > 0)
-				svSwap(pa, pc, ptemp, size);
+				svSwap(pa, ptemp, pc, size);
 			if (cbfcmp(pb, pc) > 0)
-				svSwap(pb, pc, ptemp, size);
-			svSwap(pb, pd, ptemp, size);
+				svSwap(pb, ptemp, pc, size);
+			svSwap(pb, ptemp, pd, size);
 			for (i = l, pb = pd;; )
 			{
 				while (cbfcmp((++i, pa += size), pd) < 0);
 				while (cbfcmp(pb -= size, pd) > 0);
 				if (pa < pb)
-					svSwap(pa, pb, ptemp, size);
+					svSwap(pa, ptemp, pb, size);
 				else
 					break;
 			}
-			svSwap(pa, pd, ptemp, size);
+			svSwap(pa, ptemp, pd, size);
 			/* Push parameters onto stack. */
 			pstk->l = i + 1;
 			pstk->r = r;
@@ -465,8 +508,10 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
- *                otherwise, this function would return value NULL.
+ * Return value:  If sorting succeeded, this function would return the same pointer as pbase pointed,
+ *                otherwise, this function would return NULL.
+ * Caution:       Merge sort is stable.
+ * Tip:           Merge sort takes O(2*n) space complexity and O(n*log n) time complexity constantly.
  */
 void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -523,11 +568,11 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  If sorting succeeded, this function would return a same pointer as pbase pointed,
- *                otherwise, this function would return value NULL.
- * Tip:           The complexity of quick sort flows between O(n^2) and O(n*log n), while heap sort gives us a constant complexity. 
- *                This algorithm takes O(1) space and O(n log n) time complexity.
- *                Notice that heap sort is not stable.
+ * Return value:  If sorting succeeded, this function would return the same pointer as pbase,
+ *                otherwise, this function would return NULL.
+ * Caution:       Heap sort is not stable.
+ * Tip:           Heap sort gives us a constant complexity of O(1) space and O(n*log n) time.
+ *                However heap sort runs slower than quick sort in practice for a possible same buffer.
  */
 void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {	
@@ -562,14 +607,14 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			if (cbfcmp(py, p) >= 0)
 				break;
 
-			svSwap(py, p, ptemp, size);
+			svSwap(py, ptemp, p, size);
 			k = l;
 		}
 	}
 
 	for (i = n - 1; i > 0; --i)
 	{
-		svSwap(px, px + size * i, ptemp, size);
+		svSwap(px, ptemp, px + size * i, size);
 		m = i >> 1;
 		k = 0;
 		while (k < m)
@@ -588,7 +633,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			if (cbfcmp(py, p) >= 0)
 				break;
 
-			svSwap(py, p, ptemp, size);
+			svSwap(py, ptemp, p, size);
 			k = l;
 		}
 	}
@@ -599,18 +644,19 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 }
 
 /* Function name: svBinarySearch
- * Description:   Generic binary searching algorithm.
+ * Description:   Generic binary search algorithm.
  * Parameters:
  *       pkey Pointer to the object that serves as a key for searching.
- *      pbase Pointer to the first object of the array to be sorted.
+ *      pbase Pointer to the first object of the array to search.
  *        num Number of elements in an array that pointed by base.
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
- *            The left pointer of function cbfcmp points to the key.
+ *            The left pointer of function cbfcmp always points to the key.
  *            The right pointer of function cbfcmp may point to any position in the array.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  A pointer to an entry in the array that matches the searching key.
  *                If this function cannot find key, it will return NULL.
+ * Caution:       Binary search must be performed on an ordered array usually sorted increasingly.
  */
 void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -641,26 +687,49 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
  * Description:   Binary search a block of consecutive memory by given condition.
  * Parameters:
  *       pkey Pointer to the object that serves as a key for searching.
- *      pbase Pointer to the first object of the array to be sorted.
+ *      pbase Pointer to the first object of the array to start search.
  *        num Number of elements in an array that pointed by base.
  *       size Size in bytes of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
- *            The left pointer of function cbfcmp points to the key.
+ *            The left pointer of function cbfcmp always points to the key.
  *            The right pointer of function cbfcmp may point to any position in the array.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  *     method An enumeration indicates the method of searching.
- *            Assume we have an array: [1,2,3,5,5,5,8,9], and pkey points to 5.
- *            EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY [1,2,3,5,5,5,8,9]
+ *            Assume we have an array: [1,2,3,5,5,5,8,9], and pkey points to a key valued 5.
+ *            EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY [1,2,3,5,5,5,8,9]->index:3
  *                                                          ^
- *            EBS_LAST_LESS_THAN_KEY                 [1,2,3,5,5,5,8,9]
+ *            EBS_LAST_LESS_THAN_KEY                 [1,2,3,5,5,5,8,9]->index:2
  *                                                        ^
- *            EBS_FIRST_GREATER_THAN_KEY             [1,2,3,5,5,5,8,9]
+ *            EBS_FIRST_GREATER_THAN_KEY             [1,2,3,5,5,5,8,9]->index:6
  *                                                                ^
- *            EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY     [1,2,3,5,5,5,8,9]
+ *            EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY     [1,2,3,5,5,5,8,9]->index:5
  *                                                              ^
  * Return value:  A pointer to an entry in the array that matches the searching key.
  *                If the value of parameter method does not belong to BSearch
  *                or function cannot find the key, function will return NULL.
+ * Caution:       Binary search must be performed on an ordered array usually sorted increasingly.
+ * Tip:           Here is a way to get index:
+ *                #include <stdio.h>
+ *                #include "svstring.h"
+ *                int cmp(const void * px, const void * py) { return *(int *)px - *(int *)py; }
+ *                int main() {
+ *                void * p; int k = 5; int a[] = {1,2,3,5,5,5,8,9};
+ *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 3.
+ *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 2.
+ *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 6.
+ *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
+ *                k = 7; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
+ *                k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 7.
+ *                k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
+ *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Can not find 10.
+ *                return 0;
+ *                }
  */
 void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp, BSearch method)
 {
@@ -675,7 +744,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		{
 			m = (l + r) >> 1;
 
-			if (cbfcmp(p + m * s, pkey) < 0)
+			if (cbfcmp(pkey, p + m * s) > 0)
 				l = m;
 			else
 				r = m;
@@ -688,7 +757,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		{
 			m = (l + r) >> 1;
 
-			if (cbfcmp(p + m * s, pkey) < 0)
+			if (cbfcmp(pkey, p + m * s) > 0)
 				l = m;
 			else
 				r = m;
@@ -701,7 +770,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		{
 			m = (l + r) >> 1;
 
-			if (cbfcmp(p + m * s, pkey) <= 0)
+			if (cbfcmp(pkey, p + m * s) >= 0)
 				l = m;
 			else
 				r = m;
@@ -714,7 +783,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 		{
 			m = (l + r) >> 1;
 
-			if (cbfcmp(p + m * s, pkey) <= 0)
+			if (cbfcmp(pkey, p + m * s) >= 0)
 				l = m;
 			else
 				r = m;
@@ -734,7 +803,7 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
  *      pbase Pointer to the starting address.
  *      pitem Pointer to the address of the object to be calculated.
  *       size Size in bytes of each element in the array memory.
- * Return value:  The offset of the item in an array.
+ * Return value:  The offset of the item in an array started from 0.
  * Tip:           A macro version of this function named svIndexOf_M is available.
  */
 ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)

@@ -2,7 +2,7 @@
  * Name:        svstack.h
  * Description: Stacks interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318170912X0728191037L00159
+ * File ID:     0318170912X0721260255L00164
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -42,7 +42,7 @@ P_STACK_A stkCreateA    (size_t    num,   size_t       size);
 void      stkDeleteA    (P_STACK_A pstka);
 bool      stkIsEmptyA_O (P_STACK_A pstka);
 bool      stkIsFullA_O  (P_STACK_A pstka);
-void *    stkPushA_O    (P_STACK_A pstka, const void * pitem, size_t    size);
+void      stkPushA_O    (P_STACK_A pstka, const void * pitem, size_t    size);
 void      stkPopA_O     (void *    pitem, size_t       size,  P_STACK_A pstka);
 void      stkPeepA_O    (void *    pitem, size_t       size,  P_STACK_A pstka);
 size_t    stkLevelA_O   (P_STACK_A pstka);
@@ -54,16 +54,23 @@ void      stkDeleteL_O  (P_STACK_L pstkl);
 bool      stkIsEmptyL_O (P_STACK_L pstkl);
 P_NODE_S  stkPushL      (P_STACK_L pstkl, const void * pitem, size_t    size);
 P_NODE_S  stkPopL       (void *    pitem, size_t       size,  P_STACK_L pstkl);
-void      stkPeepL_O    (void *    pitem, size_t       size,  P_STACK_L pstkl);
+bool      stkPeepL_O    (void *    pitem, size_t       size,  P_STACK_L pstkl);
 size_t    stkLevelL_O   (P_STACK_L pstkl);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svstack.c. */
 #define stkIsEmptyA_M(pstka_M) (!(pstka_M)->top)
 #define stkIsFullA_M(pstka_M) ((pstka_M)->arr.num == (pstka_M)->top)
-#define stkPushA_M(pstka_M, pitem_M, size_M) (memcpy((pstka_M)->arr.pdata + ((pstka_M)->top++) * (size_M), (pitem_M), (size_M)))
+#define stkPushA_M(pstka_M, pitem_M, size_M) do { \
+	if (NULL != (pitem_M)) \
+		memcpy((pstka_M)->arr.pdata + (pstka_M)->top * (size_M), (pitem_M), (size_M)); \
+	++(pstka_M)->top; \
+} while (0)
 #define stkPopA_M(pitem_M, size_M, pstka_M) do { \
-	memcpy((pitem_M), (pstka_M)->arr.pdata + (--(pstka_M)->top) * (size_M), (size_M)); \
+	if (NULL != (pitem_M)) \
+		memcpy((pitem_M), (pstka_M)->arr.pdata + (--(pstka_M)->top) * (size_M), (size_M)); \
+	else \
+		--(pstka_M)->top; \
 } while (0)
 #define stkPeepA_M(pitem_M, size_M, pstka_M) do { \
 	memcpy((pitem_M), (pstka_M)->arr.pdata + ((pstka_M)->top - 1) * (size_M), (size_M)); \
@@ -80,9 +87,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	strDeleteLinkedListSC(pstkl_M); \
 } while (0)
 #define stkIsEmptyL_M(pstkl_M) (!(*pstkl_M))
-#define stkPeepL_M(pitem_M, size_M, pstkl_M) do { \
-	memcpy((pitem_M), (*(pstkl_M))->pdata, (size_M)); \
-} while (0)
+#define stkPeepL_M(pitem_M, size_M, pstkl_M) (stkIsEmptyL_M(pstkl_M) ? false : (memcpy(pitem_M, (*pstkl_M)->pdata, size_M), true))
 #define stkLevelL_M(pstkl_M) (strLevelLinkedListSC(*(pstkl_M)))
 
 /* Library optimal switch. */

@@ -2,7 +2,7 @@
  * Name:        svqueue.c
  * Description: Queues.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0417171257F0604231338L00510
+ * File ID:     0417171257F0720260718L00545
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -44,7 +44,7 @@ void * queInitAC(P_QUEUE_A pqueac, size_t num, size_t size)
 }
 
 /* Function name: queFreeAC
- * Description:   Retract the circular queue of which is allocated by function queInitAC.
+ * Description:   Retract the circular queue which is allocated by function queInitAC.
  * Parameter:
  *    pqueac Pointer to the circular queue you want to release.
  * Return value:  N/A.
@@ -79,7 +79,7 @@ P_QUEUE_A queCreateAC(size_t num, size_t size)
 }
 
 /* Function name: queDeleteAC
- * Description:   Delete the circular queue of which is allocated by function queCreateAC.
+ * Description:   Delete the circular queue which is allocated by function queCreateAC.
  * Parameter:
  *    pqueac Pointer to the circular queue you want to release.
  * Return value:  N/A.
@@ -95,8 +95,8 @@ void queDeleteAC(P_QUEUE_A pqueac)
  * Description:   Determine whether a queue is initial.
  * Parameter:
  *    pqueac Pointer to the circular queue you want to test.
- * Return value:  If the queue were initial, function would return a true,
- *                otherwise it would return a false.
+ * Return value:  If the queue were initial, function would return true,
+ *                otherwise it would return false.
  * Caution:       Address of pqueac Must Be Allocated first.
  * Tip:           A macro version of this function named queIsInitialA_M is available.
  */
@@ -170,7 +170,7 @@ void queInitL_O(P_QUEUE_L pquel)
 }
 
 /* Function name: queFreeL
- * Description:   Retract a linked list queue of which is allocated by function queInitL.
+ * Description:   Retract a linked list queue which is allocated by function queInitL.
  * Parameter:
  *     pquel Pointer to the linked list queue you want to release.
  * Return value:  N/A.
@@ -197,7 +197,7 @@ P_QUEUE_L queCreateL(void)
 }
 
 /* Function name: queDeleteL
- * Description:   Delete a linked list queue of which is allocated by function queCreateL.
+ * Description:   Delete a linked list queue which is allocated by function queCreateL.
  * Parameter:
  *     pquel Pointer to the linked list queue you want to release.
  * Return value:  N/A.
@@ -213,8 +213,8 @@ void queDeleteL(P_QUEUE_L pquel)
  * Description:   Determine whether a linked list queue is empty or not.
  * Parameter:
  *     pquel Pointer to the linked list queue you want to test.
- * Return value:  If the queue were empty, function would return a true,
- *                otherwise function would return a false.
+ * Return value:  If the queue were empty, function would return true,
+ *                otherwise function would return false.
  * Caution:       Address of pquel Must Be Allocated first.
  * Tip:           A macro version of this function named queIsEmptyL_M is available.
  */
@@ -236,14 +236,46 @@ size_t queUsageL_O(P_QUEUE_L pquel)
 	return strLevelLinkedListSC(pquel->pfront);
 }
 
+/* Function name: queHeadL_O
+ * Description:   Have a peek at the head of a queue.
+ * Parameters:
+ *      pitem Pointer to a buffer of an element.
+ *       size Size of the data that pitem pointed at and each element in the queue.
+ *      pquel Pointer to the queue you want to peek.
+ * Return value:  true  Peek successfully.
+ *                false Peek failed.
+ * Caution:       Address of pquel Must Be Allocated first.
+ * Tip:           A macro version of this function named queHeadL_M is available.
+ */
+bool queHeadL_O(void * pitem, size_t size, P_QUEUE_L pquel)
+{
+	return NULL != pquel->pfront ? (memcpy(pitem, pquel->pfront->pdata, size), true) : false;
+}
+
+/* Function name: queTailL_O
+ * Description:   Have a peek at the tail of a queue.
+ * Parameters:
+ *      pitem Pointer to a buffer of an element to be set with.
+ *       size Size of element.
+ *      pquel Pointer to the queue you want to peek.
+ * Return value:  true  Peek successfully.
+ *                false Peek failed.
+ * Caution:       Address of pquel Must Be Allocated first.
+ * Tip:           A macro version of this function named queTailL_M is available.
+ */
+bool queTailL_O(void * pitem, size_t size, P_QUEUE_L pquel)
+{
+	return NULL != pquel->prear ? (memcpy(pitem, pquel->prear->pdata, size), true) : false;
+}
+
 /* Function name: queInsertL
  * Description:   Insert an element into linked-list queue.
  * Parameters:
  *      pquel Pointer to the linked list queue you want to operate with.
- *      pitem Pointer to the address of an element.
+ *      pitem Pointer to an element.
  *       size Size of each element in the queue.
- * Return value:  If function work succeeded, it would return a true,
- *                otherwise function would return a false.
+ * Return value:  If function worked successfully it would return true,
+ *                otherwise function would return false.
  */
 bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 {
@@ -263,12 +295,12 @@ bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 /* Function name: queRemoveL
  * Description:   Dequeue an element from linked-list queue.
  * Parameters:
- *      pitem Pointer to the address of an element.
- *       size Size of each element in the queue.
+ *      pitem Pointer to an address of data to receive deleted one.
+ *       size Size of the data that pitem pointed at and each element in the queue.
  *      pquel Pointer to the linked list queue you want to operate with.
- * Return value:  If function work succeeded, it would return a true,
- *                otherwise function would return a false.
- * Caution:       To check whether queue is empty or not is NOT necessary.
+ * Return value:  If function worked successfully it would return true,
+ *                otherwise function would return false.
+ * Caution:       To check whether queue is empty or not is NOT necessary before invoking this function.
  */
 bool queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
 {
@@ -306,7 +338,7 @@ void queInitDL_O(P_DEQUE_DL pdeque)
 }
 
 /* Function name: queFreeDL
- * Description:   Retract a doubly linked list queue of which is allocated by function queInitDL.
+ * Description:   Retract a doubly linked list queue which is allocated by function queInitDL.
  * Parameter:
  *    pdeque Pointer to the doubly linked list queue you want to release.
  * Return value:  N/A.
@@ -333,7 +365,7 @@ P_DEQUE_DL queCreateDL(void)
 }
 
 /* Function name: queDeleteDL
- * Description:   Delete a doubly linked list queue of which is allocated by function queCreateDL.
+ * Description:   Delete a doubly linked list queue which is allocated by function queCreateDL.
  * Parameter:
  *    pdeque Pointer to the linked list queue you want to release.
  * Return value:  N/A.
@@ -349,8 +381,8 @@ void queDeleteDL(P_DEQUE_DL pdeque)
  * Description:   Determine whether a doubly linked list queue is empty.
  * Parameter:
  *    pdeque Pointer to the doubly linked list queue you want to test.
- * Return value:  If the queue were empty, function would return a true,
- *                otherwise function would return a false.
+ * Return value:  If the queue were empty, function would return true,
+ *                otherwise function would return false.
  * Caution:       Address of pdeque Must Be Allocated first.
  * Tip:           A macro version of this function named queIsEmptyDL_M is available.
  */
@@ -373,28 +405,45 @@ size_t queUsageDL_O(P_DEQUE_DL pdeque)
 }
 
 /* Function name: queFirstDL_O
- * Description:   Have a peek at the first element in he queue.
+ * Description:   Have a peek at the first element in a double ended queue.
  * Parameters:
  *      pitem Pointer to a buffer of an element.
- *       size Size of element.
- *    pdeque Pointer to the doubly linked list queue you want to check.
- * Return value:  N/A.
+ *       size Size of the data that pitem pointed at and each element in the queue.
+ *     pdeque Pointer to the doubly linked list queue you want to peek.
+ * Return value:  true  Peek successfully.
+ *                false Peek failed.
  * Caution:       Address of pdeque Must Be Allocated first.
  * Tip:           A macro version of this function named queFirstDL_M is available.
  */
-void queFirstDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
+bool queFirstDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
 {
-	memcpy(pitem, pdeque->pfirst->pdata, size);
+	return NULL != pdeque->pfirst ? (memcpy(pitem, pdeque->pfirst->pdata, size), true) : false;
+}
+
+/* Function name: queLastDL_O
+ * Description:   Have a peek at the last element in the double ended queue.
+ * Parameters:
+ *      pitem Pointer to a buffer of an element to be set with.
+ *       size Size of element.
+ *     pdeque Pointer to the doubly linked list queue you want to peek.
+ * Return value:  true  Peek successfully.
+ *                false Peek failed.
+ * Caution:       Address of pdeque Must Be Allocated first.
+ * Tip:           A macro version of this function named queLastDL_M is available.
+ */
+bool queLastDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
+{
+	return NULL != pdeque->plast ? (memcpy(pitem, pdeque->plast->pdata, size), true) : false;
 }
 
 /* Function name: quePushDL
  * Description:   Push an element onto the top of a doubly linked list queue.
  * Parameters:
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
- *      pitem Pointer to the address of element you want to insert.
+ *      pitem Pointer to the element you want to insert.
  *       size Size of element.
  * Return value:  Pointer to the new inserted node.
- *                If insertion failed, function would return a NULL.
+ *                If insertion failed, function would return NULL.
  */
 P_NODE_D quePushDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
 {
@@ -414,12 +463,13 @@ P_NODE_D quePushDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
 }
 
 /* Function name: quePopDL
- * Description:   Pop an element out of a doubly linked list queue from the top position.
+ * Description:   Pop an element from a doubly linked list queue from the top position.
  * Parameters:
- *      pitem Pointer to the address of element you want to insert.
+ *      pitem Pointer to an element to be set with the removal data.
  *       size Size of element.
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
- * Return value:  Pointer to the item which is lain after the deleted one.
+ * Return value:  Pointer to the item which is lain after the deleted one,
+ *                that is the new double ended queue header.
  *                If deletion failed, function returns NULL.
  */
 P_NODE_D quePopDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
@@ -440,26 +490,11 @@ P_NODE_D quePopDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
 	return ptmp;
 }
 
-/* Function name: queLastDL_O
- * Description:   Have a peek at the last element in he queue.
- * Parameters:
- *      pitem Pointer to a buffer of an element.
- *       size Size of element.
- *     pdeque Pointer to the doubly linked list queue you want to check.
- * Return value:  N/A.
- * Caution:       Address of pdeque Must Be Allocated first.
- * Tip:           A macro version of this function named queLastDL_M is available.
- */
-void queLastDL_O(void * pitem, size_t size, P_DEQUE_DL pdeque)
-{
-	memcpy(pitem, pdeque->plast->pdata, size);
-}
-
 /* Function name: queInjectDL
  * Description:   Insert an element at the bottom of a doubly linked list queue.
  * Parameters:
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
- *      pitem Pointer to the address of element you want to insert.
+ *      pitem Pointer to the element you want to insert into the queue.
  *       size Size of element.
  * Return value:  Pointer to the new inserted node.
  *                If insertion failed, function returns NULL.
@@ -482,13 +517,13 @@ P_NODE_D queInjectDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
 }
 
 /* Function name: queEjectDL
- * Description:   Remove an element out of a doubly linked list queue from the bottom.
+ * Description:   Remove an element from a doubly linked list queue at the bottom of the queue.
  * Parameters:
- *      pitem Pointer to the address of element you want to insert.
+ *      pitem Pointer to element you want to set with the bottom one to be deleting in the queue.
  *       size Size of element.
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
  * Return value:  Pointer to the item which is lain before the deleted one.
- *                If deletion failed, function would return a NULL.
+ *                If deletion failed, function would return NULL.
  */
 P_NODE_D queEjectDL(void * pitem, size_t size, P_DEQUE_DL pdeque)
 {

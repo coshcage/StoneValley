@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0718260740L00999
+ * File ID:     0901171620L0720261147L01021
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -32,8 +32,8 @@ int _setCBFIntersectionHPuppet (void * pitem, size_t param);
  * Function name: _setCBFIsSubsetHPuppet
  * Description:   This function is used to check the sub set property of a set.
  * Parameters:
- *      pitem Pointer to each NODE_S in hash table.
- *      param Pointer to a size_t[3] array.
+ *      pitem Pointer to each element in each node of a chaining hash table.
+ *      param Pointer to a size_t[3] array of which
  *            size_t[0] stores psetb of the caller function.
  *            size_t[1] stores a pointer to hash function.
  *            size_t[2] stores the size of each element.
@@ -46,8 +46,8 @@ int _setCBFIsSubsetHPuppet(void * pitem, size_t param)
 	(
 		NULL == hshSearchC
 		(
-			(P_HSHTBL_C) 0[(size_t *)param],
-			(CBF_HASH)1[(size_t *)param],
+			(P_HSHTBL_C)0[(size_t *)param],
+			(CBF_HASH)  1[(size_t *)param],
 			pitem,
 			2[(size_t *)param]
 		)
@@ -61,7 +61,7 @@ int _setCBFIsSubsetHPuppet(void * pitem, size_t param)
  * Parameters:
  *       pset Pointer to the set you want to allocate.
  *    buckets Number of buckets for the hash table in the set.
- *            This value shall be a prime number.
+ *            This value shall be a prime number that is larger than or equal to the amount of element to be inserted in the set.
  * Return value:  true  Succeeded.
  *                false Failed.
  * Caution:       Address of pset Must Be Allocated first.
@@ -73,7 +73,7 @@ bool setInitH_O(P_SET_H pset, size_t buckets)
 }
 
 /* Function name: setFreeH_O
- * Description:   Retract the set of which is allocated by function setInitH_O.
+ * Description:   Retract the set which is allocated by function setInitH_O.
  * Parameter:
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
@@ -88,8 +88,8 @@ void setFreeH_O(P_SET_H pset)
 /* Function name: setCreateH_O
  * Description:   Create a set.
  * Parameter:
- *   buckets Number of buckets for the hash table in the set.
- *           This value shall be a prime number.
+ *   buckets Number of buckets for the hash table set.
+ *           This value shall be a prime number that is larger than or equal to the amount of element to be inserted in the set.
  * Return value:  Pointer to the new allocated set.
  * Caution:       Address of pset Must Be Allocated first.
  * Tip:           A macro version of this function named setCreateH_M is available.
@@ -100,7 +100,7 @@ P_SET_H setCreateH_O(size_t buckets)
 }
 
 /* Function name: setDeleteH_O
- * Description:   Delete the set of which is allocated by function setCreateH_O.
+ * Description:   Delete the set which is allocated by function setCreateH_O.
  * Parameter:
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
@@ -113,17 +113,17 @@ void setDeleteH_O(P_SET_H pset)
 		hshDeleteC(pset);
 }
 
-/* Function name: setCopyH
- * Description:   Make a duplication of a hash table set.
+/* Function name: setCreateCopyH
+ * Description:   Make a duplication of a hash table set from another set.
  * Parameters:
  *       pset Pointer to the hash table set you want to copy.
  *       size Size of each element in the original set.
  * Return value:  Pointer to the copy set.
  * Caution:       Address of pset Must Be Allocated first.
  */
-P_SET_H setCopyH(P_SET_H pset, size_t size)
+P_SET_H setCreateCopyH(P_SET_H pset, size_t size)
 {
-	P_SET_H prtn = setCreateH(strLevelArrayZ(pset));
+	REGISTER P_SET_H prtn = setCreateH(strLevelArrayZ(pset));
 	
 	if (NULL != prtn)
 	{
@@ -144,7 +144,7 @@ P_SET_H setCopyH(P_SET_H pset, size_t size)
 }
 
 /* Function name: setSizeH_O
- * Description:   Determine how many elements there are in the set.
+ * Description:   Determine how many elements there are in a hash table set.
  * Parameter:
  *      pset Pointer to the set you want to test.
  * Return value:  Number of elements.
@@ -159,10 +159,9 @@ size_t setSizeH_O(P_SET_H pset)
 /* Function name: setIsEmptyH_O
  * Description:   Make a judgment whether a set is empty or not.
  * Parameter:
- *      pset Pointer to the stack you want to check.
- * Return value:
- *         true Set is empty.
- *        false Set is not empty.
+ *      pset Pointer to the hash table set you want to check.
+ * Return value:  true  Set is empty.
+ *                false Set is not empty.
  * Tip:           A macro version of this function named setIsEmptyH_M is available.
  */
 bool setIsEmptyH_O(P_SET_H pset)
@@ -176,11 +175,10 @@ bool setIsEmptyH_O(P_SET_H pset)
  *       pset Pointer to the set you want to check.
  *     cbfhsh Pointer to a hash function.
  *            The same set should use the same hash function.
- *      pitem Pointer to an element to want to check.
+ *      pitem Pointer to an element to check its belongings to a set.
  *       size Size of that element.
- * Return value:
- *         true Element belongs to the set.
- *        false Element does not belong to the set.
+ * Return value:  true  Element belongs to the set.
+ *                false Element does not belong to the set.
  * Tip:           A macro version of this function named setIsMemberH_M is available.
  */
 bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
@@ -189,16 +187,15 @@ bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t si
 }
 
 /* Function name: setIsSubsetH
- * Description:   Check whether a set is a sub set of another.
+ * Description:   Check whether a set is a sub set of another set.
  * Parameters:
  *      pseta Pointer to the set you want to check.
  *      psetb Pointer to the other set you want to check.
  *     cbfhsh Pointer to a hash function for psetb.
- *            Two sets should use the same hash function.
- *       size Size of that element.
- * Return value:
- *         true seta belongs to setb.
- *        false seta does not belong setb.
+ *            Two sets should use a same hash function.
+ *       size Size of each element in two sets.
+ * Return value:  true  seta belongs to setb.
+ *                false seta does not belong setb.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
 bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
@@ -215,16 +212,15 @@ bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 }
 
 /* Function name: setIsEqualH
- * Description:   Check whether a set equal to another.
+ * Description:   Check whether a set equal to another set.
  * Parameters:
  *      pseta Pointer to the set you want to check.
  *      psetb Pointer to the other set you want to check.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
- *            Two sets should use the same hash function.
+ *            Two sets should use a same hash function.
  *       size Size of element.
- * Return value:
- *         true Two sets are equal.
- *        false Two sets are NOT equal.
+ * Return value:  true  Two sets are equal.
+ *                false Two sets are NOT equal.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
 bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
@@ -237,14 +233,12 @@ bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
 /* Function name: setInsertH
  * Description:   Insert an element into a set.
  * Parameters:
- *       pset Pointer to the set you want to operate.
+ *       pset Pointer to the set you want to insert into.
  *     cbfhsh Pointer to a hash function.
- *            The same set should use the same hash function.
- *      pitem Pointer to an element to want to insert.
- *       size Size of that element.
- * Return value:
- *         true Insertion succeeded.
- *        false Insertion failed.
+ *      pitem Pointer to an element to insert.
+ *       size Size of that element to be inserted.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failed.
  * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
 bool setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
@@ -259,13 +253,11 @@ bool setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
  * Parameters:
  *       pset Pointer to the set you want to operate.
  *     cbfhsh Pointer to a hash function.
- *            The same set should use the same hash function.
- *      pitem Pointer to an element you want to remove.
+ *      pitem Pointer to an element you want to remove from a set.
  *       size Size of that element.
- * Return value:
- *         true Removal succeeded.
- *        false Removal failed.
- * Caution:  pset can not be NULL. Please check the value of pset before invoking.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
+ * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
 bool setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
 {
@@ -276,34 +268,35 @@ bool setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
  * Function name: _setCBFUnionHPuppet
  * Description:   This function is used to generate a union set.
  * Parameters:
- *      pitem Pointer to each NODE_S in hash table.
- *      param Pointer to a size_t[3] array.
+ *      pitem Pointer to each element in hash table.
+ *      param Pointer to a size_t[3] array of which
  *            size_t[0] stores psetr of the caller function.
- *            size_t[1] stores a pointer to hash function.
+ *            size_t[1] stores a pointer to a hash function.
  *            size_t[2] stores the size of each element.
- * Return value:  CBF_CONTINUE only.
+ * Return value:  CBF_CONTINUE  if insertion succeeded,
+ *                CBF_TERMINATE if insertion failed.
  */
 int _setCBFUnionHPuppet(void * pitem, size_t param)
 {
-	setInsertH
+	return setInsertH
 	(
-		(P_SET_H)0[(size_t *)param],
+		(P_SET_H) 0[(size_t *)param],
 		(CBF_HASH)1[(size_t *)param],
 		pitem,
 		2[(size_t *)param]
-	);
-	return CBF_CONTINUE;
+	) ? CBF_CONTINUE :
+	CBF_TERMINATE;
 }
 
 /* Function name: setCreateUnionH
- * Description:   Generate a union for two sets.
+ * Description:   Generate the union for two sets.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
- *            Two sets should use the same hash function.
- * Return value:  Pointer to a new set that contains the result of the union of two sets.
+ *            Two sets should use a same hash function.
+ * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
@@ -315,15 +308,19 @@ P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t si
 		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
 		if (NULL == psetr)
 			return NULL;
+		
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
-		if (NULL != pseta)
-			hshTraverseC(pseta, _setCBFUnionHPuppet, (size_t)a);
-		if (NULL != psetb)
-			hshTraverseC(psetb, _setCBFUnionHPuppet, (size_t)a);
+		if (NULL != pseta && CBF_CONTINUE != hshTraverseC(pseta, _setCBFUnionHPuppet, (size_t)a))
+			goto Lbl_Bad_Set;
+		
+		if (NULL != psetb && CBF_CONTINUE != hshTraverseC(psetb, _setCBFUnionHPuppet, (size_t)a))
+			goto Lbl_Bad_Set;
+		
 		if (setIsEmptyH(psetr))
 		{
+		Lbl_Bad_Set:
 			setDeleteH(psetr);
 			goto Lbl_Empty_Set;
 		}
@@ -337,17 +334,18 @@ Lbl_Empty_Set:
  * Function name: _setCBFIntersectionHPuppet
  * Description:   This function is used to generate an intersection set.
  * Parameters:
- *      pitem Pointer to each NODE_S in hash table.
- *      param Pointer to a size_t[5] array.
+ *      pitem Pointer to each element in hash table set.
+ *      param Pointer to a size_t[5] array of which
  *            size_t[0] stores psetr of the caller function.
- *            size_t[1] stores a pointer to hash function.
+ *            size_t[1] stores a pointer to a hash function.
  *            size_t[2] stores the size of each element.
  *            size_t[3] stores either pseta or psetb of the caller function. (Flexible)
  *            size_t[4] stores a boolean value.
- *                      If size_t[4] == false, Do insertion only when element in set
- *                      size_t[3] did not match elements in set size_t[0] at all.
+ *                      If size_t[4] is false, do insertion only when element in set size_t[3]
+ *                      did not match elements in set size_t[0] at all.
  *                      So that we can generate a difference set of set A and set B.
- * Return value:  CBF_CONTINUE only.
+ * Return value:  CBF_CONTINUE  if insertion succeeded,
+ *                CBF_TERMINATE if insertion failed.
  */
 int _setCBFIntersectionHPuppet(void * pitem, size_t param)
 {
@@ -355,33 +353,37 @@ int _setCBFIntersectionHPuppet(void * pitem, size_t param)
 	(
 		setIsMemberH
 		(
-			(P_SET_H)3[(size_t *)param],
+			(P_SET_H) 3[(size_t *)param],
 			(CBF_HASH)1[(size_t *)param],
 			pitem,
 			2[(size_t *)param]
-		) == (bool)4[(size_t *)param]
+		) == BOOLIZE(4[(size_t *)param])
 	)
 	{
-		setInsertH
+		if
 		(
-			(P_SET_H)0[(size_t *)param],
-			(CBF_HASH)1[(size_t *)param],
-			pitem,
-			2[(size_t *)param]
-		);
+			! setInsertH
+			(
+				(P_SET_H) 0[(size_t *)param],
+				(CBF_HASH)1[(size_t *)param],
+				pitem,
+				2[(size_t *)param]
+			)
+		)
+			return CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
 }
 
 /* Function name: setCreateIntersectionH
- * Description:   Generate an intersection between two sets.
+ * Description:   Generate the intersection between two sets.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
- *            Two sets should use the same hash function.
- * Return value:  Pointer to a new set that contains the result of the intersection between two sets.
+ *            Two sets should use a same hash function.
+ * Return value:  Pointer to a new set which is the intersection between two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
@@ -393,6 +395,7 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
 		if (NULL == psetr)
 			return NULL;
+		
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
@@ -400,15 +403,20 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 		if (NULL != psetb)
 		{
 			a[3] = (size_t)psetb;
-			hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a);
+			if (CBF_CONTINUE != hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a))
+				goto Lbl_Bad_Set;
 		}
+		
 		if (NULL != pseta && pseta != psetb)
 		{
 			a[3] = (size_t)pseta;
-			hshTraverseC(psetb, _setCBFIntersectionHPuppet, (size_t)a);
+			if (CBF_CONTINUE != hshTraverseC(psetb, _setCBFIntersectionHPuppet, (size_t)a))
+				goto Lbl_Bad_Set;
 		}
+		
 		if (setIsEmptyH(psetr))
 		{
+		Lbl_Bad_Set:
 			setDeleteH(psetr);
 			goto Lbl_Empty_Set;
 		}
@@ -419,14 +427,14 @@ Lbl_Empty_Set:
 }
 
 /* Function name: setCreateDifferenceH
- * Description:   Generate a difference set of two sets.
+ * Description:   Generate the difference set of two sets.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
  *            Two sets should use the same hash function.
- * Return value:  Pointer to a new set that contains the result of a difference set of two sets.
+ * Return value:  Pointer to a new set which is the difference set of two sets.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
 P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
@@ -437,12 +445,14 @@ P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size
 		size_t a[5];
 		if (NULL == psetr)
 			return NULL;
+		
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
 		a[3] = (size_t)psetb;
 		a[4] = false;
 		hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a);
+		
 		if (setIsEmptyH(psetr))
 		{
 			setDeleteH(psetr);
@@ -457,12 +467,12 @@ Lbl_Empty_Set:
 /* Function name: setTraverseItemH_O
  * Description:   Traverse each element in a hash table set.
  * Parameters:
- *       pset Pointer to the hash table set you want to operate.
+ *       pset Pointer to the hash table set you want to traverse.
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pset Must Be Allocated first.
- *                The type of pitem of function cbftvs is the type of pointer to the element you inserted into the set.
+ *                The type of pitem of function cbftvs is the type of pointer to the element that you inserted into the set.
  * Tip:           A macro named setTraverseItemH_M is available.
  */
 int setTraverseItemH_O(P_SET_H pset, CBF_TRAVERSE cbftvs, size_t param)
@@ -491,7 +501,7 @@ void setInitT_O(P_SET_T pset)
 }
 
 /* Function name: setFreeT_O
- * Description:   Retract the set of which is allocated by function setInitT_O.
+ * Description:   Retract the set which is allocated by function setInitT_O.
  * Parameter:
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
@@ -515,7 +525,7 @@ P_SET_T setCreateT_O(void)
 }
 
 /* Function name: setDeleteT_O
- * Description:   Delete the set of which is allocated by function setCreateT_O.
+ * Description:   Delete the set which is allocated by function setCreateT_O.
  * Parameter:
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
@@ -527,19 +537,26 @@ void setDeleteT_O(P_SET_T pset)
 	treDeleteBST(pset);
 }
 
-/* Function name: setCopyT
+/* Function name: setCreateCopyT
  * Description:   Make a duplication of a BST set.
  * Parameters:
  *       pset Pointer to the set you want to copy.
  *       size Size of each element in the original set.
  * Return value:  Pointer to the copy set.
+ *                If pset were empty this function would return NULL either.
  * Caution:       Address of pset Must Be Allocated first.
  */
-P_SET_T setCopyT(P_SET_T pset, size_t size)
+P_SET_T setCreateCopyT(P_SET_T pset, size_t size)
 {
-	P_SET_T prtn = setCreateT();
+	REGISTER P_SET_T prtn = setCreateT();
 	if (NULL != prtn)
-		*prtn = treCopyBST(*pset, size);
+	{
+		if (NULL == (*prtn = treCopyBST(*pset, size))) /* pset is a pointer to an empty set. */
+		{
+			setDeleteT(prtn);
+			return NULL;
+		}
+	}
 	return prtn;
 }
 
@@ -560,9 +577,8 @@ size_t setSizeT_O(P_SET_T pset)
  * Description:   Make a judgment whether a set is empty or not.
  * Parameter:
  *      pset Pointer to the set you want to check.
- * Return value:
- *         true Set is empty.
- *        false Set is not empty.
+ * Return value:  true  Set is empty.
+ *                false Set is not empty.
  * Tip:           A macro version of this function named setIsEmptyT_M is available.
  */
 bool setIsEmptyT_O(P_SET_T pset)
@@ -576,9 +592,8 @@ bool setIsEmptyT_O(P_SET_T pset)
  *       pset Pointer to the set you want to check.
  *      pitem Pointer to an element to want to check.
  *     cbfcmp Pointer to a comparison function for pset.
- * Return value:
- *         true Element belongs to the set.
- *        false Element does not belong to the set.
+ * Return value:  true  Element belongs to the set.
+ *                false Element does not belong to the set.
  * Tip:           A macro version of this function named setIsMemberT_M is available.
  */
 bool setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
@@ -588,9 +603,9 @@ bool setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _setCBFIsSubsetTPuppet
- * Description:   This function is used to check the sub set property of a set.
+ * Description:   This function is used to check the sub set property of a set to another set.
  * Parameters:
- *      pitem Pointer to each NODE_S in the tree.
+ *      pitem Pointer to each BSTNODE in the tree.
  *      param Pointer to a size_t[2] array.
  *            size_t[0] stores psetb of the caller function.
  *            size_t[1] stores a pointer to comparison function.
@@ -629,10 +644,14 @@ bool setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 	if (NULL != pseta)
 	{
 		size_t a[2];
-		a[0] = NULL != psetb ? (size_t)*psetb : (size_t)NULL;
-		a[1] = (size_t)cbfcmp;
 		if (setIsEmptyT(pseta))
 			return true; /* The empty set is the subset of any sets. */
+		
+		if (setIsEmptyT(psetb)) /* With the condition that seta is not empty. */
+			return false; /* The empty set cannot include any non empty set. */
+		
+		a[0] = NULL != psetb ? (size_t)*psetb : (size_t)NULL; /* To search an element in a NULL set results CBF_TERMINATE. */
+		a[1] = (size_t)cbfcmp;
 		if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*pseta), _setCBFIsSubsetTPuppet, (size_t)a))
 			return false;
 	}
@@ -647,9 +666,8 @@ bool setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *     cbfcmp Pointer to a comparison function for both pseta and psetb.
  *            Two sets should use the same comparison function.
  *       size Size of element.
- * Return value:
- *         true Two sets are equal.
- *        false Two sets are NOT equal.
+ * Return value:  true  Two sets are equal.
+ *                false Two sets are NOT equal.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
 bool setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
@@ -668,13 +686,10 @@ bool setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *     cbfcmp Pointer to a comparison function.
  * Return value:  true:  Insertion succeeded.
  *                false: Insertion failed.
- * Tip:           You may use function setIsMemberT to check whether insertion succeeded or not after invoking.
  */
 bool setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
-	if (setIsMemberT(pset, pitem, cbfcmp))
-		return false; /* Item has already existed. */
-	else
+	if (! setIsMemberT(pset, pitem, cbfcmp))
 	{
 		REGISTER P_BSTNODE pnode = _setInsertBST(*pset, pitem, size, cbfcmp);
 		if (NULL != pnode)
@@ -682,8 +697,9 @@ bool setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 			*pset = pnode;
 			return true;
 		}
-		return false; /* Allocation failure. */
+		/* Allocation failure. */
 	}
+	return false; /* Item has already existed. */
 }
 
 /* Function name: setRemoveT
@@ -695,7 +711,6 @@ bool setInsertT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  *     cbfcmp Pointer to a comparison function.
  * Return value:  true:  Deletion succeeded.
  *                false: Deletion failed.
- * Tip:           You may use function setIsMemberT to check whether removal succeeded or not after calling.
  */
 bool setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -711,8 +726,8 @@ bool setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  * Function name: _setCBFInsertItemTPuppet
  * Description:   This function is used to generate a union set.
  * Parameters:
- *      pitem Pointer to each NODE_S in the tree.
- *      param Pointer to a size_t[3] array.
+ *      pitem Pointer to each BSTNODE in the tree.
+ *      param Pointer to a size_t[3] array of which
  *            size_t[0] stores the pointer to psetr of the caller function.
  *            size_t[1] stores a pointer of comparison function.
  *            size_t[2] stores the size of each element.
@@ -725,7 +740,7 @@ int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 	(
 		! setIsMemberT
 		(
-			*(P_SET_T *)0[(size_t *)param],
+			*(P_SET_T *) 0[(size_t *)param],
 			((P_BSTNODE)pitem)->knot.pdata,
 			(CBF_COMPARE)1[(size_t *)param]
 		)
@@ -746,14 +761,14 @@ int _setCBFInsertItemTPuppet(void * pitem, size_t param)
 }
 
 /* Function name: setCreateUnionT
- * Description:   Generate a union for two sets.
+ * Description:   Generate the union for two sets.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfcmp Pointer to a comparison function for both pseta and psetb.
  *            Two sets should use the same comparison function.
- * Return value:  Pointer to a new set that contains the result of the union of two sets.
+ * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
@@ -762,16 +777,17 @@ P_SET_T setCreateUnionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE c
 	if (NULL != pseta || NULL != psetb)
 	{
 		P_SET_T psetr = setCreateT();
+		
 		size_t a[3];
 		a[0] = (size_t)&psetr;
 		a[1] = (size_t)cbfcmp;
 		a[2] = size;
-		if (! setIsEmptyT(pseta))
-			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
-				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
-		if (! setIsEmptyT(psetb))
-			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*psetb), _setCBFInsertItemTPuppet, (size_t)a))
-				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
+		if (! setIsEmptyT(pseta) && CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*pseta), _setCBFInsertItemTPuppet, (size_t)a))
+			goto Lbl_Erase_Bad_Set; /* Allocation failure. */
+		
+		if (! setIsEmptyT(psetb) && CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*psetb), _setCBFInsertItemTPuppet, (size_t)a))
+			goto Lbl_Erase_Bad_Set; /* Allocation failure. */
+		
 		if (setIsEmptyT(psetr))
 		{
 Lbl_Erase_Bad_Set: /* Erase the rest of the bad set. */
@@ -788,39 +804,41 @@ Lbl_Empty_Set:
  * Function name: _setCBFIntersectionTPuppet
  * Description:   This function is used to generate an intersection set.
  * Parameters:
- *      pitem Pointer to each NODE_S in the table.
- *      param Pointer to a size_t[5] array.
+ *      pitem Pointer to each BSTNODE in a tree set.
+ *      param Pointer to a size_t[5] array of which
  *            size_t[0] stores the pointer to psetr of the caller function.
  *            size_t[1] stores a pointer to comparison function.
  *            size_t[2] stores the size of each element.
  *            size_t[3] stores the pointer to either pseta or psetb of the caller function. (Flexible)
  *            size_t[4] stores a boolean value.
- *                      If size_t[4] == false, do insertion only when an element settled-
- *                      in set size_t[3] did not match elements in psetr at all.
- *                      So that we can generate a difference set of set A and set B.
+ *                      If size_t[4] is false, do insertion only when an element settled
+ *                      in set size_t[3] did not match any element in psetr at all.
+ *                      So that we can generate the difference set of set A and set B.
  * Return value:  CBF_CONTINUE  Insertion succeeded.
  *                CBF_TERMINATE Insertion failed.
  */
 int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 {
-	bool r =
+	if
 	(
-		NULL != *(P_SET_T *)3[(size_t *)param] && NULL ==
-		treBSTFindData_X
+		BOOLIZE(4[(size_t *)param]) ==
 		(
-			**(P_SET_T *)3[(size_t *)param],
-			((P_BSTNODE)pitem)->knot.pdata,
-			(CBF_COMPARE)1[(size_t *)param]
+			NULL != *(P_SET_T *)3[(size_t *)param] &&
+			NULL == treBSTFindData_X
+			(
+				**(P_SET_T *)3[(size_t *)param],
+				((P_BSTNODE)pitem)->knot.pdata,
+				(CBF_COMPARE)1[(size_t *)param]
+			)
+			? false : true
 		)
-		? false : true
-	);
-	if (r == (bool)4[(size_t *)param])
+	)
 	{
 		if
 		(
 			! setIsMemberT
 			(
-				*(P_SET_T *)0[(size_t *)param],
+				*(P_SET_T *) 0[(size_t *)param],
 				((P_BSTNODE)pitem)->knot.pdata,
 				(CBF_COMPARE)1[(size_t *)param]
 			)
@@ -842,15 +860,15 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 }
 
 /* Function name: setCreateIntersectionT
- * Description:   Generate an intersection between two sets.
+ * Description:   Generate the intersection between two sets.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfcmp Pointer to a comparison function for both pseta and psetb.
  *            Two sets should use the same comparison function.
- * Return value:  Pointer to a new set that contains the result of the intersection between two sets.
- *                NULL would be returned if result were an empty set.
+ * Return value:  Pointer to a new set which is the intersection between two sets.
+ *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
 P_SET_T setCreateIntersectionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE cbfcmp)
@@ -869,12 +887,14 @@ P_SET_T setCreateIntersectionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_CO
 			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*pseta), _setCBFIntersectionTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		}
+		
 		if (! setIsEmptyT(psetb) && pseta != psetb)
 		{
 			a[3] = (size_t)&pseta;
 			if (CBF_CONTINUE != treTraverseBYPre(P2P_TNODE_BY(*psetb), _setCBFIntersectionTPuppet, (size_t)a))
 				goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 		}
+		
 		if (setIsEmptyT(psetr))
 		{
 Lbl_Erase_Bad_Set: /* Erase the rest of the bad set. */
@@ -888,14 +908,14 @@ Lbl_Empty_Set:
 }
 
 /* Function name: setCreateDifferenceT
- * Description:   Generate a difference set of two sets. Get the result of A - B.
+ * Description:   Generate the difference set of two sets. Get the result of A - B.
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
  *       size Size of element.
  *     cbfcmp Pointer to a comparison function for both pseta and psetb.
  *            Two sets should use the same comparison function.
- * Return value:  Pointer to a new set that contains the result of a difference set of two sets.
+ * Return value:  Pointer to a new set which is the difference set between two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
@@ -923,6 +943,7 @@ P_SET_T setCreateDifferenceT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMP
 					goto Lbl_Erase_Bad_Set; /* Allocation failure. */
 			}
 		}
+		
 		if (setIsEmptyT(psetr))
 		{
 Lbl_Erase_Bad_Set: /* Erase the rest of the bad set. */
@@ -943,17 +964,16 @@ Lbl_Empty_Set:
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into the callback function.
  *         tm Method of traversal. This parameter can be any value in enumeration TvsMtd.
- *            (*) Especially, if tm does not equaled to any value in enumeration TvsMtd, function would return value CBF_TERMINATE.
  * Return value:  The same value as callback function cbftvs returns.
+ *                (*) Especially, if function encountered any error, it would still return CBF_CONTINUE
+ *                unless the callback function returns CBF_TERMINATE to break traversal intentionally.
  * Caution:       Address of pset Must Be Allocated first.
  */
 int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 {
-	if (setIsEmptyT(pset)) /* There is no need to traverse elements in an empty set. */
-		return CBF_CONTINUE;
-	else
+	if (! setIsEmptyT(pset))
 	{
-		int r = CBF_TERMINATE;
+		int r = CBF_CONTINUE;
 		switch (tm)
 		{
 		case ETM_PREORDER:        r = treTraverseBYPre      (P2P_TNODE_BY(*pset), cbftvs, param); break;
@@ -967,6 +987,7 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
 		}
 		return r;
 	}
+	return CBF_CONTINUE; /* Function will return CBF_CONTINUE when pset is empty. */
 }
 
 /* Function name: setTraverseTDispatch
@@ -985,6 +1006,8 @@ int setTraverseT(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, TvsMtd tm)
  *            (treMorrisTraverseBYPre)
  *            (treMorrisTraverseBYIn)
  * Return value:  The same value as callback function cbftvs returns or CBF_CONTINUE.
+ *                (*) Especially, if function encountered any error, it would still return CBF_CONTINUE
+ *                unless the callback function returns CBF_TERMINATE to break traversal intentionally.
  * Tip:           Example of usage:
  *                setTraverseTDispatch(pset, cbftvs, param, treTraverseBYPre);
  * Caution:       Address of pset Must Be Allocated first.
@@ -993,7 +1016,6 @@ int setTraverseTDispatch(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, CBF_TR
 {
 	if (setIsEmptyT(pset)) /* There is no need to traverse elements in an empty set. */
 		return CBF_CONTINUE;
-	else
-		return cbftvsbyt(P2P_TNODE_BY(*pset), cbftvs, param);
+	return cbftvsbyt(P2P_TNODE_BY(*pset), cbftvs, param);
 }
 

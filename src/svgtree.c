@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0328260650L00573
+ * File ID:     0809171737H0328260650L00576
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -175,6 +175,8 @@ Lbl_Allocation_Failure:
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
+ *                (*) Especially, if function encountered any error, it would still return CBF_CONTINUE
+ *                unless the callback function returns CBF_TERMINATE to break traversal intentionally.
  */
 int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -192,11 +194,12 @@ int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 			r = strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false);
 		/* Visit the current node. */
 		if (CBF_CONTINUE != cbftvs(pnode, param))
-		{	/* Do not forget to free queue here. */
+		{	/* Never forget to free queue here. */
 			queFreeL(&q);
 			return CBF_TERMINATE;
 		}
 	}
+	/* Do not forget to free queue before return. */
 	queFreeL(&q);
 	return r;
 }
@@ -259,7 +262,7 @@ void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 }
 
 /* Function name: treFreeTNodeG
- * Description:   Retract a node of which is allocated by function treInitTNodeG.
+ * Description:   Retract a node which is allocated by function treInitTNodeG.
  * Parameter:
  *     ptreb Pointer to the node you want to release.
  * Return value:  N/A.
@@ -292,7 +295,7 @@ P_TNODE_G treCreateTNodeG(const void * pitem, size_t size)
 }
 
 /* Function name: treDeleteTNodeG
- * Description:   Delete a node of which is allocated by function treCreateTNodeG.
+ * Description:   Delete a node which is allocated by function treCreateTNodeG.
  * Parameter:
  *     pnode Pointer to the node you want to allocate.
  * Return value:  N/A.
@@ -318,7 +321,7 @@ void treInitG_O(P_GTREE ptreg)
 }
 
 /* Function name: treFreeG
- * Description:   Retract a generic tree of which is allocated by function treInitG_O.
+ * Description:   Retract a generic tree which is allocated by function treInitG_O.
  * Parameter:
  *     ptreb Pointer to the generic tree you want to release.
  * Return value:  N/A.
@@ -345,7 +348,7 @@ P_GTREE treCreateG(void)
 }
 
 /* Function name: treDeleteG
- * Description:   Delete a generic tree of which is allocated by function treCreateG.
+ * Description:   Delete a generic tree which is allocated by function treCreateG.
  * Parameter:
  *     ptreb Pointer to a generic tree you want to allocate.
  * Return value:  N/A.
@@ -364,7 +367,7 @@ void treDeleteG(P_GTREE ptreg)
  *      pitem Pointer to the data you want to insert into the tree.
  *       size Size of data.
  * Return value:  If insertion succeeded, function would return a pointer of the new inserted node.
- *                Otherwise function would return a NULL.
+ *                Otherwise function would return NULL.
  * Caution:       If pnode equaled NULL, function would create a new node and return its pointer.
  */
 P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
@@ -390,7 +393,7 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
  *     pchild Pointer to the child node that you want to remove.
  *     bclear Withdraw child pointer array from parent node.
  * Return value:  Pointer to the child node.
- *                If function returned a NULL, it should mean that pchild you input is not a child node of parent.
+ *                If function returned NULL, it should mean that pchild you input is not a child node of parent.
  * Caution:       The whole sub tree that the child node holds will be retracted! Do not panic. It is a feature.
  */
 P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, bool bclear)
@@ -432,7 +435,7 @@ P_TNODE_G treGetParentNodeG(P_TNODE_G proot, P_TNODE_G pchild)
  *      pitem Pointer to the data you want to search.
  *       size Size of that data.
  * Return value:  Pointer to a node in the binary tree that contains the same data as pitem referred.
- *                If the specific data could not be found in the tree, function would return a NULL.
+ *                If the specific data could not be found in the tree, function would return NULL.
  * Caution:       This function will only use the level-order traversal.
  */
 P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, size_t size)
@@ -453,7 +456,7 @@ P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, size_t size)
  *     prooty Pointer to the root node that has a certain path to pnodey.
  *     pnodey Pointer to another node.
  * Return value:  If swapping succeeded, function would return pnodey,
- *                otherwise function would return a NULL.
+ *                otherwise function would return NULL.
  * Caution:       prootx may equal to pnodey.
  *                Both pnodex and pnodey shall not in the same sub tree.
  */
@@ -471,13 +474,13 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
 	{
 		REGISTER P_TNODE_G prtx, prty;
 		REGISTER size_t i, j;
-		P_TNODE_G ptmp;
+		P_TNODE_G tmp;
 		/* Locate pnodex and y in their parents. */
 		prtx = treGetParentNodeG(prootx, pnodex);
 		prty = treGetParentNodeG(prooty, pnodey);
 		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), false) - 1;
 		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), false) - 1;
-		svSwap(&i[(P_TNODE_G *)prtx->children.pdata], &j[(P_TNODE_G *)prty->children.pdata], &ptmp, sizeof(P_TNODE_G));
+		svSwap(&i[(P_TNODE_G *)prtx->children.pdata], &tmp, &j[(P_TNODE_G *)prty->children.pdata], sizeof(P_TNODE_G));
 		return pnodey;
 	}
 }
@@ -559,7 +562,7 @@ P_TNODE_BY treG2BYConvert(P_TNODE_G pnode, size_t size)
 {
 	QUEUE_L q;
 	/* This queue is used to maintain new bnodes.
-	 * When allocation failed, dequeue and free each element in the queue.
+	 * When allocation fails, dequeue and free each element in the queue.
 	 */
 	P_TNODE_BY pb = NULL;
 	queInitL(&q);

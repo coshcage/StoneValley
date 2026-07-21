@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0718260935L00890
+ * File ID:     0306170948B0721260727L00908
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -60,8 +60,8 @@ char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
 
 /* Function name: strCreateCharacterStringArrayZ
  * Description:   Create a sized array from a string.
- * Parameters:
- *       pstr Pointer to the string you want to copy.
+ * Parameter:
+ *      pstr Pointer to the string you want to copy in to a new sized array.
  * Return value:  Pointer to new allocated structure.
  *                If function returned NULL, it would indicate an allocation failure.
  * Caution:       N/A.
@@ -180,6 +180,25 @@ void * strMoveArrayZ_O(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size)
 	return memmove(pdest->pdata, psrc->pdata, strLevelArrayZ(pdest) * size);
 }
 
+/* Function name: strCreateCopyArrayZ
+ * Description:   Create a replica of a sized array.
+ * Parameters:
+ *       psrc Pointer to the source of array to be replicate.
+ *       size Size of each element for the source array.
+ * Return value:  A pointer to the new sized array which is exactly the replica of the source array.
+ * Caution:       Size of each element in the replica has the same value as source array's.
+ *                Item number of two arrays shall equal to each other.
+ *                Address of psrc shall be Allocated first to ensure a valid buffer address.
+ *                Destination and source will not overlap.
+ */
+P_ARRAY_Z strCreateCopyArrayZ(P_ARRAY_Z psrc, size_t size)
+{
+	REGISTER P_ARRAY_Z parrz = strCreateArrayZ(strLevelArrayZ(psrc), size);
+	if (NULL != parrz)
+		strCopyArrayZ(parrz, psrc, size);
+	return parrz;
+}
+
 /* Function name: strLocateItemArrayZ_O
  * Description:   Locate an item in a sized array.
  * Parameters:
@@ -203,7 +222,7 @@ void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
  *      pitem Pointer to an element as the searching target.
  *       size Size of an element.
  *       brev Input true  to search array in reverse.
- *            Input false to search array in order. That means to search the element from index 0 to the end of array.
+ *            Input false to search array in order. That means to search the element from index 0 to the last index of array.
  * Return value:  (*) Index of element + 1. If function returned 0, it should mean pitem could not be found.
  * Caution:       Address of parrz Must Be Allocated first.
  */
@@ -223,7 +242,7 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, b
 		{
 			for (i = 0, p = parrz->pdata; i < strLevelArrayZ(parrz); ++i, p += size)
 				if (0 == memcmp(p, pitem, size))
-					return i;
+					return i + 1;
 		}
 	}
 	return 0;
@@ -441,7 +460,7 @@ void * strBinarySearchArrayZ_O(P_ARRAY_Z parrz, const void * pkey, size_t size, 
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
- *                The size of the buffer of ptemp shall equal to parameter size.
+ *                The size of the buffer of ptemp shall equal to each parameter size of the array.
  */
 void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 {
@@ -451,7 +470,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 		REGISTER PUCHAR ptail = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
 		while (phead < ptail)
 		{	/* Swap two elements. */
-			svSwap(phead, ptail, ptemp, size);
+			svSwap(phead, ptemp, ptail, size);
 			/* Alter two pointers. */
 			phead += size;
 			ptail -= size;
@@ -475,6 +494,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
  * Tip:           To get the index of maximum value in fixed-size array arr, use the following sentences:
  *                size_t index = 0; PUCHAR ptr = (PUCHAR)strGetLimitationArrayZ(&arr, size, cbfcmp, true);
  *                if (NULL != ptr) index = (ptr - arr.pdata) / size;
+ *                Or simply use: i = strIndexOfArrayZ(&arr, ptr, size);
  */
 void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bmax, bool brev)
 {
@@ -574,7 +594,7 @@ bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cb
 					ptrk -= size
 				);
 				/* Swap (*i) and (*k). */
-				svSwap(ptri, ptrk, ptemp, size);
+				svSwap(ptri, ptemp, ptrk, size);
 				{	/* Reverse array from j to last. */
 					ARRAY_Z arrt; /* Auxiliary array header for reversing. */
 					arrt.num   = (size_t)((ptrl - ptrj) / size + 1);
@@ -663,7 +683,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
 		{
 			j = nxtrnd() % (i + 1);
-			svSwap(parrz->pdata + size * i, parrz->pdata + size * j, ptemp, size);
+			svSwap(parrz->pdata + size * i, ptemp, parrz->pdata + size * j, size);
 		}
 	}
 }
@@ -681,20 +701,19 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
  *                    it would either indicate allocation failure or callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
- * Tip:           Users may reference to the following codes:
- *                // int cbftvs(void * pitem, size_t param) {
- *                //     DWC4100(param);
- *                //     wprintf(L"%ls\n", pitem);
- *                //     return CBF_CONTINUE;
- *                // }
- *                // wchar_t txt[] = L"ABABDABACDABABCABAB";
- *                // wchar_t ptn[] = L"ABABCABAB";
- *                // ARRAY_Z parrtxt, parrptn;
- *                // parrtxt.pdata = (PUCHAR)txt;
- *                // parrtxt.num   = wcslen(txt);
- *                // parrptn.pdata = (PUCHAR)ptn;
- *                // parrptn.num   = wcslen(ptn);
- *                // strKMPSearchArrayZ(&parrtxt, &parrptn, sizeof(wchar_t), cbftvs, 0);
+ * Usage:         int cbftvs(void * pitem, size_t param) {
+ *                    DWC4100(param);
+ *                    wprintf(L"%ls\n", pitem);
+ *                    return CBF_CONTINUE;
+ *                }
+ *                wchar_t txt[] = L"ABABDABACDABABCABAB";
+ *                wchar_t ptn[] = L"ABABCABAB";
+ *                ARRAY_Z parrtxt, parrptn;
+ *                parrtxt.pdata = (PUCHAR)txt;
+ *                parrtxt.num   = wcslen(txt);
+ *                parrptn.pdata = (PUCHAR)ptn;
+ *                parrptn.num   = wcslen(ptn);
+ *                strKMPSearchArrayZ(&parrtxt, &parrptn, sizeof(wchar_t), cbftvs, 0);
  */
 int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -835,19 +854,18 @@ void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
  * Tip:           Z algorithm references to geeksforgeeks.org.
- *                Users may reference to the following codes:
- *                // int cbftvs(void * pitem, size_t param) {
- *                //     size_t i;
- *                //     for (i = 0; i < param; ++i)
- *                //         putchar(i[(char *)pitem]);
- *                //     printf("\n");
- *                //     return CBF_CONTINUE;
- *                // }
- *                // P_ARRAY_Z pp = strCreateCharacterStringArrayZ("GEEK");
- *                // P_ARRAY_Z pt = strCreateCharacterStringArrayZ("GEEKS FOR GEEKS");
- *                // strZSearchArrayZ(pt, pp, sizeof(char), cbftvs, 0);
- *                // strDeleteArrayZ(pp); // Do not forget to delete array here.
- *                // strDeleteArrayZ(pt);
+ * Usage:         int cbftvs(void * pitem, size_t param) {
+ *                    size_t i;
+ *                    for (i = 0; i < param; ++i)
+ *                        putchar(i[(char *)pitem]);
+ *                    printf("\n");
+ *                    return CBF_CONTINUE;
+ *                }
+ *                P_ARRAY_Z pp = strCreateCharacterStringArrayZ("GEEK");
+ *                P_ARRAY_Z pt = strCreateCharacterStringArrayZ("GEEKS FOR GEEKS");
+ *                strZSearchArrayZ(pt, pp, sizeof(char), cbftvs, 0);
+ *                strDeleteArrayZ(pp); // Do not forget to delete array here.
+ *                strDeleteArrayZ(pt);
  */
 int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {

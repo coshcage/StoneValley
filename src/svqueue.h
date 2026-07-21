@@ -2,7 +2,7 @@
  * Name:        svqueue.h
  * Description: Queues interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0320170743W1106172030L00183
+ * File ID:     0320170743W0720260716L00191
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -60,6 +60,8 @@ P_QUEUE_L  queCreateL       (void);
 void       queDeleteL       (P_QUEUE_L  pquel);
 bool       queIsEmptyL_O    (P_QUEUE_L  pquel);
 size_t     queUsageL_O      (P_QUEUE_L  pquel);
+bool       queHeadL_O       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
+bool       queTailL_O       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
 bool       queInsertL       (P_QUEUE_L  pquel,  const void * pitem, size_t     size);
 bool       queRemoveL       (void *     pitem,  size_t       size,  P_QUEUE_L  pquel);
 /* Functions for queues that implemented with doubly linked lists. */
@@ -69,10 +71,10 @@ P_DEQUE_DL queCreateDL      (void);
 void       queDeleteDL      (P_DEQUE_DL pdeque);
 bool       queIsEmptyDL_O   (P_DEQUE_DL pdeque);
 size_t     queUsageDL_O     (P_DEQUE_DL pdeque);
-void       queFirstDL_O     (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
+bool       queFirstDL_O     (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
+bool       queLastDL_O      (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
 P_NODE_D   quePushDL        (P_DEQUE_DL pdeque, const void * pitem, size_t     size);
 P_NODE_D   quePopDL         (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
-void       queLastDL_O      (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
 P_NODE_D   queInjectDL      (P_DEQUE_DL pdeque, const void * pitem, size_t     size);
 P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL pdeque);
 
@@ -96,18 +98,16 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 } while (0)
 #define queIsEmptyL_M(pquel_M) (!(pquel_M)->pfront)
 #define queUsageL_M(pquel_M) (strLevelLinkedListSC((pquel_M)->pfront))
+#define queHeadL_M(pitem_M, size_M, pquel_M) (NULL != (pquel_M)->pfront ? (memcpy((pitem_M), (pquel_M)->pfront->pdata, (size_M)), true) : false)
+#define queTailL_M(pitem_M, size_M, pquel_M) (NULL != (pquel_M)->prear ? (memcpy((pitem_M), (pquel_M)->prear->pdata, (size_M)), true) : false)
 /* Macros for doubly linked list queues. */
 #define queInitDL_M(pdeque_M) do { \
 	(pdeque_M)->pfirst = (pdeque_M)->plast = NULL; \
 } while (0)
 #define queIsEmptyDL_M(pdeque_M) (!(pdeque_M)->pfirst)
 #define queUsageDL_M(pdeque_M) (strLevelLinkedListDC((pdeque_M)->pfirst, false))
-#define queFirstDL_M(pitem_M, size_M, pdeque_M) do { \
-	memcpy((pitem_M), (pdeque_M)->pfirst->pdata, (size_M)); \
-} while (0)
-#define queLastDL_M(pitem_M, size_M, pdeque_M) do { \
-	memcpy((pitem_M), (pdeque_M)->plast->pdata, (size_M)); \
-} while (0)
+#define queFirstDL_M(pitem_M, size_M, pdeque_M) (NULL != (pdeque_M)->pfirst ? (memcpy((pitem_M), (pdeque_M)->pfirst->pdata, (size_M)), true) : false)
+#define queLastDL_M(pitem_M, size_M, pdeque_M) (NULL != (pdeque_M)->plast ? (memcpy((pitem_M), (pdeque_M)->plast->pdata, (size_M)), true) : false)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
@@ -121,6 +121,8 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
+	#define queHeadL       queHeadL_M
+	#define queTailL       queTailL_M
 	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
@@ -138,6 +140,8 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
+	#define queHeadL       queHeadL_M
+	#define queTailL       queTailL_M
 	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
@@ -155,6 +159,8 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queInitL       queInitL_M
 	#define queIsEmptyL    queIsEmptyL_M
 	#define queUsageL      queUsageL_M
+	#define queHeadL       queHeadL_M
+	#define queTailL       queTailL_M
 	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_M
 	#define queIsEmptyDL   queIsEmptyDL_M
@@ -171,6 +177,8 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queInitL       queInitL_O
 	#define queIsEmptyL    queIsEmptyL_O
 	#define queUsageL      queUsageL_O
+	#define queHeadL       queHeadL_O
+	#define queTailL       queTailL_O
 	/* Macros for doubly linked list queues. */
 	#define queInitDL      queInitDL_O
 	#define queIsEmptyDL   queIsEmptyDL_O

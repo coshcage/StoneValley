@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0719260111L00523
+ * File ID:     0809171737V0720260617L00520
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -42,10 +42,8 @@ typedef P_NODE_D   P_TNODE_BY; /* Pointer of tree nodes. */
 typedef P_NODE_D   BYTREE;     /* Binary tree. */
 typedef P_NODE_D * P_BYTREE;   /* Pointer to a binary tree. */
 
-/* It says a binary tree node is actually identical to a double pointer node.
- * Use this anonymous enumeration to identify node types for a FindingInfo structure.
- */
-enum { ENT_TNODE_BY = ENT_DOUBLE };
+/* It says a binary tree node is actually identical to a double pointer node. */
+#define ENT_TNODE_BY ENT_DOUBLE
 
 /* Align a NODE_D structure to the head of BSTNODE structure,
  * then put the rest of node's information such as parameter and parent pointer after the NODE_D structure,
@@ -118,7 +116,7 @@ int             treTraverseBYPre       (P_TNODE_BY      pnode,    CBF_TRAVERSE c
 int             treTraverseBYIn        (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
 int             treTraverseBYPost      (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
 int             treTraverseBYLevel     (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
-int             treTraverseBYArray     (char            order[3], P_TNODE_BY   pnode,  CBF_TRAVERSE cbftvs,  size_t       param);
+int             treTraverseBYArray     (char            order[3], P_TNODE_BY   pnode,  CBF_TRAVERSE cbftvs1, CBF_TRAVERSE cbftvs2, CBF_TRAVERSE cbftvs3, size_t      param);
 int             treMorrisTraverseBYPre (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
 int             treMorrisTraverseBYIn  (P_TNODE_BY      pnode,    CBF_TRAVERSE cbftvs, size_t       param);
 void            treInitBY_O            (P_BYTREE        ptreb);
@@ -134,7 +132,7 @@ size_t          treHeightBY            (P_TNODE_BY      pnode);
 P_TNODE_BY      treGetParentNodeBY     (P_TNODE_BY      proot,    P_TNODE_BY   pchild);
 P_TNODE_BY      treSearchDataBY        (P_TNODE_BY      pnode,    const void * pitem,  size_t       size,    TvsMtd       tm);
 bool            treDescendantBY        (P_TNODE_BY      proot,    P_TNODE_BY   pnode);
-P_TNODE_BY      treMergeNodesBY        (P_TNODE_BY      proot,    const void * pitem,  size_t       size,    P_TNODE_BY   pleft, P_TNODE_BY  pright);
+P_TNODE_BY      treMergeNodesBY        (P_TNODE_BY      proot,    const void * pitem,  size_t       size,    P_TNODE_BY   pleft,   P_TNODE_BY   pright);
 P_TNODE_BY      treSwapNodesBY         (P_TNODE_BY      proot1,   P_TNODE_BY   pnode1, P_TNODE_BY   proot2,  P_TNODE_BY   pnode2);
 P_TNODE_BY      treCopyBY              (P_TNODE_BY      proot,    size_t       size);
 /* Functions for generic trees. */
@@ -164,8 +162,8 @@ void            treDeleteHeapA         (P_HEAP_A        pheap);
 bool            treIsEmptyHeapA_O      (P_HEAP_A        pheap);
 bool            treIsFullHeapA_O       (P_HEAP_A        pheap);
 void            treMakeEmptyHeapA_O    (P_HEAP_A        pheap);
-void            treInsertHeapA         (P_HEAP_A        pheap,    const void * pitem,  void *       ptemp,   size_t       size,  CBF_COMPARE cbfcmp, bool        bmax);
-void            treRemoveHeapA         (void *          pitem,    void *       ptemp,  size_t       size,    P_HEAP_A     pheap, CBF_COMPARE cbfcmp, bool        bmax);
+bool            treInsertHeapA         (P_HEAP_A        pheap,    const void * pitem,  void *       ptemp,   size_t       size,    CBF_COMPARE  cbfcmp,  bool        bmax);
+bool            treRemoveHeapA         (void *          pitem,    void *       ptemp,  size_t       size,    P_HEAP_A     pheap,   CBF_COMPARE  cbfcmp,  bool        bmax);
 bool            trePeepHeapA           (void *          pitem,    size_t       size,   P_HEAP_A     pheap);
 /* Functions for binary search trees(BSTs). */
 void *          treInitBSTNode         (P_BSTNODE       pnode,    const void * pitem,  size_t       size,    size_t       param);
@@ -184,7 +182,7 @@ P_BSTNODE       treBSTRemoveAA         (P_BSTNODE       pnode,   const void * pi
 P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTRemoveAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for red black trees. */
-void *          treInitRBTNode         (P_RBTNODE       pnode,   const void * pitem,   size_t       size,    RBTColor     color, P_RBTNODE   parent);
+void *          treInitRBTNode         (P_RBTNODE       pnode,   const void * pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
 void            treFreeRBTNode         (P_RBTNODE       pnode);
 P_RBTNODE       treCreateRBTNode       (const void *    pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
 void            treDeleteRBTNode_O     (P_RBTNODE       pnode);
@@ -214,9 +212,9 @@ void            treInitTrieA_O         (P_TRIE_A        ptrie);
 void            treFreeTrieA_O         (P_TRIE_A        ptrie,   size_t       size);
 P_TRIE_A        treCreateTrieA         (void);
 void            treDeleteTrieA_O       (P_TRIE_A        ptrie,   size_t       size);
-size_t *        treSearchTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,  CBF_COMPARE cbfcmp);
-bool            treInsertTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,  size_t      vapdx,  CBF_COMPARE cbfcmp);
-bool            treRemoveTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,  CBF_COMPARE cbfcmp);
+size_t *        treSearchTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,    CBF_COMPARE  cbfcmp);
+bool            treInsertTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,    size_t       vapdx,   CBF_COMPARE cbfcmp);
+bool            treRemoveTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for Huffman coding trees. */
 P_ARRAY_Z       treCreateHuffmanTable  (const PUCHAR    s,       const size_t n);
 P_BITSTREAM     treHuffmanEncoding     (P_ARRAY_Z       ptable,  const PUCHAR s,      const size_t  n);
@@ -244,7 +242,6 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 /* Functions in svstree.c. */
 #define treFreeBSTNode_M(pnode_M) do { \
 	strFreeNodeD(&(pnode_M)->knot); \
-	(pnode_M)->knot.pdata = NULL; \
 } while (0)
 #define treDeleteBSTNode_M(pnode_M) do { \
 	treFreeBSTNode(pnode_M); \

@@ -42,7 +42,7 @@ int        _treCBFNodeLocator       (void * pitem, size_t param);
  *                If parent node could not be found in a tree, function would return a CBF_CONTINUE.
  */
 int _treCBFParentRetriever(void * pitem, size_t param)
-{	/* The current node is the parent node of a searching target. */
+{	/* The current node will be the parent node of the searching target node. */
 	if (*(P_TNODE_BY *)param == ((P_TNODE_BY)pitem)->ppnode[LEFT])
 	{
 		*(P_TNODE_BY *)param = (P_TNODE_BY)pitem;

@@ -247,7 +247,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 			pbstm->arrz.pdata[i] |= ((UCHART) 0x01 << (CHAR_BIT - 1));
 	}
 	*pbstm->arrz.pdata >>= 1;
-	if (false != value) /* Alter MSBit in the first block. */
+	if (BOOLIZE(value)) /* Alter MSBit in the first block. */
 		*pbstm->arrz.pdata |= ((UCHART) 0x01 << (CHAR_BIT - 1));
 	return true;
 }
@@ -263,7 +263,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
-	bool r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
+	REGISTER bool r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
 	REGISTER size_t i, j = strLevelArrayZ(&pbstm->arrz) - 1;
 	for (i = 0; i < j; ++i)
 	{
@@ -283,7 +283,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 			pbstm->bilc = CHAR_BIT;
 		}
 	}
-	return false != r;
+	return r;
 }
 
 /* Function name: strBitStreamAdd
@@ -312,7 +312,7 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 	pt = &(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1]);
 	*pt = (UCHART)
 	(
-		false != value ?
+		value ?
 		(*pt | ((UCHART)  0x01  << j)) : /* Pad 1. */
 		(*pt & ((UCHAR_MAX - 1) << j))   /* Pad 0. */
 	);

@@ -689,9 +689,9 @@ bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 	i = dr.rem ? dr.quot : dr.quot - 1;
 	pbm->arrz.pdata[i] = (UCHART)
 	(
-		false == bval ?
-		pbm->arrz.pdata[i] & (~t) :
-		pbm->arrz.pdata[i] | t
+		bval ?
+		pbm->arrz.pdata[i] | t :
+		pbm->arrz.pdata[i] & (~t)
 	);
 	return true;
 }
@@ -912,7 +912,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 			l = dr.quot  - 1;
 			m = CHAR_BIT - 1;
 		}
-		if (false != (0x01 & (pmtx->bmask.arrz.pdata[l] >> j)))
+		if (BOOLIZE(0x01 & (pmtx->bmask.arrz.pdata[l] >> j)))
 		{	/* Item exists. */
 			REGISTER size_t s = 0;
 			REGISTER P_NODE_S pnode;

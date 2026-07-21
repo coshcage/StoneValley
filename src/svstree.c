@@ -1740,7 +1740,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 					return false; /* Allocation failure. */
 				if (bleaf) /* Split a leaf node. */
 				{
-					if (false == _treSplitArrayInLeafBPT(pnew, pnode, degree))
+					if (! _treSplitArrayInLeafBPT(pnew, pnode, degree))
 					{
 						treDeleteBPTNode(pnew);
 						return false; /* Can not split array. */
@@ -1754,7 +1754,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 				else /* Split an internal node. */
 				{
 					_BPT_KEY_INFO bki;
-					if (false == _treSplitArrayInNodeBPT(&bki, pnew, pnode, degree))
+					if (! _treSplitArrayInNodeBPT(&bki, pnew, pnode, degree))
 					{
 						treDeleteBPTNode(pnew);
 						return false; /* Can not split array. */
@@ -2377,7 +2377,7 @@ size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t si
 		pbase += size;
 	}
 	if (0 == num) /* Searching reaches at the end of string. */
-		if (false != *((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie]))
+		if (BOOLIZE(*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie])))
 			return ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]);
 	return NULL;
 }

@@ -502,7 +502,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
-		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
+		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 			return NULL;
 		else
 		{
@@ -533,9 +533,9 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
-		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
+		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 		{
-			*pflag = true;
+			*pflag = (_FLAG)true;
 			return memcpy((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size));
 		}
 	}
@@ -563,7 +563,7 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
 		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
-		if (false == *pflag) /* Compare to determine whether a slot is empty or not. */
+		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 			return false;
 		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))
 		{

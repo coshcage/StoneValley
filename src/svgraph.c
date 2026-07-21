@@ -1043,10 +1043,10 @@ P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 		goto Lbl_Bad_Result;
 
 	/* Create array d to store shortest distance. */
-	if (true != _grpSPLInitArray(pgrp, parrd, vidx, true))
+	if (! _grpSPLInitArray(pgrp, parrd, vidx, true))
 		goto Lbl_Bad_Result;
 	/* Boolean array to check if vertex is present in queue or not. */
-	if (true != _grpSPLInitArray(pgrp, parrq, vidx, false))
+	if (! _grpSPLInitArray(pgrp, parrq, vidx, false))
 		goto Lbl_Bad_Result;
 
 	queInsertL(&q, &vidx, sizeof(size_t));
@@ -1579,7 +1579,7 @@ bool grpMinimalSpanningTreeL(P_GRAPH_L pgrp)
 	for (i = 0; i < strLevelArrayZ(&vtxarr); ++i)
 	{
 		prec = &i[(_P_EDGEREC)vtxarr.pdata];
-		if (true != prec->flag) /* Pick an edge away from graph. */
+		if (! prec->flag) /* Pick an edge away from graph. */
 			grpRemoveEdgeL(pgrp, prec->vids[0], prec->vids[1], prec->weight);
 	}
 	
@@ -2356,7 +2356,7 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
  * Parameters:
  *       pgrp Pointer to a matrix graph.
  *    pweight Pointer to the size_t integer of weight to be set. This weight will be gotten from the matrix.
- *            If this parameter equaled 0, this address would be omitted.
+ *            If this parameter equaled NULL, this address would be omitted.
  *       vidx Vertex ID X.
  *       vidy Vertex ID Y.
  * Return value:  The equivalent size_t integer of weight of edge(x, y).

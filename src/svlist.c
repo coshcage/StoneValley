@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0721260709L01481
+ * File ID:     0306170948C0721261101L01500
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -109,27 +109,30 @@ int _strCBFCompareNodeDataSD(void * pitem, size_t param)
  *       list Pointer to the first NODE_S element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
- * Caution:       Returning CBF_TERMINATE in callback function will not break traversal until it ends.
- *                Returning in callback function only affects the return value of strTraverseLinkedListSC_R.
+ * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           An element of a circular linked list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_R(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
 {
-	int r = CBF_CONTINUE;
 	if (NULL != list)
 	{
 		if (list != pnil)
 		{
 			if (NULL == pnil)
 				pnil = list;
-			r = strTraverseLinkedListSC_R(list->pnode, pnil, cbftvs, param);
-			if (CBF_CONTINUE != cbftvs(list, param))
+			
+			if (CBF_CONTINUE != strTraverseLinkedListSC_R(list->pnode, pnil, cbftvs, param))
+				return CBF_TERMINATE;
+			
+			if (NULL != cbftvs && CBF_CONTINUE != cbftvs(list, param))
 				return CBF_TERMINATE;
 		}
 	}
-	return r;
+	return CBF_CONTINUE;
 }
 
 /* Function name: strTraverseLinkedListSC_A
@@ -140,10 +143,11 @@ int strTraverseLinkedListSC_R(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  *       list Pointer to the first NODE_S element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
  * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
- *                and cause function strTraverseLinkedListSC_A to return CBF_TERMINATE to its caller.
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           An element of a circular linked list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
@@ -154,8 +158,10 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
 		{
 			if (NULL == pnil)
 				pnil = list;
-			if (CBF_CONTINUE != cbftvs(list, param))
+			
+			if (NULL != cbftvs && CBF_CONTINUE != cbftvs(list, param))
 				return CBF_TERMINATE;
+			
 			return strTraverseLinkedListSC_A(list->pnode, pnil, cbftvs, param);
 		}
 	}
@@ -170,10 +176,11 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
  *       list Pointer to the first element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned.
  * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
- *                and cause function strTraverseLinkedListSC_N to return CBF_TERMINATE to its caller.
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           An element of a circular linked list is suitable to be a parameter of this function.
  */
 int strTraverseLinkedListSC_N(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, size_t param)
@@ -189,8 +196,10 @@ int strTraverseLinkedListSC_N(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
 		 */
 		if (pnil == pcur)
 			break;
-		if (CBF_CONTINUE != cbftvs(pcur, param))
+		
+		if (NULL != cbftvs && CBF_CONTINUE != cbftvs(pcur, param))
 			return CBF_TERMINATE;
+		
 		pnil = pcur;
 	}
 	return CBF_CONTINUE;
@@ -678,13 +687,14 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  *       brev If brev equaled true, doubly linked list would be traversed reversely.
  *             That is the order from the current one to the previous one.
  *             If brev equaled false, the order would be from the current one to the next one.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned that depends on callback function.
- * Caution:       Returning CBF_TERMINATE in callback function will not break traversal until it ends.
- *                Returning in callback function only affects the return value of strTraverseLinkedListSC_R.
+ * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           No dead cycles for circular linked lists.
  */
 int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, size_t param, bool brev)
@@ -698,14 +708,18 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 				pnil = list;
 			if (brev)
 			{
-				r = strTraverseLinkedListDC_R(list->ppnode[PREV], pnil, cbftvs, param, brev);
-				if (CBF_CONTINUE != cbftvs(list, param))
+				if (CBF_CONTINUE != strTraverseLinkedListDC_R(list->ppnode[PREV], pnil, cbftvs, param, brev))
+					return CBF_TERMINATE;
+				
+				if (NULL != cbftvs && CBF_CONTINUE != cbftvs(list, param))
 					return CBF_TERMINATE;
 			}
 			else
 			{
-				r = strTraverseLinkedListDC_R(list->ppnode[NEXT], pnil, cbftvs, param, brev);
-				if (CBF_CONTINUE != cbftvs(list, param))
+				if (CBF_CONTINUE != strTraverseLinkedListDC_R(list->ppnode[NEXT], pnil, cbftvs, param, brev))
+					return CBF_TERMINATE;
+				
+				if (NULL != cbftvs && CBF_CONTINUE != cbftvs(list, param))
 					return CBF_TERMINATE;
 			}
 		}
@@ -721,13 +735,14 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  *       brev If brev equaled true, a doubly linked list would be traversed reversely.
  *            That is the order from the current one to the previous one.
  *            If brev equaled false, the order would be from the current one to the next one.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned that depends on callback function.
  * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
- *                and cause function strTraverseLinkedListDC_A to return CBF_TERMINATE to its caller.
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           No dead cycles for circular linked lists.
  */
 int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, size_t param, bool brev)
@@ -738,8 +753,10 @@ int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 		{
 			if (NULL == pnil)
 				pnil = list;
-			if (CBF_CONTINUE != cbftvs(list, param))
+			
+			if (NULL != cbftvs && CBF_CONTINUE != cbftvs(list, param))
 				return CBF_TERMINATE;
+			
 			return strTraverseLinkedListDC_A(brev ? list->ppnode[PREV] : list->ppnode[NEXT], pnil, cbftvs, param, brev);
 		}
 	}
@@ -754,21 +771,21 @@ int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Additional information for each node.
  *       brev If brev equaled true, doubly linked list would be traversed reversely.
  *            That is the order from the current one to the previous one.
  *            If brev equaled false, the order would be from the current one to the next one.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned that depends on callback function.
  * Caution:       Returning CBF_TERMINATE in callback function breaks traversal immediately
- *                and cause function strTraverseLinkedListDC_N to return CBF_TERMINATE to its caller.
+ *                and cause this function to return CBF_TERMINATE to its caller.
  * Tip:           No dead cycles for circular linked lists.
  */
 int strTraverseLinkedListDC_N(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
 	REGISTER P_NODE_D pcur;
 	for (pcur = list; NULL != pcur; pcur = brev ? pcur->ppnode[PREV] : pcur->ppnode[NEXT])
-	{
-		/* Break at the header of a circular list. */
+	{	/* Break at the header of a circular list. */
 		if (NULL != pnil && pcur == list)
 			break;
 		/* Dead loop appears only if A->B and B->B.
@@ -776,8 +793,10 @@ int strTraverseLinkedListDC_N(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 		 */
 		if (pnil == pcur)
 			break;
-		if (CBF_CONTINUE != cbftvs(pcur, param))
+		
+		if (NULL != cbftvs && CBF_CONTINUE != cbftvs(pcur, param))
 			return CBF_TERMINATE;
+		
 		pnil = pcur;
 	}
 	return CBF_CONTINUE;

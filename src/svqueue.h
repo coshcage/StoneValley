@@ -2,7 +2,7 @@
  * Name:        svqueue.h
  * Description: Queues interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0320170743W0720260716L00191
+ * File ID:     0320170743W0721261225L00193
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -85,11 +85,13 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	(pqueac_M)->arr.num - (pqueac_M)->front + (pqueac_M)->rear : \
 	(pqueac_M)->rear - (pqueac_M)->front)
 #define queInsertAC_M(pqueac_M, pitem_M, size_M) do { \
-	memcpy((pqueac_M)->arr.pdata + (pqueac_M)->rear * (size_M), (pitem_M), (size_M)); \
+	if (NULL != (pitem_M)) /* Avoid copying from address NULL. */ \
+		memcpy((pqueac_M)->arr.pdata + (pqueac_M)->rear * (size_M), (pitem_M), (size_M)); \
 	(pqueac_M)->rear = ((pqueac_M)->rear + 1) % (pqueac_M)->arr.num; \
 } while (0)
 #define queRemoveAC_M(pitem_M, size_M, pqueac_M) do { \
-	memcpy((pitem_M), (pqueac_M)->arr.pdata + (pqueac_M)->front * (size_M), (size_M)); \
+	if (NULL != (pitem_M)) \
+		memcpy((pitem_M), (pqueac_M)->arr.pdata + (pqueac_M)->front * (size_M), (size_M)); \
 	(pqueac_M)->front = ((pqueac_M)->front + 1) % (pqueac_M)->arr.num; \
 } while (0)
 /* Macros for single linked list queues. */

@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0328260650L00576
+ * File ID:     0809171737H0721261212L00573
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -54,7 +54,7 @@ P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P
  */
 int _treCBFGNodeEnqueue(void * pitem, size_t param)
 {
-	P_QUEUE_L pq = (P_QUEUE_L)param;
+	REGISTER P_QUEUE_L pq = (P_QUEUE_L)param;
 	if (NULL != pitem)
 		queInsertL(pq, pitem, sizeof(P_TNODE_G));
 	return CBF_CONTINUE;
@@ -139,9 +139,9 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 {
 	size_t tptr;
 	REGISTER size_t i;
-	_P_GTreeCopy ptc  = (_P_GTreeCopy)param;
-	P_TNODE_G    pcur = (P_TNODE_G)pitem;
-	P_TNODE_G    pnew = treCreateTNodeG(pcur->pdata, ptc->size);
+	REGISTER _P_GTreeCopy ptc  = (_P_GTreeCopy)param;
+	REGISTER P_TNODE_G    pcur = (P_TNODE_G)pitem;
+	REGISTER P_TNODE_G    pnew = treCreateTNodeG(pcur->pdata, ptc->size);
 	if (NULL == pnew)
 		goto Lbl_Allocation_Failure;
 	/* Set new root. */
@@ -173,6 +173,7 @@ Lbl_Allocation_Failure:
  * Parameters:
  *      pnode Pointer to the node you want to start traversal in a tree.
  *     cbftvs Pointer to a callback function.
+ *            Set this pointer to NULL to omit callback.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  *                (*) Especially, if function encountered any error, it would still return CBF_CONTINUE
@@ -180,28 +181,27 @@ Lbl_Allocation_Failure:
  */
 int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	QUEUE_L q;
-	int r = CBF_CONTINUE;
-	if (NULL == pnode)
-		return CBF_CONTINUE;
-	queInitL(&q);
-	queInsertL(&q, &pnode, sizeof(P_TNODE_G));
-	while (! queIsEmptyL(&q))
+	if (NULL != pnode)
 	{
-		queRemoveL(&pnode, sizeof(P_TNODE_G), &q);
-		/* Enqueue all the children of the node. */
-		if (strLevelArrayZ(&pnode->children) > 0)
-			r = strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false);
-		/* Visit the current node. */
-		if (CBF_CONTINUE != cbftvs(pnode, param))
-		{	/* Never forget to free queue here. */
-			queFreeL(&q);
-			return CBF_TERMINATE;
+		QUEUE_L q;
+		queInitL(&q);
+		queInsertL(&q, &pnode, sizeof(P_TNODE_G));
+		while (! queIsEmptyL(&q))
+		{
+			queRemoveL(&pnode, sizeof(P_TNODE_G), &q);
+			/* Enqueue all the children of the current node. */
+			if (strLevelArrayZ(&pnode->children) > 0)
+				strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false);
+			/* Visit the current node. */
+			if (NULL != cbftvs && CBF_CONTINUE != cbftvs(pnode, param))
+			{	/* Never forget to free queue here. */
+				queFreeL(&q);
+				return CBF_TERMINATE;
+			}
 		}
+		queFreeL(&q); /* Do not forget to free queue before return. */
 	}
-	/* Do not forget to free queue before return. */
-	queFreeL(&q);
-	return r;
+	return CBF_CONTINUE;
 }
 
 /* Function name: treArityG
@@ -255,9 +255,8 @@ size_t treHeightG(P_TNODE_G pnode)
 void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
 	pnode->pdata = (PUCHAR) malloc(size);
-	if (NULL != pitem) /* Copy data content by size. */
-		if (NULL != pnode->pdata)
-			memcpy(pnode->pdata, pitem, size);
+	if (NULL != pitem && NULL != pnode->pdata)
+		memcpy(pnode->pdata, pitem, size);
 	return pnode->pdata;
 }
 
@@ -283,7 +282,7 @@ void treFreeTNodeG(P_TNODE_G pnode)
  */
 P_TNODE_G treCreateTNodeG(const void * pitem, size_t size)
 {
-	P_TNODE_G pnew = (P_TNODE_G) malloc(sizeof(TNODE_G));
+	REGISTER P_TNODE_G pnew = (P_TNODE_G) malloc(sizeof(TNODE_G));
 	if (NULL == pnew || NULL == treInitTNodeG(pnew, pitem, size))
 	{	/* Node allocation failed. */
 		free(pnew);
@@ -340,7 +339,7 @@ void treFreeG(P_GTREE ptreg)
  */
 P_GTREE treCreateG(void)
 {
-	P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
+	REGISTER P_GTREE ptreg = (P_GTREE) malloc(sizeof(GTREE));
 	/* Sarah Silva found this issue which is that we must detect NULL pointer before alter it. */
 	if (NULL != ptreg)
 		treInitG(ptreg);
@@ -372,11 +371,9 @@ void treDeleteG(P_GTREE ptreg)
  */
 P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
-	if (NULL == pnode)
-		return treCreateTNodeG(pitem, size);
-	else
+	if (NULL != pnode)
 	{
-		P_TNODE_G pnew = treCreateTNodeG(pitem, size);
+		REGISTER P_TNODE_G pnew = treCreateTNodeG(pitem, size);
 		if (NULL == pnew)
 			return NULL; /* Initialized node allocation failed. */
 		if (NULL == strResizeArrayZ(&pnode->children, strLevelArrayZ(&pnode->children) + 1, sizeof(P_TNODE_G)))
@@ -384,6 +381,7 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
 		/* Put the new node into parent's children array. */
 		return (strLevelArrayZ(&pnode->children) - 1)[(P_TNODE_G *)pnode->children.pdata] = pnew;
 	}
+	return treCreateTNodeG(pitem, size);
 }
 
 /* Function name: treRemoveSubtreeG
@@ -398,7 +396,7 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
  */
 P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, bool bclear)
 {
-	size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), false);
+	REGISTER size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), false);
 	if (0 == i) /* Can not find pchild in parent. */
 		return NULL;
 	if (bclear)
@@ -520,9 +518,9 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
  */
 P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
 {
+	REGISTER P_TNODE_BY * po;
 	REGISTER size_t i;
 	P_TNODE_BY pn;
-	P_TNODE_BY * po;
 	if (NULL == pnode)
 		return 0;
 	/* pnode is an external node. */
@@ -559,11 +557,10 @@ P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P
  * Caution:       Size of data of every nodes shall be in the same value.
  */
 P_TNODE_BY treG2BYConvert(P_TNODE_G pnode, size_t size)
-{
-	QUEUE_L q;
-	/* This queue is used to maintain new bnodes.
+{	/* This following queue is used to maintain new bnodes.
 	 * When allocation fails, dequeue and free each element in the queue.
 	 */
+	QUEUE_L q;
 	P_TNODE_BY pb = NULL;
 	queInitL(&q);
 	_treG2BYConvertPuppet(&pb, pnode, size, &q);

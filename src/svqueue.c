@@ -2,7 +2,7 @@
  * Name:        svqueue.c
  * Description: Queues.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0417171257F0720260718L00545
+ * File ID:     0417171257F0721261225L00552
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -134,7 +134,8 @@ size_t queUsageAC_O(P_QUEUE_A pqueac)
  */
 void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
 {
-	memcpy(pqueac->arr.pdata + pqueac->rear * size, pitem, size);
+	if (NULL != pitem) /* Avoid copying from address NULL. */
+		memcpy(pqueac->arr.pdata + pqueac->rear * size, pitem, size);
 	pqueac->rear = (pqueac->rear + 1) % pqueac->arr.num;
 }
 
@@ -142,6 +143,7 @@ void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
  * Description:   Dequeue an item from a circular queue.
  * Parameters:
  *      pitem Pointer to the address of element.
+ *            Set this parameter to NULL to ignore copying memory from queue.
  *       size Size of each element in the queue.
  *     pqueac Pointer to the circular queue you want to operate with.
  * Return value:  N/A.
@@ -150,7 +152,8 @@ void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
  */
 void queRemoveAC_O(void * pitem, size_t size, P_QUEUE_A pqueac)
 {
-	memcpy(pitem, pqueac->arr.pdata + pqueac->front * size, size);
+	if (NULL != pitem)
+		memcpy(pitem, pqueac->arr.pdata + pqueac->front * size, size);
 	pqueac->front = (pqueac->front + 1) % pqueac->arr.num;
 }
 
@@ -296,6 +299,7 @@ bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
  * Description:   Dequeue an element from linked-list queue.
  * Parameters:
  *      pitem Pointer to an address of data to receive deleted one.
+ *            Set this parameter to NULL to ignore copying memory from queue.
  *       size Size of the data that pitem pointed at and each element in the queue.
  *      pquel Pointer to the linked list queue you want to operate with.
  * Return value:  If function worked successfully it would return true,
@@ -309,7 +313,8 @@ bool queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
 		/* Save new header first. */
 		REGISTER P_NODE_S phead = pquel->pfront->pnode;
 		/* Restore data of the old header. */
-		memcpy(pitem, pquel->pfront->pdata, size);
+		if (NULL != pitem)
+			memcpy(pitem, pquel->pfront->pdata, size);
 		/* Free old header. */
 		strDeleteNodeS(pquel->pfront);
 		/* Assign new header. */
@@ -357,7 +362,7 @@ void queFreeDL(P_DEQUE_DL pdeque)
  */
 P_DEQUE_DL queCreateDL(void)
 {
-	P_DEQUE_DL pdequen = (P_DEQUE_DL) malloc(sizeof(DEQUE_DL));
+	REGISTER P_DEQUE_DL pdequen = (P_DEQUE_DL) malloc(sizeof(DEQUE_DL));
 	if (NULL == pdequen)
 		return NULL; /* Allocation failure. */
 	queInitDL(pdequen);
@@ -466,6 +471,7 @@ P_NODE_D quePushDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
  * Description:   Pop an element from a doubly linked list queue from the top position.
  * Parameters:
  *      pitem Pointer to an element to be set with the removal data.
+ *            Set this parameter to NULL to ignore copying memory from queue.
  *       size Size of element.
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
  * Return value:  Pointer to the item which is lain after the deleted one,
@@ -520,6 +526,7 @@ P_NODE_D queInjectDL(P_DEQUE_DL pdeque, const void * pitem, size_t size)
  * Description:   Remove an element from a doubly linked list queue at the bottom of the queue.
  * Parameters:
  *      pitem Pointer to element you want to set with the bottom one to be deleting in the queue.
+ *            Set this parameter to NULL to ignore copying memory from queue.
  *       size Size of element.
  *     pdeque Pointer to the doubly linked list queue you want to operate on.
  * Return value:  Pointer to the item which is lain before the deleted one.

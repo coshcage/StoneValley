@@ -2,7 +2,7 @@
  * Name:        svxs.c
  * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0709251630L00238
+ * File ID:     0415251642A0721260725L00238
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -176,7 +176,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 		
 		/* Merge chunk files. */
 		parrBuffer = strCreateArrayZ(uChunkCount, size);
-		pbmValid   = strCreateBMap(1, uChunkCount, false);
+		pbmValid   = strCreateBMap(1, uChunkCount, true, false);
 
 		for (i = 0; i < uChunkCount; ++i)
 		{

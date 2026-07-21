@@ -54,7 +54,6 @@ void EscapeFromHungary(char * pstr)
 	{
 		static char buf[BUFSIZ];
 		char * pbuf = buf;
-		register int i;
 		for (; *pstr; ++pstr, ++pbuf)
 		{
 			if (*pstr >= 'A' && *pstr <= 'Z') /* Uppercase letter. */

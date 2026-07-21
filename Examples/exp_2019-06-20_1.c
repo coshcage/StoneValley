@@ -35,9 +35,9 @@ typedef struct st_Action {
 } ACTION;
 
 /* Strings that consist squares in a puzzle. */
-const static char * const pAlphabet    = " ABCDEFGHIJKLMNOPQRSTUVWX";
-const static char * const pInscription = " nullum_numen_abest_si_sit_prudentia";
-const static char * const pValleyMap   = " Librarysss_ALGs___ORIsss_THM__stonesss_\\_/yellaV";
+static const char * const pAlphabet    = " ABCDEFGHIJKLMNOPQRSTUVWX";
+static const char * const pInscription = " nullum_numen_abest_si_sit_prudentia";
+static const char * const pValleyMap   = " Librarysss_ALGs___ORIsss_THM__stonesss_\\_/yellaV";
 static const char * pAnswer = NULL;
 
 static STACK_L stkAction = NULL; /* Action list. */

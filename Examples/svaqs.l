@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0715262324L00629
+ * File ID:     0608260445A0722260015L00633
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -30,7 +30,7 @@
  * $ ./svaps version
  * $ ./svaps list 5 str
  * $ ./svaps list strCreate*
- * $ ./svaps list strCreateArrayZ
+ * $ ./svaps list strCreateArrayZ strDeleteArrayZ
  *
  */
 %option noyywrap
@@ -63,6 +63,7 @@ typedef struct st_FunRecord {
 	char * fdesc;
 	char * record;
 	char * prototype;
+	size_t filenameindex;
 } FunRecord, * P_FunRecord;
 
 FunRecord gfc;
@@ -199,6 +200,8 @@ static int cbfcmpstr(const void * px, const void * py)
 
 %%
 
+#define PRINT_NAMES printf("%zd\t%s\t%s\n", ++0[(size_t *)param], SZCFILE[pfc->filenameindex], pfc->fname)
+
 extern int _grpCBFCompareInteger(const void * px, const void * py);
 
 /* StoneValley source file name array. */
@@ -239,7 +242,7 @@ static int cbftvsListAll(void * pitem, size_t param)
 	P_TNODE_BY pnode = P2P_TNODE_BY(pitem);
 	P_FunRecord pfc = (P_FunRecord)pnode->pdata;
 	
-	printf("%zd\t%s\n", ++0[(size_t *)param], pfc->fname);
+	PRINT_NAMES;
 	
 	return CBF_CONTINUE;
 }
@@ -250,7 +253,7 @@ static int cbftvsListAllRelevant(void * pitem, size_t param)
 	P_FunRecord pfc = (P_FunRecord)pnode->pdata;
 	
 	if (0 == memcmp(pfc->fname, (void *)1[(size_t *)param], 2[(size_t *)param]))
-		printf("%zd\t%s\n", ++0[(size_t *)param], pfc->fname);
+		PRINT_NAMES;
 	
 	return CBF_CONTINUE;
 }
@@ -322,7 +325,7 @@ static int cbftvsFuzzyQuery(void * pitem, size_t param)
 	{
 		if (WagnerFischer((P_MATRIX)2[(size_t *)param], pfc->fname, (const char *)1[(size_t *)param]) <= 3[(size_t *)param])
 		{
-			printf("%zd\t%s\n", ++0[(size_t *)param], pfc->fname);
+			PRINT_NAMES;
 		}
 	}
 	else
@@ -410,7 +413,7 @@ static int cbftvsListPrintSet(void * pitem, size_t param)
 	P_TNODE_BY pnode = P2P_TNODE_BY(pitem);
 	P_FunRecord pfc = *(P_FunRecord *)pnode->pdata;
 	
-	printf("%zd\t%s\n", ++*(size_t *)param, pfc->fname);
+	PRINT_NAMES;
 	
 	return CBF_CONTINUE;
 }
@@ -588,6 +591,7 @@ int main(int argc, char * argv[])
 		
 		if (NULL != fpin)
 		{
+			gfc.filenameindex = i;
 			yyrestart(fpin);
 			yylex();
 			fclose(fpin);

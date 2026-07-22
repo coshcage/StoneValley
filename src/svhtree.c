@@ -62,7 +62,7 @@ void treFreeHeapA(P_HEAP_A pheap)
  */
 P_HEAP_A treCreateHeapA(size_t num, size_t size)
 {
-	P_HEAP_A pheap = (P_HEAP_A) malloc(sizeof(HEAP_A));
+	REGISTER P_HEAP_A pheap = (P_HEAP_A) malloc(sizeof(HEAP_A));
 	if (NULL == pheap)
 		return NULL;
 	pheap->irear = 0;

@@ -159,7 +159,7 @@ void hshFreeC(P_HSHTBL_C pht)
  */
 P_HSHTBL_C hshCreateC(size_t buckets)
 {
-	P_HSHTBL_C pht = strCreateArrayZ(buckets, sizeof(P_NODE_S));
+	REGISTER P_HSHTBL_C pht = strCreateArrayZ(buckets, sizeof(P_NODE_S));
 	if (NULL == pht)
 		return NULL;
 	/* Clear bucket array. */
@@ -425,7 +425,7 @@ void hshFreeA_O(P_HSHTBL_A pht)
  */
 P_HSHTBL_A hshCreateA(size_t slots, size_t size)
 {
-	P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + ALIGN_SIZET(size));
+	REGISTER P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + ALIGN_SIZET(size));
 	if (NULL == phtn)
 		return NULL;
 	/* Clear array. */

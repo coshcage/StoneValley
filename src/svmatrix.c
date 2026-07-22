@@ -72,7 +72,7 @@ void strFreeMatrix_O(P_MATRIX pmtx)
  */
 P_MATRIX strCreateMatrix(size_t ln, size_t col, size_t size)
 {
-	P_MATRIX pmtx = (P_MATRIX) malloc(sizeof(MATRIX));
+	REGISTER P_MATRIX pmtx = (P_MATRIX) malloc(sizeof(MATRIX));
 	if (NULL != pmtx)
 	{
 		if (NULL == strInitMatrix(pmtx, ln, col, size))
@@ -591,7 +591,7 @@ void strFreeBMap_O(P_BITMAT pbm)
  */
 P_BITMAT strCreateBMap(size_t ln, size_t col, bool bini, bool bval)
 {
-	P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
+	REGISTER P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
 	if (NULL == pbm)
 		return NULL;
 	if (NULL == strInitBMap(pbm, ln, col, bini, bval))
@@ -784,7 +784,7 @@ void strFreeSparseMatrix(P_SPAMAT pmtx)
  */
 P_SPAMAT strCreateSparseMatrix(size_t ln, size_t col)
 {
-	P_SPAMAT pmtx = (P_SPAMAT) malloc(sizeof(SPAMAT));
+	REGISTER P_SPAMAT pmtx = (P_SPAMAT) malloc(sizeof(SPAMAT));
 	if (NULL != pmtx)
 		strInitSparseMatrix(pmtx, ln, col);
 	return pmtx;

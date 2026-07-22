@@ -64,7 +64,7 @@ void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
  */
 P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
 {
-	P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
+	REGISTER P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
 	if (NULL != parrz)
 	{
 		if (NULL == strInitArrayZ(parrz, num, size))

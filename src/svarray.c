@@ -68,7 +68,7 @@ char * strInitCharacterStringArrayZ(P_ARRAY_Z parrz, const char * pstr)
  */
 P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
 {
-	P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
+	REGISTER P_ARRAY_Z parrz = (P_ARRAY_Z) malloc(sizeof(ARRAY_Z));
 	if (NULL != parrz)
 	{
 		if (NULL == strInitCharacterStringArrayZ(parrz, pstr))

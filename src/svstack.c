@@ -62,7 +62,7 @@ void stkFreeA(P_STACK_A pstka)
  */
 P_STACK_A stkCreateA(size_t num, size_t size)
 {
-	P_STACK_A pstkn = (P_STACK_A) malloc(sizeof(STACK_A));
+	REGISTER P_STACK_A pstkn = (P_STACK_A) malloc(sizeof(STACK_A));
 	if (NULL != pstkn)
 	{
 		if (NULL == stkInitA(pstkn, num, size))

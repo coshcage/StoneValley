@@ -82,7 +82,7 @@ void treFreeBSTNode_O(P_BSTNODE pnode)
  */
 P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 {
-	P_BSTNODE pnew = P2P_BSTNODE(malloc(sizeof(BSTNODE)));
+	REGISTER P_BSTNODE pnew = P2P_BSTNODE(malloc(sizeof(BSTNODE)));
 	if (NULL != pnew)
 	{
 		if (NULL == treInitBSTNode(pnew, pitem, size, param))
@@ -745,7 +745,7 @@ void treFreeRBTNode(P_RBTNODE pnode)
  */
 P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RBTNODE parent)
 {
-	P_RBTNODE pnew = P2P_RBTNODE(malloc(sizeof(RBTNODE)));
+	REGISTER P_RBTNODE pnew = P2P_RBTNODE(malloc(sizeof(RBTNODE)));
 	if (NULL != pnew)
 	{
 		if (NULL == treInitRBTNode(pnew, pitem, size, color, parent))

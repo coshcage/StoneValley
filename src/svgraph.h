@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0723260000L00231
+ * File ID:     0901171625S0723261050L00237
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -35,16 +35,22 @@ typedef struct st_VERTEX_L {
 
 /* Edge data in adjacency lists. */
 typedef struct st_EDGE {
-	size_t vid;    /* Index of the adjacent vertex. */
-	size_t weight; /* Edge weight. */
+	size_t vid; /* Index of the adjacent vertex. */
+	union {     /* An anonymous union includes edge weight for different types of integer. */
+		ptrdiff_t sweight;
+		size_t    uweight;
+		size_t    weight;
+	};
 } EDGE, * P_EDGE;
 
 /* Vertex record for shortest path and topological sort algorithm. */
 typedef struct st_VTXREC {
 	size_t vid; /* Vertex ID. */
-	union {     /* Here we need an anonymous union to include a distance and an in degree. */
-		size_t dist;
-		size_t indegree;
+	union {     /* Here we need an anonymous union to include a distance, a boolean flag and an indegree together for different types. */
+		ptrdiff_t udistance;
+		size_t    sdistance;
+		size_t    uindegree;
+		bool      flag;
 	};
 } VTXREC, * P_VTXREC;
 

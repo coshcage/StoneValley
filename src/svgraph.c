@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0719261023L02776
+ * File ID:     0905171125M0723261050L02788
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -46,23 +46,26 @@ typedef struct _st_DATINF {
 /* Shortest path trajectory record. */
 typedef struct _st_SPTREC {
 	size_t vid;  /* Vertex ID. */
-	size_t dist; /* Distance. */
 	size_t pvid; /* Previous vertex ID. */
+	union {      /* Here we need an anonymous union to include a distance integer for both signed and unsigned types. */
+		ptrdiff_t udistance;
+		size_t    sdistance;
+	};
 } _SPTREC, * _P_SPTREC;
 
 /* Edge record for generating minimal spanning tree. */
 typedef struct _st_EDGEREC {
-	size_t weight;  /* Weight of this edge. */
+	size_t weight;  /* Weight value of this edge. */
 	size_t vids[2]; /* This edge connects vids[0] to vids[1]. */
 	bool   flag;    /* Values flag true or false to determine whether this edge is valid or not. */
 } _EDGEREC, * _P_EDGEREC;
 
 /* Label structure for max flow algorithm. */
 typedef struct _st_MaxFlowLabel {
-	size_t vidc; /* Current vertex ID. */
-	size_t vidp; /* Previous vertex ID. */
-	size_t theta;
-	bool   bdir; /* false: Out flow; true: In flow. */
+	size_t vidc;  /* Current vertex ID. */
+	size_t vidp;  /* Previous vertex ID. */
+	size_t theta; /* Flow difference from capacity. */
+	bool   bdir;  /* false: Out flow; true: In flow. */
 } _MXFLWLBL, * _P_MXFLWLBL;
 
 /* An enumeration of label direction. */
@@ -935,13 +938,13 @@ int _grpCBFSPLFillVertices(void * pitem, size_t param)
  */
 int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
 {
-	((P_VTXREC)pitem)->dist = param;
+	((P_VTXREC)pitem)->sdistance = (ptrdiff_t)param;
 	return CBF_CONTINUE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpSPLInitArray
- * Description:   This function is used to initialize an array of VTXREC.
+ * Description:   This function is used to initialize an array of VTXREC structures by function grpShortestPathFastL.
  * Parameters:
  *       pgrp Pointer to a graph.
  *      parrz Pointer to an array to be initialized.
@@ -958,10 +961,15 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 	/* Fill distance into array. Pick the specific value off the array and sign it.
 	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
 	 */
-	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)(barrd ? ~(size_t)0 : (size_t)false), false);
+	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)(barrd ? (size_t)(ptrdiff_t)-1 : (size_t)false), false);
 	prec = (P_VTXREC)strBinarySearchArrayZ(parrz, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 	if (NULL != prec)
-		prec->dist = barrd ? (size_t)0 : (size_t)true;
+	{
+		if (barrd)
+			prec->sdistance = 0;
+		else
+			prec->flag = true;
+	}
 	else
 		return false;
 	return true;
@@ -989,23 +997,23 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 	size_t v = ((P_EDGE)pitem)->vid;
 	P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
 	P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
-
+	
 	if (NULL != pvru && NULL != pvrv)
 	{
-		if (pvrv->dist > pvru->dist + ((P_EDGE)pitem)->weight)
+		if (pvrv->sdistance > pvru->sdistance + ((P_EDGE)pitem)->sweight)
 		{
 			REGISTER P_VTXREC prec;
-			pvrv->dist = pvru->dist + ((P_EDGE)pitem)->weight;
+			pvrv->sdistance = pvru->sdistance + ((P_EDGE)pitem)->sweight;
 			prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 			if (NULL != prec)
 			{
 				/* Check if vertex v is in queue or not.
 				 * If not then push it into the queue.
 				 */
-				if (!prec->dist)
+				if (! prec->flag)
 				{
 					queInsertL(pq, &v, sizeof(size_t));
-					prec->dist = true;
+					prec->flag = true;
 				}
 			}
 			else
@@ -1027,6 +1035,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
  *                If function returned NULL, it should indicate searching failure.
  * Caution:       Address of pgrp Must Be Allocated first.
  * Tip:           Users may use function strDeleteArrayZ to release grpShortestPathFastL returned arrays.
+ *                Negative weights are supported for this algorithm.
  */
 P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 {
@@ -1060,7 +1069,7 @@ P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 		queRemoveL(&vidx, sizeof(size_t), &q);
 		prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 		if (NULL != prec)
-			prec->dist = (size_t)false; /* Out of the queue. */
+			prec->flag = false; /* Out of the queue. */
 		else
 			goto Lbl_Bad_Result;
 
@@ -1137,8 +1146,10 @@ int _grpCBFDijkstraFillVb(void * pitem, size_t param)
  *                Please refer to the prototype of CBF_COMPARE at svdef.h.
  */
 int _grpCBFCompareRecordDistance(const void * px, const void * py)
-{
-	return _grpCBFCompareInteger(&((_P_SPTREC)px)->dist, &((_P_SPTREC)py)->dist);
+{	/* Compare unsigned integers rather than signed two for Dijkstra use. */
+	if (((_P_SPTREC)px)->udistance > ((_P_SPTREC)py)->udistance) return  1;
+	if (((_P_SPTREC)px)->udistance < ((_P_SPTREC)py)->udistance) return -1;
+	return 0;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1167,7 +1178,7 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 		rec.vid = pedg->vid;
 		
 		if (NULL != pnode)
-			rec.dist = pedg->weight + ((_P_SPTREC)pnode->knot.pdata)->dist;
+			rec.udistance = pedg->uweight + ((_P_SPTREC)pnode->knot.pdata)->udistance;
 		else
 			return CBF_TERMINATE;
 		
@@ -1217,6 +1228,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                    grpInsertEdgeL(p, 1, 1, 1);
  *                    l = grpDijkstraShortestPathL(p, 1, 1); // Returns NULL.
  * Caution:       Address of pgrp Must Be Allocated first.
+ *                Any weight of an arbitrary edge in pgrp cannot be negative.
  * Tip:           Tips of use:
  *                #include <stdio.h>
  *                #include "svgraph.h"
@@ -1224,7 +1236,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                int cbftvsprint(void * pitem, size_t param) {
  *                	P_VTXREC p = (P_VTXREC)((P_NODE_D)pitem)->pdata;
  *                	DWC4100(param);
- *                	printf("vid = %zd, dist = %zd\n", p->vid, p->dist);
+ *                	printf("vid = %zd, udistance = %zd\n", p->vid, p->udistance);
  *                	return CBF_CONTINUE;
  *                }
  *                
@@ -1256,9 +1268,9 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a, ETM_INORDER_MORRIS))
 		goto Lbl_Cleanup; /* Allocation failure. Cleanup.*/
 
-	rec.vid  = vids;
-	rec.dist = 0;
-	rec.pvid = vids;
+	rec.vid       = vids;
+	rec.pvid      = vids;
+	rec.udistance = 0;
 	
 	a[0] = (size_t)pgrp;
 	a[2] = (size_t)&h;
@@ -1291,8 +1303,8 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	}
 	while (! setIsEmptyT(&vb));
 	
-	vr.vid  = rec.vid;
-	vr.dist = rec.dist;
+	vr.vid       = rec.vid;
+	vr.udistance = rec.udistance;
 	
 	/* Insert vide into a doubly linked list. */
 	*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), true);
@@ -1308,16 +1320,16 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 			
 			if (NULL != pbstn)
 			{
-				pvid    = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
-				vr.vid  = ((_P_SPTREC)pbstn->knot.pdata)->vid;
-				vr.dist = ((_P_SPTREC)pbstn->knot.pdata)->dist;
+				pvid         = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
+				vr.vid       = ((_P_SPTREC)pbstn->knot.pdata)->vid;
+				vr.udistance = ((_P_SPTREC)pbstn->knot.pdata)->udistance;
 				
 				*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 			}
 		}
 		
-		vr.vid  = pvid;
-		vr.dist = 0;
+		vr.vid       = pvid;
+		vr.udistance = 0;
 		/* Insert the beginning vide into the returning doubly linked list. */
 		*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 	}
@@ -1603,7 +1615,7 @@ int _grpCBFTSFillVertexArray(void * pitem, size_t param)
 {
 	REGISTER P_VTXREC * pprec = (P_VTXREC *)0[(size_t *)param];
 	REGISTER P_GRAPH_L  pgrp  = (P_GRAPH_L) 1[(size_t *)param];
-	(*pprec)->indegree = grpIndegreeVertexL(pgrp, (*pprec)->vid = ((P_VERTEX_L)pitem)->vid);
+	(*pprec)->uindegree = grpIndegreeVertexL(pgrp, (*pprec)->vid = ((P_VERTEX_L)pitem)->vid);
 	++(*pprec);
 	return CBF_CONTINUE;
 }
@@ -1621,7 +1633,7 @@ int _grpCBFTSFillVertexArray(void * pitem, size_t param)
  */
 int _grpCBFTSInitQ(void * pitem, size_t param)
 {
-	if (0 == ((P_VTXREC)pitem)->indegree)
+	if (0 == ((P_VTXREC)pitem)->uindegree)
 	{
 		REGISTER P_QUEUE_L pq   = (P_QUEUE_L)1[(size_t *)param];
 		REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
@@ -1657,7 +1669,7 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
 	);
 	if (NULL != prec)
 	{
-		if (0 == --prec->indegree)
+		if (0 == --prec->uindegree)
 		{
 			REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
 			queInsertL(pq, &(((P_EDGE)pitem)->vid), sizeof(size_t));

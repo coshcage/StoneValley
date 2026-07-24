@@ -48,8 +48,8 @@ typedef struct _st_SPTREC {
 	size_t vid;  /* Vertex ID. */
 	size_t pvid; /* Previous vertex ID. */
 	union {      /* Here we need an anonymous union to include a distance integer for both signed and unsigned types. */
-		ptrdiff_t udistance;
-		size_t    sdistance;
+		ptrdiff_t udistance; /* Unsigned distance. */
+		size_t    sdistance; /* Signed distance. */
 	};
 } _SPTREC, * _P_SPTREC;
 

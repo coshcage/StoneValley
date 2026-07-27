@@ -36,7 +36,7 @@ typedef struct st_VERTEX_L {
 /* Edge data in adjacency lists. */
 typedef struct st_EDGE {
 	size_t vid; /* Index of the adjacent vertex. */
-	union {     /* An anonymous union includes edge weight for different types of integer. */
+	union {     /* An anonymous union includes an edge weight for different types of integer. */
 		ptrdiff_t sweight; /* Signed weight. */
 		size_t    uweight; /* Unsigned weight. */
 		size_t    weight;  /* Unsigned generic weight for common purpose. */
@@ -213,7 +213,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
  * Here we explain the addressing issue of an adjacent matrix graph.
  * Assume we have such an adjacent matrix graph which contains 8 vertices.
  * The mathematical description of such a matrix is as follows:
- * G = {V, e} of which V = {a,b,c,d,e,f,g,h}, function e(v, v) = w for each v belongs to V.
+ * G = (V, e) of which V = {a,b,c,d,e,f,g,h}, function e(v, v) = w for each v belongs to V.
  * V is a set of a group of constants, in set V:
  * a = 0; b = 1; c = 2; d = 3; e = 4; f = 5; g = 6; h = 7;
  * In memory the graph is set as a matrix of a size_t[8][8] two dimensional array.

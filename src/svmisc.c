@@ -214,7 +214,7 @@ P_BITSTREAM strCreateCopyBitStream(P_BITSTREAM psrc)
  */
 bool strBitStreamIsEmpty_O(P_BITSTREAM pbstm)
 {
-	return (strLevelArrayZ(&pbstm->arrz) <= 1 && 0 == pbstm->bilc);
+	return strLevelArrayZ(&pbstm->arrz) <= 1 && 0 == pbstm->bilc;
 }
 
 /* Function name: strBitStreamPush

@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0723261050L02788
+ * File ID:     0905171125M0723261050L02790
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -147,6 +147,8 @@ int        _grpCBFFFMFLFillMinCutSet          (void * pitem, size_t param);
  *         py Pointer to another size_t integer.
  * Return value:  The same value as callback comparison function returns.
  *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           Most loaders from operating systems load functions together within an object file from a compilation unit (source file).
+ *                We need to make this function hot instead of using existed function svCBFCompareSizeTInteger to fit the principle of locality.
  */
 int _grpCBFCompareInteger(const void * px, const void * py)
 {

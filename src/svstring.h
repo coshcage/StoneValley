@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0721260731L00515
+ * File ID:     0306170921Y0728261432L00521
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -108,6 +108,12 @@ typedef struct st_FindingInfo {
 
 /* Miscellaneous functions for linear data structures. */
 void        svSwap                         (void *       pleft,    void *       ptemp,     void *       pright,  size_t       size);
+int         svCBFCompareSizeTInteger       (const void * px,       const void * py);
+int         svCBFComparePtrdiffTInteger    (const void * px,       const void * py);
+int         svCBFCompareUnsignedInteger    (const void * px,       const void * py);
+int         svCBFCompareSignedInteger      (const void * px,       const void * py);
+int         svCBFCompareUnsignedCharacter  (const void * px,       const void * py);
+int         svCBFCompareSignedCharacter    (const void * px,       const void * py);
 void        svShellSort                    (void *       pbase,    void *       ptemp,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 void *      svQuickSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svMergeSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);

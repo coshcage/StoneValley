@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0720260614L00813
+ * File ID:     0306170948D0728261428L00914
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -66,8 +66,8 @@ stdiv_t stdiv(size_t numerator, size_t denominator)
  *     pright Pointer to the right block you want to swap with the block of pleft pointed.
  *       size Size of memory that pleft, pright and ptemp pointed.
  * Return value:  N/A.
- * Caution:       Length of each memory that pleft, pright and ptemp pointed shall in the same size.
- *                (*) Memory blocks that pleft, pright and ptemp pointed shall not overlap.
+ * Caution:       Length of each memory that pleft, ptemp, and pright pointed shall be in the same size.
+ *                (*) Memory blocks that pleft, ptemp and pright pointed shall not overlap.
  */
 void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 {	/* Swap two elements. */
@@ -77,6 +77,107 @@ void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 		memmove(pleft, pright, size);
 		memmove(pright, ptemp, size);
 	}
+}
+
+/* Embed some callbacks for convenience.
+ * However, use-wise convenience may kill running efficiency without inline them.
+ * Use them as you need by making up your own mind.
+ */
+
+/* Function name: svCBFCompareSizeTInteger
+ * Description:   This function is used to compare two size_t integers.
+ * Parameters:
+ *         px Pointer to a size_t integer.
+ *         py Pointer to another size_t integer.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           svCBFCompareSizeTInteger is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFCompareSizeTInteger(const void * px, const void * py)
+{
+	if (*(size_t *)px > *(size_t *)py) return  1;
+	if (*(size_t *)px < *(size_t *)py) return -1;
+	return 0;
+}
+
+/* Function name: svCBFComparePtrdiffTInteger
+ * Description:   This function is used to compare two ptrdiff_t integers.
+ * Parameters:
+ *         px Pointer to a ptrdiff_t integer.
+ *         py Pointer to another ptrdiff_t integer.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFComparePtrdiffTInteger(const void * px, const void * py)
+{
+	if (*(ptrdiff_t *)px > *(ptrdiff_t *)py) return  1;
+	if (*(ptrdiff_t *)px < *(ptrdiff_t *)py) return -1;
+	return 0;
+}
+
+/* Function name: svCBFCompareUnsignedInteger
+ * Description:   This function is used to compare two unsigned integers.
+ * Parameters:
+ *         px Pointer to an unsigned integer.
+ *         py Pointer to another unsigned integer.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFCompareUnsignedInteger(const void * px, const void * py)
+{
+	if (*(unsigned int *)px > *(unsigned int *)py) return  1;
+	if (*(unsigned int *)px < *(unsigned int *)py) return -1;
+	return 0;
+}
+
+/* Function name: svCBFCompareSignedInteger
+ * Description:   This function is used to compare two signed integers.
+ * Parameters:
+ *         px Pointer to a signed integer.
+ *         py Pointer to another signed integer.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFCompareSignedInteger(const void * px, const void * py)
+{
+	if (*(signed int *)px > *(signed int *)py) return  1;
+	if (*(signed int *)px < *(signed int *)py) return -1;
+	return 0;
+}
+
+/* Function name: svCBFCompareUnsignedCharacter
+ * Description:   This function is used to compare two unsigned characters.
+ * Parameters:
+ *         px Pointer to an unsigned character.
+ *         py Pointer to another unsigned character.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFCompareUnsignedCharacter(const void * px, const void * py)
+{
+	if (*(PUCHAR)px > *(PUCHAR)py) return  1;
+	if (*(PUCHAR)px < *(PUCHAR)py) return -1;
+	return 0;
+}
+
+/* Function name: svCBFCompareSignedCharacter
+ * Description:   This function is used to compare two signed characters.
+ * Parameters:
+ *         px Pointer to a signed character.
+ *         py Pointer to another signed character.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
+ */
+int svCBFCompareSignedCharacter(const void * px, const void * py)
+{
+	if (*(signed char *)px > *(signed char *)py) return  1;
+	if (*(signed char *)px < *(signed char *)py) return -1;
+	return 0;
 }
 
 /* Functions for bit streams. */

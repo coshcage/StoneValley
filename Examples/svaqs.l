@@ -202,7 +202,7 @@ static int cbfcmpstr(const void * px, const void * py)
 
 #define PRINT_NAMES printf("%zd\t%s\t%s\n", ++0[(size_t *)param], SZCFILE[pfc->filenameindex], pfc->fname)
 
-extern int _grpCBFCompareInteger(const void * px, const void * py);
+extern int svCBFCompareSizeTInteger(const void * px, const void * py);
 
 /* StoneValley source file name array. */
 const char * SZCFILE[] =
@@ -385,7 +385,7 @@ static int cbftvsListAproposItems(void * pitem, size_t param)
 			strtolower(namebuf);
 			
 			if (NULL != strstr(namebuf, pstr))
-				setInsertT(pseta, &pfc, sizeof(P_FunRecord), _grpCBFCompareInteger);
+				setInsertT(pseta, &pfc, sizeof(P_FunRecord), svCBFCompareSizeTInteger);
 			else
 				break;
 		}
@@ -399,7 +399,7 @@ static int cbftvsListAproposItems(void * pitem, size_t param)
 		if (NULL != pstr)
 		{
 			if (NULL != strstr(pfc->fdesc, pstr))
-				setInsertT(psetb, &pfc, sizeof(P_FunRecord), _grpCBFCompareInteger);
+				setInsertT(psetb, &pfc, sizeof(P_FunRecord), svCBFCompareSizeTInteger);
 		}
 		else
 			break;
@@ -554,7 +554,7 @@ static void CommandParser(FILE * fpin)
 			
 			treMorrisTraverseBYIn(P2P_TNODE_BY(*pdb), cbftvsListAproposItems, (size_t)a);
 			
-			psetc = setCreateIntersectionT(pseta, psetb, sizeof(P_FunRecord), _grpCBFCompareInteger);
+			psetc = setCreateIntersectionT(pseta, psetb, sizeof(P_FunRecord), svCBFCompareSizeTInteger);
 			
 			if (NULL != psetc) setTraverseTDispatch(psetc, cbftvsListPrintSet, (size_t)&n, treMorrisTraverseBYIn);
 			

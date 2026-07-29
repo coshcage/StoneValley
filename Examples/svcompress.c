@@ -67,7 +67,7 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 	if (NULL == strInitArrayZ(&arrInBuffer, BUFSIZ, sizeof(UCHART)))
 		return SVC_ALLOCATION;
 	/* Read fpin into buffer in the memory. */
-	while ((c = fgetc(fpin)) != EOF)
+	while (EOF != (c = fgetc(fpin)))
 	{
 		arrInBuffer.pdata[i] = (UCHART)c;
 		if (++i >= strLevelArrayZ(&arrInBuffer))
@@ -129,13 +129,13 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 	/* Delete symbol table. */
 	strDeleteArrayZ(parrTable);
 	/* Write compressed data length. */
-	j = strLevelArrayZ(&(pbstm->arrz));
+	j = strLevelArrayZ(&pbstm->arrz);
 	fwrite(&j, sizeof j, 1, fpout);
 	/* Write remaining bits. */
 	uc = (UCHART)pbstm->bilc;
 	fwrite(&uc, sizeof uc, 1, fpout);
 	/* Write compressed data. */
-	for (j = 0; j < strLevelArrayZ(&(pbstm->arrz)); ++j)
+	for (j = 0; j < strLevelArrayZ(&pbstm->arrz); ++j)
 		fputc(pbstm->arrz.pdata[j], fpout);
 	/* Cleanup. */
 	strDeleteBitStream(pbstm);
@@ -185,7 +185,7 @@ SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin)
 	parrTable = strCreateArrayZ(uc, sizeof(HFM_SYMBOL));
 	for (i = 0; i < j; ++i)
 	{
-		if ((c = fgetc(fpin)) == EOF)
+		if (EOF == (c = fgetc(fpin)))
 		{
 			strDeleteArrayZ(parrTable);
 			return SVC_FILE_TYPE;
@@ -205,7 +205,7 @@ SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin)
 	/* Read compressed data. */
 	for (i = 0; i < k; ++i)
 	{
-		if ((c = fgetc(fpin)) == EOF)
+		if (EOF == (c = fgetc(fpin)))
 		{
 			strDeleteArrayZ(parrTable);
 			strFreeBitStream(&bsin);

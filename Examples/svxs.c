@@ -49,7 +49,7 @@ typedef struct _st_MFILE
  */
 void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t uChunkCount)
 {
-	size_t i;
+	register size_t i;
 	for (i = 0; i < uChunkCount; ++i)
 	{
 		P_MFILE pmf = (P_MFILE)strLocateItemArrayZ(parrChunkFile, sizeof(MFILE), i);
@@ -79,11 +79,11 @@ void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t uChunkCount)
  */
 XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	if ((!len) || (!num) || (!size))
+	if (! len || ! num || ! size)
 		return XSE_BAD_ARGUMENT;
 	else
 	{
-		size_t i;
+		register size_t i;
 		fpos_t pos;
 		P_ARRAY_Z parrChunk     = strCreateArrayZ(num, size);
 		P_ARRAY_Z parrChunkFile = strCreateArrayZ(BUFSIZ, sizeof(MFILE));
@@ -94,7 +94,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 		size_t    uCount      = 0;
 		ptrdiff_t uValidCount = 0;
 		
-		if (!fpin)
+		if (NULL == fpin)
 		{
 			strDeleteArrayZ(parrChunkFile);
 			strDeleteArrayZ(parrChunk);
@@ -160,7 +160,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 
 		strDeleteArrayZ(parrChunk);
 		
-		if (!fpout)
+		if (NULL == fpout)
 		{
 			_svxsDestroyMFileArrayZ(parrChunkFile, uChunkCount);
 			return XSE_OPEN_OUTPUT_FILE;
@@ -197,7 +197,7 @@ XSortError svXSort(FILE * fpout, FILE * fpin, size_t len, size_t num, size_t siz
 		while (uValidCount > 0)
 		{
 			FILE * fp;
-			ptrdiff_t iMinIndex = -1;
+			register ptrdiff_t iMinIndex = -1;
 			for (i = 0; i < uChunkCount; ++i)
 			{
 				if

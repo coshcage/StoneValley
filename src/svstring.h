@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0728261432L00521
+ * File ID:     0306170921Y0728262146L00521
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -499,16 +499,16 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
  *         0 0 0 0.. |
  * Matrix data list: 2->4->6->8->NULL;
  * # The above sparse matrix in memory is:
- * +_SPAMAT______________
- * |BITMAT               |
- * |________________bmask|
- * |size_t|size_t|ARRAY_Z|
- * |____ln|___col|size_t |
- * |_____4|_____5|____num|
- * |LIST_S       |______3|
- * |______ datlst|PUCHAR |
- * |*____________|__pdata|
- *  |            |______*->[0x82][0x12][0x20]
+ * +_SPAMAT______________________
+ * |BITMAT_______________|ARRAY_Z|
+ * |_____________|ARRAY_Z|___bita|
+ * |size_t|size_t|__bmask|size_t_|
+ * |____ln|___col|size_t_|____num|
+ * |_____4|_____5|____num|______4|
+ * |LIST_S_______|______3|PUCHAR_|  # Here we have the memory buffer of a Fenwick tree
+ * |______ datlst|PUCHAR_|__pdata|  # that resides in the structure of a sparse matrix.
+ * |*____________|__pdata|______*->[0x00000000][0x00000002][0x00000003][0x00000001]
+ *  |            |______*->[0x82][0x08][0x20] # This is the memory buffer of the bit map.
  *  |
  *  +_NODE_S_  +-+_NODE_S_  +-+_NODE_S_  +-+_NODE_S_
  *  |P_NODE_S| | |P_NODE_S| | |P_NODE_S| | |P_NODE_S|

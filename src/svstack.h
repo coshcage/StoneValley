@@ -2,7 +2,7 @@
  * Name:        svstack.h
  * Description: Stacks interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318170912X0721260255L00164
+ * File ID:     0318170912X0802262253L00163
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -67,10 +67,9 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	++(pstka_M)->top; \
 } while (0)
 #define stkPopA_M(pitem_M, size_M, pstka_M) do { \
+	--(pstka_M)->top; \
 	if (NULL != (pitem_M)) \
-		memcpy((pitem_M), (pstka_M)->arr.pdata + (--(pstka_M)->top) * (size_M), (size_M)); \
-	else \
-		--(pstka_M)->top; \
+		memcpy((pitem_M), (pstka_M)->arr.pdata + (pstka_M)->top * (size_M), (size_M)); \
 } while (0)
 #define stkPeepA_M(pitem_M, size_M, pstka_M) do { \
 	memcpy((pitem_M), (pstka_M)->arr.pdata + ((pstka_M)->top - 1) * (size_M), (size_M)); \

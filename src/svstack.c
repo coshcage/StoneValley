@@ -2,7 +2,7 @@
  * Name:        svstack.c
  * Description: Stacks.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318171803E0721260821L00321
+ * File ID:     0318171803E0802262300L00320
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -144,10 +144,9 @@ void stkPushA_O(P_STACK_A pstka, const void * pitem, size_t size)
  */
 void stkPopA_O(void * pitem, size_t size, P_STACK_A pstka)
 {
+	--pstka->top;
 	if (NULL != pitem)
-		memcpy(pitem, pstka->arr.pdata + (--pstka->top) * size, size);
-	else
-		--pstka->top;
+		memcpy(pitem, pstka->arr.pdata + pstka->top * size, size);
 }
 
 /* Function name: stkPeepA_O

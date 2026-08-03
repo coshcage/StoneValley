@@ -92,7 +92,7 @@ typedef enum en_TvsMtd {
 	/* ETM_BREADTHFIRST = ETM_LEVELORDER */
 	/* WARNING: Do NOT embed any form of binary tree traversal inside a Morris traversal.
 	 * The reason why we cannot do this is that a Morris traversal would interrupt a tree structure during working.
-	 * A Morris traversal can only be done as an ACID transaction/procedure with a whole to a binary tree.
+	 * A Morris traversal can only be done as an ACID transaction/procedure in a whole to a binary tree.
 	 */
 	ETM_PREORDER_MORRIS = 021,
 	ETM_INORDER_MORRIS  = 022

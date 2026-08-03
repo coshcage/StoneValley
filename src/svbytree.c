@@ -529,7 +529,7 @@ void treRemoveRightBY(P_TNODE_BY pnode)
 size_t treArityBY(P_TNODE_BY pnode)
 {
 	size_t s = 0;
-	/* No matter what order we use here, it is not a matter. */
+	/* No matter what order we use here, it is not a problem. */
 	treMorrisTraverseBYIn(pnode, _strCBFNodesCounter, (size_t)&s);
 	return s;
 }

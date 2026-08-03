@@ -33,9 +33,9 @@
 int cbftvs_print(void * pitem, size_t param)
 {
 	if (ENT_SINGLE == param)
-		printf("%c ", (char)(size_t)((P_NODE_S)pitem)->pdata);
+		printf("%c ", (char) (size_t)((P_NODE_S)pitem)->pdata);
 	else if (ENT_DOUBLE == param)
-		printf("%2d ", *(int *)((P_NODE_D)pitem)->pdata);
+		printf("%2d ", *(int *) ((P_NODE_D)pitem)->pdata);
 	else
 		return CBF_TERMINATE;
 	return CBF_CONTINUE;
@@ -48,9 +48,9 @@ int cbftvs_print(void * pitem, size_t param)
 int cbftvs_copy_1(void * pitem, size_t param)
 {
 	if (0[(size_t *)param]) /* linked list -> array. */
-		*((*(char **)1[(size_t *)param])++) = (char)(size_t)((P_NODE_S)pitem)->pdata;
+		*((*(char **)1[(size_t *)param])++) = (char) (size_t)((P_NODE_S)pitem)->pdata;
 	else /* Array -> linked list. */
-		((P_NODE_S)pitem)->pdata = (PUCHAR)(size_t)*((*(char **)1[(size_t *)param])++);
+		((P_NODE_S)pitem)->pdata = (PUCHAR) (size_t)*((*(char **)1[(size_t *)param])++);
 	return CBF_CONTINUE;
 }
 
@@ -61,9 +61,9 @@ int cbftvs_copy_1(void * pitem, size_t param)
 int cbftvs_copy_2(void * pitem, size_t param)
 {
 	if (0[(size_t *)param]) /* linked list -> array. */
-		*((*(int **)1[(size_t *)param])++) = *(int *)((P_NODE_D)pitem)->pdata;
+		*((*(int **)1[(size_t *)param])++) = *(int *) ((P_NODE_D)pitem)->pdata;
 	else /* Array -> linked list. */
-		*(int *)((P_NODE_D)pitem)->pdata = *((*(int **)1[(size_t *)param])++);
+		*(int *) ((P_NODE_D)pitem)->pdata = *((*(int **)1[(size_t *)param])++);
 	return CBF_CONTINUE;
 }
 
@@ -157,14 +157,14 @@ int main(void)
 	char * pstr = "helloworld";
 	strInitLinkedListDC(&list2);
 	// Assemble single linked list 1.
-	list1[0].pdata = (PUCHAR)(size_t)(*pstr++);
+	list1[0].pdata = (PUCHAR) (*pstr++);
 	for (i = 1; i < LIST1_LEN; ++i)
 	{
 		/* To convert a size_t value to PUCHAR after converting char value to size_t
 		 * to cheat compilers from warning me. Warning codes are shocking.
 		 * I wish for compilers' forgiveness for my false conduct. :)
 		 */
-		list1[i].pdata = (PUCHAR)(size_t)(*pstr++);
+		list1[i].pdata = (PUCHAR)(*pstr++);
 		list1[i - 1].pnode = &list1[i];
 	}
 	list1[9].pnode = NULL; // Close tail.
@@ -175,7 +175,7 @@ int main(void)
 	else
 		puts("Error occurred while sorting list 1.");
 	// Assemble doubly-pointer linked list 2.
-	srand((unsigned int)(size_t)&n);
+	srand((unsigned int)&n);
 	n = rand() % 99 + 1;
 	list2 = strCreateNodeD(&n, sizeof(int));
 	for (i = 0, pnoded = list2; n = rand() % 99 + 1, i < (LIST2_LEN - 1); ++i)

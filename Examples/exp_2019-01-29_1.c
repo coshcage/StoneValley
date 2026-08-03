@@ -58,7 +58,7 @@ void PrintArrayZ(P_ARRAY_Z parrz, size_t size, bool bchar)
 	 * altering parrz->num, so that strLevelArrayZ might not be an appendix.
 	 */
 	for (i = 0; i < strLevelArrayZ(parrz); ++i)
-		printf("%c", (c = *(MYTYPE *)(parrz->pdata + i * size), bchar ? c : c - '0'));
+		printf("%c", (c = *(MYTYPE *) (parrz->pdata + i * size), bchar ? c : c - '0'));
 	printf("\n");
 }
 

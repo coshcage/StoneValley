@@ -165,7 +165,7 @@ int ComputeExecutionQueue(void * pitem, size_t param)
 				case '-': f2 -= f1; break;
 				case '*': f2 *= f1; break;
 				case '/': if (0.0f == f1) goto Lbl_Math_Error; f2 /= f1; break;
-				case '%': f2 = (float)((long)f2 % (long)f1); break;
+				case '%': f2 = (float) ((long)f2 % (long)f1); break;
 				case '^': f2 = powf(f2, f1); break;
 			}
 			f1 = f2;

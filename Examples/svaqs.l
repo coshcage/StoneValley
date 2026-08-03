@@ -76,7 +76,7 @@ char cmdbuf[BUFSIZ];
 
 static void CheckBufferSize(int bflen)
 {
-	if ((size_t)(pbuf - arrbuf.pdata) >= strLevelArrayZ(&arrbuf))
+	if ((size_t) (pbuf - arrbuf.pdata) >= strLevelArrayZ(&arrbuf))
 		pbuf = (PUCHAR)strResizeBufferedArrayZ(&arrbuf, sizeof(char), +BUFSIZ);
 	if (bflen > 0)
 		pbuf += bflen;

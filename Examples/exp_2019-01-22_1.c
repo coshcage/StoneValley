@@ -28,7 +28,7 @@
 // Return:   CBF_CONTINUE only.
 int cbftvs_print_list(void * pitem, size_t param)
 {
-	printf("%ld, ", *(long *)((P_NODE_D)pitem)->pdata);
+	printf("%ld, ", *(long *) ((P_NODE_D)pitem)->pdata);
 	DWC4100(param);
 	return CBF_CONTINUE;
 }

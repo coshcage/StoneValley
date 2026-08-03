@@ -597,7 +597,7 @@ bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cb
 				svSwap(ptri, ptemp, ptrk, size);
 				{	/* Reverse array from j to last. */
 					ARRAY_Z arrt; /* Auxiliary array header for reversing. */
-					arrt.num   = (size_t)((ptrl - ptrj) / size + 1);
+					arrt.num   = (size_t) ((ptrl - ptrj) / size + 1);
 					arrt.pdata = ptrj;
 					strReverseArrayZ(&arrt, ptemp, size);
 				}
@@ -719,7 +719,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 {
 	REGISTER size_t i = 0; /* Index for parrtxt. */
 	REGISTER size_t j = 0; /* Index for parrptn. */
-	size_t * lps = (size_t *)malloc(strLevelArrayZ(parrptn) * sizeof(size_t));
+	size_t * lps = (size_t *) malloc(strLevelArrayZ(parrptn) * sizeof(size_t));
 	
 	if (NULL == lps)
 		return CBF_TERMINATE;

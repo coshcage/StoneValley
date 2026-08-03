@@ -30,7 +30,7 @@
 /* Library version. */
 #define SV_LIB_VER "1.3.3.1"
 /* This following macro turns library version string into a size_t integer to be calculated by users. */
-#define SV_LIB_VER_VAL ((size_t)((SV_LIB_VER[0] - '0') * 1000UL + (SV_LIB_VER[2] - '0') * 100UL + (SV_LIB_VER[4] - '0') * 10UL + (SV_LIB_VER[6] - '0')))
+#define SV_LIB_VER_VAL ((size_t) ((SV_LIB_VER[0] - '0') * 1000UL + (SV_LIB_VER[2] - '0') * 100UL + (SV_LIB_VER[4] - '0') * 10UL + (SV_LIB_VER[6] - '0')))
 
 /* Convert the result of an expression into a boolean value. */
 #define BOOLIZE(exp_term) (!!(exp_term))

@@ -1219,8 +1219,8 @@ void strSwapNodeItemLinkedListDC(P_NODE_D pnodex, P_NODE_D pnodey)
  */
 void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 {	/* Unfortunately, the pursuing of interchangeability made this function difficult to read. */
-#define _P2P_NODE_S(pnode) ((P_NODE_S)(pnode)) /* Cast a pointer to P_NODE_S. */
-#define _P2P_NODE_D(pnode) ((P_NODE_D)(pnode)) /* Cast a pointer to P_NODE_D. */
+#define _P2P_NODE_S(pnode) ((P_NODE_S) (pnode)) /* Cast a pointer to P_NODE_S. */
+#define _P2P_NODE_D(pnode) ((P_NODE_D) (pnode)) /* Cast a pointer to P_NODE_D. */
 	REGISTER void * plast = pfirst;
 	REGISTER void * ptemp  = NULL;
 	if (NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp))
@@ -1260,12 +1260,12 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 			ptemp =
 			(
 				(ENT_SINGLE == ntp) ?
-				(void *)(_P2P_NODE_S(plast)->pnode) :
+				(void *) (_P2P_NODE_S(plast)->pnode) :
 				(void *)
 				(
 					brev ?
-					(void *)(_P2P_NODE_D(plast)->ppnode[PREV]) :
-					(void *)(_P2P_NODE_D(plast)->ppnode[NEXT])
+					(void *) (_P2P_NODE_D(plast)->ppnode[PREV]) :
+					(void *) (_P2P_NODE_D(plast)->ppnode[NEXT])
 				)
 			)
 		)
@@ -1440,8 +1440,8 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 					(pb = (P_NODE_S)q),
 					(px = (P_NODE_D)p),
 					(py = (P_NODE_D)q),
-					(p1 = (void *)(ENT_DOUBLE != ntp ? pa->pdata : px->pdata)),
-					(p2 = (void *)(ENT_DOUBLE != ntp ? pb->pdata : py->pdata)),
+					(p1 = (void *) (ENT_DOUBLE != ntp ? pa->pdata : px->pdata)),
+					(p2 = (void *) (ENT_DOUBLE != ntp ? pb->pdata : py->pdata)),
 					cbfcmp(p1, p2) <= 0
 				)
 				{

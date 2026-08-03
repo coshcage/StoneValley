@@ -186,11 +186,11 @@ P_VERTEX_L grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
 int _grpCBFFindEdgeInList(void * pitem, size_t param)
 {
 	REGISTER _P_FIEDG pd = (_P_FIEDG)param;
-	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
+	if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
 	{
 		if (pd->bweight) /* Weighted edge. */
 		{
-			if (((P_EDGE)((P_NODE_S)pitem)->pdata)->weight == pd->vertex.weight)
+			if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight == pd->vertex.weight)
 				goto Lbl_Found;
 			else
 				return CBF_CONTINUE;
@@ -213,8 +213,8 @@ Lbl_Found:
 int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
 {
 	REGISTER _P_FIEDG pd = (_P_FIEDG)param;
-	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
-		return pd->cbftvs(&((P_EDGE)((P_NODE_S)pitem)->pdata)->weight, param);
+	if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
+		return pd->cbftvs(&((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight, param);
 	return CBF_CONTINUE;
 }
 
@@ -230,7 +230,7 @@ int _grpCBFTraversePuppet(void * pitem, size_t param)
 {
 	_P_DATINF psi = (_P_DATINF)param;
 	if (psi->bedge)
-		return psi->cbftvs((P_EDGE)((P_NODE_S)pitem)->pdata, psi->param);
+		return psi->cbftvs((P_EDGE) ((P_NODE_S)pitem)->pdata, psi->param);
 	else
 		return psi->cbftvs((P_VERTEX_L)P2P_TNODE_BY(pitem)->pdata, psi->param);
 }
@@ -276,7 +276,7 @@ int _grpCBFFreePuppet(void * pitem, size_t param)
  */
 int _grpCBFIndegreeVertexPuppet(void * pitem, size_t param)
 {
-	if (((P_EDGE)((P_NODE_S)pitem)->pdata)->vid == 1[(size_t *)param])
+	if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid == 1[(size_t *)param])
 		++ *(size_t *)param;
 	return CBF_CONTINUE;
 }
@@ -306,7 +306,7 @@ int _grpCBFIndegreeVertex(void * pitem, size_t param)
  */
 int _grpCBFRemoveEdgePuppet(void * pitem, size_t param)
 {
-	if (*(size_t *)param == ((P_EDGE)((P_NODE_S)pitem)->pdata)->vid)
+	if (*(size_t *)param == ((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid)
 	{
 		P_VERTEX_L pvtx = (P_VERTEX_L)1[(size_t *)param];
 		if ((P_NODE_S)pitem == pvtx->adjlist) /* pitem is the header. */
@@ -859,7 +859,7 @@ int grpDFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  */
 int _grpCBFQueueInsertVertex(void * pitem, size_t param)
 {
-	queInsertL((P_QUEUE_L)param, &((P_EDGE)((P_NODE_S)pitem)->pdata)->vid, sizeof(size_t));
+	queInsertL((P_QUEUE_L)param, &((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid, sizeof(size_t));
 	return CBF_CONTINUE;
 }
 
@@ -963,7 +963,7 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 	/* Fill distance into array. Pick the specific value off the array and sign it.
 	 * Initialize the distance from source to other vertex as INT_MAX(infinite).
 	 */
-	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)(barrd ? (size_t)(ptrdiff_t)-1 : (size_t)false), false);
+	strTraverseArrayZ(parrz, sizeof(VTXREC), _grpCBFSPLInitVtxrecArray, (size_t)(barrd ? (size_t) (ptrdiff_t)-1 : (size_t)false), false);
 	prec = (P_VTXREC)strBinarySearchArrayZ(parrz, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 	if (NULL != prec)
 	{
@@ -1236,7 +1236,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                #include "svgraph.h"
  *                
  *                int cbftvsprint(void * pitem, size_t param) {
- *                	P_VTXREC p = (P_VTXREC)((P_NODE_D)pitem)->pdata;
+ *                	P_VTXREC p = (P_VTXREC) ((P_NODE_D)pitem)->pdata;
  *                	DWC4100(param);
  *                	printf("vid = %zd, udistance = %zd\n", p->vid, p->udistance);
  *                	return CBF_CONTINUE;
@@ -1369,8 +1369,8 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 	
 	(*pprec)->flag = false;
 	(*pprec)->vids[0] = 1[(size_t *)param];
-	(*pprec)->vids[1] = ((P_EDGE)((P_NODE_S)pitem)->pdata)->vid;
-	(*pprec)->weight  = ((P_EDGE)((P_NODE_S)pitem)->pdata)->weight;
+	(*pprec)->vids[1] = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid;
+	(*pprec)->weight  = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight;
 	
 	++(*pprec);
 	return CBF_CONTINUE;
@@ -1796,7 +1796,7 @@ int _grpCBFEdgesIsomorphicL(void * pitem, size_t param)
 		(
 			(P_GRAPH_L)_FFMFL_PARAM_ARRAY(_EGID_1_P_GRAPH_L_FLW),
 			_FFMFL_PARAM_ARRAY(_EGID_7_VIDT),
-			((P_EDGE)((P_NODE_S)pitem)->pdata)->vid,
+			((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid,
 			false,
 			0
 		)
@@ -2010,7 +2010,7 @@ int _grpCBFFFMFLFindInEdges(void * pitem, size_t param)
  */
 int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
 {
-	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
+	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL) ((P_NODE_S)pitem)->pdata;
 	if (2[(size_t *)param] == plbl->vidc)
 	{
 		if (plbl->theta < 0[(size_t *)param])
@@ -2033,7 +2033,7 @@ int _grpCBFFFMFLFindMinimalTheta(void * pitem, size_t param)
  */
 int _grpCBFFFMFLReduceFlowValue(void * pitem, size_t param)
 {
-	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL)((P_NODE_S)pitem)->pdata;
+	REGISTER _P_MXFLWLBL plbl = (_P_MXFLWLBL) ((P_NODE_S)pitem)->pdata;
 	if (2[(size_t *)param] == plbl->vidc)
 	{
 		if (plbl->vidc != plbl->vidp)
@@ -2718,8 +2718,8 @@ int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param)
 	grpSetEdgeWeightM
 	(
 		(P_GRAPH_M)0[(size_t *)param], 
-		(size_t)(p1 - (size_t *)((P_ARRAY_Z)1[(size_t *)param])->pdata),
-		(size_t)(p2 - (size_t *)((P_ARRAY_Z)1[(size_t *)param])->pdata),
+		(size_t)(p1 - (size_t *) ((P_ARRAY_Z)1[(size_t *)param])->pdata),
+		(size_t)(p2 - (size_t *) ((P_ARRAY_Z)1[(size_t *)param])->pdata),
 		((P_EDGE)pitem)->weight
 	);
 	return CBF_CONTINUE;

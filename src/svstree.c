@@ -1719,7 +1719,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 		*pbpt = treCreateBPTNode(NULL, NULL);
 		if (NULL == *pbpt)
 			return false;
-		if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO)((*pbpt)->pdata), pkey, NULL, cbfcmp))
+		if (NULL == _treInsertKeyIntoArrayBPT((_P_BPT_INFO) ((*pbpt)->pdata), pkey, NULL, cbfcmp))
 			return false;
 	}
 	else
@@ -1914,7 +1914,7 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 				{	/* Insert nodes pointers into parent's array. */
 					queRemoveL(&pnode, sizeof(P_BPTNODE), pqa);
 					pki->pchild = pnode;
-					pki->pkey = ((_P_BPT_KEY_INFO)((_P_BPT_INFO)pnode->pdata)->keyarr.pdata)->pkey;
+					pki->pkey = ((_P_BPT_KEY_INFO) ((_P_BPT_INFO)pnode->pdata)->keyarr.pdata)->pkey;
 					pnode->ppnode[PARENTPTR] = pnew;
 					++pki;
 				}
@@ -1923,7 +1923,7 @@ bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 			{	/* Insert nodes pointers into parent's array. */
 				queRemoveL(&pnode, sizeof(P_BPTNODE), pqa);
 				pki->pchild = pnode;
-				pki->pkey = ((_P_BPT_KEY_INFO)((_P_BPT_INFO)pnode->pdata)->keyarr.pdata)->pkey;
+				pki->pkey = ((_P_BPT_KEY_INFO) ((_P_BPT_INFO)pnode->pdata)->keyarr.pdata)->pkey;
 				pnode->ppnode[PARENTPTR] = pnew;
 			}
 			/* Insert new created node into the second one. queue. */
@@ -2290,7 +2290,7 @@ void _treFreeTrieNode(P_TRIE_A ptrie, size_t size)
 		REGISTER PUCHAR pdat = (*ptrie)->pdata;
 		for (i = 0; i < strLevelArrayZ(*ptrie); ++i, pdat += _ELESIZ(size))
 		{
-			P_TRIE_A pt = (P_TRIE_A)(pdat + size);
+			P_TRIE_A pt = (P_TRIE_A) (pdat + size);
 			if (NULL != *pt)
 				_treFreeTrieNode(pt, size);
 		}

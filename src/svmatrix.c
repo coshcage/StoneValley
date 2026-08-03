@@ -970,8 +970,8 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 			l = dr.quot  - 1;
 			m = CHAR_BIT - 1;
 		}
-		t = (UCHART)(0x01 << j);
-		u = (UCHART)(pmtx->bmask.arrz.pdata[l] >> j);
+		t = (UCHART) (0x01 << j);
+		u = (UCHART) (pmtx->bmask.arrz.pdata[l] >> j);
 		/* Count items. */
 		s = _strBITSum(l, &pmtx->bita);
 		/* Count the rest of items. */
@@ -993,7 +993,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 					/* Update the Fenwick tree. */
 					_strBITAdd(l + 1, -1, &pmtx->bita);
 					/* Clear bit mask. */
-					pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] & ~t);
+					pmtx->bmask.arrz.pdata[l] = (UCHART) (pmtx->bmask.arrz.pdata[l] & ~t);
 				}
 			}
 		}
@@ -1014,7 +1014,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 					pnode->pnode = pnew;
 				}
 				/* Sign a bit on bit mask. */
-				pmtx->bmask.arrz.pdata[l] = (UCHART)(pmtx->bmask.arrz.pdata[l] | t);
+				pmtx->bmask.arrz.pdata[l] = (UCHART) (pmtx->bmask.arrz.pdata[l] | t);
 				/* Update the Fenwick tree. */
 				_strBITAdd(l + 1, +1, &pmtx->bita);
 				return pnew->pdata;

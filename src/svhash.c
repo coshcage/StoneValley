@@ -225,7 +225,7 @@ int hshTraverseC(P_HSHTBL_C pht, CBF_TRAVERSE cbftvs, size_t param)
  */
 P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
-	return strSearchLinkedListSC(*(P_NODE_S *)(pht->pdata + (cbfhsh(pkey) % strLevelArrayZ(pht)) * sizeof(P_NODE_S)), pkey, size);
+	return strSearchLinkedListSC(*(P_NODE_S *) (pht->pdata + (cbfhsh(pkey) % strLevelArrayZ(pht)) * sizeof(P_NODE_S)), pkey, size);
 }
 
 /* Function name: hshInsertC
@@ -243,7 +243,7 @@ P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t s
  */
 bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
-	REGISTER P_NODE_S * ppnode = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
+	REGISTER P_NODE_S * ppnode = (P_NODE_S *) (pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
 	REGISTER P_NODE_S pnew = strCreateNodeS(pkey, size);
 	if (NULL == pnew)
 		return false; /* Allocation failure. */
@@ -271,7 +271,7 @@ bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  */
 bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 {
-	REGISTER P_NODE_S * pphead = (P_NODE_S *)(pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
+	REGISTER P_NODE_S * pphead = (P_NODE_S *) (pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
 	REGISTER P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, size);
 	if (NULL == pphead || NULL == *pphead || NULL == pnode)
 		return false;
@@ -501,7 +501,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
+		pflag = (_P_FLAG) (pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 			return NULL;
 		else
@@ -532,7 +532,7 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
+		pflag = (_P_FLAG) (pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 		{
 			*pflag = (_FLAG)true;
@@ -562,7 +562,7 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 	for (i = 0; i < strLevelArrayZ(pht); ++i)
 	{
 		j = (cbfhsh1(pkey) + i * cbfhsh2(pkey)) % strLevelArrayZ(pht);
-		pflag = (_P_FLAG)(pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
+		pflag = (_P_FLAG) (pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 			return false;
 		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))

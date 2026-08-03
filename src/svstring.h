@@ -255,7 +255,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svmisc.c. */
-#define svIndexOf_M(pbase_M, pitem_M, size_M) ((ptrdiff_t)((ptrdiff_t)(pitem_M) - (ptrdiff_t)(pbase_M)) / (ptrdiff_t)(size_M))
+#define svIndexOf_M(pbase_M, pitem_M, size_M) ((ptrdiff_t) ((ptrdiff_t)(pitem_M) - (ptrdiff_t)(pbase_M)) / (ptrdiff_t)(size_M))
 /* Functions in svatom.c. */
 #define strFreeArrayZ_M(parrz_M) do { \
 	if (NULL != (parrz_M)->pdata) /* Circumvent freeing a NULL pointer. */ { \
@@ -288,12 +288,12 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	free(pnode_M); \
 } while (0)
 /* Functions in svarray.c. */
-#define strLevelArrayZ_M(parrz_M) ((const size_t)((parrz_M)->num))
+#define strLevelArrayZ_M(parrz_M) ((const size_t) ((parrz_M)->num))
 #define strCopyArrayZ_M(pdest_M, psrc_M, size_M) (memcpy((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strMoveArrayZ_M(pdest_M, psrc_M, size_M) (memmove((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strLocateItemArrayZ_M(parrz_M, size_M, index_M) ((index_M) < strLevelArrayZ(parrz_M) ? (parrz_M)->pdata + (index_M) * (size_M) : NULL)
 #define strIndexOfArrayZ_M(parrz_M, pitem, size) ( \
-	((size_t)(pitem_M) >= (size_t)(parrz_M)->pdata && (size_t)(pitem_M) <= (size_t)&(parrz_M)->pdata[(size_M) * (strLevelArrayZ(parrz_M) - 1)]) ? \
+	((size_t) (pitem_M) >= (size_t) (parrz_M)->pdata && (size_t) (pitem_M) <= (size_t)&(parrz_M)->pdata[(size_M) * (strLevelArrayZ(parrz_M) - 1)]) ? \
 	svIndexOf((parrz_M)->pdata, (pitem_M), (size_M)) : \
 	-1 \
 )

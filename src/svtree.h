@@ -60,9 +60,9 @@ typedef struct st_RBTNODE {
 	struct st_RBTNODE * parent; /* A pointer to parent node. */
 } RBTNODE, * P_RBTNODE, * RBT, ** P_RBT;
 
-#define P2P_TNODE_BY(pnode) ((P_TNODE_BY)(pnode)) /* Cast a pointer to P_TNODE_BY. */
-#define P2P_BSTNODE(pnode)  ((P_BSTNODE) (pnode)) /* Cast a pointer to P_BSTNODE. */
-#define P2P_RBTNODE(pnode)  ((P_RBTNODE) (pnode)) /* Cast a pointer to P_RBTNODE. */
+#define P2P_TNODE_BY(pnode) ((P_TNODE_BY) (pnode)) /* Cast a pointer to P_TNODE_BY. */
+#define P2P_BSTNODE(pnode)  ((P_BSTNODE)  (pnode)) /* Cast a pointer to P_BSTNODE. */
+#define P2P_RBTNODE(pnode)  ((P_RBTNODE)  (pnode)) /* Cast a pointer to P_RBTNODE. */
 
 /* Types for generic tree nodes. */
 typedef struct st_TNODE_G {
@@ -274,7 +274,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 } while (0)
 #define _treGetParentBPTNode_M(pnode_M) ((pnode_M)->ppnode[PARENTPTR])
 #define _treGetNextBPTNode_M(pnode_M) ((pnode_M)->ppnode[NEXTPTR])
-#define _treIsLeafBPTNode_M(pnode_M) (!((_P_BPT_INFO)(pnode_M)->pdata)->headptr)
+#define _treIsLeafBPTNode_M(pnode_M) (!((_P_BPT_INFO) (pnode_M)->pdata)->headptr)
 #define treInitBPT_M(pbpt_M) do { \
 	*(pbpt_M) = NULL; \
 } while (0)

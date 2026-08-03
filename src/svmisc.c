@@ -431,7 +431,7 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
-	REGISTER UCHART r = (UCHART)(pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART)(CHAR_BIT - pbstm->bilc)));
+	REGISTER UCHART r = (UCHART) (pbstm->arrz.pdata[strLevelArrayZ(&pbstm->arrz) - 1] & ((UCHART) 0x01 << (UCHART) (CHAR_BIT - pbstm->bilc)));
 	if (--pbstm->bilc < 1)
 	{	/* Need to reallocate. */
 		if (strLevelArrayZ(&pbstm->arrz) > 1)
@@ -475,7 +475,7 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 void strBitStreamReverse(P_BITSTREAM pbstm)
 {
 	REGISTER size_t i, j = (0 == pbstm->bilc ? strLevelArrayZ(&pbstm->arrz) - 1 : strLevelArrayZ(&pbstm->arrz));
-	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = (UCHART)(~pbstm->arrz.pdata[i]);
+	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = (UCHART) (~pbstm->arrz.pdata[i]);
 }
 
 /* Due to some reasons that this library could
@@ -506,7 +506,7 @@ void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPAR
 	REGISTER size_t g, gap;
 	/* Using Marcin Ciura's gap sequence. */
 	size_t gaps[] = { 701, 301, 132, 57, 23, 10, 4, 1 };
-	for (g = 0; g < (const size_t)(sizeof(gaps) / sizeof(gaps[0])); ++g)
+	for (g = 0; g < (const size_t) (sizeof(gaps) / sizeof(gaps[0])); ++g)
 	{
 		REGISTER size_t i, j, k;
 		gap = gaps[g];
@@ -617,8 +617,8 @@ void * svQuickSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
 	REGISTER size_t i, j;
-	REGISTER PUCHAR pl = (PUCHAR)pbase;
-	REGISTER PUCHAR pr = (PUCHAR)malloc(num * size);
+	REGISTER PUCHAR pl = (PUCHAR) pbase;
+	REGISTER PUCHAR pr = (PUCHAR) malloc(num * size);
 
 	if (NULL == pr)
 		return NULL; /* Allocation failure. */
@@ -909,6 +909,6 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
  */
 ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
 {
-	return (ptrdiff_t)((ptrdiff_t)pitem - (ptrdiff_t)pbase) / (ptrdiff_t)size;
+	return (ptrdiff_t) ((ptrdiff_t)pitem - (ptrdiff_t)pbase) / (ptrdiff_t)size;
 }
 

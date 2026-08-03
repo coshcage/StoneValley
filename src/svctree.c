@@ -26,7 +26,7 @@
 #include "svtree.h"
 
 /* A macro that defines the maximum symbol table length. */
-#define _SMB_TBL_LEN ((size_t)(UCHAR_MAX + 1))
+#define _SMB_TBL_LEN ((size_t) (UCHAR_MAX + 1))
 
  /* Symbol information of Huffman trees. */
 typedef struct _st_SMBINF {
@@ -93,11 +93,11 @@ int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)
 {
 	REGISTER size_t f0, f1;
 	f0 = (NULL == (*(P_TNODE_BY *)x)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)x)->ppnode[RIGHT] ?
-		((_P_HFMNOD)(*(P_TNODE_BY *)x)->pdata)->NodeData.psbinf->freq :
-		((_P_HFMNOD)(*(P_TNODE_BY *)x)->pdata)->NodeData.sbfreq);
+		((_P_HFMNOD) (*(P_TNODE_BY *)x)->pdata)->NodeData.psbinf->freq :
+		((_P_HFMNOD) (*(P_TNODE_BY *)x)->pdata)->NodeData.sbfreq);
 	f1 = (NULL == (*(P_TNODE_BY *)y)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)y)->ppnode[RIGHT] ?
-		((_P_HFMNOD)(*(P_TNODE_BY *)y)->pdata)->NodeData.psbinf->freq :
-		((_P_HFMNOD)(*(P_TNODE_BY *)y)->pdata)->NodeData.sbfreq);
+		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.psbinf->freq :
+		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.sbfreq);
 	if (f0 > f1) return  1;
 	if (f0 < f1) return -1;
 	return 0;
@@ -195,7 +195,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 	if (NULL == pnode->ppnode[LEFT] && NULL == pnode->ppnode[RIGHT])
 	{	/* Node is a leaf. */
 		REGISTER P_TNODE_BY parent = ((_P_HFMNOD)pnode->pdata)->parent;
-		REGISTER _P_SMBINF psi = (_P_SMBINF)((_P_HFMNOD)pnode->pdata)->NodeData.psbinf;
+		REGISTER _P_SMBINF psi = (_P_SMBINF) ((_P_HFMNOD)pnode->pdata)->NodeData.psbinf;
 		if (NULL != parent)
 		{	/* Clear frequency. Get ready for bits assigning. */
 			psi->Symbol.bits = 0;
@@ -203,7 +203,7 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 			while (NULL != parent)
 			{	/* Padding bit one onto value. */
 				if (parent->ppnode[RIGHT] == pnode)
-					psi->Symbol.sgnb |= (size_t)(1 << psi->Symbol.bits);
+					psi->Symbol.sgnb |= (size_t) (1 << psi->Symbol.bits);
 				/* Increase number of bits. */
 				++psi->Symbol.bits;
 				/* Propagate upward to root. */

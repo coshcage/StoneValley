@@ -41,7 +41,7 @@ void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 	if (0 == sum)
 	{
 		parrz->num = 0;
-		return (void *)(parrz->pdata = NULL);
+		return (void *) (parrz->pdata = NULL);
 	}
 	else
 	{
@@ -129,7 +129,7 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 			free(parrz->pdata);
 			parrz->num = 0;
 		}
-		return (void *)(parrz->pdata = NULL);
+		return (void *) (parrz->pdata = NULL);
 	}
 	else
 	{
@@ -141,7 +141,7 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 			else
 			{
 				parrz->num = num;
-				return (void *)(parrz->pdata = pnew);
+				return (void *) (parrz->pdata = pnew);
 			}
 		}
 		else

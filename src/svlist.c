@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0721261101L01500
+ * File ID:     0306170948C0804261027L01510
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -347,9 +347,9 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always the pdata of listx
  *            and the second one points to the pdata of listy. Both of them are type cast to (const void *).
- * Return value:   1: listx is greater than listy.
- *                 0: listx equal to listy.
- *                -1: listx is less than listy.
+ * Return value:   1: listx is greater than listy. (>).
+ *                 0: listx equal to listy.        (=).
+ *                -1: listx is less than listy.    (<).
  *                The following table shows characteristics about this function:
  *                listx  listy result
  *                abcde  abdef     -1
@@ -361,6 +361,9 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *                acd    b         -1
  *                a      bcd       -1
  *                bcd    a          1
+ *                NULL   NULL       0
+ *                NULL   a         -1
+ *                a      NULL       1
  * Caution:       Data in each node of two linked lists must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */
@@ -369,10 +372,16 @@ int strCompareLinkedListSC(LIST_S listx, LIST_S listy, CBF_COMPARE cbfcmp)
 	REGISTER int rtn = 0;
 	REGISTER P_NODE_S pstatx = listx;
 	REGISTER P_NODE_S pstaty = listy;
+	if (listx == listy)
+		return 0;
+	if (NULL == listx)
+		return -1;
+	if (NULL == listy)
+		return 1;
 	while (NULL != listx && NULL != listy)
 	{
 		if (0 != (rtn = cbfcmp(listx->pdata, listy->pdata)))
-			break;
+			return rtn;
 		listx = listx->pnode;
 		listy = listy->pnode;
 		if (pstatx == listx || pstaty == listy) /* Circular list. */
@@ -380,12 +389,10 @@ int strCompareLinkedListSC(LIST_S listx, LIST_S listy, CBF_COMPARE cbfcmp)
 	}
 	if (0 == rtn) /* Determine results when two lists have a same part. */
 	{
-		REGISTER size_t rx = strLevelLinkedListSC(listx);
-		REGISTER size_t ry = strLevelLinkedListSC(listy);
-		if (rx > ry)
-			return 1;
-		if (rx < ry)
+		if ((NULL != listy && pstaty != listy) && (NULL == listx || pstatx == listx))
 			return -1;
+		if ((NULL != listx && pstatx != listx) && (NULL == listy || pstaty == listy))
+			return 1;
 	}
 	return rtn;
 }
@@ -992,17 +999,24 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, bool brev)
  *                (->A<-) and (A<-B->A).
  *                (->A<-)   means A.ppnode[PREV] == &A && A.ppnode[NEXT] == &A;
  *                (A<-B->A) means B.ppnode[PREV] == &A && B.ppnode[NEXT] == &A;
+ *                Be aware of the caveat handling NULL value of listx and listy.
  * Tip:           No dead cycles for other circular linked lists.
  */
 int strCompareLinkedListDC(LIST_D listx, LIST_D listy, CBF_COMPARE cbfcmp, bool brev)
 {
-	int rtn = 0;
+	REGISTER int rtn = 0;
 	REGISTER P_NODE_D pstatx = listx;
 	REGISTER P_NODE_D pstaty = listy;
+	if (listx == listy)
+		return 0;
+	if (NULL == listx)
+		return -1;
+	if (NULL == listy)
+		return 1;
 	while (NULL != listx && NULL != listy)
 	{
 		if (0 != (rtn = cbfcmp(listx->pdata, listy->pdata)))
-			break;
+			return rtn;
 		if (brev)
 		{
 			listx = listx->ppnode[PREV];
@@ -1013,19 +1027,15 @@ int strCompareLinkedListDC(LIST_D listx, LIST_D listy, CBF_COMPARE cbfcmp, bool 
 			listx = listx->ppnode[NEXT];
 			listy = listy->ppnode[NEXT];
 		}
-		if ((pstatx == listx) || (pstaty == listy)) /* Circular list. */
+		if (pstatx == listx || pstaty == listy) /* Circular list. */
 			break;
 	}
-	if (0 == rtn) /* Determine whether two lists are in the same size. */
+	if (0 == rtn) /* Determine results when two lists have a same part. */
 	{
-		size_t rx = strLevelLinkedListDC(listx, brev);
-		size_t ry = strLevelLinkedListDC(listy, brev);
-		if (rx > ry)
-			return  1;
-		if (rx < ry)
+		if ((NULL != listy && pstaty != listy) && (NULL == listx || pstatx == listx))
 			return -1;
-		else
-			return  0;
+		if ((NULL != listx && pstatx != listx) && (NULL == listy || pstaty == listy))
+			return 1;
 	}
 	return rtn;
 }

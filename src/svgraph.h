@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0723261050L00237
+ * File ID:     0901171625S0804261317L00244
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -79,7 +79,7 @@ bool       grpInsertVertexL         (P_GRAPH_L pgrp,    size_t       vid);
 bool       grpInsertEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   size_t       weight);
 bool       grpRemoveVertexL         (P_GRAPH_L pgrp,    size_t       vid);
 bool       grpRemoveEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   size_t       weight);
-P_GRAPH_L  grpCopyL                 (P_GRAPH_L pgrp);
+P_GRAPH_L  grpCreateCopyL           (P_GRAPH_L pgrp);
 int        grpDFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 int        grpBFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 P_ARRAY_Z  grpShortestPathFastL     (P_GRAPH_L pgrp,    size_t       vidx);
@@ -93,6 +93,7 @@ void       grpFreeM_O               (P_GRAPH_M pgrp);
 P_GRAPH_M  grpCreateM               (size_t    vtxc);
 void       grpDeleteM_O             (P_GRAPH_M pgrp);
 bool       grpCopyM_O               (P_GRAPH_M pdest,   P_GRAPH_M    psrc);
+P_GRAPH_M  grpCreateCopyM_O         (P_GRAPH_M psrc);
 size_t     grpGetDimensionM_O       (P_GRAPH_M pgrp);
 bool       grpResizeM               (P_GRAPH_M pgrp,    size_t       vtxc);
 size_t     grpGetEdgeWeightM        (P_GRAPH_M pgrp,    size_t *     pweight, size_t       vidx,    size_t       vidy);
@@ -122,6 +123,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	strDeleteMatrix(pgrp_M); \
 } while (0)
 #define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
+#define grpCreateCopyM_M(psrc_M) (strCreateCopyMatrix((psrc_M), sizeof(size_t)))
 #define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
 #define grpAreAdjacentVerticesM_M(pgrp_M, vidx_M, vidy_M) (0 != grpGetEdgeWeightM((pgrp_M), NULL, (vidx_M), (vidy_M)))
 
@@ -133,6 +135,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	#define grpFreeM                      grpFreeM_M
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
+	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
@@ -142,6 +145,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	#define grpFreeM                      grpFreeM_M
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
+	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
@@ -151,6 +155,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	#define grpFreeM                      grpFreeM_M
 	#define grpDeleteM                    grpDeleteM_M
 	#define grpCopyM                      grpCopyM_M
+	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_M
 #else /* Optimization has been disabled. */
@@ -160,6 +165,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 	#define grpFreeM                      grpFreeM_O
 	#define grpDeleteM                    grpDeleteM_O
 	#define grpCopyM                      grpCopyM_O
+	#define grpCreateCopyM                grpCreateCopyM_O
 	#define grpGetDimensionM              grpGetDimensionM_O
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_O
 #endif
@@ -213,7 +219,8 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
  * Here we explain the addressing issue of an adjacent matrix graph.
  * Assume we have such an adjacent matrix graph which contains 8 vertices.
  * The mathematical description of such a matrix is as follows:
- * G = (V, e) of which V = {a,b,c,d,e,f,g,h}, function e(v, v) = w for each v belongs to V.
+ * G = (V, e) of which V = {a,b,c,d,e,f,g,h}
+ * function e(u, v) = w for each u and v belong to V.
  * V is a set of a group of constants, in set V:
  * a = 0; b = 1; c = 2; d = 3; e = 4; f = 5; g = 6; h = 7;
  * In memory the graph is set as a matrix of a size_t[8][8] two dimensional array.

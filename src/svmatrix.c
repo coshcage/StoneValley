@@ -102,7 +102,7 @@ void strDeleteMatrix_O(P_MATRIX pmtx)
  * Description:   Copy a matrix from source to destination.
  * Parameters:
  *      pdest Pointer to the destination matrix whose content is to be copied.
- *       psrc Pointer to the source of the matrix to copy to.
+ *       psrc Pointer to the source of the matrix to copy from.
  *       size Size of each element in both two matrices.
  * Return value:  pdest->arrz.pdata
  *                If function returned NULL, it indicated a duplicating failure.
@@ -153,7 +153,7 @@ void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
  * Description:   Make a copy of matrix from a template source.
  * Parameters:
  *       psrc Pointer to the template source matrix to copy from.
- *       size Size of each element in both two matrices.
+ *       size Size of each element in the matrix.
  * Return value:  A pointer to the new copied matrix.
  *                If function returned NULL, it indicated a duplicating failure.
  * Caution:       Address of psrc Must Be Allocated first.

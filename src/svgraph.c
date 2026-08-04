@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0723261050L02790
+ * File ID:     0905171125M0804261312L02802
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -228,7 +228,7 @@ int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
  */
 int _grpCBFTraversePuppet(void * pitem, size_t param)
 {
-	_P_DATINF psi = (_P_DATINF)param;
+	REGISTER _P_DATINF psi = (_P_DATINF)param;
 	if (psi->bedge)
 		return psi->cbftvs((P_EDGE) ((P_NODE_S)pitem)->pdata, psi->param);
 	else
@@ -259,8 +259,8 @@ int _grpCBFEdgesCountPuppet(void * pitem, size_t param)
  */
 int _grpCBFFreePuppet(void * pitem, size_t param)
 {
-	strFreeLinkedListSC(&((P_VERTEX_L)pitem)->adjlist);
 	DWC4100(param);
+	strFreeLinkedListSC(&((P_VERTEX_L)pitem)->adjlist);
 	return CBF_CONTINUE;
 }
 
@@ -277,7 +277,7 @@ int _grpCBFFreePuppet(void * pitem, size_t param)
 int _grpCBFIndegreeVertexPuppet(void * pitem, size_t param)
 {
 	if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid == 1[(size_t *)param])
-		++ *(size_t *)param;
+		++*(size_t *)param;
 	return CBF_CONTINUE;
 }
 
@@ -765,7 +765,7 @@ int _grpCBFCopyEdges(void * pitem, size_t param)
 	return grpTraverseVertexEdgesL((P_GRAPH_L)0[(size_t *)param], a[0], _grpCBFCopyEdgesPuppet, (size_t)a);
 }
 
-/* Function name: grpCopyL
+/* Function name: grpCreateCopyL
  * Description:   Copy an adjacent list formed graph.
  * Parameter:
  *      pgrp Pointer to the source graph to be copied.
@@ -773,7 +773,7 @@ int _grpCBFCopyEdges(void * pitem, size_t param)
  *                If this function returned NULL, it would indicate a duplicating failure.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  */
-P_GRAPH_L grpCopyL(P_GRAPH_L pgrp)
+P_GRAPH_L grpCreateCopyL(P_GRAPH_L pgrp)
 {
 	size_t a[2];
 	P_GRAPH_L prtn = grpCreateL();
@@ -992,13 +992,13 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
  */
 int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 {
-	P_ARRAY_Z parrd = (P_ARRAY_Z)1[(size_t *)param];
-	P_ARRAY_Z parrq = (P_ARRAY_Z)2[(size_t *)param];
-	P_QUEUE_L pq = (P_QUEUE_L)3[(size_t *)param];
 	size_t u = 0[(size_t *)param];
 	size_t v = ((P_EDGE)pitem)->vid;
-	P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
-	P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
+	REGISTER P_ARRAY_Z parrd = (P_ARRAY_Z)1[(size_t *)param];
+	REGISTER P_ARRAY_Z parrq = (P_ARRAY_Z)2[(size_t *)param];
+	REGISTER P_QUEUE_L pq = (P_QUEUE_L)3[(size_t *)param];
+	REGISTER P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
+	REGISTER P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 	
 	if (NULL != pvru && NULL != pvrv)
 	{
@@ -1148,10 +1148,8 @@ int _grpCBFDijkstraFillVb(void * pitem, size_t param)
  *                Please refer to the prototype of CBF_COMPARE at svdef.h.
  */
 int _grpCBFCompareRecordDistance(const void * px, const void * py)
-{	/* Compare unsigned integers rather than signed two for Dijkstra use. */
-	if (((_P_SPTREC)px)->udistance > ((_P_SPTREC)py)->udistance) return  1;
-	if (((_P_SPTREC)px)->udistance < ((_P_SPTREC)py)->udistance) return -1;
-	return 0;
+{	/* Compare two unsigned integers rather than signed two for Dijkstra use. */
+	return _grpCBFCompareInteger(&((_P_SPTREC)px)->udistance, &((_P_SPTREC)py)->udistance);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1439,7 +1437,7 @@ bool _grpDisjointSetSearch(P_ARRAY_Z parrz, size_t x, size_t y)
 	REGISTER bool bfx;
 	for (i = 0; i < strLevelArrayZ(parrz); ++i)
 	{
-		P_ARRAY_Z pslot = *(P_ARRAY_Z *)strLocateItemArrayZ(parrz, sizeof(P_ARRAY_Z), i);
+		REGISTER P_ARRAY_Z pslot = *(P_ARRAY_Z *)strLocateItemArrayZ(parrz, sizeof(P_ARRAY_Z), i);
 		bfx = false;
 		if (NULL != strBinarySearchArrayZ(pslot, &x, sizeof(size_t), _grpCBFCompareInteger))
 			bfx = true;
@@ -2298,7 +2296,7 @@ void grpDeleteM_O(P_GRAPH_M pgrp)
  * Description:   Copy a matrix graph from source to destination.
  * Parameters:
  *      pdest Pointer to the destination matrix graph whose content is to be copied.
- *       psrc Pointer to the source of the matrix graph to copy to.
+ *       psrc Pointer to the source of the matrix graph to copy from.
  * Return value:  If function returned false, it indicated a duplicating failure.
  *                Otherwise, this function would return true.
  * Caution:       Address of pdest and psrc Must Be Allocated first.
@@ -2308,6 +2306,20 @@ void grpDeleteM_O(P_GRAPH_M pgrp)
 bool grpCopyM_O(P_GRAPH_M pdest, P_GRAPH_M psrc)
 {
 	return NULL != strCopyMatrix(pdest, psrc, sizeof(size_t));
+}
+
+/* Function name: grpCreateCopyM_O
+ * Description:   Duplicate a matrix graph from a source graph in the same type.
+ * Parameter:
+ *      psrc Pointer to the source of the matrix graph to copy from.
+ * Return value:  A pointer to the new copied adjacent matrix graph.
+ *                If function returned NULL, it indicated a duplicating failure.
+ * Caution:       Address of psrc Must Be Allocated first.
+ * Tip:           A macro version of this function called grpCreateCopyM_M is available.
+ */
+P_GRAPH_M grpCreateCopyM_O(P_GRAPH_M psrc)
+{
+	return strCreateCopyMatrix(psrc, sizeof(size_t));
 }
 
 /* Function name: grpGetDimensionM_O
@@ -2436,7 +2448,7 @@ int grpTraverseVertexEdgesM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, siz
  */
 bool grpAreAdjacentVerticesM_O(P_GRAPH_M pgrp, size_t vidx, size_t vidy)
 {
-	return (0 != grpGetEdgeWeightM(pgrp, NULL, vidx, vidy));
+	return 0 != grpGetEdgeWeightM(pgrp, NULL, vidx, vidy);
 }
 
 /* Function name: grpEdgesCountM
@@ -2634,7 +2646,7 @@ P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
 		return NULL;
 	else
 	{
-		P_GRAPH_L pr = grpCreateL();
+		REGISTER P_GRAPH_L pr = grpCreateL();
 		REGISTER size_t i, j, w;
 
 		for (i = 0; i < k; ++i)
@@ -2753,8 +2765,8 @@ int _grpCBFTraverseEdgesAndFillM(void * pitem, size_t param)
 P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 {
 	REGISTER size_t k;
-	P_ARRAY_Z pmt = strCreateArrayZ(k = grpVerticesCountL(pgrpl), sizeof(size_t)); /* Vertices mapping table. */
-	P_GRAPH_M pr  = grpCreateM(k);
+	REGISTER P_ARRAY_Z pmt = strCreateArrayZ(k = grpVerticesCountL(pgrpl), sizeof(size_t)); /* Vertices mapping table. */
+	REGISTER P_GRAPH_M pr  = grpCreateM(k);
 	size_t a[4];
 
 	if (NULL == pr)

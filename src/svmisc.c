@@ -471,7 +471,7 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
  */
 void strBitStreamReverse(P_BITSTREAM pbstm)
 {
-	REGISTER size_t i, j = (0 == pbstm->bilc ? strLevelArrayZ(&pbstm->arrz) - 1 : strLevelArrayZ(&pbstm->arrz));
+	REGISTER size_t i, j = 0 == pbstm->bilc ? strLevelArrayZ(&pbstm->arrz) - 1 : strLevelArrayZ(&pbstm->arrz);
 	for (i = 0; i < j; ++i) pbstm->arrz.pdata[i] = (UCHART) (~pbstm->arrz.pdata[i]);
 }
 

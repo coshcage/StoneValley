@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0728262146L00521
+ * File ID:     0306170921Y0805260722L00530
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -30,12 +30,21 @@
 #define PREV 1
 #define NEXT 0
 
-/* An enumeration of binary search methods. */
+/* An enumeration of binary search methods and their abbreviations.
+ * Choose a sane constant as you wish when you are calling svBinarySearchDispatch.
+ */
 typedef enum en_BSearch {
 	EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
+		EBS_1ST_GE = EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
+
 	EBS_LAST_LESS_THAN_KEY,
+		EBS_LST_LT = EBS_LAST_LESS_THAN_KEY,
+
 	EBS_FIRST_GREATER_THAN_KEY,
-	EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+		EBS_1ST_GT = EBS_FIRST_GREATER_THAN_KEY,
+
+	EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY,
+		EBS_LST_LE = EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
 } BSearch;
 
 /* Sized array. */
@@ -81,8 +90,8 @@ typedef struct st_MATRIX {
 } MATRIX, * P_MATRIX;
 
 /* Definition of callback functions on matrices.
- * This function should return either CBF_CONTINUE or CBF_TERMINATE.
- * If callback algebraic function returned CBF_TERMINATE,
+ * These functions should either return CBF_CONTINUE or CBF_TERMINATE.
+ * If a callback algebraic function returned CBF_TERMINATE,
  *   caller would be interrupted,
  *     unless the callee should return CBF_CONTINUE to calculate continually.
  */

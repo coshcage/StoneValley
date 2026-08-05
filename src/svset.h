@@ -40,7 +40,7 @@ typedef BST SET_T, * P_SET_T;
 /* Tree set method switch. Alter the following one macro to alter set implementation. */
 #define SET_TREE_USING (SET_TREE_AA)
 
-/* These following two macros are used to switch between BSTs. */
+/* These following two macros are used to switch between two types of BSTs. */
 #if   SET_TREE_USING == SET_TREE_AA
 	#define _setInsertBST treBSTInsertAA
 	#define _setRemoveBST treBSTRemoveAA

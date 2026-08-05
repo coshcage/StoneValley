@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0720260617L00520
+ * File ID:     0809171737V0805260735L00522
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -76,7 +76,7 @@ typedef struct st_HEAP_A {
 	size_t  irear; /* Index of the last element. */
 } HEAP_A, * P_HEAP_A;
 
-/* Types for in memory B-plus trees. */
+/* Types for in-memory B-plus trees. */
 typedef NODE_D     BPTNODE;
 typedef P_NODE_D   P_BPTNODE;
 typedef P_NODE_D   BPT;
@@ -283,10 +283,12 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	*(ptrie_M) = NULL; \
 } while (0)
 #define treFreeTrieA_M(ptrie_M, size_M) do { \
+	extern void _treFreeTrieNode(P_TRIE_A ptrie, size_t size); \
 	_treFreeTrieNode(ptrie_M, size_M); \
 	*(ptrie_M) = NULL; \
 } while(0)
 #define treDeleteTrieA_M(ptrie_M, size_M) do { \
+	extern void _treFreeTrieNode(P_TRIE_A ptrie, size_t size); \
 	_treFreeTrieNode(ptrie_M, size_M); \
 	free(ptrie_M); \
 } while (0)

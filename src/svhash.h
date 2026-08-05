@@ -2,7 +2,7 @@
  * Name:        svhshtbl.h
  * Description: Hash tables interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615U0609191235L00118
+ * File ID:     0901171615U0609191235L00117
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -93,22 +93,21 @@ size_t     hshCBFHashString (const void * pstr);
  * num == 3; // 3 is a prime number.
  * pdata:
  * [0x0000FFF1][0x00000000][0x00000000] : This is an array that used to store buckets.
- *      |                                 A NULL value indicates an empty bucket.
- * [0x0000FFF2][0x0000FFF3]->[0x65] : This is a NODE_S of a single linked list.
- *      |                             A bucket is made of a single linked list.
- * [0x00000000][0x0000FFF4]->[0x66]
- *     pnode      pdata      Real data.
+ * V                                      A NULL value indicates an empty bucket.
+ * [0x0000FFE1][0x0000FFD1]->[0x65]     : This is a NODE_S of a single linked list.
+ * V pnode      pdata         Real data   A bucket is made of a single linked list.
+ * [0x00000000][0x0000FFD2]->[0x66]
+ *   pnode      pdata         Real data
  * ______________________________________________________________________________
- * # Another diagram illustrated what an open addressing hash table looks like:
+ * # Another diagram illustrates what an open addressing hash table looks like:
  * num == 5; // 5 is a prime number.
  * pdata:         __Slot __   This slot is valid.
- *               /  _ Data_\  Cuz the flag of this slot == true.
+ *               /  _ Data_\  Because the flag of this slot is true.
  *              |  |        | And its data is an integer of value 0xABCD1234.
  * [00|00000000][01|ABCD1234][00|FFFFFFFF][01|EEEEEEEE][00|00000000]
  *   |                         \                         |
  *   +-This is a Flag.          +These two slots are invalid.
- *     Flag size is determined
- *     by macro _FLAG_SIZE in svhash.c
+ *     Flag size is determined by macro _FLAG_SIZE in svhash.c
  *     A flag is used to determine whether a slot is valid or not.
  *  ## An open addressing hash table is actually an ARRAY_Z.
  *  ## When function hshRemoveA removes an item from an open addressing hash table, it does not

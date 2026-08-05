@@ -792,7 +792,7 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
  *            The left pointer of function cbfcmp always points to the key.
  *            The right pointer of function cbfcmp may point to any position in the array.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- *     method An enumeration indicates the method of searching.
+ *     method An enumeration indicates the method of searching. Refer to enumeration BSearch at svstring.h so that you can find some amenities.
  *            Assume we have an array: [1,2,3,5,5,5,8,9], and pkey points to a key valued 5.
  *            EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY [1,2,3,5,5,5,8,9]->index:3
  *                                                          ^

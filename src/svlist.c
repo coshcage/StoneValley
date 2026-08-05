@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0804261027L01510
+ * File ID:     0306170948C0805260700L01520
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -1141,7 +1141,7 @@ P_NODE_D strLocateItemDC_N(P_NODE_D pnode, ptrdiff_t incmtl)
  */
 P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 {
-	REGISTER P_NODE_D ptemp  = NULL;
+	REGISTER P_NODE_D ptemp = NULL;
 	REGISTER P_NODE_D plast = pnode;
 	if (NULL == pnode)
 		return NULL;
@@ -1232,7 +1232,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 #define _P2P_NODE_S(pnode) ((P_NODE_S) (pnode)) /* Cast a pointer to P_NODE_S. */
 #define _P2P_NODE_D(pnode) ((P_NODE_D) (pnode)) /* Cast a pointer to P_NODE_D. */
 	REGISTER void * plast = pfirst;
-	REGISTER void * ptemp  = NULL;
+	REGISTER void * ptemp = NULL;
 	if (NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp))
 	{
 		while
@@ -1372,7 +1372,8 @@ bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx,
  *            Please refer to NodeType enumeration at svstring.h.
  *     cbfcmp Pointer to a function that compares two elements in nodes.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- * Return value:  This function would return a new header for sorted linked list. 
+ * Return value:  This function would return a new header for sorted linked list.
+ *                If parameter list was NULL, function would return NULL.
  * Tip:           This function can sort circular single/double linked list after parameter bCircular was set.
  *                Merge sort algorithm is used for this function and takes O(1) space complexity and O(n*log n) time complexity.
  *                This function refers to web: https://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
@@ -1380,131 +1381,140 @@ bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx,
  */
 void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_COMPARE cbfcmp)
 {
-	REGISTER void * p, * q, * e, * tail, * oldhead;
-	REGISTER size_t insize, nmerges, psize, qsize, i;
-	REGISTER P_NODE_S pa, pb;
-	REGISTER P_NODE_D px, py;
-	REGISTER void * p1, * p2;
-
-	if (NULL == list)
-		return NULL;
-
-	insize = 1;
-
-	for ( ;; )
+	if (NULL != list)
 	{
-		p = list;
-		oldhead = list; /* Used for circular linkage. */
-		list = NULL;
-		tail = NULL;
+		REGISTER void * p, * q, * e, * tail, * oldhead;
+		REGISTER size_t insize, nmerges, psize, qsize;
 
-		/* Counter of merges we do in this pass. */
-		nmerges = 0;
-
-		while (NULL != p)
+		insize = 1;
+		for ( ;; )
 		{
-			/* There exists a merge to be done. */
-			++nmerges;
-			/* Step 'insize' places along from p. */
-			q = p;
-			psize = 0;
-			for (i = 0; i < insize; ++i)
+			p = list;
+			oldhead = list; /* Used for circular linkage. */
+			list = NULL;
+			tail = NULL;
+
+			/* Counter of merges we do in this pass. */
+			nmerges = 0;
+
+			while (NULL != p)
 			{
-				++psize;
-				if (bCircular)
-					q = (*(void **)q == oldhead ? NULL : *(void **)q);
-				else
-					q = *(void **)q;
-				if (NULL == q)
-					break;
+				REGISTER size_t i;
+				/* There exists a merge to be done. */
+				++nmerges;
+				/* Step 'insize' places along from p. */
+				q = p;
+				psize = 0;
+				for (i = 0; i < insize; ++i)
+				{
+					++psize;
+					if (bCircular)
+						q = (NEXT[(void **)q] == oldhead ? NULL : NEXT[(void **)q]);
+					else
+						q = NEXT[(void **)q];
+					if (NULL == q)
+						break;
+				}
+
+				/* If q hasn't fallen off end, we have two lists to merge. */
+				qsize = insize;
+
+				/* Now we have two lists; Merge them. */
+				while (psize > 0 || (qsize > 0 && NULL != q))
+				{
+					REGISTER void * px, * py;
+					/* Decide whether the next element of merge comes from p or q. */
+					if (0 == psize)
+					{
+						/* p is empty; e must come from q. */
+						e = q;
+						q = NEXT[(void **)q];
+						--qsize;
+						if (bCircular && q == oldhead)
+							q = NULL;
+					}
+					else if (qsize == 0 || NULL == q)
+					{
+						/* q is empty; e must come from p. */
+						e = p;
+						p = NEXT[(void **)p];
+						--psize;
+						if (bCircular && p == oldhead)
+							p = NULL;
+					}
+					else if
+					(
+						(
+							px = (void *)
+							(
+								ENT_DOUBLE != ntp ?
+								((P_NODE_S)p)->pdata :
+								((P_NODE_D)p)->pdata
+							)
+						),
+						(
+							py = (void *)
+							(
+								ENT_DOUBLE != ntp ?
+								((P_NODE_S)q)->pdata :
+								((P_NODE_D)q)->pdata
+							)
+						),
+						cbfcmp(px, py) <= 0
+					)
+					{
+						/* First element of p is lower (or same); e must come from p. */
+						e = p;
+						p = NEXT[(void **)p];
+						--psize;
+						if (bCircular && p == oldhead)
+							p = NULL;
+					}
+					else
+					{
+						/* First element of q is lower; e must come from q. */
+						e = q;
+						q = NEXT[(void **)q];
+						--qsize;
+						if (bCircular && q == oldhead)
+							q = NULL;
+					}
+
+					/* Add the next element to the merged list. */
+					if (NULL != tail)
+						NEXT[(void **)tail] = e;
+					else
+						list = e;
+					
+					/* Maintain reverse pointers in a doubly linked list. */
+					if (ENT_DOUBLE == ntp)
+						PREV[(void **)e] = tail;
+					
+					tail = e;
+				}
+
+				/* Now p has stepped 'insize' places along, and q has too. */
+				p = q;
 			}
 
-			/* If q hasn't fallen off end, we have two lists to merge. */
-			qsize = insize;
-
-			/* Now we have two lists; Merge them. */
-			while (psize > 0 || (qsize > 0 && NULL != q))
+			if (bCircular)
 			{
-				/* Decide whether the next element of merge comes from p or q. */
-				if (0 == psize)
-				{
-					/* p is empty; e must come from q. */
-					e = q;
-					q = *(void **)q;
-					--qsize;
-					if (bCircular && q == oldhead)
-						q = NULL;
-				}
-				else if (qsize == 0 || NULL == q)
-				{
-					/* q is empty; e must come from p. */
-					e = p;
-					p = *(void **)p;
-					--psize;
-					if (bCircular && p == oldhead)
-						p = NULL;
-				}
-				else if
-				(
-					(pa = (P_NODE_S)p),
-					(pb = (P_NODE_S)q),
-					(px = (P_NODE_D)p),
-					(py = (P_NODE_D)q),
-					(p1 = (void *) (ENT_DOUBLE != ntp ? pa->pdata : px->pdata)),
-					(p2 = (void *) (ENT_DOUBLE != ntp ? pb->pdata : py->pdata)),
-					cbfcmp(p1, p2) <= 0
-				)
-				{
-					/* First element of p is lower (or same); e must come from p. */
-					e = p;
-					p = *(void **)p;
-					--psize;
-					if (bCircular && p == oldhead)
-						p = NULL;
-				}
-				else
-				{
-					/* First element of q is lower; e must come from q. */
-					e = q;
-					q = *(void **)q;
-					--qsize;
-					if (bCircular && q == oldhead)
-						q = NULL;
-				}
-
-				/* Add the next element to the merged list. */
 				if (NULL != tail)
-					*(void **)tail = e;
-				else
-					list = e;
-				
-				/* Maintain reverse pointers in a doubly linked list. */
-				if (ENT_DOUBLE == ntp)
-					*((void **)e + PREV) = tail;
-				
-				tail = e;
+					NEXT[(void **)tail] = list;
+				if (ENT_DOUBLE == ntp && NULL != list)
+					PREV[(void **)list] = tail;
 			}
+			else if (NULL != tail)
+				NEXT[(void **)tail] = NULL;
 
-			/* Now p has stepped 'insize' places along, and q has too. */
-			p = q;
+			/* If we have done only one merge, we're finished. */
+			if (nmerges <= 1) /* Allow for nmerges == 0, the empty list case. */
+				return list;
+
+			/* Otherwise repeat, merging lists twice the size. */
+			insize <<= 1;
 		}
-
-		if (bCircular)
-		{
-			if (NULL != tail)
-				*(void **)tail = list;
-			if (ENT_DOUBLE == ntp && NULL != list)
-				*((void **)list + PREV) = tail;
-		}
-		else if (NULL != tail)
-			*(void **)tail = NULL;
-
-		/* If we have done only one merge, we're finished. */
-		if (nmerges <= 1) /* Allow for nmerges == 0, the empty list case. */
-			return list;
-
-		/* Otherwise repeat, merging lists twice the size. */
-		insize <<= 1;
 	}
+	return NULL;
 }
 

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0221250535L01057
+ * File ID:     0213191430N0805260805L01059
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -824,7 +824,7 @@ P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 			if (NULL == strResizeArrayZ(&pdest->bita, strLevelArrayZ(&psrc->bita), sizeof(size_t)))
 				return NULL; /* Can not resize Fenwick tree. */
 		
-		/* Copy embedded Fenwick tree in first step. */
+		/* Copy embedded Fenwick tree in the first step. */
 		if (0 != strLevelArrayZ(&psrc->bita) && 0 != strLevelArrayZ(&pdest->bita))
 		{
 			if (NULL == strMoveArrayZ(&pdest->bita, &psrc->bita, sizeof(size_t)))
@@ -935,7 +935,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 }
 
 /* Function name: strSetValueSparseMatrix
- * Description:   Set value for a sparse matrix onto a specific position.
+ * Description:   Set value for a sparse matrix onto the specific position.
  * Parameters:
  *       pmtx Pointer to a sparse matrix you want to operate.
  *         ln Number of line in the sparse matrix. Line number starts from 0.
@@ -1029,14 +1029,16 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 /* Function name: strFillSparseMatrix
  * Description:   Fill a sparse matrix into a common matrix.
  * Parameters:
- *      pdest Pointer to a common matrix you want to flush.
- *       psrc Pointer to a sparse matrix you want to operate.
+ *      pdest Pointer to a common matrix you want to fill.
+ *       psrc Pointer to a sparse matrix you want to fill into the common matrix.
  *       size Size of each element in the sparse matrix and the common matrix.
  * Return value:  true  Filling succeeded.
  *                false Filling failed.
  * Caution:       Address of pdest and psrc Must Be Allocated first.
+ *                Users may need to set matrix pdest into an empty one by their own before invoking this function.
+ *                Nevertheless, this function remains matrix elements untouched if they do not appear in the sparse one.
  *                (*) Line and column number of the common destination matrix shall
- *                greater than or equal to each value for the source sparse matrix.
+ *                greater than or equal to each value of the source sparse matrix.
  */
 bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 {

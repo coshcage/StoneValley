@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0728261428L00911
+ * File ID:     0306170948D0804262330L00911
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -23,7 +23,7 @@
 
 #include <stdio.h>  /* Using macro BUFSIZ, function printf. */
 #include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memmove, memset. */
+#include <string.h> /* Using function memcpy, memmove. */
 #include <limits.h> /* Using macro CHAR_BIT, UCHAR_MAX. */
 #include "svstring.h"
 
@@ -60,11 +60,11 @@ stdiv_t stdiv(size_t numerator, size_t denominator)
 /* Function name: svSwap
  * Description:   Swap contents of two memory blocks.
  * Parameters:
- *      pleft Pointer to the left block you want to swap with the block of pright pointed.
+ *      pleft Pointer to the left block you want to swap with the right block.
  *      ptemp Pointer to a temporary buffer which has a size that equals to parameter size.
  *            (*) Users shall manage this temporary buffer manually in the caller function.
- *     pright Pointer to the right block you want to swap with the block of pleft pointed.
- *       size Size of memory that pleft, pright and ptemp pointed.
+ *     pright Pointer to the right block you want to swap with the left block.
+ *       size Size of memory that pleft, ptemp and pright pointed.
  * Return value:  N/A.
  * Caution:       Length of each memory that pleft, ptemp, and pright pointed shall be in the same size.
  *                (*) Memory blocks that pleft, ptemp and pright pointed shall not overlap.
@@ -76,7 +76,7 @@ void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 	memmove(pright, ptemp, size);
 }
 
-/* Embed some callbacks for convenience.
+/* Embed some callbacks for convenience hereinafter.
  * However, use-wise convenience may kill running efficiency without inline them.
  * Use them as you need by making up your own mind.
  */

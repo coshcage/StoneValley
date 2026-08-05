@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0804261312L02802
+ * File ID:     0905171125M0804262255L02802
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2362,15 +2362,15 @@ bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 		{
 			/* Clean newly allocated spaces. */
 			REGISTER size_t i, j;
-			size_t o = 0;
+			const size_t o = 0;
 
 			for (i = 0; i < ov; ++i)
 				for (j = ov; j < vtxc; ++j)
-					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
+					strSetValueMatrix(pgrp, i, j, (void *)&o, sizeof(size_t));
 
 			for (i = ov; i < vtxc; ++i)
 				for (j = 0; j < vtxc; ++j)
-					strSetValueMatrix(pgrp, i, j, &o, sizeof(size_t));
+					strSetValueMatrix(pgrp, i, j, (void *)&o, sizeof(size_t));
 		}
 		return true;
 	}

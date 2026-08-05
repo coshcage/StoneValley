@@ -233,7 +233,7 @@ static int cbftvsCleanNode(void * pitem, size_t param)
 	for (i = 0; i < 4; ++i)
 		free(i[(char **)pfc]);
 	
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 

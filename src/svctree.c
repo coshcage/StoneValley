@@ -191,7 +191,7 @@ Lbl_Allocation_Error:
 int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 {	/* Current node is an external node. */
 	REGISTER P_TNODE_BY pnode = (P_TNODE_BY)pitem;
-	DWC4100(param); /* Disable warning. */
+	DISUSE(param); /* Disable warning. */
 	if (NULL == pnode->ppnode[LEFT] && NULL == pnode->ppnode[RIGHT])
 	{	/* Node is a leaf. */
 		REGISTER P_TNODE_BY parent = ((_P_HFMNOD)pnode->pdata)->parent;

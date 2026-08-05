@@ -2,7 +2,7 @@
  * Name:        svdef.c
  * Description: Common definitions.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306171808Z0720260900L00098
+ * File ID:     0306171808Z0805261450L00099
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -72,8 +72,9 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 
 /* Disable warning C4100 for Visual C/C++ compiler.
  * As for gcc/clang, use this macro to disable compiler warning for unused parameter.
+ * Usage: DISUSE(variable); DISUSE(fun(a, b)); // Drop function return value by this way.
  */
-#define DWC4100(param) (void)(param)
+#define DISUSE(param) (void)(param)
 
 /* Register qualifier. */
 #define REGISTER register

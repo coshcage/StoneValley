@@ -259,7 +259,7 @@ int _grpCBFEdgesCountPuppet(void * pitem, size_t param)
  */
 int _grpCBFFreePuppet(void * pitem, size_t param)
 {
-	DWC4100(param);
+	DISUSE(param);
 	strFreeLinkedListSC(&((P_VERTEX_L)pitem)->adjlist);
 	return CBF_CONTINUE;
 }
@@ -1235,7 +1235,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                
  *                int cbftvsprint(void * pitem, size_t param) {
  *                	P_VTXREC p = (P_VTXREC) ((P_NODE_D)pitem)->pdata;
- *                	DWC4100(param);
+ *                	DISUSE(param);
  *                	printf("vid = %zd, udistance = %zd\n", p->vid, p->udistance);
  *                	return CBF_CONTINUE;
  *                }

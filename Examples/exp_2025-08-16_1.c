@@ -80,7 +80,7 @@ static void DestoryArray(P_ARRAY_Z parrz)
 static int CbfPrintResult(void * pitem, size_t param)
 {
 	printf("%s %ld\n", (*((P_VOCABULARY *)pitem))->pword, (*((P_VOCABULARY *)pitem))->freq);
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 

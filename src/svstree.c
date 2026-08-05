@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0720261836L02564
+ * File ID:     0809171737I0805261435L02542
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -119,7 +119,7 @@ void treDeleteBSTNode_O(P_BSTNODE pnode)
 int _treCBFFreeNodeBST(void * pitem, size_t param)
 {
 	treDeleteBSTNode(P2P_BSTNODE(pitem));
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 
@@ -374,7 +374,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 					pnode = pbstchild(pnode)[RIGHT];
 				}
 				else
-					pnode = (NULL != pbstchild(pnode)[LEFT]) ? pbstchild(pnode)[LEFT] : pbstchild(pnode)[RIGHT];
+					pnode = NULL != pbstchild(pnode)[LEFT] ? pbstchild(pnode)[LEFT] : pbstchild(pnode)[RIGHT];
 				treDeleteBSTNode(plast);
 			}
 		}
@@ -411,7 +411,7 @@ typedef ptrdiff_t _en_BalanceFactor; /* Redefine it for lower C standards. */
 ptrdiff_t _treBSTGetBalanceFactorAVL_O  (P_BSTNODE pnode);
 ptrdiff_t _treBSTMaxBalanceFactorAVL_O  (ptrdiff_t lbf,   ptrdiff_t rbf);
 ptrdiff_t _treBSTReadBalanceFactorAVL_O (P_BSTNODE pnode);
-P_BSTNODE _treBSTRotateAVL              (P_BSTNODE pnode, bool      bleft);
+P_BSTNODE _treBSTRotateAVL              (P_BSTNODE pnode, bool      bright);
 
 /* Inline function macros are defined here. */
 #define _treBSTGetBalanceFactorAVL_M(pnode_M) (NULL == (pnode_M) ? _ABF_BALANCED : _NODE_PARAM((pnode_M), const ptrdiff_t))
@@ -484,18 +484,18 @@ ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
  * Description:   Rotate AVL-tree nodes.
  * Parameters:
  *      pnode Pointer to a node of an AVL tree.
- *      bleft true  for left  rotate.
- *            false for right rotate.
+ *     bright true/RIGHT for right rotate.
+ *            false/LEFT for left  rotate.
  * Return value:  Pointer to the rotated node in an AVL-tree.
  */
-P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bleft)
+P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bright)
 {
-	P_BSTNODE pnodex = pbstchild(pnode) [bleft ? RIGHT : LEFT];
-	P_BSTNODE pnodey = pbstchild(pnodex)[bleft ? LEFT : RIGHT];
+	P_BSTNODE pnodex = pbstchild(pnode) [! bright];
+	P_BSTNODE pnodey = pbstchild(pnodex)[bright];
 
 	/* Adjust pointers. */
-	pbstchild(pbstchild(pnode)[bleft ? RIGHT : LEFT])[bleft ? LEFT : RIGHT] = pnode;
-	pbstchild(pnode)[bleft ? RIGHT : LEFT] = pnodey;
+	pbstchild(pbstchild(pnode)[! bright])[bright] = pnode;
+	pbstchild(pnode)[! bright] = pnodey;
 
 	/* Recalculating Balance Factors */
 	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
@@ -553,24 +553,24 @@ P_BSTNODE treBSTInsertAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 	/* Left left case. */
 	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) <= 0)
-		return _treBSTRotateAVL(pnode, false);
+		return _treBSTRotateAVL(pnode, RIGHT);
 
 	/* Right right case. */
 	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) >= 0)
-		return _treBSTRotateAVL(pnode, true);
+		return _treBSTRotateAVL(pnode, LEFT);
 
 	/* Right left case. */
 	if (cb < _ABF_HEAVY_RT && cbfcmp(pitem, (pbstchild(pnode)[RIGHT])->knot.pdata) <= 0)
 	{
-		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], false);
-		return _treBSTRotateAVL(pnode, true);
+		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], RIGHT);
+		return _treBSTRotateAVL(pnode, LEFT);
 	}
 
 	/* Left right case. */
 	if (cb > _ABF_HEAVY_LT && cbfcmp(pitem, (pbstchild(pnode)[LEFT])->knot.pdata) >= 0)
 	{
-		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], true);
-		return _treBSTRotateAVL(pnode, false);
+		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], LEFT);
+		return _treBSTRotateAVL(pnode, RIGHT);
 	}
 
 	return pnode;
@@ -655,24 +655,24 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 
 	/* Left left case. */
 	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) >= _ABF_BALANCED)
-		return _treBSTRotateAVL(pnode, false);
+		return _treBSTRotateAVL(pnode, RIGHT);
 
 	/* Right right case. */
 	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) <= _ABF_BALANCED)
-		return _treBSTRotateAVL(pnode, true);
+		return _treBSTRotateAVL(pnode, LEFT);
 
 	/* Right left case. */
 	if (cb < _ABF_HEAVY_RT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[RIGHT]) >= _ABF_BALANCED)
 	{
-		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], false);
-		return _treBSTRotateAVL(pnode, true);
+		pbstchild(pnode)[RIGHT] = _treBSTRotateAVL(pbstchild(pnode)[RIGHT], RIGHT);
+		return _treBSTRotateAVL(pnode, LEFT);
 	}
 
 	/* Left right case. */
 	if (cb > _ABF_HEAVY_LT && _treBSTReadBalanceFactorAVL(pbstchild(pnode)[LEFT]) <= _ABF_BALANCED)
 	{
-		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], true);
-		return _treBSTRotateAVL(pnode, false);
+		pbstchild(pnode)[LEFT] = _treBSTRotateAVL(pbstchild(pnode)[LEFT], LEFT);
+		return _treBSTRotateAVL(pnode, RIGHT);
 	}
 
 	return pnode;
@@ -702,8 +702,8 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 /* File level function declarations. */
 P_RBTNODE _treCopyRBTPuppet       (P_RBTNODE pnode, P_RBTNODE proot, size_t    size);
 int       _treCBFFreeNodeRBT      (void *    pitem, size_t    param);
-void      _treRBRotate            (P_RBT     prbt,  P_RBTNODE x,     bool      bleft);
-void      _treRBInsertFixupPuppet (P_RBT     prbt,  P_RBTNODE z,     bool      B);
+void      _treRBRotate            (P_RBT     prbt,  P_RBTNODE x,     bool      bright);
+void      _treRBInsertFixupPuppet (P_RBT     prbt,  P_RBTNODE z,     bool      bright);
 void      _treRBInsertFixup       (P_RBT     prbt,  P_RBTNODE z);
 void      _treRBTransplant        (P_RBT     prbt,  P_RBTNODE u,     P_RBTNODE v);
 void      _treRBDeleteFixup       (P_RBT     prbt,  P_RBTNODE x);
@@ -786,7 +786,7 @@ void treDeleteRBTNode_O(P_RBTNODE pnode)
 int _treCBFFreeNodeRBT(void * pitem, size_t param)
 {
 	treDeleteRBTNode(P2P_RBTNODE(pitem));
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 
@@ -890,44 +890,33 @@ P_RBTNODE treCopyRBT(P_RBTNODE proot, size_t size)
  * Parameters:
  *       prbt Pointer to a red black tree.
  *          x Pointer to the red black tree node you want to rotate.
- *      bleft true for left rotate, false for right rotate.
+ *     bright true/RIGHT for right rotate.
+ *            false/LEFT for left  rotate.
  * Return value:  N/A.
  */
-void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bleft)
+void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bright)
 {
-	REGISTER bool A, B;
 	REGISTER P_RBTNODE y;
 	
-	if (bleft)
-	{
-		A = LEFT;
-		B = RIGHT;
-	}
-	else
-	{
-		A = RIGHT;
-		B = LEFT;
-	}	
-	
-	y = prbtchild(x)[B];
+	y = prbtchild(x)[! bright];
 	
 	if (NULL != y)
 	{
-		prbtchild(x)[B] = prbtchild(y)[A];
+		prbtchild(x)[! bright] = prbtchild(y)[bright];
 		
-		if (NULL != prbtchild(y)[A])
-			prbtparent(prbtchild(y)[A]) = x;
+		if (NULL != prbtchild(y)[bright])
+			prbtparent(prbtchild(y)[bright]) = x;
 		
 		prbtparent(y) = prbtparent(x);
 		
 		if (NULL == prbtparent(x))
 			*prbt = y;
-		else if (x == prbtchild(prbtparent(x))[A])
-			prbtchild(prbtparent(x))[A] = y;
+		else if (x == prbtchild(prbtparent(x))[bright])
+			prbtchild(prbtparent(x))[bright] = y;
 		else
-			prbtchild(prbtparent(x))[B] = y;
+			prbtchild(prbtparent(x))[! bright] = y;
 		
-		prbtchild(y)[A] = x;
+		prbtchild(y)[bright] = x;
 		prbtparent(x) = y;
 	}
 }
@@ -938,12 +927,12 @@ void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bleft)
  * Parameters:
  *       prbt Pointer to a red black tree.
  *          z Pointer to a red black tree node.
- *          B This parameter can either be LEFT or RIGHT.
+ *     bright This parameter can either be LEFT/false or RIGHT/true.
  * Return value:  N/A.
  */
-void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool B)
+void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool bright)
 {
-	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[B];
+	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[bright];
 			
 	if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
 	{
@@ -955,18 +944,18 @@ void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool B)
 	}
 	else
 	{
-		if (z == prbtchild(prbtparent(z))[B])
+		if (z == prbtchild(prbtparent(z))[bright])
 		{
 			/* Case 2. */
 			z = prbtparent(z);
-			_treRBRotate(prbt, z, RIGHT == B ? true : false);
+			_treRBRotate(prbt, z, ! bright);
 		}
 		
 		/* Case 3. */
 		_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
 		_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
 		
-		_treRBRotate(prbt, prbtparent(prbtparent(z)), RIGHT == B ? false : true);
+		_treRBRotate(prbt, prbtparent(prbtparent(z)), bright);
 	}
 }
 
@@ -1067,46 +1056,35 @@ void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
 {
 	while (NULL != x && x != *prbt && BLACK == _NODE_COLOR(x, const RBTColor))
 	{
-		REGISTER bool A, B;
 		REGISTER P_RBTNODE w;
+		REGISTER bool dir = x != prbtchild(prbtparent(x))[LEFT];
 		
-		if (x == prbtchild(prbtparent(x))[LEFT])
-		{
-			A = LEFT;
-			B = RIGHT;
-		}
-		else
-		{
-			A = RIGHT;
-			B = LEFT;
-		}
-		
-		w = prbtchild(prbtparent(x))[B];
+		w = prbtchild(prbtparent(x))[! dir];
 		
 		if (RED == _NODE_COLOR(w, const RBTColor))
 		{
 			_NODE_COLOR(w, RBTColor) = BLACK;
 			_NODE_COLOR(prbtparent(x), RBTColor) = RED;
-			_treRBRotate(prbt, prbtparent(x), true);
-			w = prbtchild(prbtparent(x))[B];
+			_treRBRotate(prbt, prbtparent(x), LEFT);
+			w = prbtchild(prbtparent(x))[! dir];
 		}
-		if (BLACK == _NODE_COLOR(prbtchild(w)[A], const RBTColor) && BLACK == _NODE_COLOR(prbtchild(w)[B], const RBTColor))
+		if (BLACK == _NODE_COLOR(prbtchild(w)[dir], const RBTColor) && BLACK == _NODE_COLOR(prbtchild(w)[! dir], const RBTColor))
 		{
 			_NODE_COLOR(w, RBTColor) = RED;
 			x = prbtparent(x);
 		}
-		else if (BLACK == _NODE_COLOR(prbtchild(w)[B], const RBTColor))
+		else if (BLACK == _NODE_COLOR(prbtchild(w)[! dir], const RBTColor))
 		{
-			_NODE_COLOR(prbtchild(w)[A], RBTColor) = BLACK;
+			_NODE_COLOR(prbtchild(w)[dir], RBTColor) = BLACK;
 			_NODE_COLOR(w, RBTColor) = RED;
-			_treRBRotate(prbt, w, false);
-			w = prbtchild(prbtparent(x))[B];
+			_treRBRotate(prbt, w, RIGHT);
+			w = prbtchild(prbtparent(x))[! dir];
 		}
 		
 		_NODE_COLOR(w, RBTColor) = _NODE_COLOR(prbtparent(x), const RBTColor);
 		_NODE_COLOR(prbtparent(x), RBTColor) = BLACK;
-		_NODE_COLOR(prbtchild(w)[B], RBTColor) = BLACK;
-		_treRBRotate(prbt, prbtparent(x), true);
+		_NODE_COLOR(prbtchild(w)[! dir], RBTColor) = BLACK;
+		_treRBRotate(prbt, prbtparent(x), LEFT);
 		x = *prbt;
 	}
 	

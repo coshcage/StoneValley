@@ -71,7 +71,7 @@ int _treCBFGNodeEnqueue(void * pitem, size_t param)
 int _treCBFFreeTNodeG(void * pitem, size_t param)
 {
 	treDeleteTNodeG((P_TNODE_G)pitem);
-	DWC4100(param);
+	DISUSE(param);
 	/* Add this above sentence to prevent function from producing a
 	 * unreferenced formal parameter warning for param.
 	 */

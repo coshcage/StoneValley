@@ -129,7 +129,7 @@ int PrintExecutionQueue(void * pitem, size_t param)
 		else
 			printf("%c ", pelmt->edata.opr.name);
 	}
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 
@@ -179,7 +179,7 @@ int ComputeExecutionQueue(void * pitem, size_t param)
 		if (NULL == stkPushL(stkOperand, &f1, sizeof(float)))
 			goto Lbl_Allocation_Failure;
 	}
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 Lbl_Allocation_Failure:
 	puts(strException);
@@ -238,7 +238,7 @@ int PrintPostfixExpression(void * pitem, size_t param)
 		else
 			printf("%c ", pelmt->edata.opr.name);
 	}
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 

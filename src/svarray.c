@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0805261100L00892
+ * File ID:     0306170948B0805261100L00896
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -692,13 +692,15 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
+ *                This function would still return CBF_CONTINUE if there were an allocation failure occurred,
+ *                unless callback function cbftvs returned CBF_TERMINATE would break the caller to return CBF_TERMINATE.
  *                Parameter size shall not equal to zero.
  * Usage:         <test.c>
  *                #include <stdio.h>
  *                #include <wchar.h>
  *                #include "svstring.h"
  *                int cbftvs(void * pitem, size_t param) {
- *                    DWC4100(param);
+ *                    DISUSE(param);
  *                    wprintf(L"%ls\n", pitem);
  *                    return CBF_CONTINUE;
  *                }
@@ -789,8 +791,10 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
+ *                This function would still return CBF_CONTINUE if there were an allocation failure occurred,
+ *                unless callback function cbftvs returned CBF_TERMINATE would break the caller to return CBF_TERMINATE.
  * Tip:           Z algorithm references to geeksforgeeks.org.
- *                This function takes O(pattern_length + text_length) memory space.
+ *                This function will take O(m + n + 1) extra memory space where m is the pattern length and n is the text length.
  * Usage:         <test.c>
  *                #include <stdio.h>
  *                #include "svstring.h"

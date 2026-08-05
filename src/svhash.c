@@ -44,7 +44,7 @@ int _hshCBFCopyCPuppet       (void * pitem, size_t param);
 int _hshCBFFreeBuckets(void * pitem, size_t param)
 {
 	strFreeLinkedListSC((P_LIST_S)pitem);
-	DWC4100(param);
+	DISUSE(param);
 	return CBF_CONTINUE;
 }
 

@@ -233,7 +233,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                PrintBinaryTree(pnode->ppnode[LEFT], space);
  *                }
  *                int tvs1(void * pitem, size_t param) {
- *                P_STACK_A ps = (P_STACK_A)param; DWC4100(pitem);
+ *                P_STACK_A ps = (P_STACK_A)param; DISUSE(pitem);
  *                stkPushA(ps, NULL, sizeof(size_t)); return CBF_CONTINUE;
  *                }
  *                int tvs2(void * pitem, size_t param) {
@@ -246,7 +246,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                int tvs3(void * pitem, size_t param) {
  *                P_STACK_A ps = (P_STACK_A)param;
  *                stkPopA(NULL, sizeof(size_t), ps); // Eject stack unconditionally.
- *                DWC4100(pitem); return CBF_CONTINUE;
+ *                DISUSE(pitem); return CBF_CONTINUE;
  *                }
  *                #define MAX_TREE_HEIGHT 4
  *                int main() {

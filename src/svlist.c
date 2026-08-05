@@ -63,7 +63,7 @@ int _strCBFDeleteNode(void * pitem, size_t param)
 int _strCBFNodesCounter(void * pitem, size_t param)
 {
 	++*(size_t *)param;
-	DWC4100(pitem);
+	DISUSE(pitem);
 	/* Add this above sentence to prevent function from producing a
 	 * unreferenced formal parameter warning for pitem.
 	 */

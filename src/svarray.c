@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0721260727L00908
+ * File ID:     0306170948B0805261100L00892
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -21,8 +21,7 @@
  *
  */
 
-#include <stdio.h>  /* Using macro BUFSIZ. */
-#include <stdlib.h> /* Using function malloc, calloc, realloc, free. */
+#include <stdlib.h> /* Using function malloc, calloc, free. */
 #include <string.h> /* Using function memcpy, memmove, memcmp. */
 #include "svstring.h"
 
@@ -31,9 +30,6 @@
  * It is the library programmer's duty to ensure index_M is in the range of an array.
  */
 #define _P_ARRAY_Z_ITEM_M(parrz_M, size_M, index_M) ((parrz_M)->pdata + (size_M) * (index_M))
-
-/* File level function declarations here. */
-void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size);
 
 /* Function name: strInitCharacterStringArrayZ
  * Description:   Initialize a sized array through a string.
@@ -212,7 +208,7 @@ P_ARRAY_Z strCreateCopyArrayZ(P_ARRAY_Z psrc, size_t size)
  */
 void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
 {
-	return (index < strLevelArrayZ(parrz) ? parrz->pdata + index * size : NULL);
+	return index < strLevelArrayZ(parrz) ? parrz->pdata + index * size : NULL;
 }
 
 /* Function name: strLinearSearchArrayZ
@@ -353,11 +349,8 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 	false; /* Both destination and source are in decreasing order. */
 	
 	t = strLevelArrayZ(pdest);
-	if (NULL == strResizeBufferedArrayZ(pdest, size, +strLevelArrayZ(psrc)))
-		return NULL;
-	else
-	{
-		/* Assume we have two arrays to merge,
+	if (NULL != strResizeBufferedArrayZ(pdest, size, +strLevelArrayZ(psrc)))
+	{	/* Assume we have two arrays to merge,
 		 *   di (di + 1)
 		 *    \   /
 		 *    56|78  : Destination.
@@ -429,8 +422,9 @@ void * strMergeSortedArrayZ(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size, CBF_CO
 				pdest->num += t;
 			}
 		}
+		return (void *)pdest->pdata;
 	}
-	return (void *)pdest->pdata;
+	return NULL;
 }
 
 /* Function name: strBinarySearchArrayZ_O
@@ -691,58 +685,57 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
 /* Function name: strKMPSearchArrayZ
  * Description:   Match pattern in text by using Knuth-Morris-Pratt algorithm.
  * Parameters:
- *    parrtxt Pointer to the sized array you want to search.
+ *    parrtxt Pointer to the sized array that represents the text to search.
  *    parrptn Pointer to the sized array which contains the pattern.
  *       size Size of each element in both parrtxt and parrptn.
  *     cbftvs Callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
- *                (*) If function returned CBF_TERMINATE,
- *                    it would either indicate allocation failure or callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
- * Usage:         int cbftvs(void * pitem, size_t param) {
+ * Usage:         <test.c>
+ *                #include <stdio.h>
+ *                #include <wchar.h>
+ *                #include "svstring.h"
+ *                int cbftvs(void * pitem, size_t param) {
  *                    DWC4100(param);
  *                    wprintf(L"%ls\n", pitem);
  *                    return CBF_CONTINUE;
  *                }
- *                wchar_t txt[] = L"ABABDABACDABABCABAB";
- *                wchar_t ptn[] = L"ABABCABAB";
- *                ARRAY_Z parrtxt, parrptn;
- *                parrtxt.pdata = (PUCHAR)txt;
- *                parrtxt.num   = wcslen(txt);
- *                parrptn.pdata = (PUCHAR)ptn;
- *                parrptn.num   = wcslen(ptn);
- *                strKMPSearchArrayZ(&parrtxt, &parrptn, sizeof(wchar_t), cbftvs, 0);
+ *                int main() {
+ *                    wchar_t txt[] = L"ABABDABACDABABCABAB";
+ *                    wchar_t ptn[] = L"ABABCABAB";
+ *                    ARRAY_Z parrtxt, parrptn;
+ *                    parrtxt.pdata = (PUCHAR)txt;
+ *                    parrtxt.num   = wcslen(txt);
+ *                    parrptn.pdata = (PUCHAR)ptn;
+ *                    parrptn.num   = wcslen(ptn);
+ *                    strKMPSearchArrayZ(&parrtxt, &parrptn, sizeof(wchar_t), cbftvs, 0);
+ *                    return 0;
+ *                }
  */
 int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER size_t i = 0; /* Index for parrtxt. */
-	REGISTER size_t j = 0; /* Index for parrptn. */
-	size_t * lps = (size_t *) malloc(strLevelArrayZ(parrptn) * sizeof(size_t));
-	
-	if (NULL == lps)
-		return CBF_TERMINATE;
-
-	/* Process the pattern to generate the longest prefix suffix (lps) array. */
-	{
-		REGISTER size_t len = 0;
-		REGISTER size_t k   = 1;
+	REGISTER size_t * lps = (size_t *) malloc(strLevelArrayZ(parrptn) * sizeof(size_t));
+	if (NULL != lps)
+	{	/* i is the index for parrtxt. j is the index for parrptn. */
+		REGISTER size_t i = 0, j = 0, n = 0, k = 1;
 		
 		lps[0] = 0; /* lps[0] is always 0. */
 		
+		/* Process the pattern to generate the longest prefix suffix(lps) array. */
 		while (k < parrptn->num)
 		{
-			if (memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, len), size) == 0)
+			if (memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, n), size) == 0)
 			{
-				lps[k] = ++len;
+				lps[k] = ++n;
 				++k;
 			}
 			else
 			{
-				if (0 != len)
+				if (0 != n)
 				{
-					len = lps[len - 1];
+					n = lps[n - 1];
 				}
 				else
 				{
@@ -751,143 +744,135 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 				}
 			}
 		}
-	}
 
-	while (i < parrtxt->num)
-	{
-		if (0 == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
+		while (i < parrtxt->num)
 		{
-			++j;
-			++i;
-		}
-		
-		if (j == parrptn->num)
-		{
-			if (CBF_CONTINUE != cbftvs(parrtxt->pdata + (i - j) * size, param))
+			if (0 == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 			{
-				free(lps);
-				return CBF_TERMINATE;
+				++j;
+				++i;
 			}
 			
-			lps[j - 1] = j;
-		}
-		
-		else if (i < parrtxt->num && 0 != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
-		{
-			if (0 != j)
-				j = lps[j - 1];
-			else
-				++i;
-		}
-	}
-	
-	free(lps);
-	return CBF_CONTINUE;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _strGetZArray
- * Description:   This function is used to fill Z array for given parrz.
- * Parameters:
- *          z Pointer to a size_t array named Z.
- *      paraz Pointer to a sized array that contains the pattern and text.
- *       size Size of each element in parrz.
- * Return value:  N/A.
- */
-void _strGetZArray(size_t z[], P_ARRAY_Z parrz, size_t size)
-{
-	REGISTER size_t n = strLevelArrayZ(parrz);
-	REGISTER size_t i, l, r, k;
-
-	/* [l,r] Make a window which matches with prefix of parrz. */
-	l = r = 0;
-	for (i = 1; i < n; ++i)
-	{
-		/* If i > r, nothing matches so we will calculate.
-		 * z[i] using naive way.
-		 */
-		if (i > r)
-		{
-			l = r = i;
-			/* r - l == 0 in starting, so it will start checking from 0'th index.
-			 * For example, for "ababab" and i == 1, the value of r remains 0 and z[i] becomes 0.
-			 * For string "aaaaaa" and i = 1, z[i] and r become 5.
-			 */
-			while (r < n && 0 == memcmp(_P_ARRAY_Z_ITEM_M(parrz, size, r - l), _P_ARRAY_Z_ITEM_M(parrz, size, r), size))
-				++r;
-			z[i] = r - l;
-			--r;
-		}
-		else
-		{
-			/* k = i - l, so k corresponds to number which matches in [l,r] interval. */
-			k = i - l;
-			/* If z[k] is less than remaining interval then z[i] will be equal to z[k].
-			 * For example, str == "ababab", i == 3, r == 5 and l == 2.
-			 */
-			if (z[k] < r - i + 1)
-				z[i] = z[k]; /* For example str == "aaaaaa" and i == 2, r is 5, l is 0. */
-			else
+			if (j == parrptn->num)
 			{
-				/* Start from r and check manually. */
-				l = i;
-				while (r < n && 0 == memcmp(_P_ARRAY_Z_ITEM_M(parrz, size, r - l), _P_ARRAY_Z_ITEM_M(parrz, size, r), size))
-					++r;
-				z[i] = r - l;
-				--r;
+				if (CBF_CONTINUE != cbftvs(parrtxt->pdata + (i - j) * size, param))
+				{
+					free(lps);
+					return CBF_TERMINATE;
+				}
+				
+				lps[j - 1] = j;
+			}
+			
+			else if (i < parrtxt->num && 0 != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
+			{
+				if (0 != j)
+					j = lps[j - 1];
+				else
+					++i;
 			}
 		}
+		
+		free(lps);
 	}
+	return CBF_CONTINUE;
 }
 
 /* Function name: strZSearchArrayZ
  * Description:   Match pattern in text by using Z algorithm.
  * Parameters:
- *    parrtxt Pointer to the sized array you want to search.
+ *    parrtxt Pointer to the sized array that represents the text to search.
  *    parrptn Pointer to the sized array which contains the pattern.
  *       size Size of each element in both parrtxt and parrptn.
- *     cbftvs Callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
+ *     cbftvs Callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in the text array.
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
- *                (*) If function returned CBF_TERMINATE,
- *                    it would either indicate allocation failure or callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
  * Tip:           Z algorithm references to geeksforgeeks.org.
- * Usage:         int cbftvs(void * pitem, size_t param) {
+ *                This function takes O(pattern_length + text_length) memory space.
+ * Usage:         <test.c>
+ *                #include <stdio.h>
+ *                #include "svstring.h"
+ *                int cbftvs(void * pitem, size_t param) {
  *                    size_t i;
  *                    for (i = 0; i < param; ++i)
  *                        putchar(i[(char *)pitem]);
  *                    printf("\n");
  *                    return CBF_CONTINUE;
  *                }
- *                P_ARRAY_Z pp = strCreateCharacterStringArrayZ("GEEK");
- *                P_ARRAY_Z pt = strCreateCharacterStringArrayZ("GEEKS FOR GEEKS");
- *                strZSearchArrayZ(pt, pp, sizeof(char), cbftvs, 0);
- *                strDeleteArrayZ(pp); // Do not forget to delete array here.
- *                strDeleteArrayZ(pt);
+ *                int main() {
+ *                    P_ARRAY_Z pp = strCreateCharacterStringArrayZ("GEEK"); // Pattern.
+ *                    P_ARRAY_Z pt = strCreateCharacterStringArrayZ("GEEKS FOR GEEKS AND GEEKS"); // Text.
+ *                    strZSearchArrayZ(pt, pp, sizeof(char), cbftvs, strLevelArrayZ(pp));
+ *                    strDeleteArrayZ(pp); // Do not forget to delete array here.
+ *                    strDeleteArrayZ(pt);
+ *                    return 0;
+ *                }
  */
 int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {
-	REGISTER size_t i, l = strLevelArrayZ(parrtxt) + 1 + strLevelArrayZ(parrptn);
-	size_t * z = (size_t *) calloc(l, sizeof(size_t));
-	ARRAY_Z arrstr = { 0 };
-	int r = CBF_TERMINATE;
+	REGISTER size_t i, n = strLevelArrayZ(parrtxt) + 1 + strLevelArrayZ(parrptn);
+	REGISTER size_t * z = (size_t *) calloc(n, sizeof(size_t));
 
 	if (NULL != z)
 	{
-		if (NULL != strInitArrayZ(&arrstr, l, size))
+		REGISTER PUCHAR pstr = (PUCHAR) malloc(n * size);
+		if (NULL != pstr)
 		{
+			REGISTER size_t l, r, k;
 			/* Create concatenated string "P\0T". */
-			memcpy(arrstr.pdata, parrptn->pdata, size * strLevelArrayZ(parrptn));
-			memset(arrstr.pdata + size * strLevelArrayZ(parrptn), 0, size);
-			memcpy(arrstr.pdata + size * (strLevelArrayZ(parrptn) + 1), parrtxt->pdata, size * strLevelArrayZ(parrtxt));
+			memcpy(pstr, parrptn->pdata, size * strLevelArrayZ(parrptn));
+			memset(pstr + size * strLevelArrayZ(parrptn), 0, size);
+			memcpy(pstr + size * (strLevelArrayZ(parrptn) + 1), parrtxt->pdata, size * strLevelArrayZ(parrtxt));
+			
+			/* [l,r] Make a window which matches with prefix of parrz. */
+			l = r = 0;
+			
 			/* Use Z algorithm to find string matching. */
-			_strGetZArray(z, &arrstr, size);
-			strFreeArrayZ(&arrstr);
+			for (i = 1; i < n; ++i)
+			{
+				/* If i > r, nothing matches so we will calculate.
+				 * z[i] using naive way.
+				 */
+				if (i > r)
+				{
+					l = r = i;
+					/* r - l == 0 in starting, so it will start checking from 0'th index.
+					 * For example, for "ababab" and i == 1, the value of r remains 0 and z[i] becomes 0.
+					 * For string "aaaaaa" and i = 1, z[i] and r become 5.
+					 */
+					while (r < n && 0 == memcmp(pstr + size * (r - l), pstr + size * r, size))
+						++r;
+					z[i] = r - l;
+					--r;
+				}
+				else
+				{
+					/* k = i - l, so k corresponds to number which matches in [l,r] interval. */
+					k = i - l;
+					/* If z[k] is less than remaining interval then z[i] will be equal to z[k].
+					 * For example, str == "ababab", i == 3, r == 5 and l == 2.
+					 */
+					if (z[k] < r - i + 1)
+						z[i] = z[k]; /* For example str == "aaaaaa" and i == 2, r is 5, l is 0. */
+					else
+					{
+						/* Start from r and check manually. */
+						l = i;
+						while (r < n && 0 == memcmp(pstr + size * (r - l), pstr + size * r, size))
+							++r;
+						z[i] = r - l;
+						--r;
+					}
+				}
+			}
+			
+			/* Drop pstr now to save memory. */
+			free(pstr);
 
 			/* Looping through Z array for matching condition. */
-			for (i = 0; i < l; ++i)
+			for (i = 0; i < n; ++i)
 			{
 				/* If z[i](matched region) is equal to pattern length then we got the pattern. */
 				if (strLevelArrayZ(parrptn) == z[i])
@@ -899,10 +884,9 @@ int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAV
 					}
 				}
 			}
-			r = CBF_CONTINUE;
 		}
 		free(z);
 	}
-	return r;
+	return CBF_CONTINUE;
 }
 

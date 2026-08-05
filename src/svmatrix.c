@@ -23,7 +23,7 @@
 
 #include <stdlib.h> /* Using function malloc, free. */
 #include <string.h> /* Using function memcpy, memset, memmove. */
-#include <limits.h> /* Using macro CHAR_BIT, UCHAR_MAX. */
+#include <limits.h> /* Using macro CHAR_BIT. */
 #include "svstring.h"
 
 /* Function name: strInitMatrix

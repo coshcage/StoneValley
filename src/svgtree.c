@@ -23,7 +23,7 @@
  */
 
 #include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memcpy. */
+#include <string.h> /* Using function memcpy. */
 #include "svtree.h"
 #include "svqueue.h"
 

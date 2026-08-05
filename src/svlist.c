@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0805260700L01520
+ * File ID:     0306170948C0805260700L01514
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -102,9 +102,8 @@ int _strCBFCompareNodeDataSD(void * pitem, size_t param)
 }
 
 /* Function name: strTraverseLinkedListSC_R
- * Description:   Recursively traverse a single-pointer-node linked list.
- *                The sequence of traversal is reversely to strTraverseLinkedListSC_A
- *                that this function traversals a list form tail to head.
+ * Description:   Recursively traverse a single-pointer-node linked list form tail to head.
+ *                The sequence of traversal is reversely to strTraverseLinkedListSC_A.
  * Parameters:
  *       list Pointer to the first NODE_S element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -136,9 +135,8 @@ int strTraverseLinkedListSC_R(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strTraverseLinkedListSC_A
- * Description:   Recursively traverse a single-pointer-node linked list.
- *                The order of traversal is opposite of strTraverseLinkedListSC_R
- *                that this function traversals a list from tail to head.
+ * Description:   Recursively traverse a single-pointer-node linked list from head to tail.
+ *                The order of traversal is opposite of strTraverseLinkedListSC_R.
  * Parameters:
  *       list Pointer to the first NODE_S element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -169,9 +167,8 @@ int strTraverseLinkedListSC_A(LIST_S list, P_NODE_S pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strTraverseLinkedListSC_N
- * Description:   Traverse a single-pointer-node linked list using a loop.
- *                The order of traversal is as the same as strTraverseLinkedListSC_A
- *                that this function traversals a list from head to tail.
+ * Description:   Traverse a single-pointer-node linked list using a loop from head to tail.
+ *                The order of traversal is as the same as strTraverseLinkedListSC_A.
  * Parameters:
  *       list Pointer to the first element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -687,9 +684,8 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 /* The section for double-pointer-node linked list began bellow.  */
 
 /* Function name: strTraverseLinkedListDC_R
- * Description:   Recursively traverse a double-pointer-node linked list.
- *                The sequence of traversal is reversely to strTraverseLinkedListSC_A
- *                that this function traversals a list form tail to head.
+ * Description:   Recursively traverse a double-pointer-node linked-list form tail to head.
+ *                The sequence of traversal is reversely to strTraverseLinkedListSC_A.
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -735,9 +731,8 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strTraverseLinkedListDC_A
- * Description:   Recursively traverse a double-pointer-node linked list.
- *                The order of traversal is opposite of strTraverseLinkedListDC_R
- *                that this function traversals a list from head to tail.
+ * Description:   Recursively traverse a double-pointer-node linked-list from head to tail.
+ *                The order of traversal is opposite of strTraverseLinkedListDC_R.
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -771,9 +766,8 @@ int strTraverseLinkedListDC_A(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 }
 
 /* Function name: strTraverseLinkedListDC_N
- * Description:   Traverse a double-pointer-node linked list using a loop.
- *                The order of traversal is as the same as strTraverseLinkedListDC_A
- *                that this function traversals a list from head to tail.
+ * Description:   Traverse a double-pointer-node linked-list using a loop from head to tail.
+ *                The order of traversal is as the same as strTraverseLinkedListDC_A.
  * Parameters:
  *       list Pointer to the first NODE_D element while traversal.
  *       pnil Please Leave It As NULL for internal use.
@@ -1367,19 +1361,19 @@ bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx,
  * Description:   Merge sort a linked list.
  * Parameters:
  *       list Pointer to the first node of the linked list to be sorted, cast into (void *).
- *  bCircular true for circular linked list, false for non-circular linked list.
+ *  bcircular true for circular linked list, false for non-circular linked list.
  *        ntp Determine whether this is a doubly linked list or a single linked list.
  *            Please refer to NodeType enumeration at svstring.h.
  *     cbfcmp Pointer to a function that compares two elements in nodes.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  This function would return a new header for sorted linked list.
  *                If parameter list was NULL, function would return NULL.
- * Tip:           This function can sort circular single/double linked list after parameter bCircular was set.
+ * Tip:           This function can sort circular single/double linked list after parameter bcircular was set.
  *                Merge sort algorithm is used for this function and takes O(1) space complexity and O(n*log n) time complexity.
  *                This function refers to web: https://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
  *                Thank him for sharing his idea and code!
  */
-void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_COMPARE cbfcmp)
+void * strMergeSortLinkedListSDC(void * list, bool bcircular, NodeType ntp, CBF_COMPARE cbfcmp)
 {
 	if (NULL != list)
 	{
@@ -1408,7 +1402,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 				for (i = 0; i < insize; ++i)
 				{
 					++psize;
-					if (bCircular)
+					if (bcircular)
 						q = (NEXT[(void **)q] == oldhead ? NULL : NEXT[(void **)q]);
 					else
 						q = NEXT[(void **)q];
@@ -1430,7 +1424,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 						e = q;
 						q = NEXT[(void **)q];
 						--qsize;
-						if (bCircular && q == oldhead)
+						if (bcircular && q == oldhead)
 							q = NULL;
 					}
 					else if (qsize == 0 || NULL == q)
@@ -1439,7 +1433,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 						e = p;
 						p = NEXT[(void **)p];
 						--psize;
-						if (bCircular && p == oldhead)
+						if (bcircular && p == oldhead)
 							p = NULL;
 					}
 					else if
@@ -1467,7 +1461,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 						e = p;
 						p = NEXT[(void **)p];
 						--psize;
-						if (bCircular && p == oldhead)
+						if (bcircular && p == oldhead)
 							p = NULL;
 					}
 					else
@@ -1476,7 +1470,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 						e = q;
 						q = NEXT[(void **)q];
 						--qsize;
-						if (bCircular && q == oldhead)
+						if (bcircular && q == oldhead)
 							q = NULL;
 					}
 
@@ -1497,7 +1491,7 @@ void * strMergeSortLinkedListSDC(void * list, bool bCircular, NodeType ntp, CBF_
 				p = q;
 			}
 
-			if (bCircular)
+			if (bcircular)
 			{
 				if (NULL != tail)
 					NEXT[(void **)tail] = list;

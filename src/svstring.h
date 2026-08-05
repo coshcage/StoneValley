@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0805260722L00530
+ * File ID:     0306170921Y0805260722L00531
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -211,7 +211,7 @@ void        strSwapNodeItemLinkedListDC    (P_NODE_D     pnodex,   P_NODE_D     
 /* Functions for both single linked lists and doubly linked lists. */
 void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       bool         brev);
 bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t  sizey, NodeType ntpy);
-void *      strMergeSortLinkedListSDC      (void *       list,     bool         bCircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
+void *      strMergeSortLinkedListSDC      (void *       list,     bool         bcircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
 /* Functions for bit streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
 void        strFreeBitStream               (P_BITSTREAM  pbstm);
@@ -279,9 +279,10 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 } while (0)
 /* Macros for nodes. */
 #define strFreeNodeS_M(pnode_M) do { \
-	if (NULL != (pnode_M)->pdata) /* Circumvent freeing a NULL pointer. */ \
+	if (NULL != (pnode_M)->pdata) { /* Circumvent freeing a NULL pointer. */ \
 		free((pnode_M)->pdata); \
 		(pnode_M)->pdata = NULL; \
+	} \
 } while (0)
 #define strDeleteNodeS_M(pnode_M) do { \
 	strFreeNodeS_M(pnode_M); \

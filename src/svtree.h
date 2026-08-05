@@ -176,7 +176,7 @@ P_BST           treCreateBST           (void);
 void            treDeleteBST_O         (P_BST           pbst);
 P_BSTNODE       treCopyBST             (P_BSTNODE       proot,   size_t       size);
 P_BSTNODE       treBSTFindData_R       (P_BSTNODE       proot,   const void * pitem,   CBF_COMPARE  cbfcmp);
-P_BSTNODE       treBSTFindData_A       (P_BSTNODE       proot,   const void * pitem,   CBF_COMPARE  cbfcmp);
+P_BSTNODE       treBSTFindData_N       (P_BSTNODE       proot,   const void * pitem,   CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTInsertAA         (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTRemoveAA         (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
@@ -337,7 +337,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treIsFullHeapA       treIsFullHeapA_M
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
 	/* Functions in svstree.c. */
-	#define treBSTFindData_X     treBSTFindData_A
+	#define treBSTFindData_X     treBSTFindData_N
 	#define treFreeBSTNode       treFreeBSTNode_M
 	#define treDeleteBSTNode     treDeleteBSTNode_M
 	#define treInitBST           treInitBST_M
@@ -367,7 +367,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treIsFullHeapA       treIsFullHeapA_M
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
 	/* Functions in svstree.c. */
-	#define treBSTFindData_X     treBSTFindData_A
+	#define treBSTFindData_X     treBSTFindData_N
 	#define treFreeBSTNode       treFreeBSTNode_O
 	#define treDeleteBSTNode     treDeleteBSTNode_O
 	#define treInitBST           treInitBST_M

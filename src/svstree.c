@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0720261836L02560
+ * File ID:     0809171737I0720261836L02564
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -210,6 +210,8 @@ P_BSTNODE treCopyBST(P_BSTNODE proot, size_t size)
  * Return value:  Pointer to the node that contains the data.
  *                NULL indicates function cannot find the data that pitem pointed.
  * Caution:       Address of proot Must Be Allocated first.
+ * Tip:           Turn tail recursive optimization of your compiler on to accelerate the execution speed of this function.
+ *                Otherwize, choose function treBSTFindData_N for a better performance.
  */
 P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfcmp)
 {
@@ -221,7 +223,7 @@ P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 	return treBSTFindData_R(pbstchild(proot)[r > 0], pitem, cbfcmp);
 }
 
-/* Function name: treBSTFindData_A
+/* Function name: treBSTFindData_N
  * Description:   Find data in a binary search tree using a loop.
  * Parameters:
  *      proot Pointer to the root node.
@@ -230,15 +232,17 @@ P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
  * Return value:  Pointer to the node that contains the data.
  *                NULL indicates function cannot find the data that pitem pointed.
  * Caution:       Address of proot Must Be Allocated first.
+ * Tip:           This function always performs faster than treBSTFindData_R unless your compiler optimized treBSTFindData_R.
  */
-P_BSTNODE treBSTFindData_A(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfcmp)
+P_BSTNODE treBSTFindData_N(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfcmp)
 {
-	REGISTER int r = 0;
-	while (NULL != proot)
+	REGISTER P_BSTNODE pnode = proot;
+	REGISTER int r;
+	while (NULL != pnode)
 	{
-		if (0 == (r = cbfcmp(pitem, proot->knot.pdata)))
-			return proot;
-		proot = pbstchild(proot)[r > 0];
+		if (0 == (r = cbfcmp(pitem, pnode->knot.pdata)))
+			return pnode;
+		pnode = pbstchild(pnode)[r > 0];
 	}
 	return NULL;
 }
@@ -1124,7 +1128,7 @@ void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
  */
 void treRemoveRBT(P_RBT prbt, const void * pitem, CBF_COMPARE cbfcmp)
 {
-	REGISTER P_RBTNODE z = P2P_RBTNODE(treBSTFindData_A(P2P_BSTNODE(*prbt), pitem, cbfcmp));
+	REGISTER P_RBTNODE z = P2P_RBTNODE(treBSTFindData_N(P2P_BSTNODE(*prbt), pitem, cbfcmp));
 	if (NULL != z)
 	{
 		REGISTER P_RBTNODE x;

@@ -169,7 +169,7 @@ int _grpCBFCompareInteger(const void * px, const void * py)
 P_VERTEX_L grpGetVertexByID(P_GRAPH_L pgrp, size_t vid)
 {
 	REGISTER P_BSTNODE pnode;
-	if (! setIsEmptyT(pgrp) && NULL != (pnode = treBSTFindData_A(*pgrp, &vid, _grpCBFCompareInteger)))
+	if (! setIsEmptyT(pgrp) && NULL != (pnode = treBSTFindData_N(*pgrp, &vid, _grpCBFCompareInteger)))
 		return (P_VERTEX_L)pnode->knot.pdata;
 	return NULL;
 }

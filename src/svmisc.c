@@ -454,7 +454,7 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 	if (index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc)
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
-		return !!(pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
+		return BOOLIZE(pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
 	}
 	return false;
 }

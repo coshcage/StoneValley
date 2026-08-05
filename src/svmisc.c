@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0728261428L00914
+ * File ID:     0306170948D0728261428L00911
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -23,7 +23,7 @@
 
 #include <stdio.h>  /* Using macro BUFSIZ, function printf. */
 #include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memset. */
+#include <string.h> /* Using function memcpy, memmove, memset. */
 #include <limits.h> /* Using macro CHAR_BIT, UCHAR_MAX. */
 #include "svstring.h"
 
@@ -71,12 +71,9 @@ stdiv_t stdiv(size_t numerator, size_t denominator)
  */
 void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 {	/* Swap two elements. */
-	if (pleft != pright)
-	{	/* It is worth to swap. */
-		memmove(ptemp,  pleft, size);
-		memmove(pleft, pright, size);
-		memmove(pright, ptemp, size);
-	}
+	memmove(ptemp,  pleft, size);
+	memmove(pleft, pright, size);
+	memmove(pright, ptemp, size);
 }
 
 /* Embed some callbacks for convenience.

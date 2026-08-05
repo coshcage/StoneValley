@@ -598,7 +598,7 @@ int main(int argc, char * argv[])
 			fpin = NULL;
 		}
 		else
-			printf("WARNING: Cannot open file \"%s\"!\n", SZCFILE[i]);
+			fprintf(stderr, "WARNING: Cannot open file \"%s\"!\n", SZCFILE[i]);
 	}
 	
 	strFreeArrayZ(&arrbuf);

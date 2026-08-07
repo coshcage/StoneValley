@@ -2,7 +2,7 @@
  * Name:        svhshtbl.h
  * Description: Hash tables interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615U0609191235L00117
+ * File ID:     0901171615U0806260346L00108
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -41,46 +41,37 @@ P_HSHTBL_C hshCreateC       (size_t       buckets);
 void       hshDeleteC       (P_HSHTBL_C   pht);
 size_t     hshSizeC         (P_HSHTBL_C   pht);
 int        hshTraverseC     (P_HSHTBL_C   pht,   CBF_TRAVERSE cbftvs,  size_t       param);
-P_NODE_S   hshSearchC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
+P_NODE_S   hshSearchC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    CBF_COMPARE  cbfmch);
 bool       hshInsertC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
-bool       hshRemoveC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    size_t       size);
+bool       hshRemoveC       (P_HSHTBL_C   pht,   CBF_HASH     cbfhsh,  const void * pkey,    CBF_COMPARE  cbfmch);
 bool       hshCopyC         (P_HSHTBL_C   pdest, CBF_HASH     cbfhsh,  P_HSHTBL_C   psrc,    size_t       size);
 /* Functions for open addressing hash table using double hashing. */
-bool       hshInitA         (P_HSHTBL_A   pht,   size_t       buckets, size_t size);
+bool       hshInitA         (P_HSHTBL_A   pht,   size_t       buckets, size_t       size);
 void       hshFreeA_O       (P_HSHTBL_A   pht);
 P_HSHTBL_A hshCreateA       (size_t       slots, size_t       size);
 void       hshDeleteA_O     (P_HSHTBL_A   pht);
 size_t     hshSizeA         (P_HSHTBL_A   pht,   size_t       size);
 int        hshTraverseA     (P_HSHTBL_A   pht,   size_t       size,    CBF_TRAVERSE cbftvs,  size_t       param);
-void *     hshSearchA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
+void *     hshSearchA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size, CBF_COMPARE cbfmch);
 void *     hshInsertA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
-bool       hshRemoveA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size);
+bool       hshRemoveA       (P_HSHTBL_A   pht,   CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, const void * pkey, size_t size, CBF_COMPARE cbfmch);
 bool       hshCopyA         (P_HSHTBL_A   pdest, CBF_HASH     cbfhsh1, CBF_HASH     cbfhsh2, P_HSHTBL_A   psrc, size_t size);
 /* Some built-in hash functions are declared below. */
 size_t     hshCBFHashString (const void * pstr);
 
-/* Macros for function inline to accelerate execution speed. */
-/* Functions in svhash.c. */
-#define hshFreeA_M(pht_M) do { \
-	strFreeArrayZ(pht_M); \
-} while (0)
-#define hshDeleteA_M(pht_M) do { \
-	strDeleteArrayZ(pht_M); \
-} while (0)
-
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
 	/* Macros for open addressing hash tables. */
-	#define hshFreeA   hshFreeA_M
-	#define hshDeleteA hshDeleteA_M
+	#define hshFreeA   strFreeArrayZ
+	#define hshDeleteA strDeleteArrayZ
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	/* Macros for open addressing hash tables. */
-	#define hshFreeA   hshFreeA_M
-	#define hshDeleteA hshDeleteA_M
+	#define hshFreeA   strFreeArrayZ
+	#define hshDeleteA strDeleteArrayZ
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	/* Macros for open addressing hash tables. */
-	#define hshFreeA   hshFreeA_M
-	#define hshDeleteA hshDeleteA_M
+	#define hshFreeA   strFreeArrayZ
+	#define hshDeleteA strDeleteArrayZ
 #else /* Optimization has been disabled. */
 	/* Macros for open addressing hash tables. */
 	#define hshFreeA   hshFreeA_O

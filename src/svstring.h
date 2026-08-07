@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0805260722L00531
+ * File ID:     0306170921Y0806261800L00521
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -31,20 +31,21 @@
 #define NEXT 0
 
 /* An enumeration of binary search methods and their abbreviations.
- * Choose a sane constant as you wish when you are calling svBinarySearchDispatch.
+ * Choose a rational constant as you wish when you are calling svBinarySearchDispatch.
  */
 typedef enum en_BSearch {
 	EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
-		EBS_1ST_GE = EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
-
+		EBS_1ST_GE = /* First value that is great than or equal to key. */
+			EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
 	EBS_LAST_LESS_THAN_KEY,
-		EBS_LST_LT = EBS_LAST_LESS_THAN_KEY,
-
+		EBS_LST_LT = /* Last value that is less than key. */
+			EBS_LAST_LESS_THAN_KEY,
 	EBS_FIRST_GREATER_THAN_KEY,
-		EBS_1ST_GT = EBS_FIRST_GREATER_THAN_KEY,
-
+		EBS_1ST_GT = /* First value that is great than key. */
+			EBS_FIRST_GREATER_THAN_KEY,
 	EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY,
-		EBS_LST_LE = EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+		EBS_LST_LE = /* Last value that is less than or equal to key. */
+			EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
 } BSearch;
 
 /* Sized array. */
@@ -111,7 +112,7 @@ typedef struct st_SPAMAT {
 typedef struct st_FindingInfo {
 	void *       result; /* Finding result. */
 	const void * pitem;  /* Finding target. */
-	size_t       size;   /* Size of target. */
+	CBF_COMPARE  cbfmch; /* Comparison function. */
 	NodeType     ntp;    /* Type of target. */
 } FindingInfo, * P_FindingInfo;
 
@@ -156,7 +157,7 @@ void *      strMoveArrayZ_O                (P_ARRAY_Z    pdest,    P_ARRAY_Z    
 P_ARRAY_Z   strCreateCopyArrayZ            (P_ARRAY_Z    psrc,     size_t       size);
 void *      strLocateItemArrayZ_O          (P_ARRAY_Z    parrz,    size_t       size,      size_t       index);
 ptrdiff_t   strIndexOfArrayZ_O             (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size);
-size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    bool         brev);
+size_t      strLinearSearchArrayZ          (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    CBF_COMPARE  cbfmch, bool        brev);
 void *      strInsertItemArrayZ            (P_ARRAY_Z    parrz,    const void * pitem,     size_t       size,    size_t       index);
 void        strRemoveItemArrayZ            (P_ARRAY_Z    parrz,    size_t       size,      size_t       index,   bool         bshrink);
 void *      strSortArrayZ                  (P_ARRAY_Z    parrz,    size_t       size,      CBF_COMPARE  cbfcmp,  bool         bstable);
@@ -181,7 +182,7 @@ void        strDeleteLinkedListSC_O        (P_LIST_S     plist);
 size_t      strLevelLinkedListSC           (LIST_S       list);
 P_NODE_S    strCopyLinkedListSC            (LIST_S       psrc,     size_t       size);
 int         strCompareLinkedListSC         (LIST_S       listx,    LIST_S       listy,     CBF_COMPARE  cbfcmp);
-P_NODE_S    strSearchLinkedListSC          (LIST_S       list,     const void * pitem,     size_t       size);
+P_NODE_S    strSearchDataLinkedListSC      (LIST_S       list,     const void * pitem,     CBF_COMPARE  cbfmch);
 P_NODE_S    strLocatePreviousItemSC        (LIST_S       list,     P_NODE_S     pnode);
 P_NODE_S    strLocateLastItemSC            (LIST_S       list);
 P_NODE_S    strLocateItemSC_R              (P_NODE_S     pnode,    size_t       incmtl);
@@ -202,7 +203,7 @@ void        strDeleteLinkedListDC_O        (P_LIST_D     plist,    bool         
 size_t      strLevelLinkedListDC           (LIST_D       list,     bool         brev);
 P_NODE_D    strCopyLinkedListDC            (LIST_D       psrc,     size_t       size,      bool brev);
 int         strCompareLinkedListDC         (LIST_D       listx,    LIST_D       listy,     CBF_COMPARE  cbfcmp,  bool         brev);
-P_NODE_D    strSearchLinkedListDC          (LIST_D       list,     const void * pitem,     size_t       size,    bool         brev);
+P_NODE_D    strSearchDataLinkedListDC      (LIST_D       list,     const void * pitem,     CBF_COMPARE  cbfmch,  bool         brev);
 P_NODE_D    strLocateItemDC_R              (P_NODE_D     pnode,    ptrdiff_t    incmtl);
 P_NODE_D    strLocateItemDC_N              (P_NODE_D     pnode,    ptrdiff_t    incmtl);
 P_NODE_D    strInsertItemLinkedListDC      (P_NODE_D     pdest,    P_NODE_D     pnode,     bool         bafter);
@@ -266,11 +267,12 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 /* Functions in svmisc.c. */
 #define svIndexOf_M(pbase_M, pitem_M, size_M) ((ptrdiff_t) ((ptrdiff_t)(pitem_M) - (ptrdiff_t)(pbase_M)) / (ptrdiff_t)(size_M))
 /* Functions in svatom.c. */
+#define _strFreedomRoutine_M(pobj_M) do { \
+		free((pobj_M)->pdata); \
+		(pobj_M)->pdata = NULL; \
+} while (0)
 #define strFreeArrayZ_M(parrz_M) do { \
-	if (NULL != (parrz_M)->pdata) /* Circumvent freeing a NULL pointer. */ { \
-		free((parrz_M)->pdata); \
-		(parrz_M)->pdata = NULL; \
-	} \
+	_strFreedomRoutine_M(parrz_M); \
 	(parrz_M)->num = 0; \
 } while (0)
 #define strDeleteArrayZ_M(parrz_M) do { \
@@ -279,19 +281,14 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 } while (0)
 /* Macros for nodes. */
 #define strFreeNodeS_M(pnode_M) do { \
-	if (NULL != (pnode_M)->pdata) { /* Circumvent freeing a NULL pointer. */ \
-		free((pnode_M)->pdata); \
-		(pnode_M)->pdata = NULL; \
-	} \
+	_strFreedomRoutine_M(pnode_M); \
 } while (0)
 #define strDeleteNodeS_M(pnode_M) do { \
 	strFreeNodeS_M(pnode_M); \
 	free(pnode_M); \
 } while (0)
 #define strFreeNodeD_M(pnode_M) do { \
-	if (NULL != (pnode_M)->pdata) /* Circumvent freeing a NULL pointer. */ \
-		free((pnode_M)->pdata); \
-		(pnode_M)->pdata = NULL; \
+	_strFreedomRoutine_M(pnode_M); \
 } while (0)
 #define strDeleteNodeD_M(pnode_M) do { \
 	strFreeNodeD_M(pnode_M); \
@@ -320,7 +317,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	*(plist_M) = NULL; \
 } while (0)
 #define strDeleteLinkedListDC_M(plist_M, brev_M) do { \
-	strFreeLinkedListDC(plist_M, brev_M); \
+	strFreeLinkedListDC((plist_M), (brev_M)); \
 	free(plist_M); \
 } while (0)
 /* Functions in svmatrix.c */
@@ -329,21 +326,14 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	(pmtx_M)->ln = (pmtx_M)->col = 0; \
 } while (0)
 #define strDeleteMatrix_M(pmtx_M) do { \
-	strFreeMatrix(pmtx_M); \
+	strFreeMatrix_M(pmtx_M); \
 	free(pmtx_M); \
 } while (0)
 #define strSetMatrix_M(pmtx_M, pval_M, size_M) do { \
 	strSetArrayZ(&(pmtx_M)->arrz, (pval_M), (size_M)); \
 } while (0)
 #define strSetValueMatrix_M(pmtx_M, ln_M, col_M, pval_M, size_M) \
-	(((ln_M) < (pmtx_M)->ln && (col_M) < (pmtx_M)->col && (size_M)) ? \
-	memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)) : NULL)
-#define strFreeBMap_M(pbm_M) do { \
-	strFreeMatrix(pbm_M); \
-} while (0)
-#define strDeleteBMap_M(pbm_M) do { \
-	strDeleteMatrix(pbm_M); \
-} while (0)
+	(memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)))
 #define strCopyBMap_M(pdest_M, psrc_M) (strCopyMatrix((pdest_M), (psrc_M), sizeof(UCHART)))
 #define strBitStreamIsEmpty_M(pbstm_M) (strLevelArrayZ(&(pbstm_M)->arrz) <= 1 && 0 == (pbstm_M)->bilc)
 
@@ -381,8 +371,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strDeleteMatrix           strDeleteMatrix_O
 	#define strSetMatrix              strSetMatrix_M
 	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeBMap_M
-	#define strDeleteBMap             strDeleteBMap_M
+	#define strFreeBMap               strFreeMatrix
+	#define strDeleteBMap             strDeleteMatrix
 	#define strCopyBMap               strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	#include <stdlib.h> /* Using function free. */
@@ -418,8 +408,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strDeleteMatrix           strDeleteMatrix_M
 	#define strSetMatrix              strSetMatrix_M
 	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeBMap_M
-	#define strDeleteBMap             strDeleteBMap_M
+	#define strFreeBMap               strFreeMatrix
+	#define strDeleteBMap             strDeleteMatrix
 	#define strCopyBMap               strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	#include <stdlib.h> /* Using function free. */
@@ -455,8 +445,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strDeleteMatrix           strDeleteMatrix_M
 	#define strSetMatrix              strSetMatrix_M
 	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeBMap_M
-	#define strDeleteBMap             strDeleteBMap_M
+	#define strFreeBMap               strFreeMatrix
+	#define strDeleteBMap             strDeleteMatrix
 	#define strCopyBMap               strCopyBMap_M
 #else /* Optimization has been disabled. */
 	/* Macros for miscellaneous data structures. */

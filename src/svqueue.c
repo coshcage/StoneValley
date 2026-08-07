@@ -2,7 +2,7 @@
  * Name:        svqueue.c
  * Description: Queues.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0417171257F0721261225L00552
+ * File ID:     0417171257F0806261730L00549
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -72,7 +72,7 @@ P_QUEUE_A queCreateAC(size_t num, size_t size)
 		if (NULL == queInitAC(pquen, num, size))
 		{	/* Allocation failure. */
 			free(pquen);
-			return NULL;
+			pquen = NULL;
 		}
 	}
 	return pquen;
@@ -134,7 +134,7 @@ size_t queUsageAC_O(P_QUEUE_A pqueac)
  */
 void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
 {
-	if (NULL != pitem) /* Avoid copying from address NULL. */
+	if (SVASSERT(NULL != pitem)) /* Avoid copying from address NULL. */
 		memcpy(pqueac->arr.pdata + pqueac->rear * size, pitem, size);
 	pqueac->rear = (pqueac->rear + 1) % pqueac->arr.num;
 }
@@ -152,7 +152,7 @@ void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
  */
 void queRemoveAC_O(void * pitem, size_t size, P_QUEUE_A pqueac)
 {
-	if (NULL != pitem)
+	if (SVASSERT(NULL != pitem))
 		memcpy(pitem, pqueac->arr.pdata + pqueac->front * size, size);
 	pqueac->front = (pqueac->front + 1) % pqueac->arr.num;
 }
@@ -193,9 +193,8 @@ void queFreeL(P_QUEUE_L pquel)
 P_QUEUE_L queCreateL(void)
 {
 	REGISTER P_QUEUE_L pquen = (P_QUEUE_L) malloc(sizeof(QUEUE_L));
-	if (NULL == pquen)
-		return NULL; /* Allocation failure. */
-	queInitL(pquen);
+	if (NULL != pquen)
+		queInitL(pquen);
 	return pquen;
 }
 
@@ -309,8 +308,7 @@ bool queInsertL(P_QUEUE_L pquel, const void * pitem, size_t size)
 bool queRemoveL(void * pitem, size_t size, P_QUEUE_L pquel)
 {
 	if (NULL != pquel->pfront)
-	{
-		/* Save new header first. */
+	{	/* Save new header first. */
 		REGISTER P_NODE_S phead = pquel->pfront->pnode;
 		/* Restore data of the old header. */
 		if (NULL != pitem)
@@ -363,9 +361,8 @@ void queFreeDL(P_DEQUE_DL pdeque)
 P_DEQUE_DL queCreateDL(void)
 {
 	REGISTER P_DEQUE_DL pdequen = (P_DEQUE_DL) malloc(sizeof(DEQUE_DL));
-	if (NULL == pdequen)
-		return NULL; /* Allocation failure. */
-	queInitDL(pdequen);
+	if (NULL != pdequen)
+		queInitDL(pdequen);
 	return pdequen;
 }
 

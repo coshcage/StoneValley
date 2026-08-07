@@ -136,10 +136,10 @@ vii Here is a simple checklist. Please retrieve it before you compile this libra
 	 _________________________________________________________________
 	|o               # BEFORE COMPILING CHECK LIST #                 o|\ [Figure 3]
 	|_____[ITEM]___________[TYPE]_____[LINES]_____[FILE]_____[MARK]___|\
-	| [_] DISUSE            MACRO       76         SVDEF.H    ALTER   |\
-	| [_] REGISTER          MACRO       80         SVDEF.H    CONFIRM |\
-	| [_] SV_OPTIMIZATION   MACRO       96         SVDEF.H    ALTER   |\
-	| [_] SET_TREE_USING    MACRO       41         SVSET.H    CONFIRM |\
+	| [_]  DISUSE           MACRO         93       SVDEF.H    ALTER   |\
+	| [_]  REGISTER         MACRO         96       SVDEF.H    CONFIRM |\
+	| [_]  SV_OPTIMIZATION  MACRO        112       SVDEF.H    ALTER   |\
+	| [_]  SET_TREE_USING   MACRO         45       SVSET.H    CONFIRM |\
 	|                                                                 |\
 	| ALTER:   Alter item if necessary.                               |\
 	| CONFIRM: Confirm item before compilation.           StoneValley |\

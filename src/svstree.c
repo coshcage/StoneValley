@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0805261435L02542
+ * File ID:     0809171737I0806261800L02543
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -88,7 +88,7 @@ P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)
 		if (NULL == treInitBSTNode(pnew, pitem, size, param))
 		{
 			free(pnew);
-			return NULL;
+			pnew = NULL;
 		}
 	}
 	return pnew;
@@ -160,9 +160,8 @@ void treFreeBST(P_BST pbst)
 P_BST treCreateBST(void)
 {
 	REGISTER P_BST pbst = (P_BST) malloc(sizeof(BST));
-	if (NULL == pbst)
-		return NULL;
-	treInitBST(pbst);
+	if (NULL != pbst)
+		treInitBST(pbst);
 	return pbst;
 }
 
@@ -218,7 +217,7 @@ P_BSTNODE treBSTFindData_R(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 	REGISTER int r;
 	if (NULL == proot)
 		return NULL;
-	if (0 == (r = cbfcmp(pitem, proot->knot.pdata)))
+	if (CBF_CMP_EQUAL == (r = cbfcmp(pitem, proot->knot.pdata)))
 		return proot;
 	return treBSTFindData_R(pbstchild(proot)[r > 0], pitem, cbfcmp);
 }
@@ -240,7 +239,7 @@ P_BSTNODE treBSTFindData_N(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 	REGISTER int r;
 	while (NULL != pnode)
 	{
-		if (0 == (r = cbfcmp(pitem, pnode->knot.pdata)))
+		if (CBF_CMP_EQUAL == (r = cbfcmp(pitem, pnode->knot.pdata)))
 			return pnode;
 		pnode = pbstchild(pnode)[r > 0];
 	}
@@ -361,7 +360,7 @@ P_BSTNODE treBSTRemoveAA(P_BSTNODE pnode, const void * pitem, size_t size, CBF_C
 		/* If pnode is a leaf node, remove it directly. */
 		if (pnode == plast)
 		{
-			if (NULL != pdelete && 0 == cbfcmp(pitem, pdelete->knot.pdata))
+			if (NULL != pdelete && CBF_CMP_EQUAL == cbfcmp(pitem, pdelete->knot.pdata))
 			{
 				REGISTER P_BSTNODE temp = pbstchild(pnode)[RIGHT];
 				memcpy(pdelete->knot.pdata, pnode->knot.pdata, size);
@@ -498,16 +497,18 @@ P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bright)
 	pbstchild(pnode)[! bright] = pnodey;
 
 	/* Recalculating Balance Factors */
-	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
-		(
-			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
-			_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
-		);
-	_NODE_PARAM(pnodex, ptrdiff_t) = _ABF_HEAVY_LT + _treBSTMaxBalanceFactorAVL
-		(
-			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[LEFT]),
-			_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[RIGHT])
-		);
+	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT +
+	_treBSTMaxBalanceFactorAVL
+	(
+		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[LEFT]),
+		_treBSTGetBalanceFactorAVL(pbstchild(pnode)[RIGHT])
+	);
+	_NODE_PARAM(pnodex, ptrdiff_t) = _ABF_HEAVY_LT +
+	_treBSTMaxBalanceFactorAVL
+	(
+		_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[LEFT]),
+		_treBSTGetBalanceFactorAVL(pbstchild(pnodex)[RIGHT])
+	);
 
 	return pnodex;
 }
@@ -601,7 +602,7 @@ P_BSTNODE treBSTRemoveAVL(P_BSTNODE pnode, const void * pitem, size_t size, CBF_
 	r = cbfcmp(pnode->knot.pdata, pitem);
 
 	/* Check if we find the exact node. */
-	if (0 == r)
+	if (CBF_CMP_EQUAL == r)
 	{
 		REGISTER P_BSTNODE ptemp;
 		if (NULL == pbstchild(pnode)[LEFT] && NULL == pbstchild(pnode)[RIGHT])
@@ -755,7 +756,7 @@ P_RBTNODE treCreateRBTNode(const void * pitem, size_t size, RBTColor color, P_RB
 		if (NULL == treInitRBTNode(pnew, pitem, size, color, parent))
 		{
 			free(pnew);
-			return NULL;
+			pnew = NULL;
 		}
 	}
 	return pnew;
@@ -827,9 +828,8 @@ void treFreeRBT(P_RBT prbt)
 P_RBT treCreateRBT(void)
 {
 	REGISTER P_RBT prbt = (P_RBT) malloc(sizeof(RBT));
-	if (NULL == prbt)
-		return NULL;
-	treInitRBT(prbt);
+	if (NULL != prbt)
+		treInitRBT(prbt);
 	return prbt;
 }
 
@@ -935,8 +935,7 @@ void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool bright)
 	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[bright];
 			
 	if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
-	{
-		/* Case 1. */
+	{	/* Case 1. */
 		_NODE_COLOR(prbtparent(z), RBTColor) = BLACK;
 		_NODE_COLOR(y, RBTColor) = BLACK;
 		_NODE_COLOR(prbtparent(prbtparent(z)), RBTColor) = RED;
@@ -945,8 +944,7 @@ void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool bright)
 	else
 	{
 		if (z == prbtchild(prbtparent(z))[bright])
-		{
-			/* Case 2. */
+		{	/* Case 2. */
 			z = prbtparent(z);
 			_treRBRotate(prbt, z, ! bright);
 		}
@@ -1189,7 +1187,7 @@ void             _treFreeBPTPuppet           (P_QUEUE_L        pquelx,  P_QUEUE_
 P_BPTNODE        _treLocateKeyChainHeaderBPT (P_BPT            pbpt);
 P_BPTNODE        _treLocateKeyInLeafBPT      (P_BPT            pbpt,    const void * pkey,   CBF_COMPARE  cbfcmp);
 _P_BPT_KEY_INFO  _treInsertKeyIntoArrayBPT   (_P_BPT_INFO      pbni,    const void * pkey,   P_BPTNODE    pchild,   CBF_COMPARE  cbfcmp);
-size_t           _treRemoveKeyFromArrayBPT   (_P_BPT_INFO      pbni,    const void * pkey,   CBF_COMPARE  cbfcmp);
+size_t           _treRemoveKeyFromArrayBPT   (_P_BPT_INFO      pbni,    const void * pkey,   CBF_COMPARE  cbfmch);
 bool             _treSplitArrayInLeafBPT     (P_BPTNODE        pnew,    P_BPTNODE    pold,   const size_t degree);
 bool             _treSplitArrayInNodeBPT     (_P_BPT_KEY_INFO  pbki,    P_BPTNODE    pnew,   P_BPTNODE    pold,     const size_t degree);
 bool             _treMakeKeyChainBPT         (P_QUEUE_L        pquel,   P_BPTNODE *  pprev,  PUCHAR *     ppkeys[], const size_t num);
@@ -1362,7 +1360,7 @@ P_BPTNODE _treGetNextBPTNode_O(P_BPTNODE pnode)
  */
 bool _treIsLeafBPTNode_O(P_BPTNODE pnode)
 {
-	return !((_P_BPT_INFO)pnode->pdata)->headptr;
+	return NULL == ((_P_BPT_INFO)pnode->pdata)->headptr;
 }
 
 /* Function name: treInitBPT_O
@@ -1602,17 +1600,19 @@ _P_BPT_KEY_INFO _treInsertKeyIntoArrayBPT(_P_BPT_INFO pbni, const void * pkey, P
  * Parameters:
  *       pbni Pointer to a _BPT_INFO structure in a node.
  *       pkey A pointer value which stores the index key.
- *     cbfcmp Pointer to a callback function that compares the data in pkey and the data in the nodes of a tree.
+ *     cbfmch Pointer to a callback function that matches data in pkey and data in the nodes of a tree.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Value of index + 1 for element which has been removed.
  *                If function returned 0, that meant nothing had been deleted from array.
  * Caution:       Address of pbni Must Be Allocated first.
  */
-size_t _treRemoveKeyFromArrayBPT(_P_BPT_INFO pbni, const void * pkey, CBF_COMPARE cbfcmp)
+size_t _treRemoveKeyFromArrayBPT(_P_BPT_INFO pbni, const void * pkey, CBF_COMPARE cbfmch)
 {
 	REGISTER size_t i;
 	for (i = 0; i < pbni->keyarr.num; ++i)
 	{
-		if (cbfcmp(i[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey, pkey) == 0)
+		if (CBF_CMP_EQUAL == cbfmch(i[(_P_BPT_KEY_INFO)pbni->keyarr.pdata].pkey, pkey))
 		{
 			strRemoveItemArrayZ(&pbni->keyarr, sizeof(_BPT_KEY_INFO), i, true);
 			return i + 1;
@@ -1784,7 +1784,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
  */
 bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], const size_t num)
 {
-	if (num > 0)
+	if (SVASSERT(num > 0))
 	{
 		REGISTER size_t i;
 		_P_BPT_INFO     pti;
@@ -1839,7 +1839,7 @@ bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  */
 bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {
-	if (num > 0 && degree > 2)
+	if (SVASSERT(num > 0 && degree > 2))
 	{
 		QUEUE_L q1, q2;
 		REGISTER size_t i;
@@ -2217,7 +2217,7 @@ bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	REGISTER P_BPTNODE pnode = *pbpt;
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{	/* Remove key when tree is not empty. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		return _treBPTRemovePuppet(pbpt, pnode, degree >> 1, pkey, cbfcmp);
@@ -2233,8 +2233,8 @@ bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
 
 /* A macro used to calculate the length of an element in a trie's array. */
 #define _ELESIZ(size) (ALIGN_SIZET(size) + sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t) + sizeof(size_t))
-/*                                 ^              ^                ^                ^                ^
- * Element consists of: -----------data--------next_trie---reference_counter--------appendix---------flag.
+/**                                ^              ^                ^                ^                ^
+ * An element consists of: --------data--------next_trie---reference_counter--------appendix---------flag.
  * We make the flag sign as size_t to further align structure to a suitable size.
  */
 
@@ -2266,7 +2266,7 @@ void treInitTrieA_O(P_TRIE_A ptrie)
  */
 void _treFreeTrieNode(P_TRIE_A ptrie, size_t size)
 {
-	if (NULL != *ptrie)
+	if (SVASSERT(NULL != *ptrie))
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR pdat = (*ptrie)->pdata;
@@ -2346,21 +2346,22 @@ void treDeleteTrieA_O(P_TRIE_A ptrie, size_t size)
  */
 size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	REGISTER PUCHAR pbase = (PUCHAR) pstr;
-	if (0 == num || 0 == size)
-		return NULL;
-	while (NULL != *ptrie && 0 != num)
+	if (SVASSERT(0 != num && 0 != size))
 	{
-		REGISTER PUCHAR pdat;
-		if (NULL == (pdat = (PUCHAR) strBinarySearchArrayZ(*ptrie, pbase, _ELESIZ(size), cbfcmp)))
-			return NULL;
-		ptrie = (P_TRIE_A) &pdat[size];
-		--num;
-		pbase += size;
+		REGISTER PUCHAR pbase = (PUCHAR) pstr;
+		while (NULL != *ptrie && 0 != num)
+		{
+			REGISTER PUCHAR pdat;
+			if (NULL == (pdat = (PUCHAR) strBinarySearchArrayZ(*ptrie, pbase, _ELESIZ(size), cbfcmp)))
+				return NULL;
+			ptrie = (P_TRIE_A) &pdat[size];
+			--num;
+			pbase += size;
+		}
+		if (0 == num) /* Searching reaches at the end of string. */
+			if (BOOLIZE(*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie])))
+				return ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]);
 	}
-	if (0 == num) /* Searching reaches at the end of string. */
-		if (BOOLIZE(*((size_t *) &(sizeof(TRIE_A) + sizeof(size_t) + sizeof(size_t))[(PUCHAR) ptrie])))
-			return ((size_t *) &(sizeof(TRIE_A) + sizeof(size_t))[(PUCHAR) ptrie]);
 	return NULL;
 }
 

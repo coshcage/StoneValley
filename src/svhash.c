@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0718261327L00620
+ * File ID:     0901171615K0806261646L00634
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -68,8 +68,8 @@ int _hshCBFSizeBuckets(void * pitem, size_t param)
  * Description:   This function is used to fetch pdata in a NODE_S.
  * Parameters:
  *      pitem Pointer to each NODE_S in bucket linked list.
- *      param Pointer to a size_t[2] array.
- *            size_t[0] stores a pointer to callback function.
+ *      param Pointer to a size_t[2] array of which
+ *            size_t[0] stores a pointer to callback function,
  *            size_t[1] stores the param argument.
  * Return value:  The same value as callback function returns.
  */
@@ -83,40 +83,14 @@ int _hshCBFFetchPdataInNodeS(void * pitem, size_t param)
  * Description:   This function is used to traverse each bucket in a separate chaining hash table.
  * Parameters:
  *      pitem Pointer to each P_NODE_S in array.
- *      param Pointer to a size_t[2] array.
- *            size_t[0] stores a pointer to callback function.
+ *      param Pointer to a size_t[2] array of which
+ *            size_t[0] stores a pointer to callback function,
  *            size_t[1] stores the param argument.
  * Return value:  The same value as function callback function stored in param returns.
  */
 int _hshCBFTraverseCPuppet(void * pitem, size_t param)
 {
 	return strTraverseLinkedListSC_N(*(P_NODE_S *)pitem, NULL, _hshCBFFetchPdataInNodeS, param);
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _hshCBFCopyCPuppet
- * Description:   This function is used to cooperate with function hshCopyC to copy the entire separate chaining hash table.
- * Parameters:
- *      pitem Pointer to each NODE_S in bucket.
- *      param Pointer to a size_t[3] array.
- *            size_t[0] stores a pointer to the destination hash table.
- *            size_t[1] stores a pointer to hash function.
- *            size_t[2] stores size of each element in the source table.
- * Return value:  CBF_CONTINUE  Insert data in to destined table is done.
- *                CBF_TERMINATE Cannot insert data into the destined table.
- */
-int _hshCBFCopyCPuppet(void * pitem, size_t param)
-{
-	return false ==
-		hshInsertC
-		(
-			(P_HSHTBL_C) 0[(size_t *)param],
-			(CBF_HASH)1[(size_t *)param],
-			pitem,
-			2[(size_t *)param]
-		)
-		? CBF_TERMINATE :
-		CBF_CONTINUE;
 }
 
 /* Function name: hshInitC
@@ -160,10 +134,8 @@ void hshFreeC(P_HSHTBL_C pht)
 P_HSHTBL_C hshCreateC(size_t buckets)
 {
 	REGISTER P_HSHTBL_C pht = strCreateArrayZ(buckets, sizeof(P_NODE_S));
-	if (NULL == pht)
-		return NULL;
-	/* Clear bucket array. */
-	memset((P_NODE_S *)pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht));
+	if (NULL != pht)
+		memset((P_NODE_S *)pht->pdata, 0, sizeof(P_NODE_S) * strLevelArrayZ(pht)); /* Clear bucket array. */
 	return pht;
 }
 
@@ -199,6 +171,7 @@ size_t hshSizeC(P_HSHTBL_C pht)
  * Parameters:
  *        pht Pointer to the hash table you want to operate.
  *     cbftvs Pointer to a callback function.
+ *            Parameter pitem of this callback function points to each datum in the table NOT pointing to NODE_S.
  *      param Parameter which can be transferred into callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pht Must Be Allocated first.
@@ -207,6 +180,7 @@ size_t hshSizeC(P_HSHTBL_C pht)
 int hshTraverseC(P_HSHTBL_C pht, CBF_TRAVERSE cbftvs, size_t param)
 {
 	size_t a[2];
+	
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
 	return strTraverseArrayZ(pht, sizeof(P_NODE_S), _hshCBFTraverseCPuppet, (size_t)a, false);
@@ -219,13 +193,15 @@ int hshTraverseC(P_HSHTBL_C pht, CBF_TRAVERSE cbftvs, size_t param)
  *     cbfhsh Pointer to hash function.
  *            The same hash table should use the same hash function.
  *       pkey Pointer to an element cast into (const void *).
- *      param size Size of data of pkey.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a NODE_S node that contains key value in the hash table.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
+P_NODE_S hshSearchC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, CBF_COMPARE cbfmch)
 {
-	return strSearchLinkedListSC(*(P_NODE_S *) (pht->pdata + (cbfhsh(pkey) % strLevelArrayZ(pht)) * sizeof(P_NODE_S)), pkey, size);
+	return strSearchDataLinkedListSC(*(P_NODE_S *) (pht->pdata + (cbfhsh(pkey) % strLevelArrayZ(pht)) * sizeof(P_NODE_S)), pkey, cbfmch);
 }
 
 /* Function name: hshInsertC
@@ -264,15 +240,17 @@ bool hshInsertC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  *     cbfhsh Pointer to hash function.
  *            The same hash table should use the same hash function.
  *       pkey Pointer to an element cast into (const void *).
- *       size Size of key.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Removal succeeded.
  *                false Removal failure.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
+bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, CBF_COMPARE cbfmch)
 {
 	REGISTER P_NODE_S * pphead = (P_NODE_S *) (pht->pdata + cbfhsh(pkey) % strLevelArrayZ(pht) * sizeof(P_NODE_S));
-	REGISTER P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, size);
+	REGISTER P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, cbfmch);
 	if (NULL == pphead || NULL == *pphead || NULL == pnode)
 		return false;
 	if (*pphead == pnode) /* Put next item into bucket. */
@@ -280,6 +258,31 @@ bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
 	pnode = strRemoveItemLinkedListSC(*pphead, pnode);
 	strDeleteNodeS(pnode);
 	return true;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _hshCBFCopyCPuppet
+ * Description:   This function is used to cooperate with function hshCopyC to copy the entire separate chaining hash table.
+ * Parameters:
+ *      pitem Pointer to each NODE_S in bucket.
+ *      param Pointer to a size_t[3] array.
+ *            size_t[0] stores a pointer to the destination hash table,
+ *            size_t[1] stores a pointer to hash function,
+ *            size_t[2] stores size of each element in the source table.
+ * Return value:  CBF_CONTINUE  Insert data into destined table is done.
+ *                CBF_TERMINATE Can not insert data into the destined table.
+ */
+int _hshCBFCopyCPuppet(void * pitem, size_t param)
+{
+	return hshInsertC
+	(
+		(P_HSHTBL_C) 0[(size_t *)param],
+		(CBF_HASH)   1[(size_t *)param],
+		pitem,
+		2[(size_t *)param]
+	)
+	? CBF_CONTINUE : /* Insertion succeeded. */
+	CBF_TERMINATE;   /* Insertion failed. */
 }
 
 /* Function name: hshCopyC
@@ -296,13 +299,16 @@ bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, size_t size)
  */
 bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 {
-	size_t a[3];
-	if (NULL == pdest)
-		return false;
-	a[0] = (size_t)pdest;
-	a[1] = (size_t)cbfhsh;
-	a[2] = size;
-	return CBF_CONTINUE != hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a) ? false : true;
+	if (SVASSERT(NULL != pdest))
+	{
+		size_t a[3];
+		
+		a[0] = (size_t)pdest;
+		a[1] = (size_t)cbfhsh;
+		a[2] = size;
+		return CBF_CONTINUE != hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a) ? false : true;
+	}
+	return false;
 }
 
 /* Functions for open addressing hash tables. */
@@ -336,8 +342,8 @@ int _hshCBFCountSlots(void * pitem, size_t param)
  * Description:   This function is used to traverse each element in an open addressing hash table.
  * Parameters:
  *      pitem Pointer to each element in the array of slots.
- *      param Pointer to a size_t[2] array.
- *            size_t[0] stores a pointer to callback function.
+ *      param Pointer to a size_t[2] array of which
+ *            size_t[0] stores a pointer to callback function,
  *            size_t[1] stores the param argument.
  * Return value:  If the slot were valid, return value of this function would be
  *                the same value as callback function returns.
@@ -349,35 +355,6 @@ int _hshCBFTraverseOPuppet(void * pitem, size_t param)
 	if (BOOLIZE(*(_P_FLAG)pitem))
 		return ((CBF_TRAVERSE)0[(size_t *)param])((PUCHAR)pitem + _FLAG_SIZE, 1[(size_t *)param]);
 	return CBF_CONTINUE;
-}
-
-/* Attention:     This Is An Internal Function. No Interface for Library Users.
- * Function name: _hshCBFCopyOPuppet
- * Description:   This function is used to cooperate with function hshCopyA to copy the entire open addressing hash table.
- * Parameters:
- *      pitem Pointer to each slot in array.
- *      param Pointer to a size_t[4] array.
- *            size_t[0] stores a pointer to the destination hash table.
- *            size_t[1] stores a pointer to the first hash function.
- *            size_t[2] stores a pointer to the second hash function.
- *            size_t[3] stores size of each element in the source table.
- *                      Caution: Before invoking this function, size Must Be Aligned!
- * Return value:  CBF_CONTINUE  Inserting data in to the destined table is done.
- *                CBF_TERMINATE Cannot insert data into the target table.
- */
-int _hshCBFCopyOPuppet(void * pitem, size_t param)
-{
-	return NULL ==
-		hshInsertA
-		(
-			(P_HSHTBL_A)0[(size_t *)param],
-			(CBF_HASH)  1[(size_t *)param],
-			(CBF_HASH)  2[(size_t *)param],
-			pitem,
-			3[(size_t *)param] /* This parameter Must Be Aligned initially. */
-		)
-		? CBF_TERMINATE :
-		CBF_CONTINUE;
 }
 
 /* Function name: hshInitA
@@ -394,11 +371,12 @@ int _hshCBFCopyOPuppet(void * pitem, size_t param)
  */
 bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
 {
-	if (NULL == strInitArrayZ(pht, slots, _FLAG_SIZE + ALIGN_SIZET(size)))
-		return false;
-	/* Clear array. */
-	memset(pht->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(pht));
-	return true;
+	if (NULL != strInitArrayZ(pht, slots, _FLAG_SIZE + ALIGN_SIZET(size)))
+	{
+		memset(pht->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(pht)); /* Clear array. */
+		return true;
+	}
+	return false;
 }
 
 /* Function name: hshFreeA_O
@@ -407,7 +385,7 @@ bool hshInitA(P_HSHTBL_A pht, size_t slots, size_t size)
  *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Address of pht Must Be Allocated first.
- * Tip:           A macro version of this function named hshFreeA_M is available.
+ * Tip:           This function can be macro inline to use hshFreeA.
  */
 void hshFreeA_O(P_HSHTBL_A pht)
 {
@@ -426,10 +404,8 @@ void hshFreeA_O(P_HSHTBL_A pht)
 P_HSHTBL_A hshCreateA(size_t slots, size_t size)
 {
 	REGISTER P_HSHTBL_A phtn = strCreateArrayZ(slots, _FLAG_SIZE + ALIGN_SIZET(size));
-	if (NULL == phtn)
-		return NULL;
-	/* Clear array. */
-	memset(phtn->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(phtn));
+	if (NULL != phtn)
+		memset(phtn->pdata, 0, (_FLAG_SIZE + ALIGN_SIZET(size)) * strLevelArrayZ(phtn)); /* Clear array. */
 	return phtn;
 }
 
@@ -439,7 +415,7 @@ P_HSHTBL_A hshCreateA(size_t slots, size_t size)
  *       pht Pointer to the hash table you want to release.
  * Return value:  N/A.
  * Caution:       Parameter pht Must Be Allocated first.
- * Tip:           A macro version of this function named hshDeleteA_M is available.
+ * Tip:           This function can be macro inline to use hshDeleteA.
  */
 void hshDeleteA_O(P_HSHTBL_A pht)
 {
@@ -476,6 +452,7 @@ size_t hshSizeA(P_HSHTBL_A pht, size_t size)
 int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
 {
 	size_t a[2];
+	
 	a[0] = (size_t)cbftvs;
 	a[1] = param;
 	return strTraverseArrayZ(pht, _FLAG_SIZE + ALIGN_SIZET(size), _hshCBFTraverseOPuppet, (size_t)a, false);
@@ -491,10 +468,13 @@ int hshTraverseA(P_HSHTBL_A pht, size_t size, CBF_TRAVERSE cbftvs, size_t param)
  *            While cbfhsh1 shall not equal to cbfhsh2.
  *       pkey Pointer to an element cast into (const void *).
  *       size Size of each element in the table.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to an element that contains key value.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
+void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size, CBF_COMPARE cbfmch)
 {
 	REGISTER _P_FLAG pflag;
 	REGISTER size_t i, j;
@@ -506,7 +486,7 @@ void * hshSearchA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
 			return NULL;
 		else
 		{
-			if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))
+			if (CBF_CMP_EQUAL == cbfmch((PUCHAR)pflag + _FLAG_SIZE, pkey))
 				return (PUCHAR)pflag + _FLAG_SIZE;
 		}
 	}
@@ -550,12 +530,15 @@ void * hshInsertA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void
  *    cbfhsh2 Pointer to the second hash function.
  *            The same open addressing hash table should use the same double hashing function.
  *       pkey Pointer to an element cast into (const void *).
- *       size Size of key.
+ *       size Size of each element in the table.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Removal succeeded.
  *                false Removal failure.
  * Caution:       Parameter pht Must Be Allocated first.
  */
-bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size)
+bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void * pkey, size_t size, CBF_COMPARE cbfmch)
 {
 	REGISTER _P_FLAG pflag;
 	REGISTER size_t i, j;
@@ -565,13 +548,43 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 		pflag = (_P_FLAG) (pht->pdata + j * (_FLAG_SIZE + ALIGN_SIZET(size)));
 		if (! BOOLIZE(*pflag)) /* Compare to determine whether a slot is empty or not. */
 			return false;
-		else if (0 == memcmp((PUCHAR)pflag + _FLAG_SIZE, pkey, ALIGN_SIZET(size)))
+		else if (CBF_CMP_EQUAL == cbfmch((PUCHAR)pflag + _FLAG_SIZE, pkey))
 		{
 			*pflag = false;
 			return true;
 		}
 	}
 	return false;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _hshCBFCopyOPuppet
+ * Description:   This function is used to cooperate with function hshCopyA to copy the entire open addressing hash table.
+
+ * Parameters:
+ *      pitem Pointer to each slot in array.
+ *      param Pointer to a size_t[4] array of which
+ *            size_t[0] stores a pointer to the destination hash table,
+ *            size_t[1] stores a pointer to the first hash function,
+ *            size_t[2] stores a pointer to the second hash function,
+ *            size_t[3] stores size of each element in the source table.
+ *                      Caution: Before invoking this function, size Must Be Aligned!
+ * Return value:  CBF_CONTINUE  Inserting data in to the destined table is done.
+ *                CBF_TERMINATE Cannot insert data into the target table.
+ */
+int _hshCBFCopyOPuppet(void * pitem, size_t param)
+{
+	return NULL ==
+	hshInsertA
+	(
+		(P_HSHTBL_A)0[(size_t *)param],
+		(CBF_HASH)  1[(size_t *)param],
+		(CBF_HASH)  2[(size_t *)param],
+		pitem,
+		3[(size_t *)param] /* This parameter Must Be Aligned initially. */
+	)
+	? CBF_TERMINATE :
+	CBF_CONTINUE;
 }
 
 /* Function name: hshCopyA
@@ -590,6 +603,7 @@ bool hshRemoveA(P_HSHTBL_A pht, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, const void *
 bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A psrc, size_t size)
 {
 	size_t a[4];
+	
 	a[0] = (size_t)pdest;
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;

@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0804262255L02802
+ * File ID:     0905171125M0806261810L02800
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -152,9 +152,9 @@ int        _grpCBFFFMFLFillMinCutSet          (void * pitem, size_t param);
  */
 int _grpCBFCompareInteger(const void * px, const void * py)
 {
-	if (*(size_t *)px > *(size_t *)py) return  1;
-	if (*(size_t *)px < *(size_t *)py) return -1;
-	return 0;
+	if (*(size_t *)px > *(size_t *)py) return CBF_CMP_GT;
+	if (*(size_t *)px < *(size_t *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: grpGetVertexByID
@@ -270,7 +270,7 @@ int _grpCBFFreePuppet(void * pitem, size_t param)
  * Parameters:
  *      pitem Pointer to each NODE_S in a single pointer list.
  *      param Pointer to a size_t[2] array of which
- *            a[0] stores the in-degree value after calculation.
+ *            a[0] stores the in-degree value after calculation,
  *            a[1] stores the vertex ID to be handled.
  * Return value:  CBF_CONTINUE only.
  */
@@ -408,7 +408,7 @@ int grpTraverseVertexEdgesL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, siz
  *      pgrp Pointer to the graph you want to initialize.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           A macro version of this function named grpInitL_M is available.
+ * Tip:           This function can be macro inline to use grpInitL.
  */
 void grpInitL_O(P_GRAPH_L pgrp)
 {
@@ -432,8 +432,7 @@ void grpFreeL(P_GRAPH_L pgrp)
  * Description:   Allocate a new graph dynamically.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated graph.
- * Tip:           This function can be inline for better performance.
- *                A macro version of this function called grpCreateL_M can be found.
+ * Tip:           This function can be macro inline to use grpCreateL.
  */
 P_GRAPH_L grpCreateL_O(void)
 {
@@ -1000,7 +999,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 	REGISTER P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
 	REGISTER P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 	
-	if (NULL != pvru && NULL != pvrv)
+	if (SVASSERT(NULL != pvru && NULL != pvrv))
 	{
 		if (pvrv->sdistance > pvru->sdistance + ((P_EDGE)pitem)->sweight)
 		{
@@ -1365,7 +1364,7 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 {
 	REGISTER _P_EDGEREC * pprec = (_P_EDGEREC *)0[(size_t *)param];
 	
-	(*pprec)->flag = false;
+	(*pprec)->flag    = false;
 	(*pprec)->vids[0] = 1[(size_t *)param];
 	(*pprec)->vids[1] = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid;
 	(*pprec)->weight  = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight;
@@ -2246,10 +2245,10 @@ int _grpCBFTraverseEdgesAndFillM       (void * pitem, size_t param);
  */
 void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
 {
-	REGISTER void * pr = strInitMatrix(pgrp, vtxc, vtxc, sizeof(size_t));
-	if(NULL != pr)
-		memset(pr, 0, vtxc * vtxc * sizeof(size_t));
-	return pr;
+	REGISTER void * pbuf = strInitMatrix(pgrp, vtxc, vtxc, sizeof(size_t));
+	if(NULL != pbuf)
+		memset(pbuf, 0, vtxc * vtxc * sizeof(size_t));
+	return pbuf;
 }
 
 /* Function name: grpFreeM_O
@@ -2258,7 +2257,7 @@ void * grpInitM(P_GRAPH_M pgrp, size_t vtxc)
  *      pgrp Pointer to the graph you want to release.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           A macro version of this function called grpFreeM_M is available.
+ * Tip:           This function can be macro inline to use grpFreeM.
  */
 void grpFreeM_O(P_GRAPH_M pgrp)
 {
@@ -2285,7 +2284,7 @@ P_GRAPH_M grpCreateM(size_t vtxc)
  *      pgrp Pointer to the graph you want to delete from main memory.
  * Return value:  N/A.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           A macro version of this function named grpDeleteM_M is available.
+ * Tip:           This function can be macro inline to use grpDeleteM.
  */
 void grpDeleteM_O(P_GRAPH_M pgrp)
 {
@@ -2348,7 +2347,7 @@ size_t grpGetDimensionM_O(P_GRAPH_M pgrp)
  */
 bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 {
-	if (0 != vtxc && pgrp->ln == pgrp->col)
+	if (SVASSERT(0 != vtxc && pgrp->ln == pgrp->col))
 	{
 		REGISTER size_t ov = grpGetDimensionM(pgrp);
 
@@ -2528,7 +2527,7 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
  */
 int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col)
+	if (SVASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col))
 	{
 		size_t j;
 		STACK_A stk;
@@ -2588,7 +2587,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  */
 int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (0 != pgrp->arrz.num && pgrp->ln == pgrp->col) /* The adjacent matrix is valid. */
+	if (SVASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col)) /* The adjacent matrix is valid. */
 	{
 		size_t i;
 		QUEUE_A q;
@@ -2642,18 +2641,16 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
 {
 	REGISTER size_t k = grpGetDimensionM(pgrpm);
-	if (0 == k)
-		return NULL;
-	else
+	if (0 != k)
 	{
-		REGISTER P_GRAPH_L pr = grpCreateL();
+		REGISTER P_GRAPH_L pgrpln = grpCreateL();
 		REGISTER size_t i, j, w;
 
 		for (i = 0; i < k; ++i)
 		{
-			if (! grpInsertVertexL(pr, i))
+			if (! grpInsertVertexL(pgrpln, i))
 			{
-				grpDeleteL(pr);
+				grpDeleteL(pgrpln);
 				return NULL;
 			}
 		}
@@ -2665,16 +2662,17 @@ P_GRAPH_L grpCreateLFromM(P_GRAPH_M pgrpm)
 				w = grpGetEdgeWeightM(pgrpm, NULL, i, j);
 				if (0 != w)
 				{
-					if (! grpInsertEdgeL(pr, i, j, w))
+					if (! grpInsertEdgeL(pgrpln, i, j, w))
 					{
-						grpDeleteL(pr);
+						grpDeleteL(pgrpln);
 						return NULL;
 					}
 				}
 			}
 		}
-		return pr;
+		return pgrpln;
 	}
+	return NULL;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -2765,11 +2763,11 @@ int _grpCBFTraverseEdgesAndFillM(void * pitem, size_t param)
 P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 {
 	REGISTER size_t k;
-	REGISTER P_ARRAY_Z pmt = strCreateArrayZ(k = grpVerticesCountL(pgrpl), sizeof(size_t)); /* Vertices mapping table. */
-	REGISTER P_GRAPH_M pr  = grpCreateM(k);
+	REGISTER P_ARRAY_Z pmt    = strCreateArrayZ(k = grpVerticesCountL(pgrpl), sizeof(size_t)); /* Vertices mapping table. */
+	REGISTER P_GRAPH_M pgrpmn = grpCreateM(k);
 	size_t a[4];
 
-	if (NULL == pr)
+	if (NULL == pgrpmn)
 	{
 		if (NULL != pmt)
 			strDeleteArrayZ(pmt);
@@ -2778,7 +2776,7 @@ P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 
 	if (NULL == pmt)
 	{
-		grpDeleteM(pr);
+		grpDeleteM(pgrpmn);
 		return NULL;
 	}
 
@@ -2787,16 +2785,16 @@ P_GRAPH_M grpCreateMFromL(P_GRAPH_L pgrpl)
 
 	setTraverseTDispatch(pgrpl, _grpCBFFillVertexMappingTable, (size_t)a, treMorrisTraverseBYIn);
 
-	a[0] = (size_t)pr;
+	a[0] = (size_t)pgrpmn;
 	a[2] = (size_t)pgrpl;
 	if (CBF_CONTINUE != grpTraverseVerticesL(pgrpl, _grpCBFTraverseEdgesAndFillM, (size_t)a, ETM_INORDER_MORRIS))
 	{
 		strDeleteArrayZ(pmt);
-		grpDeleteM(pr);
+		grpDeleteM(pgrpmn);
 		return NULL;
 	}
 
 	strDeleteArrayZ(pmt);
-	return pr;
+	return pgrpmn;
 }
 

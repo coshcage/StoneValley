@@ -157,7 +157,7 @@ int main(void)
 	char * pstr = "helloworld";
 	strInitLinkedListDC(&list2);
 	// Assemble single linked list 1.
-	list1[0].pdata = (PUCHAR) (*pstr++);
+	list1[0].pdata = (PUCHAR)(*pstr++);
 	for (i = 1; i < LIST1_LEN; ++i)
 	{
 		/* To convert a size_t value to PUCHAR after converting char value to size_t

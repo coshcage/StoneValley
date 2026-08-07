@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0720261147L01021
+ * File ID:     0901171620L0806261500L01167
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -34,9 +34,9 @@ int _setCBFIntersectionHPuppet (void * pitem, size_t param);
  * Parameters:
  *      pitem Pointer to each element in each node of a chaining hash table.
  *      param Pointer to a size_t[3] array of which
- *            size_t[0] stores psetb of the caller function.
- *            size_t[1] stores a pointer to hash function.
- *            size_t[2] stores the size of each element.
+ *            size_t[0] stores psetb of the caller function,
+ *            size_t[1] stores a pointer to hash function,
+ *            size_t[2] stores a pointer to a comparison function.
  * Return value:  CBF_CONTINUE  Element cannot be found in psetb.
  *                CBF_TERMINATE Element has been found in psetb.
  */
@@ -46,10 +46,10 @@ int _setCBFIsSubsetHPuppet(void * pitem, size_t param)
 	(
 		NULL == hshSearchC
 		(
-			(P_HSHTBL_C)0[(size_t *)param],
-			(CBF_HASH)  1[(size_t *)param],
+			(P_HSHTBL_C) 0[(size_t *)param],
+			(CBF_HASH)   1[(size_t *)param],
 			pitem,
-			2[(size_t *)param]
+			(CBF_COMPARE)2[(size_t *)param]
 		)
 	)
 		return CBF_TERMINATE;
@@ -65,7 +65,7 @@ int _setCBFIsSubsetHPuppet(void * pitem, size_t param)
  * Return value:  true  Succeeded.
  *                false Failed.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setInitH_M is available.
+ * Tip:           This function can be macro inline to use setInitH.
  */
 bool setInitH_O(P_SET_H pset, size_t buckets)
 {
@@ -78,7 +78,7 @@ bool setInitH_O(P_SET_H pset, size_t buckets)
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setFreeH_M is available.
+ * Tip:           This function can be macro inline to use setFreeH.
  */
 void setFreeH_O(P_SET_H pset)
 {
@@ -92,7 +92,7 @@ void setFreeH_O(P_SET_H pset)
  *           This value shall be a prime number that is larger than or equal to the amount of element to be inserted in the set.
  * Return value:  Pointer to the new allocated set.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setCreateH_M is available.
+ * Tip:           This function can be macro inline to use setCreateH.
  */
 P_SET_H setCreateH_O(size_t buckets)
 {
@@ -105,12 +105,11 @@ P_SET_H setCreateH_O(size_t buckets)
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setDeleteH_M is available.
+ * Tip:           This function can be macro inline to use setDeleteH.
  */
 void setDeleteH_O(P_SET_H pset)
 {
-	if (NULL != pset)
-		hshDeleteC(pset);
+	hshDeleteC(pset);
 }
 
 /* Function name: setCreateCopyH
@@ -166,7 +165,7 @@ size_t setSizeH_O(P_SET_H pset)
  */
 bool setIsEmptyH_O(P_SET_H pset)
 {
-	return !setSizeH(pset);
+	return 0 == setSizeH(pset);
 }
 
 /* Function name: setIsMemberH_O
@@ -176,14 +175,16 @@ bool setIsEmptyH_O(P_SET_H pset)
  *     cbfhsh Pointer to a hash function.
  *            The same set should use the same hash function.
  *      pitem Pointer to an element to check its belongings to a set.
- *       size Size of that element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Element belongs to the set.
  *                false Element does not belong to the set.
  * Tip:           A macro version of this function named setIsMemberH_M is available.
  */
-bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, CBF_COMPARE cbfmch)
 {
-	return NULL == pset ? false : (NULL != hshSearchC(pset, cbfhsh, pitem, size) ? true : false);
+	return NULL == pset ? false : NULL != hshSearchC(pset, cbfhsh, pitem, cbfmch);
 }
 
 /* Function name: setIsSubsetH
@@ -193,20 +194,23 @@ bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t si
  *      psetb Pointer to the other set you want to check.
  *     cbfhsh Pointer to a hash function for psetb.
  *            Two sets should use a same hash function.
- *       size Size of each element in two sets.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  seta belongs to setb.
  *                false seta does not belong setb.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbfmch)
 {
 	if (NULL != pseta)
 	{
 		size_t a[3];
+		
 		a[0] = (size_t)psetb;
 		a[1] = (size_t)cbfhsh;
-		a[2] = size;
-		return CBF_CONTINUE != hshTraverseC(pseta, _setCBFIsSubsetHPuppet, (size_t)a) ? false : true;
+		a[2] = (size_t)cbfmch;
+		return CBF_CONTINUE == hshTraverseC(pseta, _setCBFIsSubsetHPuppet, (size_t)a);
 	}
 	return true; /* An empty set is a subset of any set. */
 }
@@ -218,14 +222,16 @@ bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
  *      psetb Pointer to the other set you want to check.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
  *            Two sets should use a same hash function.
- *       size Size of element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Two sets are equal.
  *                false Two sets are NOT equal.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbfmch)
 {
-	if (pseta == psetb || (setIsSubsetH(pseta, psetb, cbfhsh, size) && setIsSubsetH(psetb, pseta, cbfhsh, size)))
+	if (pseta == psetb || (setIsSubsetH(pseta, psetb, cbfhsh, cbfmch) && setIsSubsetH(psetb, pseta, cbfhsh, cbfmch)))
 		return true;
 	return false;
 }
@@ -237,31 +243,37 @@ bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
  *     cbfhsh Pointer to a hash function.
  *      pitem Pointer to an element to insert.
  *       size Size of that element to be inserted.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Insertion succeeded.
  *                false Insertion failed.
  * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
-bool setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setInsertH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size, CBF_COMPARE cbfmch)
 {
-	if (NULL != hshSearchC(pset, cbfhsh, pitem, size))
+	if (NULL != hshSearchC(pset, cbfhsh, pitem, cbfmch))
 		return false; /* Item has already existed. */
 	return hshInsertC(pset, cbfhsh, pitem, size);
 }
 
-/* Function name: setRemoveH
+/* Function name: setRemoveH_O
  * Description:   Remove an element from a set.
  * Parameters:
  *       pset Pointer to the set you want to operate.
  *     cbfhsh Pointer to a hash function.
  *      pitem Pointer to an element you want to remove from a set.
- *       size Size of that element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Removal succeeded.
  *                false Removal failed.
  * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
+ * Tip:           A macro version of this function named setRemoveH_M is available.
  */
-bool setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
+bool setRemoveH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, CBF_COMPARE cbfmch)
 {
-	return hshRemoveC(pset, cbfhsh, pitem, size);
+	return hshRemoveC(pset, cbfhsh, pitem, cbfmch);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -269,23 +281,24 @@ bool setRemoveH(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, size_t size)
  * Description:   This function is used to generate a union set.
  * Parameters:
  *      pitem Pointer to each element in hash table.
- *      param Pointer to a size_t[3] array of which
- *            size_t[0] stores psetr of the caller function.
- *            size_t[1] stores a pointer to a hash function.
- *            size_t[2] stores the size of each element.
+ *      param Pointer to a size_t[4] array of which
+ *            size_t[0] stores psetr of the caller function,
+ *            size_t[1] stores a pointer to a hash function,
+ *            size_t[2] stores the size of each element,
+ *            size_t[3] stores a pointer to a comparison function.
  * Return value:  CBF_CONTINUE  if insertion succeeded,
  *                CBF_TERMINATE if insertion failed.
  */
 int _setCBFUnionHPuppet(void * pitem, size_t param)
 {
-	return setInsertH
-	(
-		(P_SET_H) 0[(size_t *)param],
-		(CBF_HASH)1[(size_t *)param],
-		pitem,
-		2[(size_t *)param]
-	) ? CBF_CONTINUE :
-	CBF_TERMINATE;
+	REGISTER P_SET_H     psetr  = (P_SET_H)    0[(size_t *)param];
+	REGISTER CBF_HASH    cbfhsh = (CBF_HASH)   1[(size_t *)param];
+	REGISTER CBF_COMPARE cbfmch = (CBF_COMPARE)3[(size_t *)param];
+	
+	if (NULL == hshSearchC(psetr, cbfhsh, pitem, cbfmch))
+		return hshInsertC(psetr, cbfhsh, pitem, 2[(size_t *)param]) ? CBF_CONTINUE : CBF_TERMINATE;
+	
+	return CBF_CONTINUE;
 }
 
 /* Function name: setCreateUnionH
@@ -293,18 +306,21 @@ int _setCBFUnionHPuppet(void * pitem, size_t param)
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
- *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
  *            Two sets should use a same hash function.
+ *       size Size of element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
 	if (NULL != pseta || NULL != psetb)
 	{
-		size_t a[3];
+		size_t a[4];
 		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
 		if (NULL == psetr)
 			return NULL;
@@ -312,6 +328,7 @@ P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t si
 		a[0] = (size_t)psetr;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
+		a[3] = (size_t)cbfmch;
 		if (NULL != pseta && CBF_CONTINUE != hshTraverseC(pseta, _setCBFUnionHPuppet, (size_t)a))
 			goto Lbl_Bad_Set;
 		
@@ -335,42 +352,38 @@ Lbl_Empty_Set:
  * Description:   This function is used to generate an intersection set.
  * Parameters:
  *      pitem Pointer to each element in hash table set.
- *      param Pointer to a size_t[5] array of which
- *            size_t[0] stores psetr of the caller function.
- *            size_t[1] stores a pointer to a hash function.
- *            size_t[2] stores the size of each element.
- *            size_t[3] stores either pseta or psetb of the caller function. (Flexible)
+ *      param Pointer to a size_t[6] array of which
+ *            size_t[0] stores psetr of the caller function,
+ *            size_t[1] stores a pointer to a hash function,
+ *            size_t[2] stores the size of each element,
+ *            size_t[3] stores either pseta or psetb of the caller function (Flexible),
  *            size_t[4] stores a boolean value.
  *                      If size_t[4] is false, do insertion only when element in set size_t[3]
  *                      did not match elements in set size_t[0] at all.
  *                      So that we can generate a difference set of set A and set B.
+ *            size_t[5] Stores a pointer to a comparison function.
  * Return value:  CBF_CONTINUE  if insertion succeeded,
  *                CBF_TERMINATE if insertion failed.
  */
 int _setCBFIntersectionHPuppet(void * pitem, size_t param)
 {
+	REGISTER CBF_HASH    cbfhsh = (CBF_HASH)   1[(size_t *)param];
+	REGISTER CBF_COMPARE cbfmch = (CBF_COMPARE)5[(size_t *)param];
 	if
 	(
+		BOOLIZE(4[(size_t *)param]) ==
 		setIsMemberH
 		(
-			(P_SET_H) 3[(size_t *)param],
-			(CBF_HASH)1[(size_t *)param],
+			(P_SET_H)    3[(size_t *)param],
+			cbfhsh,
 			pitem,
-			2[(size_t *)param]
-		) == BOOLIZE(4[(size_t *)param])
+			cbfmch
+		)
 	)
 	{
-		if
-		(
-			! setInsertH
-			(
-				(P_SET_H) 0[(size_t *)param],
-				(CBF_HASH)1[(size_t *)param],
-				pitem,
-				2[(size_t *)param]
-			)
-		)
-			return CBF_TERMINATE;
+		REGISTER P_SET_H psetr = (P_SET_H)0[(size_t *)param];
+		if (NULL == hshSearchC(psetr, cbfhsh, pitem, cbfmch))
+			return hshInsertC(psetr, cbfhsh, pitem, 2[(size_t *)param]) ? CBF_CONTINUE : CBF_TERMINATE;
 	}
 	return CBF_CONTINUE;
 }
@@ -380,18 +393,21 @@ int _setCBFIntersectionHPuppet(void * pitem, size_t param)
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
- *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
  *            Two sets should use a same hash function.
+ *       size Size of element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the intersection between two sets.
  *                NULL would be returned if the result were an empty set.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
 	if (NULL != pseta || NULL != psetb)
 	{
-		size_t a[5];
+		size_t a[6];
 		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
 		if (NULL == psetr)
 			return NULL;
@@ -400,6 +416,7 @@ P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, si
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
 		a[4] = true;
+		a[5] = (size_t)cbfmch;
 		if (NULL != psetb)
 		{
 			a[3] = (size_t)psetb;
@@ -431,18 +448,21 @@ Lbl_Empty_Set:
  * Parameters:
  *      pseta Pointer to a set.
  *      psetb Pointer to the other set.
- *       size Size of element.
  *     cbfhsh Pointer to a hash function for both pseta and psetb.
  *            Two sets should use the same hash function.
+ *       size Size of element.
+ *     cbfmch Pointer to a comparison function to match data in set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the difference set of two sets.
  * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
  */
-P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size)
+P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
 	if (NULL != pseta)
 	{
 		REGISTER P_SET_H psetr = setCreateH(NULL == psetb ? strLevelArrayZ(pseta) : strLevelArrayZ(psetb));
-		size_t a[5];
+		size_t a[6];
 		if (NULL == psetr)
 			return NULL;
 		
@@ -451,6 +471,7 @@ P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size
 		a[2] = size;
 		a[3] = (size_t)psetb;
 		a[4] = false;
+		a[5] = (size_t)cbfmch;
 		hshTraverseC(pseta, _setCBFIntersectionHPuppet, (size_t)a);
 		
 		if (setIsEmptyH(psetr))
@@ -470,6 +491,7 @@ Lbl_Empty_Set:
  *       pset Pointer to the hash table set you want to traverse.
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
+ *            Parameter pitem of this callback function points to each datum in the set.
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pset Must Be Allocated first.
  *                The type of pitem of function cbftvs is the type of pointer to the element that you inserted into the set.
@@ -493,7 +515,7 @@ int _setCBFIntersectionTPuppet (void * pitem, size_t param);
  *      pset Pointer to the set you want to allocate.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setInitT_M is available.
+ * Tip:           This function can be macro inline to use setInitT.
  */
 void setInitT_O(P_SET_T pset)
 {
@@ -506,7 +528,7 @@ void setInitT_O(P_SET_T pset)
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setFreeT_M is available.
+ * Tip:           This function can be macro inline to use setFreeT.
  */
 void setFreeT_O(P_SET_T pset)
 {
@@ -517,7 +539,7 @@ void setFreeT_O(P_SET_T pset)
  * Description:   Create a set.
  * Parameter:     N/A.
  * Return value:  Pointer to the new allocated set.
- * Tip:           A macro version of this function named setCreateT_M is available.
+ * Tip:           This function can be macro inline to use setCreateT.
  */
 P_SET_T setCreateT_O(void)
 {
@@ -530,7 +552,7 @@ P_SET_T setCreateT_O(void)
  *      pset Pointer to the set you want to release.
  * Return value:  N/A.
  * Caution:       Address of pset Must Be Allocated first.
- * Tip:           A macro version of this function named setDeleteT_M is available.
+ * Tip:           This function can be macro inline to use setDeleteT.
  */
 void setDeleteT_O(P_SET_T pset)
 {
@@ -554,7 +576,7 @@ P_SET_T setCreateCopyT(P_SET_T pset, size_t size)
 		if (NULL == (*prtn = treCopyBST(*pset, size))) /* pset is a pointer to an empty set. */
 		{
 			setDeleteT(prtn);
-			return NULL;
+			prtn = NULL;
 		}
 	}
 	return prtn;
@@ -583,7 +605,7 @@ size_t setSizeT_O(P_SET_T pset)
  */
 bool setIsEmptyT_O(P_SET_T pset)
 {
-	return NULL == pset ? true: !(*pset);
+	return NULL == pset ? true : NULL == *pset;
 }
 
 /* Function name: setIsMemberT_O
@@ -598,7 +620,7 @@ bool setIsEmptyT_O(P_SET_T pset)
  */
 bool setIsMemberT_O(P_SET_T pset, const void * pitem, CBF_COMPARE cbfcmp)
 {
-	return NULL == treBSTFindData_X(*pset, pitem, cbfcmp) ? false : true;
+	return NULL != treBSTFindData_X(*pset, pitem, cbfcmp);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -728,8 +750,8 @@ bool setRemoveT(P_SET_T pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  * Parameters:
  *      pitem Pointer to each BSTNODE in the tree.
  *      param Pointer to a size_t[3] array of which
- *            size_t[0] stores the pointer to psetr of the caller function.
- *            size_t[1] stores a pointer of comparison function.
+ *            size_t[0] stores the pointer to psetr of the caller function,
+ *            size_t[1] stores a pointer of comparison function,
  *            size_t[2] stores the size of each element.
  * Return value:  CBF_CONTINUE  Insertion succeeded.
  *                CBF_TERMINATE Insertion failed.
@@ -806,10 +828,10 @@ Lbl_Empty_Set:
  * Parameters:
  *      pitem Pointer to each BSTNODE in a tree set.
  *      param Pointer to a size_t[5] array of which
- *            size_t[0] stores the pointer to psetr of the caller function.
- *            size_t[1] stores a pointer to comparison function.
- *            size_t[2] stores the size of each element.
- *            size_t[3] stores the pointer to either pseta or psetb of the caller function. (Flexible)
+ *            size_t[0] stores the pointer to psetr of the caller function,
+ *            size_t[1] stores a pointer to comparison function,
+ *            size_t[2] stores the size of each element,
+ *            size_t[3] stores the pointer to either pseta or psetb of the caller function (Flexible),
  *            size_t[4] stores a boolean value.
  *                      If size_t[4] is false, do insertion only when an element settled
  *                      in set size_t[3] did not match any element in psetr at all.
@@ -1017,5 +1039,129 @@ int setTraverseTDispatch(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, CBF_TR
 	if (setIsEmptyT(pset)) /* There is no need to traverse elements in an empty set. */
 		return CBF_CONTINUE;
 	return cbftvsbyt(P2P_TNODE_BY(*pset), cbftvs, param);
+}
+
+/* Function definitions for both hash set and tree set. */
+
+/* Callback function declarations for this section. */
+int _setCBFCreateHFromTPuppet(void * pitem, size_t param);
+int _setCBFCreateTFromHPuppet(void * pitem, size_t param);
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _setCBFCreateHFromTPuppet
+ * Description:   This function is used to create a hash set from a tree set.
+ * Parameters:
+ *      pitem Pointer to each BSTNODE in a tree set.
+ *      param Pointer to a size_t[4] array of which
+ *            size_t[0] stores the pointer to the returning hash set,
+ *            size_t[1] stores the size of each element,
+ *            size_t[2] stores a pointer to a hash function used by hash set,
+ *            size_t[3] stores a pointer to comparison function to match elements.
+ * Return value:  CBF_CONTINUE  Successfully insert elements to hash set.
+ *                CBF_TERMINATE Failed to insert elements to hash set.
+ */
+int _setCBFCreateHFromTPuppet(void * pitem, size_t param)
+{
+	REGISTER void *   pdata  = (void *)P2P_BSTNODE(pitem)->knot.pdata;
+	REGISTER P_SET_H  pset   = (P_SET_H) 0[(size_t *)param];
+	REGISTER CBF_HASH cbfhsh = (CBF_HASH)2[(size_t *)param];
+	
+	if (NULL != hshSearchC(pset, cbfhsh, pdata, (CBF_COMPARE)3[(size_t *)param]))
+		return CBF_CONTINUE; /* Filter out repetition. */
+	
+	return hshInsertC(pset, cbfhsh, pdata, 1[(size_t *)param]) ? CBF_CONTINUE : CBF_TERMINATE;
+}
+
+/* Function name: setCreateHFromT
+ * Description:   Create a hash set from a tree set.
+ * Parameters:
+ *      ptset Pointer to a tree set to be copied from.
+ *       size Size of element for both source set and returning set.
+ *    buckets Number of buckets for the hash table set.
+ *     cbfhsh Pointer to a hash function for the hash table set.
+ *     cbfmch Pointer to a comparison function to match data in hash set.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
+ * Return value:  Pointer to a new hash set which is equivalent to the source tree set.
+ *                NULL would be returned if the result were an empty set or in an erroneous case.
+ */
+P_SET_H setCreateHFromT(P_SET_T ptset, size_t size, size_t buckets, CBF_HASH cbfhsh, CBF_COMPARE cbfmch)
+{
+	if (! setIsEmptyT(ptset))
+	{
+		P_SET_H phsetr = setCreateH(buckets);
+		size_t a[4];
+		
+		a[0] = (size_t)phsetr;
+		a[1] = size;
+		a[2] = (size_t)cbfhsh;
+		a[3] = (size_t)cbfmch;
+		if (CBF_CONTINUE != setTraverseTDispatch(ptset, _setCBFCreateHFromTPuppet, (size_t)a, treMorrisTraverseBYIn))
+		{
+			setDeleteH(phsetr);
+			return NULL;
+		}
+		return phsetr;
+	}
+	return NULL;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _setCBFCreateTFromHPuppet
+ * Description:   This function is used to create a tree set from a hash set.
+ * Parameters:
+ *      pitem Pointer to each datum in a hash set.
+ *      param Pointer to a size_t[3] array of which
+ *            size_t[0] stores the pointer to the returning tree set,
+ *            size_t[1] stores the size of each element,
+ *            size_t[2] stores a pointer to comparison function for tree set.
+ * Return value:  CBF_CONTINUE  Successfully insert elements to tree set.
+ *                CBF_TERMINATE Failed to insert elements to tree set.
+ */
+int _setCBFCreateTFromHPuppet(void * pitem, size_t param)
+{
+	REGISTER P_SET_T     pset   = (P_SET_T)    0[(size_t *)param];
+	REGISTER CBF_COMPARE cbfcmp = (CBF_COMPARE)2[(size_t *)param];
+	
+	if (! setIsMemberT(pset, pitem, cbfcmp))
+	{
+		REGISTER P_BSTNODE pnode = _setInsertBST(*pset, pitem, 1[(size_t *)param], cbfcmp);
+		if (NULL != pnode)
+		{
+			*pset = pnode;
+			return CBF_CONTINUE;
+		}
+		return CBF_TERMINATE;
+	}
+	return CBF_CONTINUE;
+}
+
+/* Function name: setCreateHFromT
+ * Description:   Create a tree set from a hash set.
+ * Parameters:
+ *      phset Pointer to a hash set to be copied from.
+ *       size Size of element for both source set and returning set.
+ *     cbfcmp Pointer to a comparison function for the returning tree set.
+ * Return value:  Pointer to a new tree set which is equivalent to the source hash set.
+ *                NULL would be returned if the result were an empty set or in an erroneous case.
+ */
+P_SET_T setCreateTFromH(P_SET_H phset, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (! setIsEmptyH(phset))
+	{
+		P_SET_T ptsetr = setCreateT();
+		size_t a[3];
+		
+		a[0] = (size_t)ptsetr;
+		a[1] = size;
+		a[2] = (size_t)cbfcmp;
+		if (CBF_CONTINUE != setTraverseItemH(phset, _setCBFCreateTFromHPuppet, (size_t)a))
+		{
+			setDeleteT(ptsetr);
+			return NULL;
+		}
+		return ptsetr;
+	}
+	return NULL;
 }
 

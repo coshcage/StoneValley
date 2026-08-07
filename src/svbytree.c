@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0721261119L00741
+ * File ID:     0809171737G0805261805L00747
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -172,7 +172,7 @@ int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{
 		QUEUE_L q;
 		queInitL(&q);
@@ -225,50 +225,50 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                #include "svtree.h"
  *                #include "svstack.h"
  *                void PrintBinaryTree(P_TNODE_BY pnode, size_t space) {
- *                if (NULL == pnode) return;
- *                ++space;
- *                PrintBinaryTree(pnode->ppnode[RIGHT], space); // Process right child first.
- *                for (size_t i = 1; i < space; ++i) printf("\t");
- *                printf("%zd\n", *(size_t *)pnode->pdata); // Print current node after space count.
- *                PrintBinaryTree(pnode->ppnode[LEFT], space);
+ *                    if (NULL == pnode) return;
+ *                    ++space;
+ *                    PrintBinaryTree(pnode->ppnode[RIGHT], space); // Process right child first.
+ *                    for (size_t i = 1; i < space; ++i) printf("\t");
+ *                    printf("%zd\n", *(size_t *)pnode->pdata); // Print current node after space count.
+ *                    PrintBinaryTree(pnode->ppnode[LEFT], space);
  *                }
  *                int tvs1(void * pitem, size_t param) {
- *                P_STACK_A ps = (P_STACK_A)param; DISUSE(pitem);
- *                stkPushA(ps, NULL, sizeof(size_t)); return CBF_CONTINUE;
+ *                    P_STACK_A ps = (P_STACK_A)param; DISUSE(pitem);
+ *                    stkPushA(ps, NULL, sizeof(size_t)); return CBF_CONTINUE;
  *                }
  *                int tvs2(void * pitem, size_t param) {
- *                size_t i; P_STACK_A ps = (P_STACK_A)param;
- *                for (i = 1; i < stkLevelA(ps); ++i) printf("\t");
- *                printf("%zd\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
- *                stkPopA(NULL, sizeof(size_t), ps); stkPushA(ps, NULL, sizeof(size_t)); // Push after pop.
- *                return CBF_CONTINUE;
+ *                    size_t i; P_STACK_A ps = (P_STACK_A)param;
+ *                    for (i = 1; i < stkLevelA(ps); ++i) printf("\t");
+ *                    printf("%zd\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
+ *                    stkPopA(NULL, sizeof(size_t), ps); stkPushA(ps, NULL, sizeof(size_t)); // Push after pop.
+ *                    return CBF_CONTINUE;
  *                }
  *                int tvs3(void * pitem, size_t param) {
- *                P_STACK_A ps = (P_STACK_A)param;
- *                stkPopA(NULL, sizeof(size_t), ps); // Eject stack unconditionally.
- *                DISUSE(pitem); return CBF_CONTINUE;
+ *                    P_STACK_A ps = (P_STACK_A)param;
+ *                    stkPopA(NULL, sizeof(size_t), ps); // Eject stack unconditionally.
+ *                    DISUSE(pitem); return CBF_CONTINUE;
  *                }
  *                #define MAX_TREE_HEIGHT 4
  *                int main() {
- *                size_t i; P_NODE_D proot; STACK_A stk;
- *                stkInitA(&stk, MAX_TREE_HEIGHT, sizeof(size_t));
- *                i = 1; proot = strCreateNodeD(&i, sizeof i);
- *                i = 2; proot->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
- *                i = 3; proot->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
- *                i = 4; proot->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
- *                i = 5; proot->ppnode[LEFT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
- *                i = 6; proot->ppnode[RIGHT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
- *                i = 7; proot->ppnode[RIGHT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
- *                i = 8; proot->ppnode[LEFT]->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
- *                treTraverseBYArray("RDL", proot, tvs1, tvs2, tvs3, (size_t)&stk); // So does PrintBinaryTree printing the same tree.
- *                printf("-------------------------\n"); // Delimiter.
- *                PrintBinaryTree(proot, 0); // Equivalent to use treTraverseBYArray by RDL order.
- *                stkFreeA(&stk); treFreeBY(&proot); return 0;
+ *                    size_t i; P_NODE_D proot; STACK_A stk;
+ *                    stkInitA(&stk, MAX_TREE_HEIGHT, sizeof(size_t));
+ *                    i = 1; proot = strCreateNodeD(&i, sizeof i);
+ *                    i = 2; proot->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 3; proot->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 4; proot->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 5; proot->ppnode[LEFT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 6; proot->ppnode[RIGHT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 7; proot->ppnode[RIGHT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 8; proot->ppnode[LEFT]->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    treTraverseBYArray("RDL", proot, tvs1, tvs2, tvs3, (size_t)&stk); // So does PrintBinaryTree printing the same tree.
+ *                    printf("-------------------------\n"); // Delimiter.
+ *                    PrintBinaryTree(proot, 0); // Equivalent to use treTraverseBYArray by RDL order.
+ *                    stkFreeA(&stk); treFreeBY(&proot); return 0;
  *                }
  */
 int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CBF_TRAVERSE cbftvs2, CBF_TRAVERSE cbftvs3, size_t param)
 {
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{
 		REGISTER size_t i;
 		if (NULL != cbftvs1 && CBF_CONTINUE != cbftvs1(pnode, param))
@@ -314,7 +314,7 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CB
 int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
 	int r = CBF_CONTINUE;
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{
 		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
@@ -367,7 +367,7 @@ int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 int treMorrisTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
 	int r = CBF_CONTINUE;
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{
 		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
@@ -434,9 +434,8 @@ void treFreeBY(P_BYTREE ptreb)
 P_BYTREE treCreateBY(void)
 {
 	REGISTER P_BYTREE ptreb = (P_BYTREE) malloc(sizeof(BYTREE));
-	if (NULL == ptreb)
-		return NULL;
-	treInitBY(ptreb);
+	if (NULL != ptreb)
+		treInitBY(ptreb);
 	return ptreb;
 }
 
@@ -466,12 +465,12 @@ void treDeleteBY_O(P_BYTREE ptreb)
 P_TNODE_BY treInsertLeftBY(P_TNODE_BY pnode, const void * pitem, size_t size)
 {
 	if (NULL == pnode) /* If and only if pnode is a root node. */
-		return (pnode = strCreateNodeD(pitem, size));
+		return strCreateNodeD(pitem, size);
 	
-	if (NULL != pnode->ppnode[LEFT]) /* Left node already exists. */
-		return NULL;
+	if (SVASSERT(NULL == pnode->ppnode[LEFT]))
+		return pnode->ppnode[LEFT] = strCreateNodeD(pitem, size);
 	
-	return pnode->ppnode[LEFT] = strCreateNodeD(pitem, size);
+	return NULL;
 }
 
 /* Function name: treInsertRightBY
@@ -486,12 +485,12 @@ P_TNODE_BY treInsertLeftBY(P_TNODE_BY pnode, const void * pitem, size_t size)
 P_TNODE_BY treInsertRightBY(P_TNODE_BY pnode, const void * pitem, size_t size)
 {
 	if (NULL == pnode) /* If and only if pnode is a root node. */
-		return (pnode = strCreateNodeD(pitem, size));
+		return strCreateNodeD(pitem, size);
 	
-	if (NULL != pnode->ppnode[RIGHT]) /* Right node already exists. */
-		return NULL;
+	if (SVASSERT(NULL == pnode->ppnode[RIGHT]))
+		return pnode->ppnode[RIGHT] = strCreateNodeD(pitem, size);
 	
-	return pnode->ppnode[RIGHT] = strCreateNodeD(pitem, size);
+	return NULL;
 }
 
 /* Function name: treRemoveLeftBY
@@ -581,17 +580,19 @@ P_TNODE_BY treGetParentNodeBY(P_TNODE_BY proot, P_TNODE_BY pchild)
  * Parameters:
  *      pnode Pointer to the first node that you want to start your searching procedure in a binary tree.
  *      pitem Pointer to the data you want to search.
- *       size Size of each data the tree.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  *         tm Method of traversal. This parameter can be any value in enumeration TvsMtd.
  * Return value:  Pointer to a node in the binary tree that contains the same data as pitem referred.
  *                If the specific data could not be found in the tree, function would return NULL.
  */
-P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, size_t size, TvsMtd tm)
+P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, CBF_COMPARE cbfmch, TvsMtd tm)
 {
 	FindingInfo fi;
 	fi.result = NULL;
 	fi.pitem  = pitem;
-	fi.size   = size;
+	fi.cbfmch = cbfmch;
 	fi.ntp    = ENT_TNODE_BY;
 	
 	switch (tm)
@@ -618,16 +619,17 @@ P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, size_t size, Tv
  */
 bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
 {
-	FindingInfo fi;
-	
-	if (proot == pnode || NULL == proot || NULL == pnode)
-		return false;
-	
-	fi.result = NULL;
-	fi.pitem = pnode;
-	treTraverseBYPre(proot, _treCBFNodeLocator, (size_t)&fi);
-	
-	return fi.result != NULL;
+	if (SVASSERT(proot != pnode && NULL != proot && NULL != pnode))
+	{
+		FindingInfo fi;
+		
+		fi.result = NULL;
+		fi.pitem = pnode;
+		treTraverseBYPre(proot, _treCBFNodeLocator, (size_t)&fi);
+		
+		return fi.result != NULL;
+	}
+	return false;
 }
 
 /* Function name: treMergeNodesBY
@@ -646,16 +648,17 @@ bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
  */
 P_TNODE_BY treMergeNodesBY(P_TNODE_BY proot, const void * pitem, size_t size, P_TNODE_BY pleft, P_TNODE_BY pright)
 {	/* Return NULL while pright is a sub tree of pleft or pleft is a sub tree of pright. */
-	if (treDescendantBY(pleft, pright) || treDescendantBY(pright, pleft))
-		return NULL;
-	
-	if (NULL == proot && NULL == (proot = strCreateNodeD(pitem, size)))
-		return NULL;
-	
-	proot->ppnode[LEFT]  = pleft;
-	proot->ppnode[RIGHT] = pright;
-	
-	return proot;
+	if (SVASSERT(! treDescendantBY(pleft, pright) && ! treDescendantBY(pright, pleft)))
+	{
+		if (NULL == proot && NULL == (proot = strCreateNodeD(pitem, size)))
+			return NULL;
+		
+		proot->ppnode[LEFT]  = pleft;
+		proot->ppnode[RIGHT] = pright;
+		
+		return proot;
+	}
+	return NULL;
 }
 
 /* Function name: treSwapNodesBY
@@ -674,10 +677,13 @@ P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot
 {
 	if
 	(
-		NULL != proot1 && NULL != proot2  &&
-		NULL != pnode1 && NULL != pnode2  &&
-		! treDescendantBY(pnode1, pnode2) &&
-		! treDescendantBY(pnode2, pnode1)
+		SVASSERT
+		(
+			NULL != proot1 && NULL != proot2  &&
+			NULL != pnode1 && NULL != pnode2  &&
+			! treDescendantBY(pnode1, pnode2) &&
+			! treDescendantBY(pnode2, pnode1)
+		)
 	)
 	{
 		REGISTER P_TNODE_BY prt1, prt2;

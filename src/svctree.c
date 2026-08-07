@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0719261401L00485
+ * File ID:     0914171200J0719261624L00484
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -98,9 +98,9 @@ int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)
 	f1 = (NULL == (*(P_TNODE_BY *)y)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)y)->ppnode[RIGHT] ?
 		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.psbinf->freq :
 		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.sbfreq);
-	if (f0 > f1) return  1;
-	if (f0 < f1) return -1;
-	return 0;
+	if (f0 > f1) return CBF_CMP_GT;
+	if (f0 < f1) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -231,9 +231,9 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
 int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
 {
 	/* Sort frequency from high to low. This would speed up retrieving. */
-	if (((_P_SMBINF)x)->freq < ((_P_SMBINF)y)->freq) return  1;
-	if (((_P_SMBINF)x)->freq > ((_P_SMBINF)y)->freq) return -1;
-	return 0;
+	if (((_P_SMBINF)x)->freq < ((_P_SMBINF)y)->freq) return CBF_CMP_GT;
+	if (((_P_SMBINF)x)->freq > ((_P_SMBINF)y)->freq) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: treCreateHuffmanTable
@@ -248,44 +248,43 @@ int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
  */
 P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
 {
-	REGISTER P_ARRAY_Z stbl = _treHFMCreateSymbolTable(s, n);
 	REGISTER P_ARRAY_Z otbl = NULL;
-	if
-	(	/* Both buffer and its length are not empty. */
-		NULL != s && 0 != n &&
-		NULL != stbl
-	)
+	if (SVASSERT(NULL != s && 0 != n))
 	{
-		P_TNODE_BY proot = _treHFMBuildHuffmanTree(stbl);
-		if (NULL != proot)
+		REGISTER P_ARRAY_Z stbl = _treHFMCreateSymbolTable(s, n);
+		if (NULL != stbl)
 		{
-			REGISTER P_HFM_SYMBOL ptbl;
-			REGISTER size_t i;
+			P_TNODE_BY proot = _treHFMBuildHuffmanTree(stbl);
+			if (NULL != proot)
+			{
+				REGISTER P_HFM_SYMBOL ptbl;
+				REGISTER size_t i;
 
-			/* Traverse the whole Huffman tree to fill symbol table. */
-			treTraverseBYPre(proot, _treCBFHFMFillSymbolTable, 0);
+				/* Traverse the whole Huffman tree to fill symbol table. */
+				treTraverseBYPre(proot, _treCBFHFMFillSymbolTable, 0);
 
-			/* Delete Huffman tree. Tree is used to generate table. Drop it directly after generating. */
-			treFreeBY(&proot);
-			
-			/* Sort symbol table by its frequency if possible, so that we can retrieve them much faster in the next decoding time. */
-			strSortArrayZ(stbl, sizeof(_SMBINF), _treCBFHFMCompareSymbolFreq, false);
-			
-			/* Convert symbol table. */
-			if (NULL != (otbl = strCreateArrayZ(strLevelArrayZ(stbl), sizeof(HFM_SYMBOL))))
-				for (i = 0, ptbl = (P_HFM_SYMBOL)otbl->pdata; i[(_P_SMBINF)stbl->pdata].freq && i < _SMB_TBL_LEN; ++i)
-					*(ptbl++) = i[(_P_SMBINF)stbl->pdata].Symbol; /* Copy a structure once a time. */
-			else
-				goto Lbl_Failed;
-			
-			/* Resize output table. */
-			strResizeArrayZ(otbl, i, sizeof(HFM_SYMBOL));
+				/* Delete Huffman tree. Tree is used to generate table. Drop it directly after generating. */
+				treFreeBY(&proot);
+				
+				/* Sort symbol table by its frequency if possible, so that we can retrieve them much faster in the next decoding time. */
+				strSortArrayZ(stbl, sizeof(_SMBINF), _treCBFHFMCompareSymbolFreq, false);
+				
+				/* Convert symbol table. */
+				if (NULL != (otbl = strCreateArrayZ(strLevelArrayZ(stbl), sizeof(HFM_SYMBOL))))
+					for (i = 0, ptbl = (P_HFM_SYMBOL)otbl->pdata; i[(_P_SMBINF)stbl->pdata].freq && i < _SMB_TBL_LEN; ++i)
+						*(ptbl++) = i[(_P_SMBINF)stbl->pdata].Symbol; /* Copy a structure once a time. */
+				else
+					goto Lbl_Failed;
+				
+				/* Resize output table. */
+				strResizeArrayZ(otbl, i, sizeof(HFM_SYMBOL));
+			}
 		}
+	Lbl_Failed:
+		/* Delete the original large table. */
+		if (NULL != stbl)
+			strDeleteArrayZ(stbl);
 	}
-Lbl_Failed:
-	/* Delete the original large table. */
-	if (NULL != stbl)
-		strDeleteArrayZ(stbl);
 	return otbl;
 }
 
@@ -317,7 +316,7 @@ Lbl_Failed:
  */
 P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
 {
-	if (NULL != s && 0 != n && NULL != ptable)
+	if (SVASSERT(NULL != s && 0 != n && NULL != ptable))
 	{	/* Both buffer and it's length are not empty. */
 		REGISTER P_BITSTREAM pbstm = strCreateBitStream();
 		REGISTER P_ARRAY_Z   pltbl = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
@@ -394,7 +393,7 @@ P_TNODE_BY _treHFMRebuildHuffmanTree(P_ARRAY_Z stbl)
 				hfmnode.NodeData.sbfreq = 0;
 			hfmnode.parent = pnode;
 
-			k = (0 != (((size_t)1 << (psmb->bits - j)) & psmb->sgnb));
+			k = (size_t)BOOLIZE(((size_t)1 << (psmb->bits - j)) & psmb->sgnb);
 			if (NULL != pnode->ppnode[k])
 				pnew = pnode->ppnode[k];
 			else
@@ -429,7 +428,7 @@ Lbl_Building_Failed:
  */
 P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 {
-	if (NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0)
+	if (SVASSERT(NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0))
 	{
 		P_BITSTREAM pbout = strCreateBitStream();
 		if (NULL != pbout)

@@ -2,7 +2,7 @@
  * Name:        svstack.c
  * Description: Stacks.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318171803E0802262300L00320
+ * File ID:     0318171803E0806261519L00317
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -68,7 +68,7 @@ P_STACK_A stkCreateA(size_t num, size_t size)
 		if (NULL == stkInitA(pstkn, num, size))
 		{	/* Allocation failure. */
 			free(pstkn);
-			return NULL;
+			pstkn = NULL;
 		}
 	}
 	return pstkn;
@@ -97,7 +97,7 @@ void stkDeleteA(P_STACK_A pstka)
  */
 bool stkIsEmptyA_O(P_STACK_A pstka)
 {
-	return !pstka->top;
+	return 0 == pstka->top;
 }
 
 /* Function name: stkIsFullA_O
@@ -183,8 +183,7 @@ size_t stkLevelA_O(P_STACK_A pstka)
  *     pstkl Pointer to the stack you want to initialize.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated first.
- * Tip:           This function can be inline for better performance.
- *                A macro version of this function named stkInitL_M is available.
+ * Tip:           This function can be macro inline to use stkInitL.
  */
 void stkInitL_O(P_STACK_L pstkl)
 {
@@ -197,8 +196,7 @@ void stkInitL_O(P_STACK_L pstkl)
  *     pstkl Pointer to the stack you want to release.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated first.
- * Tip:           This function can be inline for better performance.
- *                A macro version of this function named stkFreeL_M is available.
+ * Tip:           This function can be macro inline to use stkFreeL.
  */
 void stkFreeL_O(P_STACK_L pstkl)
 {
@@ -209,7 +207,7 @@ void stkFreeL_O(P_STACK_L pstkl)
  * Description:   Create a new pointer to a new allocated linked list stack.
  * Parameter:     N/A.
  * Return value:  A pointer to a new allocated linked list stack.
- * Tip:           This function can be inline for better performance.
+ * Tip:           This function can be macro inline to use stkCreateL.
  */
 P_STACK_L stkCreateL_O(void)
 {
@@ -222,8 +220,7 @@ P_STACK_L stkCreateL_O(void)
  *     pstkl Pointer to the stack you want to delete from the main memory.
  * Return value:  N/A.
  * Caution:       Address of pstkl Must Be Allocated By Function stkCreateL at first.
- * Tip:           This function can be inline for better performance.
- *                A macro version of this function named stkDeleteL_M is available.
+ * Tip:           This function can be macro inline to use stkDeleteL.
  */
 void stkDeleteL_O(P_STACK_L pstkl)
 {

@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0805260700L01514
+ * File ID:     0306170948C0806261816L01542
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -86,13 +86,13 @@ int _strCBFCompareNodeDataSD(void * pitem, size_t param)
 	
 	switch (pfi->ntp)
 	{
-	case ENT_SINGLE: pdata = ((P_NODE_S)pitem)->pdata; break;
-	case ENT_DOUBLE: pdata = ((P_NODE_D)pitem)->pdata; break;
+	case ENT_SINGLE: pdata = (void *) ((P_NODE_S)pitem)->pdata; break;
+	case ENT_DOUBLE: pdata = (void *) ((P_NODE_D)pitem)->pdata; break;
 	default:
 	return CBF_TERMINATE;
 	}
 	
-	if (0 == memcmp(pdata, pfi->pitem, pfi->size))
+	if (CBF_CMP_EQUAL == pfi->cbfmch(pdata, pfi->pitem))
 	{
 		pfi->result = pitem;
 		return CBF_TERMINATE;
@@ -238,8 +238,8 @@ void strFreeLinkedListSC(P_LIST_S plist)
 		if (pnil == pcur)
 			break;
 		ptmp = pcur->pnode;
-		strDeleteNodeS(pcur);
 		pnil = pcur;
+		strDeleteNodeS(pcur);
 		pcur = ptmp;
 	}
 	strInitLinkedListSC(plist);
@@ -253,9 +253,8 @@ void strFreeLinkedListSC(P_LIST_S plist)
 P_LIST_S strCreateLinkedListSC(void)
 {
 	REGISTER P_LIST_S pnew = (P_LIST_S) malloc(sizeof(LIST_S));
-	if (NULL == pnew)
-		return NULL; /* Allocation failure. */
-	strInitLinkedListSC(pnew);
+	if (NULL != pnew)
+		strInitLinkedListSC(pnew);
 	return pnew;
 }
 
@@ -344,72 +343,74 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always the pdata of listx
  *            and the second one points to the pdata of listy. Both of them are type cast to (const void *).
- * Return value:   1: listx is greater than listy. (>).
- *                 0: listx equal to listy.        (=).
- *                -1: listx is less than listy.    (<).
+ * Return value:  CBF_CMP_GT:    listx is greater than listy. (>).
+ *                CBF_CMP_EQUAL: listx equal to listy.        (=).
+ *                CBF_CMP_LT:    listx is less than listy.    (<).
  *                The following table shows characteristics about this function:
  *                listx  listy result
- *                abcde  abdef     -1
- *                bcdef  abcde      1
- *                abcde  abcde      0
- *                abc    abcd      -1
- *                abcd   abc        1
- *                b      acd        1
- *                acd    b         -1
- *                a      bcd       -1
- *                bcd    a          1
- *                NULL   NULL       0
- *                NULL   a         -1
- *                a      NULL       1
+ *                abcde  abdef CBF_CMP_LT
+ *                bcdef  abcde CBF_CMP_GT
+ *                abcde  abcde CBF_CMP_EQUAL
+ *                abc    abcd  CBF_CMP_LT
+ *                abcd   abc   CBF_CMP_GT
+ *                b      acd   CBF_CMP_GT
+ *                acd    b     CBF_CMP_LT
+ *                a      bcd   CBF_CMP_LT
+ *                bcd    a     CBF_CMP_GT
+ *                NULL   NULL  CBF_CMP_EQUAL
+ *                NULL   a     CBF_CMP_LT
+ *                a      NULL  CBF_CMP_GT
  * Caution:       Data in each node of two linked lists must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */
 int strCompareLinkedListSC(LIST_S listx, LIST_S listy, CBF_COMPARE cbfcmp)
 {
-	REGISTER int rtn = 0;
+	REGISTER int rtn = CBF_CMP_EQUAL;
 	REGISTER P_NODE_S pstatx = listx;
 	REGISTER P_NODE_S pstaty = listy;
 	if (listx == listy)
-		return 0;
+		return CBF_CMP_EQUAL;
 	if (NULL == listx)
-		return -1;
+		return CBF_CMP_LT;
 	if (NULL == listy)
-		return 1;
+		return CBF_CMP_GT;
 	while (NULL != listx && NULL != listy)
 	{
-		if (0 != (rtn = cbfcmp(listx->pdata, listy->pdata)))
+		if (CBF_CMP_EQUAL != (rtn = cbfcmp(listx->pdata, listy->pdata)))
 			return rtn;
 		listx = listx->pnode;
 		listy = listy->pnode;
 		if (pstatx == listx || pstaty == listy) /* Circular list. */
 			break;
 	}
-	if (0 == rtn) /* Determine results when two lists have a same part. */
+	if (CBF_CMP_EQUAL == rtn) /* Determine results when two lists have a same part. */
 	{
 		if ((NULL != listy && pstaty != listy) && (NULL == listx || pstatx == listx))
-			return -1;
+			return CBF_CMP_LT;
 		if ((NULL != listx && pstatx != listx) && (NULL == listy || pstaty == listy))
-			return 1;
+			return CBF_CMP_GT;
 	}
 	return rtn;
 }
 
-/* Function name: strSearchLinkedListSC
+/* Function name: strSearchDataLinkedListSC
  * Description:   Find item in a single linked list.
  * Parameters:
  *       list Pointer to the first NODE_S element you want to search in the linked list.
  *      pitem Pointer to the item you want to search.
- *       size Size of item in bytes.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to the NODE_S which contains the same data to pitem.
  * Caution:       Data in each node of a linked list must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */
-P_NODE_S strSearchLinkedListSC(LIST_S list, const void * pitem, size_t size)
+P_NODE_S strSearchDataLinkedListSC(LIST_S list, const void * pitem, CBF_COMPARE cbfmch)
 {
 	FindingInfo fi;
 	fi.result = NULL;
 	fi.pitem  = pitem;
-	fi.size   = size;
+	fi.cbfmch = cbfmch;
 	fi.ntp    = ENT_SINGLE;
 	strTraverseLinkedListSC_X(list, NULL, _strCBFCompareNodeDataSD, (size_t)&fi);
 	return (P_NODE_S)fi.result;
@@ -462,7 +463,7 @@ P_NODE_S strLocateLastItemSC(LIST_S list)
 {
 	REGISTER P_NODE_S plast = list;
 	REGISTER P_NODE_S ptemp = NULL;
-	if (NULL != list)
+	if (SVASSERT(NULL != list))
 	{
 		while ((NULL != plast->pnode) && (list != plast->pnode))
 		{
@@ -524,29 +525,57 @@ P_NODE_S strLocateItemSC_N(P_NODE_S pnode, size_t incmtl)
  *      pdest Pointer to the node you want to operate with.
  *      pnode Pointer to a single link node that you want to insert.
  *     bafter Input true to insert pnode after pdest.
- *            Input false to insert pnode in front of pdest.
+ *            Input false to insert pnode before pdest.
  * Return value:  The same pointer as pnode will be returned if function works successfully.
  *                If function returned NULL, it should indicate an insertion failure.
  * Tip:           No dead cycles for circular linked lists.
+ *                Here is an example to load two plasmids:
+ *                <test.c>
+ *                #include <stdio.h>
+ *                #include "svstring.h"
+ *                int print(void * pitem, size_t param) {
+ *                    DISUSE(param); printf("%c ", *(char *)((P_NODE_S)pitem)->pdata);
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int main() {
+ *                    char c = '1'; // h is the first plasmid, g is the second plasmid. d is destination.
+ *                    P_NODE_S p = strCreateNodeS(&c, sizeof c), h = p, q, g, d;
+ *                    c = '6'; p->pnode = strCreateNodeS(&c, sizeof c); p = p->pnode; d = p; // d is 1 on h.
+ *                    c = '7'; p->pnode = strCreateNodeS(&c, sizeof c); p = p->pnode;
+ *                    p->pnode = h; // Make a circle for h. h is 1 6 7.
+ *                    c = '2'; q = strCreateNodeS(&c, sizeof c); g = q;
+ *                    c = '3'; q->pnode = strCreateNodeS(&c, sizeof c); q = q->pnode;
+ *                    c = '4'; q->pnode = strCreateNodeS(&c, sizeof c); q = q->pnode;
+ *                    c = '5'; q->pnode = strCreateNodeS(&c, sizeof c); q = q->pnode;
+ *                    q->pnode = g; // Make a circle for g. g is 2 3 4 5.
+ *                    DISUSE(strInsertItemLinkedListSC(h, d, g, false));
+ *                    strTraverseLinkedListSC_N(h, NULL, print, 0); // Print 1 2 3 4 5 6 7.
+ *                    printf("\n"); strFreeLinkedListSC(&h); return 0;
+ *                }
  */
 P_NODE_S strInsertItemLinkedListSC(LIST_S list, P_NODE_S pdest, P_NODE_S pnode, bool bafter)
 {
-	if (NULL == pdest || NULL == pnode)
-		return NULL;
-	if (bafter)
-	{	/* Locate tail in pnode headed linked list. */
-		P_NODE_S plast = strLocateLastItemSC(pnode);
-		plast->pnode = pdest->pnode;
-		return pdest->pnode = pnode;
-	}
-	else /* Previous. */
+	if (SVASSERT(NULL != pdest && NULL != pnode))
 	{
-		P_NODE_S pr = strLocatePreviousItemSC(list, pdest);
-		if (NULL != pr)
-			return strInsertItemLinkedListSC(list, pr, pnode, false);
-		else
-			return strInsertItemLinkedListSC(NULL, strLocateLastItemSC(pnode), pdest, false);
+		if (bafter)
+		{	/* Locate tail in pnode headed linked list. */
+			REGISTER P_NODE_S plast = strLocateLastItemSC(pnode);
+			plast->pnode = pdest->pnode;
+			return pdest->pnode = pnode;
+		}
+		else /* Previous. */
+		{
+			REGISTER P_NODE_S pr = strLocatePreviousItemSC(list, pdest);
+			if (NULL != pr)
+				return strInsertItemLinkedListSC(list, pr, pnode, true);
+			else
+			{
+				pnode = strLocateLastItemSC(pnode);
+				return strInsertItemLinkedListSC(NULL, pnode, pdest, true);
+			}
+		}
 	}
+	return NULL;
 }
 
 /* Function name: strRemoveItemLinkedListSC
@@ -616,7 +645,7 @@ P_NODE_S strReverseLinkedListSC(LIST_S phead)
  */
 void strSwapNodeItemLinkedListSC(P_NODE_S pnodex, P_NODE_S pnodey)
 {
-	if (pnodex->pdata != pnodey->pdata)
+	if (SVASSERT(pnodex->pdata != pnodey->pdata))
 	{	/* Worth swapping. */
 		PUCHAR temp;
 		svSwap(&pnodex->pdata, &temp, &pnodey->pdata, sizeof(PUCHAR));
@@ -637,9 +666,7 @@ void strSwapNodeItemLinkedListSC(P_NODE_S pnodex, P_NODE_S pnodey)
  */
 LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 {
-	if (NULL == phead || NULL == phead->pnode)
-		return phead;
-	else
+	if (NULL != phead && NULL != phead->pnode)
 	{
 		REGISTER P_NODE_S pivot  = phead;
 		REGISTER P_NODE_S pleft  = NULL;
@@ -679,6 +706,7 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
 
 		return pleft;
 	}
+	return NULL;
 }
 
 /* The section for double-pointer-node linked list began bellow.  */
@@ -842,8 +870,8 @@ void strFreeLinkedListDC(P_LIST_D plist, bool brev)
 		if (pnil == pcur)
 			break;
 		ptmp = brev ? pcur->ppnode[PREV] : pcur->ppnode[NEXT];
-		strDeleteNodeD(pcur);
 		pnil = pcur;
+		strDeleteNodeD(pcur);
 		pcur = ptmp;
 	}
 	strInitLinkedListDC(plist);
@@ -857,9 +885,8 @@ void strFreeLinkedListDC(P_LIST_D plist, bool brev)
 P_LIST_D strCreateLinkedListDC(void)
 {
 	REGISTER P_LIST_D plist = (P_LIST_D) malloc(sizeof(LIST_D));
-	if (NULL == plist)
-		return NULL; /* Allocation failure. */
-	strInitLinkedListDC(plist);
+	if (NULL != plist)
+		strInitLinkedListDC(plist);
 	return plist;
 }
 
@@ -984,9 +1011,9 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, bool brev)
  *            and the second one points to pdata of listy. Both of them are type cast to (const void *).
  *       brev If brev equaled true, function would do comparison from current node to the next node.
  *            If brev equaled false, function would perform comparison reversely.
- * Return value:   1: listx is greater than listy.
- *                 0: listx equal to listy.
- *                -1: listx is less than listy.
+ * Return value:  CBF_CMP_GT:    listx is greater than listy.
+ *                CBF_CMP_EQUAL: listx equal to listy.
+ *                CBF_CMP_LT:    listx is less than listy.
  *                Please refer to function strCompareLinkedListSC for more details.
  * Caution:       Data in each node of two linked lists must be in the same size.
  *                If the following situation occurred, dead cycle would happen:
@@ -998,18 +1025,18 @@ P_NODE_D strCopyLinkedListDC(LIST_D psrc, size_t size, bool brev)
  */
 int strCompareLinkedListDC(LIST_D listx, LIST_D listy, CBF_COMPARE cbfcmp, bool brev)
 {
-	REGISTER int rtn = 0;
+	REGISTER int rtn = CBF_CMP_EQUAL;
 	REGISTER P_NODE_D pstatx = listx;
 	REGISTER P_NODE_D pstaty = listy;
 	if (listx == listy)
-		return 0;
+		return CBF_CMP_EQUAL;
 	if (NULL == listx)
-		return -1;
+		return CBF_CMP_LT;
 	if (NULL == listy)
-		return 1;
+		return CBF_CMP_GT;
 	while (NULL != listx && NULL != listy)
 	{
-		if (0 != (rtn = cbfcmp(listx->pdata, listy->pdata)))
+		if (CBF_CMP_EQUAL != (rtn = cbfcmp(listx->pdata, listy->pdata)))
 			return rtn;
 		if (brev)
 		{
@@ -1024,36 +1051,40 @@ int strCompareLinkedListDC(LIST_D listx, LIST_D listy, CBF_COMPARE cbfcmp, bool 
 		if (pstatx == listx || pstaty == listy) /* Circular list. */
 			break;
 	}
-	if (0 == rtn) /* Determine results when two lists have a same part. */
+	if (CBF_CMP_EQUAL == rtn) /* Determine results when two lists have a same part. */
 	{
 		if ((NULL != listy && pstaty != listy) && (NULL == listx || pstatx == listx))
-			return -1;
+			return CBF_CMP_LT;
 		if ((NULL != listx && pstatx != listx) && (NULL == listy || pstaty == listy))
-			return 1;
+			return CBF_CMP_GT;
 	}
 	return rtn;
 }
 
-/* Function name: strSearchLinkedListDC
+/* Function name: strSearchDataLinkedListDC
  * Description:   Find pitem in a doubly linked list list.
  * Parameters:
  *       list Pointer to the first NODE_D element when traversal.
  *      pitem Pointer to the item you want to search.
- *       size Size of data of pitem.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  *       brev If brev equaled true, function would search a linked list from current node to the next node.
  *            If brev equaled false, function would search a linked list reversely.
  * Return value:  Pointer to the NODE_S which contains the same data to pitem.
  * Caution:       Data in each node of a linked list must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */
-P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, bool brev)
+P_NODE_D strSearchDataLinkedListDC(LIST_D list, const void * pitem, CBF_COMPARE cbfmch, bool brev)
 {
 	FindingInfo fi;
+	
 	fi.result = NULL;
 	fi.pitem  = pitem;
-	fi.size   = size;
+	fi.cbfmch = cbfmch;
 	fi.ntp    = ENT_DOUBLE;
 	strTraverseLinkedListDC_X(list, NULL, _strCBFCompareNodeDataSD, (size_t)&fi, brev);
+	
 	return (P_NODE_D)fi.result;
 }
 
@@ -1062,8 +1093,8 @@ P_NODE_D strSearchLinkedListDC(LIST_D list, const void * pitem, size_t size, boo
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.
- *            If incmtl  > 0, locate nodes forward.
- *            If incmtl  < 0, locate nodes backward.
+ *            If incmtl  > 0, locate nodes forward by incmtl steps.
+ *            If incmtl  < 0, locate nodes backward by abstract incmtl steps.
  *            If incmtl == 0, function would return the pointer to the current node, that was the same value as pnode stored.
  * Return value:  Pointer to the NODE_D which is located forward or backward for incmtl numbers of nodes.
  * Caution:       (*) Addressing capability of this function limited in the range of which a ptrdiff_t integer could perform.
@@ -1090,8 +1121,8 @@ P_NODE_D strLocateItemDC_R(P_NODE_D pnode, ptrdiff_t incmtl)
  * Parameters:
  *      pnode Pointer to the current node.
  *     incmtl Incremental of location.
- *            If incmtl  > 0, locate nodes forward.
- *            If incmtl  < 0, locate nodes backward.
+ *            If incmtl  > 0, locate nodes forward by incmtl steps.
+ *            If incmtl  < 0, locate nodes backward by abstract incmtl steps.
  *            If incmtl == 0, function would return the pointer to the current node, that was the same value as pnode stored.
  * Return value:  Pointer to the NODE_D which is located forward or backward for abstract incmtl numbers of nodes.
  * Caution:       (*) Addressing capability of this function limited in the range which a ptrdiff_t integer could perform.
@@ -1135,39 +1166,40 @@ P_NODE_D strLocateItemDC_N(P_NODE_D pnode, ptrdiff_t incmtl)
  */
 P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 {
-	REGISTER P_NODE_D ptemp = NULL;
-	REGISTER P_NODE_D plast = pnode;
-	if (NULL == pnode)
-		return NULL;
-	/* Locate tail in pnode. */
-	while (NULL != plast->ppnode[NEXT])
+	if (SVASSERT(NULL != pnode))
 	{
-		plast = plast->ppnode[NEXT];
-		/* Dead loop appears only if A<-B->A.
-		 * We have to prevent it from occurring.
-		 */
-		if (ptemp == plast)
-			break;
-		ptemp = plast;
-	}
-	if (bafter)
-	{
-		if (NULL != pdest)
+		REGISTER P_NODE_D ptemp = NULL;
+		REGISTER P_NODE_D plast = pnode;
+		/* Locate tail in pnode. */
+		while (NULL != plast->ppnode[NEXT])
 		{
-			plast->ppnode[NEXT] = pdest->ppnode[NEXT];
-			if (NULL != pdest->ppnode[NEXT])
-				pdest->ppnode[NEXT]->ppnode[PREV] = plast;
-			pdest->ppnode[NEXT] = pnode;
-			pnode->ppnode[PREV] = pdest;
-			return pdest;
+			plast = plast->ppnode[NEXT];
+			/* Dead loop appears only if A<-B->A.
+			 * We have to prevent it from occurring.
+			 */
+			if (ptemp == plast)
+				break;
+			ptemp = plast;
 		}
-	}
-	else /* Before. */
-	{
-		plast->ppnode[NEXT] = pdest;
-		if (NULL != (pnode->ppnode[PREV] = pdest->ppnode[PREV]))
-			pdest->ppnode[PREV]->ppnode[NEXT] = pnode;
-		pdest->ppnode[PREV] = plast;
+		if (bafter)
+		{
+			if (NULL != pdest)
+			{
+				plast->ppnode[NEXT] = pdest->ppnode[NEXT];
+				if (NULL != pdest->ppnode[NEXT])
+					pdest->ppnode[NEXT]->ppnode[PREV] = plast;
+				pdest->ppnode[NEXT] = pnode;
+				pnode->ppnode[PREV] = pdest;
+				return pdest;
+			}
+		}
+		else /* Before. */
+		{
+			plast->ppnode[NEXT] = pdest;
+			if (NULL != (pnode->ppnode[PREV] = pdest->ppnode[PREV]))
+				pdest->ppnode[PREV]->ppnode[NEXT] = pnode;
+			pdest->ppnode[PREV] = plast;
+		}
 	}
 	return pnode;
 }
@@ -1203,7 +1235,7 @@ P_NODE_D strRemoveItemLinkedListDC(P_NODE_D pnode)
  */
 void strSwapNodeItemLinkedListDC(P_NODE_D pnodex, P_NODE_D pnodey)
 {
-	if (pnodex->pdata != pnodey->pdata)
+	if (SVASSERT(pnodex->pdata != pnodey->pdata))
 	{	/* Worth swapping. */
 		PUCHAR tmp;
 		svSwap(&pnodex->pdata, &tmp, &pnodey->pdata, sizeof(PUCHAR));
@@ -1227,7 +1259,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 #define _P2P_NODE_D(pnode) ((P_NODE_D) (pnode)) /* Cast a pointer to P_NODE_D. */
 	REGISTER void * plast = pfirst;
 	REGISTER void * ptemp = NULL;
-	if (NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp))
+	if (SVASSERT(NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp)))
 	{
 		while
 		(
@@ -1261,16 +1293,13 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 	if
 	(
 		(
-			ptemp =
+			(ENT_SINGLE == ntp) ?
+			(void *) (_P2P_NODE_S(plast)->pnode) :
+			(void *)
 			(
-				(ENT_SINGLE == ntp) ?
-				(void *) (_P2P_NODE_S(plast)->pnode) :
-				(void *)
-				(
-					brev ?
-					(void *) (_P2P_NODE_D(plast)->ppnode[PREV]) :
-					(void *) (_P2P_NODE_D(plast)->ppnode[NEXT])
-				)
+				brev ?
+				(void *) (_P2P_NODE_D(plast)->ppnode[PREV]) :
+				(void *) (_P2P_NODE_D(plast)->ppnode[NEXT])
 			)
 		)
 		== pfirst
@@ -1304,56 +1333,55 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
  */
 bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx, void * pbuf, void * pnodey, size_t sizey, NodeType ntpy)
 {
-	REGISTER PUCHAR * ppdatax, * ppdatay;
-	
-	if (pnodex == pnodey)
-		return false;
-	
-	switch (ntpx)
+	if (SVASSERT(pnodex != pnodey))
 	{
-	case ENT_SINGLE: ppdatax = &((P_NODE_S)pnodex)->pdata; break;
-	case ENT_DOUBLE: ppdatax = &((P_NODE_D)pnodex)->pdata; break;
-	default: return false;
-	}
-	
-	switch (ntpy)
-	{
-	case ENT_SINGLE: ppdatay = &((P_NODE_S)pnodey)->pdata; break;
-	case ENT_DOUBLE: ppdatay = &((P_NODE_D)pnodey)->pdata; break;
-	default: return false;
-	}
-	
-	if (*ppdatax == *ppdatay)
-		return false;
-	
-	memcpy(pbuf, *ppdatax, sizex);              /* t = a; */
-	
-	if (sizex == sizey)
-	{
-		memmove(*ppdatax, *ppdatay, sizey);     /* a = b; */
-		memcpy(*ppdatay, pbuf, sizex);          /* b = t; */
-	}
-	else
-	{
-		REGISTER PUCHAR pnew;
+		REGISTER PUCHAR * ppdatax, * ppdatay;
 		
-		if (NULL != (pnew = (PUCHAR) realloc(*ppdatax, sizey)))
+		switch (ntpx)
 		{
-			*ppdatax = pnew;
-			memmove(*ppdatax, *ppdatay, sizey); /* a = b; */
+		case ENT_SINGLE: ppdatax = &((P_NODE_S)pnodex)->pdata; break;
+		case ENT_DOUBLE: ppdatax = &((P_NODE_D)pnodex)->pdata; break;
+		default: return false;
 		}
-		else
+		
+		switch (ntpy)
+		{
+		case ENT_SINGLE: ppdatay = &((P_NODE_S)pnodey)->pdata; break;
+		case ENT_DOUBLE: ppdatay = &((P_NODE_D)pnodey)->pdata; break;
+		default: return false;
+		}
+		
+		if (*ppdatax == *ppdatay)
 			return false;
 		
-		if (NULL != (pnew = (PUCHAR) realloc(*ppdatay, sizex)))
+		memcpy(pbuf, *ppdatax, sizex);              /* t = a; */
+		
+		if (sizex == sizey)
 		{
-			*ppdatay = pnew;
-			memcpy(*ppdatay, pbuf, sizex);      /* b = t; */
+			memmove(*ppdatax, *ppdatay, sizey);     /* a = b; */
+			memcpy(*ppdatay, pbuf, sizex);          /* b = t; */
 		}
 		else
-			return false;
+		{
+			REGISTER PUCHAR pnew;
+			
+			if (NULL != (pnew = (PUCHAR) realloc(*ppdatax, sizey)))
+			{
+				*ppdatax = pnew;
+				memmove(*ppdatax, *ppdatay, sizey); /* a = b; */
+			}
+			else
+				return false;
+			
+			if (NULL != (pnew = (PUCHAR) realloc(*ppdatay, sizex)))
+			{
+				*ppdatay = pnew;
+				memcpy(*ppdatay, pbuf, sizex);      /* b = t; */
+			}
+			else
+				return false;
+		}
 	}
-	
 	return true;
 }
 
@@ -1375,7 +1403,7 @@ bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx,
  */
 void * strMergeSortLinkedListSDC(void * list, bool bcircular, NodeType ntp, CBF_COMPARE cbfcmp)
 {
-	if (NULL != list)
+	if (SVASSERT(NULL != list))
 	{
 		REGISTER void * p, * q, * e, * tail, * oldhead;
 		REGISTER size_t insize, nmerges, psize, qsize;

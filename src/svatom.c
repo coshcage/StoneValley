@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0720261304L00377
+ * File ID:     0306170948A0720261600L00370
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -45,10 +45,7 @@ void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 	}
 	else
 	{
-		if (NULL == (parrz->pdata = (PUCHAR) malloc(sum)))
-			parrz->num = 0;
-		else
-			parrz->num = num;
+		parrz->num = NULL == (parrz->pdata = (PUCHAR) malloc(sum)) ? 0 : num;
 		return parrz->pdata;
 	}
 }
@@ -70,7 +67,7 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
 		if (NULL == strInitArrayZ(parrz, num, size))
 		{	/* Allocation failure. */
 			free(parrz);
-			return NULL;
+			parrz = NULL;
 		}
 	}
 	return parrz;
@@ -87,7 +84,7 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
  */
 void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
 {
-	if (strLevelArrayZ(parrz) > 0)
+	if (SVASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		if (sizeof(UCHART) == size) /* size is one for byte, call memset directly. */
 			memset(parrz->pdata, (int)*(PUCHAR)pval, size * sizeof(UCHART) * strLevelArrayZ(parrz));
@@ -187,7 +184,7 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
  */
 void strFreeArrayZ_O(P_ARRAY_Z parrz)
 {
-	if (NULL != parrz->pdata) /* Circumvent freeing a NULL pointer. */
+	if (SVASSERT(NULL != parrz->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(parrz->pdata);
 		parrz->pdata = NULL;
@@ -223,15 +220,15 @@ void strDeleteArrayZ_O(P_ARRAY_Z parrz)
 void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
 {
 	pnode->pnode = NULL;
-	if (0 == size)
-		pnode->pdata = NULL;
-	else
+	if (SVASSERT(0 != size))
 	{
 		if (NULL == (pnode->pdata = (PUCHAR) malloc(size)))
 			return NULL; /* Buffer creation failed. */
 		if (NULL != pval)
 			memcpy(pnode->pdata, pval, size);
 	}
+	else
+		pnode->pdata = NULL;
 	return pnode->pdata;
 }
 
@@ -247,15 +244,13 @@ void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
 P_NODE_S strCreateNodeS(const void * pval, size_t size)
 {
 	REGISTER P_NODE_S pnode = (P_NODE_S) malloc(sizeof(NODE_S));
-	if (NULL == pnode)
-		return NULL;
-	else
+	if (NULL != pnode)
 	{
 		REGISTER void * p = strInitNodeS(pnode, pval, size);
 		if (0 != size && NULL == p)
 		{
 			free(pnode); /* Allocation failure. */
-			return NULL;
+			pnode = NULL;
 		}
 	}
 	return pnode;
@@ -271,7 +266,7 @@ P_NODE_S strCreateNodeS(const void * pval, size_t size)
  */
 void strFreeNodeS_O(P_NODE_S pnode)
 {
-	if (NULL != pnode->pdata) /* Circumvent freeing a NULL pointer. */
+	if (SVASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(pnode->pdata);
 		pnode->pdata = NULL;
@@ -306,15 +301,15 @@ void strDeleteNodeS_O(P_NODE_S pnode)
 void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
 {
 	pnode->ppnode[PREV] = pnode->ppnode[NEXT] = NULL;
-	if (0 == size)
-		pnode->pdata = NULL;
-	else
+	if (SVASSERT(0 != size))
 	{
 		if (NULL == (pnode->pdata = (PUCHAR) malloc(size)))
 			return NULL; /* Buffer creation failed. */
 		if (NULL != pval)
 			memcpy(pnode->pdata, pval, size);
 	}
+	else
+		pnode->pdata = NULL;
 	return pnode->pdata;
 }
 
@@ -330,15 +325,13 @@ void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
 P_NODE_D strCreateNodeD(const void * pval, size_t size)
 {
 	REGISTER P_NODE_D pnode = (P_NODE_D) malloc(sizeof(NODE_D));
-	if (NULL == pnode)
-		return NULL;
-	else
+	if (NULL != pnode)
 	{
 		REGISTER void * p = strInitNodeD(pnode, pval, size);
 		if (0 != size && NULL == p)
 		{
 			free(pnode); /* Allocation failure. */
-			return NULL;
+			pnode = NULL;
 		}
 	}
 	return pnode;
@@ -354,7 +347,7 @@ P_NODE_D strCreateNodeD(const void * pval, size_t size)
  */
 void strFreeNodeD_O(P_NODE_D pnode)
 {
-	if (NULL != pnode->pdata) /* Circumvent freeing a NULL pointer. */
+	if (SVASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(pnode->pdata);
 		pnode->pdata = NULL;

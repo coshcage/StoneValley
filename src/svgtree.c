@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0721261212L00573
+ * File ID:     0809171737H0806261638L00609
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -29,9 +29,9 @@
 
 /* A structure for generic tree nodes' copy. */
 typedef struct _st_GTreeCopy {
-	void *    pnroot; /* Root of new tree.    */
+	void *    pnroot; /* Root of new tree. */
+	size_t    size;   /* Node data size. */
 	P_QUEUE_L pquel;  /* Children node queue. */
-	size_t    size;   /* Node data size.      */
 } _GTreeCopy, * _P_GTreeCopy;
 
 /* Callback function for generic trees. */
@@ -69,18 +69,30 @@ int _treCBFGNodeEnqueue(void * pitem, size_t param)
  * Return value:  CBF_CONTINUE only.
  */
 int _treCBFFreeTNodeG(void * pitem, size_t param)
-{
-	treDeleteTNodeG((P_TNODE_G)pitem);
-	DISUSE(param);
-	/* Add this above sentence to prevent function from producing a
+{	/* Add this following sentence to prevent function from producing a
 	 * unreferenced formal parameter warning for param.
 	 */
+	DISUSE(param);
+	treDeleteTNodeG((P_TNODE_G)pitem);
 	return CBF_CONTINUE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _treCBFMatchTNodeGPointer
+ * Description:   This function is used to match node's pointers in the child array of a generic tree.
+ * Parameters:
+ *         px Pointer to each node pointer in a node's child array.
+ *      param Pointer to the pointer of node you want to find.
+ * Return value:  CBF_SET_EQUAL if pointers matched. true if pointers mismatched.
+ */
+int _treCBFMatchTNodeGPointer(const void * px, const void * py)
+{
+	return (int)BOOLIZE(*(P_TNODE_G *)px - *(P_TNODE_G *)py);
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treCBFGTreeLocateChild
- * Description:   This function is used to locate child node for parent in a generic tree.
+ * Description:   This function is used to locate child node for a parent in a generic tree.
  * Parameters:
  *      pitem Pointer to each node in the generic tree.
  *      param Pointer to a FindingInfo structure.
@@ -90,11 +102,13 @@ int _treCBFFreeTNodeG(void * pitem, size_t param)
 int _treCBFGTreeLocateChild(void * pitem, size_t param)
 {
 	P_FindingInfo pfi = (P_FindingInfo)param;
-	if (0 != strLinearSearchArrayZ(&((P_TNODE_G)pitem)->children, &pfi->pitem, sizeof(P_TNODE_G), false))
+	
+	if (0 != strLinearSearchArrayZ(&((P_TNODE_G)pitem)->children, &pfi->pitem, sizeof(P_TNODE_G), _treCBFMatchTNodeGPointer, false))
 	{
 		pfi->result = pitem;
 		return CBF_TERMINATE;
 	}
+	
 	return CBF_CONTINUE;
 }
 
@@ -108,15 +122,13 @@ int _treCBFGTreeLocateChild(void * pitem, size_t param)
  *                otherwise function would return value CBF_CONTINUE.
  */
 int _treCBFCompareTNodeDataG(void * pitem, size_t param)
-{
-	/* The type of param is P_FindingInfo. */
+{	/* The type of param is P_FindingInfo. */
 	if 
 	(
-		0 == memcmp
+		CBF_CMP_EQUAL == ((P_FindingInfo)param)->cbfmch
 		(
 			((P_TNODE_G)    pitem)->pdata,
-			((P_FindingInfo)param)->pitem,
-			((P_FindingInfo)param)->size
+			((P_FindingInfo)param)->pitem
 		)
 	)
 	{
@@ -142,6 +154,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 	REGISTER _P_GTreeCopy ptc  = (_P_GTreeCopy)param;
 	REGISTER P_TNODE_G    pcur = (P_TNODE_G)pitem;
 	REGISTER P_TNODE_G    pnew = treCreateTNodeG(pcur->pdata, ptc->size);
+	
 	if (NULL == pnew)
 		goto Lbl_Allocation_Failure;
 	/* Set new root. */
@@ -162,6 +175,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 		queInsertL(ptc->pquel, &tptr, sizeof(P_TNODE_G));
 	}
 	return CBF_CONTINUE;
+	
 Lbl_Allocation_Failure:
 	treFreeG((P_GTREE)&ptc->pnroot);
 	ptc->pnroot = NULL;
@@ -181,7 +195,7 @@ Lbl_Allocation_Failure:
  */
 int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (NULL != pnode)
+	if (SVASSERT(NULL != pnode))
 	{
 		QUEUE_L q;
 		queInitL(&q);
@@ -255,7 +269,7 @@ size_t treHeightG(P_TNODE_G pnode)
 void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
 	pnode->pdata = (PUCHAR) malloc(size);
-	if (NULL != pitem && NULL != pnode->pdata)
+	if (SVASSERT(NULL != pitem && NULL != pnode->pdata))
 		memcpy(pnode->pdata, pitem, size);
 	return pnode->pdata;
 }
@@ -363,6 +377,7 @@ void treDeleteG(P_GTREE ptreg)
  * Description:   Insert a node into generic tree.
  * Parameters:
  *      pnode Pointer to the parent node.
+ *            Input NULL to create a new node.
  *      pitem Pointer to the data you want to insert into the tree.
  *       size Size of data.
  * Return value:  If insertion succeeded, function would return a pointer of the new inserted node.
@@ -396,15 +411,19 @@ P_TNODE_G treInsertG(P_TNODE_G pnode, const void * pitem, size_t size)
  */
 P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, bool bclear)
 {
-	REGISTER size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), false);
+	REGISTER size_t i = strLinearSearchArrayZ(&parent->children, &pchild, sizeof(P_TNODE_G), _treCBFMatchTNodeGPointer, false);
+	
 	if (0 == i) /* Can not find pchild in parent. */
 		return NULL;
+	
 	if (bclear)
 	{
 		treFreeG(&pchild);
 		pchild = NULL;
 	}
+	
 	strRemoveItemArrayZ(&parent->children, sizeof(P_TNODE_G), i - 1, true);
+	
 	return pchild;
 }
 
@@ -418,11 +437,14 @@ P_TNODE_G treRemoveSubtreeG(P_TNODE_G parent, P_TNODE_G pchild, bool bclear)
 P_TNODE_G treGetParentNodeG(P_TNODE_G proot, P_TNODE_G pchild)
 {
 	FindingInfo fi;
+	
 	if (proot == pchild)
 		return NULL; /* Parent of root node is NULL. */
+	
 	fi.pitem  = pchild;
 	fi.result = NULL;
 	treTraverseGLevel(proot, _treCBFGTreeLocateChild, (size_t)&fi);
+	
 	return (P_TNODE_G)fi.result;
 }
 
@@ -431,18 +453,22 @@ P_TNODE_G treGetParentNodeG(P_TNODE_G proot, P_TNODE_G pchild)
  * Parameters:
  *      proot Pointer to the root node that you want to start your searching procedure in a generic tree.
  *      pitem Pointer to the data you want to search.
- *       size Size of that data.
+ *     cbfmch Pointer to a comparison function to match data in nodes.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a node in the binary tree that contains the same data as pitem referred.
  *                If the specific data could not be found in the tree, function would return NULL.
  * Caution:       This function will only use the level-order traversal.
  */
-P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, size_t size)
+P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, CBF_COMPARE cbfmch)
 {
 	FindingInfo fi;
+	
 	fi.result = NULL;
 	fi.pitem  = pitem;
-	fi.size   = size;
+	fi.cbfmch = cbfmch;
 	treTraverseGLevel(proot, _treCBFCompareTNodeDataG, (size_t)&fi);
+	
 	return (P_TNODE_G)fi.result;
 }
 
@@ -460,27 +486,33 @@ P_TNODE_G treSearchDataG(P_TNODE_G proot, const void * pitem, size_t size)
  */
 P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_TNODE_G pnodey)
 {
-	if 
+	if
 	(
-		NULL == prootx || NULL == prooty ||
-		NULL == pnodex || NULL == pnodey ||
-		NULL != treGetParentNodeG(pnodex, pnodey) ||
-		NULL != treGetParentNodeG(pnodey, pnodex)
+		SVASSERT
+		(
+			NULL != prootx && NULL != prooty &&
+			NULL != pnodex && NULL != pnodey &&
+			NULL == treGetParentNodeG(pnodex, pnodey) &&
+			NULL == treGetParentNodeG(pnodey, pnodex)
+		)
 	)
-		return NULL; /* T1 contains T2, or T2 contains T1. */
-	else
 	{
 		REGISTER P_TNODE_G prtx, prty;
 		REGISTER size_t i, j;
 		P_TNODE_G tmp;
+		
 		/* Locate pnodex and y in their parents. */
 		prtx = treGetParentNodeG(prootx, pnodex);
 		prty = treGetParentNodeG(prooty, pnodey);
-		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), false) - 1;
-		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), false) - 1;
+		
+		i = strLinearSearchArrayZ(&prtx->children, &pnodex, sizeof(P_TNODE_G), _treCBFMatchTNodeGPointer, false) - 1;
+		j = strLinearSearchArrayZ(&prty->children, &pnodey, sizeof(P_TNODE_G), _treCBFMatchTNodeGPointer, false) - 1;
+		
 		svSwap(&i[(P_TNODE_G *)prtx->children.pdata], &tmp, &j[(P_TNODE_G *)prty->children.pdata], sizeof(P_TNODE_G));
+		
 		return pnodey;
 	}
+	return NULL; /* T1 contains T2, or T2 contains T1. */
 }
 
 /* Function name: treCopyG
@@ -495,11 +527,13 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 {
 	_GTreeCopy tp;
 	QUEUE_L q;
+	
 	queInitL(&q);
 	tp.pnroot = NULL;
 	tp.pquel  = &q;
 	tp.size   = size;
 	treTraverseGLevel(proot, _treCBFCopyTreeNodeG, (size_t)&tp);
+	
 	/* Do not forget to delete the queue. */
 	queFreeL(&q);
 	return (P_TNODE_G)tp.pnroot;
@@ -518,34 +552,36 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
  */
 P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
 {
-	REGISTER P_TNODE_BY * po;
-	REGISTER size_t i;
-	P_TNODE_BY pn;
-	if (NULL == pnode)
-		return 0;
-	/* pnode is an external node. */
-	if (0 == strLevelArrayZ(&pnode->children))
+	if (NULL != pnode)
 	{
+		REGISTER P_TNODE_BY * po;
+		REGISTER size_t i;
+		P_TNODE_BY pn;
+		/* pnode is an external node. */
+		if (0 == strLevelArrayZ(&pnode->children))
+		{
+			if (NULL == (pn = strCreateNodeD(pnode->pdata, size)))
+				return (*ppnil = NULL);
+			queInsertL(pql, &pn, sizeof(P_TNODE_BY));
+			return pn;
+		}
+		/* Create a new node for binary tree. */
 		if (NULL == (pn = strCreateNodeD(pnode->pdata, size)))
 			return (*ppnil = NULL);
 		queInsertL(pql, &pn, sizeof(P_TNODE_BY));
+		/* Set root of new binary tree. */
+		if (NULL == *ppnil)
+			*ppnil = pn;
+		po = &(pn->ppnode[LEFT]);
+		/* Solve each height of descendants recursively. */
+		for (i = 0; i < strLevelArrayZ(&pnode->children); ++i)
+		{
+			*po = _treG2BYConvertPuppet(ppnil, i[(P_TNODE_G *)pnode->children.pdata], size, pql);
+			po = &((*po)->ppnode[RIGHT]);
+		}
 		return pn;
 	}
-	/* Create a new node for binary tree. */
-	if (NULL == (pn = strCreateNodeD(pnode->pdata, size)))
-		return (*ppnil = NULL);
-	queInsertL(pql, &pn, sizeof(P_TNODE_BY));
-	/* Set root of new binary tree. */
-	if (NULL == *ppnil)
-		*ppnil = pn;
-	po = &(pn->ppnode[LEFT]);
-	/* Solve each height of descendants recursively. */
-	for (i = 0; i < strLevelArrayZ(&pnode->children); ++i)
-	{
-		*po = _treG2BYConvertPuppet(ppnil, i[(P_TNODE_G *)pnode->children.pdata], size, pql);
-		po = &((*po)->ppnode[RIGHT]);
-	}
-	return pn;
+	return NULL;
 }
 
 /* Function name: treG2BYConvert

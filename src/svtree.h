@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0805260735L00522
+ * File ID:     0809171737V0806261650L00523
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -130,7 +130,7 @@ void            treRemoveRightBY       (P_TNODE_BY      pnode);
 size_t          treArityBY             (P_TNODE_BY      pnode);
 size_t          treHeightBY            (P_TNODE_BY      pnode);
 P_TNODE_BY      treGetParentNodeBY     (P_TNODE_BY      proot,    P_TNODE_BY   pchild);
-P_TNODE_BY      treSearchDataBY        (P_TNODE_BY      pnode,    const void * pitem,  size_t       size,    TvsMtd       tm);
+P_TNODE_BY      treSearchDataBY        (P_TNODE_BY      pnode,    const void * pitem,  CBF_COMPARE  cbfmch,  TvsMtd       tm);
 bool            treDescendantBY        (P_TNODE_BY      proot,    P_TNODE_BY   pnode);
 P_TNODE_BY      treMergeNodesBY        (P_TNODE_BY      proot,    const void * pitem,  size_t       size,    P_TNODE_BY   pleft,   P_TNODE_BY   pright);
 P_TNODE_BY      treSwapNodesBY         (P_TNODE_BY      proot1,   P_TNODE_BY   pnode1, P_TNODE_BY   proot2,  P_TNODE_BY   pnode2);
@@ -150,7 +150,7 @@ void            treDeleteG             (P_GTREE         ptreg);
 P_TNODE_G       treInsertG             (P_TNODE_G       pnode,    const void * pitem,  size_t       size);
 P_TNODE_G       treRemoveSubtreeG      (P_TNODE_G       parent,   P_TNODE_G    pchild, bool         bclear);
 P_TNODE_G       treGetParentNodeG      (P_TNODE_G       proot,    P_TNODE_G    pchild);
-P_TNODE_G       treSearchDataG         (P_TNODE_G       proot,    const void * pitem,  size_t       size);
+P_TNODE_G       treSearchDataG         (P_TNODE_G       proot,    const void * pitem,  CBF_COMPARE  cbfmch);
 P_TNODE_G       treSwapNodesG          (P_TNODE_G       proot1,   P_TNODE_G    pnode1, P_TNODE_G    proot2,  P_TNODE_G    pnode2);
 P_TNODE_G       treCopyG               (P_TNODE_G       proot,    size_t       size);
 P_TNODE_BY      treG2BYConvert         (P_TNODE_G       pnode,    size_t       size);
@@ -234,7 +234,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	*(ptreg_M) = NULL; \
 } while (0)
 /* Functions in svhtree.c. */
-#define treIsEmptyHeapA_M(pheap_M) (!(pheap_M)->irear)
+#define treIsEmptyHeapA_M(pheap_M) (0 == (pheap_M)->irear)
 #define treIsFullHeapA_M(pheap_M) ((pheap_M)->irear == (pheap_M)->hdarr.num)
 #define treMakeEmptyHeapA_M(pheap_M) do { \
 	(pheap_M)->irear = 0; \
@@ -244,7 +244,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	strFreeNodeD(&(pnode_M)->knot); \
 } while (0)
 #define treDeleteBSTNode_M(pnode_M) do { \
-	treFreeBSTNode(pnode_M); \
+	treFreeBSTNode_M(pnode_M); \
 	free(pnode_M); \
 } while (0)
 #define treInitBST_M(pbst_M) do { \
@@ -269,12 +269,13 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	(pbi_M)->keyarr.pdata = NULL; \
 } while (0)
 #define _treDeleteBPTInfo_M(pbi_M) do { \
+	extern void _treFreeBPTInfo(_P_BPT_INFO pbi); \
 	_treFreeBPTInfo(pbi_M); \
 	free(pbi_M); \
 } while (0)
 #define _treGetParentBPTNode_M(pnode_M) ((pnode_M)->ppnode[PARENTPTR])
 #define _treGetNextBPTNode_M(pnode_M) ((pnode_M)->ppnode[NEXTPTR])
-#define _treIsLeafBPTNode_M(pnode_M) (!((_P_BPT_INFO) (pnode_M)->pdata)->headptr)
+#define _treIsLeafBPTNode_M(pnode_M) (NULL == ((_P_BPT_INFO) (pnode_M)->pdata)->headptr)
 #define treInitBPT_M(pbpt_M) do { \
 	*(pbpt_M) = NULL; \
 } while (0)

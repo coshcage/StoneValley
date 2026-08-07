@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0805260805L01059
+ * File ID:     0213191430N0806261721L01074
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -78,7 +78,7 @@ P_MATRIX strCreateMatrix(size_t ln, size_t col, size_t size)
 		if (NULL == strInitMatrix(pmtx, ln, col, size))
 		{
 			free(pmtx);
-			return NULL; /* Allocation failure. */
+			pmtx = NULL; /* Allocation failure. */
 		}
 	}
 	return pmtx;
@@ -257,7 +257,7 @@ void strSetMatrix_O(P_MATRIX pmtx, const void * pval, size_t size)
  */
 void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 {
-	if (ln < pmtx->ln && col < pmtx->col && size)
+	if (SVASSERT(ln < pmtx->ln && col < pmtx->col && 0 != size))
 	{
 		REGISTER void * ptr = &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
 		if (NULL != pval)
@@ -281,8 +281,9 @@ void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size
  */
 void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, size_t size)
 {
-	return (ln < pmtx->ln && col < pmtx->col && size) ?
-		memcpy(&pmtx->arrz.pdata[(ln * pmtx->col + col) * size], pval, size) : NULL;
+	if (SVASSERT(ln < pmtx->ln && col < pmtx->col && NULL != pval && 0 != size))
+		return memcpy(&pmtx->arrz.pdata[(ln * pmtx->col + col) * size], pval, size);
+	return NULL;
 }
 
 /* Function name: strTransposeMatrix
@@ -290,14 +291,15 @@ void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, si
  * Parameters:
  *       pmtx Pointer to a matrix.
  *       size Size of each element in the matrix.
- *     cbfcmp Pointer to a callback function that uses to compare each element in the matrix.
- *            Two parameters of cbfcmp may point to any element in the array.
- *            Please refer to the definition of type CBF_COMPARE.
+ *     cbfmch Pointer to a callback function that uses to match each element in the matrix.
+ *            Two parameters of cbfmch may point to any element in the matrix.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  pmtx->arrz.pdata
  *                If this function returned value NULL, it would indicate an allocation failure.
  * Caution:       Address of pmtx Must Be Allocated first.
  */
-void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
+void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfmch)
 {
 	MATRIX mtxt = { 0 };
 	if (NULL != strCopyMatrix(&mtxt, pmtx, size))
@@ -313,7 +315,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
 				n = j * size;
 				pa = &mtxt.arrz.pdata[mtxt.col * m + n];
 				pb = &pmtx->arrz.pdata[mtxt.ln * n + m];
-				if (0 != cbfcmp(pa, pb))
+				if (CBF_CMP_EQUAL != cbfmch(pb, pa))
 					memcpy(pb, pa, size);
 			}
 		}
@@ -348,7 +350,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfcmp)
  */
 bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, size_t sln, size_t scol, size_t size)
 {
-	if (dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col)
+	if (SVASSERT(dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col))
 	{
 		REGISTER size_t i, j, k, l, o, p;
 		const size_t m = sln - dln, n = scol - dcol;
@@ -393,7 +395,7 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           Users could use this function to multiply a number with a matrix like this way:
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
- *                float f = 1.0f; strM1Matrix(&f, pmtx, sizeof(float), mul);
+ *                float f = 2.0f; strM1Matrix(pmtx, &f, sizeof(float), mul);
  */
 int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfagb)
 {
@@ -423,7 +425,7 @@ int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfag
  */
 int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 {
-	if (pmtxa->ln == pmtxb->ln && pmtxa->col == pmtxb->col)
+	if (SVASSERT(pmtxa->ln == pmtxb->ln && pmtxa->col == pmtxb->col))
 	{
 		REGISTER size_t i, j;
 		for (i = 0, j = pmtxa->ln * pmtxa->col * size; i < j; i += size)
@@ -462,25 +464,37 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
  * Caution:       Address of ppmtx[0], ppmtx[1] and ppmtx[2] Must Be Allocated first.
  * Tip:           Users could use this function to multiply a matrix with another like this way:
+ *                <test.c>
+ *                #include <string.h>
+ *                #include "svstring.h"
+ *                void Print(P_MATRIX p) {
+ *                    size_t i, j;
+ *                    for (i = 0; i < p->ln; ++i) {
+ *                        for (j = 0; j < p->col; ++j)
+ *                            printf("%0.0f ", *(float *)strGetValueMatrix(NULL, p, i, j, sizeof(float)));
+ *                        printf("\n");
+ *                    }
+ *                }
  *                int add(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
- *                MATRIX mc, ma, mb;
- *                float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, tmp = 0.0f;
- *                float b[] = { 3.0f, 2.0f, 1.0f, 6.0f, 5.0f, 4.0f };
- *                CBF_ALGEBRA alg[2];
- *                P_MATRIX pm[3];
- *                alg[0] = add; alg[1] = mul;
- *                pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
- *                strInitMatrix(&ma, 2, 3, sizeof(float));
- *                strInitMatrix(&mb, 3, 2, sizeof(float));
- *                strInitMatrix(&mc, 2, 2, sizeof(float));
- *                strSetMatrix(&mc, &tmp, sizeof(float));
- *                memcpy(ma.arrz.pdata, a, sizeof a);
- *                memcpy(mb.arrz.pdata, b, sizeof b);
- *                strM3Matrix(pm, &tmp, sizeof(float), alg);
- *                strFreeMatrix(&mc);
- *                strFreeMatrix(&ma);
- *                strFreeMatrix(&mb);
+ *                int main() {
+ *                    MATRIX mc, ma, mb;
+ *                    float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, tmp = 0.0f;
+ *                    float b[] = { 3.0f, 2.0f, 1.0f, 6.0f, 5.0f, 4.0f };
+ *                    CBF_ALGEBRA alg[2]; P_MATRIX pm[3];
+ *                    alg[0] = add; alg[1] = mul;
+ *                    pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
+ *                    strInitMatrix(&ma, 2, 3, sizeof(float));
+ *                    strInitMatrix(&mb, 3, 2, sizeof(float));
+ *                    strInitMatrix(&mc, 2, 2, sizeof(float));
+ *                    strSetMatrix(&mc, &tmp, sizeof(float));
+ *                    memcpy(ma.arrz.pdata, a, sizeof a);
+ *                    memcpy(mb.arrz.pdata, b, sizeof b);
+ *                    strM3Matrix(pm, &tmp, sizeof(float), alg); Print(&mc);
+ *                    strFreeMatrix(&mc); strFreeMatrix(&ma); strFreeMatrix(&mb);
+ *                    return 0;
+ *                }
+ *                Result and explanation:
  *                | 1 2 3 |   | 3 2 |   | 20 26 |
  *                | 4 5 6 | * | 1 6 | = | 47 62 |
  *                            | 5 4 |
@@ -492,7 +506,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  */
 int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
-	if (MAT_COL(_M3M_A) == MAT_LN(_M3M_B))
+	if (SVASSERT(MAT_COL(_M3M_A) == MAT_LN(_M3M_B)))
 	{
 		REGISTER size_t i, j, k, m;
 		REGISTER PUCHAR ptrmc = MAT_DATA(_M3M_C);
@@ -517,9 +531,8 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 				ptrmc += size;
 			}
 		}
-		return CBF_CONTINUE;
 	}
-	return CBF_TERMINATE;
+	return CBF_CONTINUE;
 }
 
 #undef MAT_LN
@@ -552,11 +565,13 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bini, bool bval)
 {
 	stdiv_t dr = stdiv(ln * col, CHAR_BIT); /* ln bit * col bit / CHAR_BIT. */
+	
 	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(UCHART)))
 	{
 		pbm->ln = pbm->col = 0;
 		return NULL;
 	}
+	
 	if (bini)
 		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, sizeof(UCHART) * pbm->arrz.num);
 	
@@ -571,7 +586,7 @@ void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bini, bool bval)
  *       pbm Pointer to a bit matrix you want to fall it into disuse.
  * Return value:  N/A.
  * Caution:       Address of pbm Must Be Allocated first.
- * Tip:           A macro version of this function named strFreeBMap_M is available.
+ * Tip:           This function can be macro inline to use strFreeBMap.
  */
 void strFreeBMap_O(P_BITMAT pbm)
 {
@@ -592,12 +607,13 @@ void strFreeBMap_O(P_BITMAT pbm)
 P_BITMAT strCreateBMap(size_t ln, size_t col, bool bini, bool bval)
 {
 	REGISTER P_BITMAT pbm = (P_BITMAT) malloc(sizeof(BITMAT));
-	if (NULL == pbm)
-		return NULL;
-	if (NULL == strInitBMap(pbm, ln, col, bini, bval))
-	{	/* Allocation failure. */
-		free(pbm);
-		return NULL;
+	if (NULL != pbm)
+	{
+		if (NULL == strInitBMap(pbm, ln, col, bini, bval))
+		{	/* Allocation failure. */
+			free(pbm);
+			pbm = NULL;
+		}
 	}
 	return pbm;
 }
@@ -608,7 +624,7 @@ P_BITMAT strCreateBMap(size_t ln, size_t col, bool bini, bool bval)
  *       pbm Pointer to a bit matrix you want to release.
  * Return value:  N/A.
  * Caution:       Address of pbm Must Be Allocated first.
- * Tip:           A macro version of this function named strDeleteBMap_M is available.
+ * Tip:           This function can be macro inline to use strDeleteBMap.
  */
 void strDeleteBMap_O(P_BITMAT pbm)
 {
@@ -660,11 +676,12 @@ P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
  */
 bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
 {
-	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
-	if (ln >= pbm->ln || col >= pbm->col)
-		return false; /* Over size. */
-	/* Right shift a UCHART block to compare its LSBit with 1. */
-	return 0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0));
+	if (SVASSERT(ln < pbm->ln && col < pbm->col))
+	{	/* Right shift a UCHART block to compare its LSBit with 1. */
+		stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
+		return BOOLIZE(0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0)));
+	}
+	return false; /* Over size. */
 }
 
 /* Function name: strSetBitBMap
@@ -679,21 +696,24 @@ bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
  */
 bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 {
-	REGISTER UCHART t = 0x01;
-	REGISTER size_t i;
-	stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
-	if (ln >= pbm->ln || col >= pbm->col)
-		return false; /* Over size. */
-	/* Left shift t and pile it onto the specific UCHART block. */
-	t <<= (dr.rem ? CHAR_BIT - dr.rem : 0);
-	i = dr.rem ? dr.quot : dr.quot - 1;
-	pbm->arrz.pdata[i] = (UCHART)
-	(
-		bval ?
-		pbm->arrz.pdata[i] | t :
-		pbm->arrz.pdata[i] & (~t)
-	);
-	return true;
+	if (SVASSERT(ln < pbm->ln && col < pbm->col))
+	{
+		REGISTER UCHART t = 0x01;
+		REGISTER size_t i;
+		stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
+		
+		/* Left shift t and pile it onto the specific UCHART block. */
+		t <<= (dr.rem ? CHAR_BIT - dr.rem : 0);
+		i = dr.rem ? dr.quot : dr.quot - 1;
+		pbm->arrz.pdata[i] = (UCHART)
+		(
+			bval ?
+			pbm->arrz.pdata[i] | t :
+			pbm->arrz.pdata[i] & (~t)
+		);
+		return true;
+	}
+	return false; /* Over size. */
 }
 
 /* Functions for sparse matrices are implemented bellow. */
@@ -757,7 +777,7 @@ bool strInitSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col)
 	if (NULL != strInitArrayZ(&pmtx->bita, ln, sizeof(size_t)))
 		memset(pmtx->bita.pdata, 0, sizeof(size_t) * strLevelArrayZ(&pmtx->bita));
 	strInitLinkedListSC(&pmtx->datlst);
-	return (NULL != strInitBMap(&pmtx->bmask, ln, col, true, false));
+	return NULL != strInitBMap(&pmtx->bmask, ln, col, true, false);
 }
 
 /* Function name: strFreeSparseMatrix
@@ -816,9 +836,7 @@ void strDeleteSparseMatrix(P_SPAMAT pmtx)
  */
 P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 {
-	if (pdest == psrc)
-		return pdest;
-	else
+	if (pdest != psrc)
 	{
 		if (strLevelArrayZ(&pdest->bita) != strLevelArrayZ(&psrc->bita))
 			if (NULL == strResizeArrayZ(&pdest->bita, strLevelArrayZ(&psrc->bita), sizeof(size_t)))
@@ -848,8 +866,9 @@ P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 			}
 			return pdest;
 		}
+		return NULL;
 	}
-	return NULL;
+	return pdest;
 }
 
 /* Function name: strCreateCopySparseMatrix
@@ -893,12 +912,10 @@ P_SPAMAT strCreateCopySparseMatrix(P_SPAMAT psrc, size_t size)
  */
 void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col, size_t size)
 {
-	stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
-	if (ln >= pmtx->bmask.ln || col >= pmtx->bmask.col)
-		return NULL; /* Over size. */
-	else
+	if (SVASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
 	{
 		REGISTER size_t i, j, l, m;
+		stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
 		/* Initialize variables. */
 		if (dr.rem)
 		{
@@ -949,14 +966,12 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
  */
 void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval, size_t size)
 {
-	stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
-	if (ln >= pmtx->bmask.ln || col >= pmtx->bmask.col)
-		return NULL; /* Over size. */
-	else
+	if (SVASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
 	{
 		REGISTER size_t i, j, l, m, s = 0;
 		REGISTER P_NODE_S pnode;
 		REGISTER UCHART t, u;
+		stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
 		/* Initialize variables. */
 		if (dr.rem)
 		{
@@ -1042,7 +1057,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
  */
 bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 {
-	if (pdest->ln >= psrc->bmask.ln && pdest->col >= psrc->bmask.col)
+	if (SVASSERT(pdest->ln >= psrc->bmask.ln && pdest->col >= psrc->bmask.col))
 	{
 		REGISTER P_NODE_S pnode = psrc->datlst;
 		REGISTER size_t i, j;

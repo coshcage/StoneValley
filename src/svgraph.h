@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0804261317L00244
+ * File ID:     0901171625S0806260343L00235
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -111,17 +111,8 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svgraph.c. */
-#define grpInitL_M(pgrp_M) do { \
-	treInitBST(pgrp_M); \
-} while (0)
 #define grpVerticesCountL_M(pgrp_M) (setSizeT(pgrp_M))
 /* Macros for adjacent matrix. */
-#define grpFreeM_M(pgrp_M) do { \
-	strFreeMatrix(pgrp_M); \
-} while (0)
-#define grpDeleteM_M(pgrp_M) do { \
-	strDeleteMatrix(pgrp_M); \
-} while (0)
 #define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
 #define grpCreateCopyM_M(psrc_M) (strCreateCopyMatrix((psrc_M), sizeof(size_t)))
 #define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
@@ -129,31 +120,31 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#define grpInitL                      grpInitL_M
+	#define grpInitL                      treInitBST
 	#define grpCreateL                    treCreateBST
 	#define grpVerticesCountL             grpVerticesCountL_M
-	#define grpFreeM                      grpFreeM_M
-	#define grpDeleteM                    grpDeleteM_M
+	#define grpFreeM                      strFreeMatrix
+	#define grpDeleteM                    strDeleteMatrix
 	#define grpCopyM                      grpCopyM_M
 	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#define grpInitL                      grpInitL_M
+	#define grpInitL                      treInitBST
 	#define grpCreateL                    treCreateBST
 	#define grpVerticesCountL             grpVerticesCountL_M
-	#define grpFreeM                      grpFreeM_M
-	#define grpDeleteM                    grpDeleteM_M
+	#define grpFreeM                      strFreeMatrix
+	#define grpDeleteM                    strDeleteMatrix
 	#define grpCopyM                      grpCopyM_M
 	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M
 	#define grpAreAdjacentVerticesM       grpAreAdjacentVerticesM_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#define grpInitL                      grpInitL_M
+	#define grpInitL                      treInitBST
 	#define grpCreateL                    treCreateBST
 	#define grpVerticesCountL             grpVerticesCountL_M
-	#define grpFreeM                      grpFreeM_M
-	#define grpDeleteM                    grpDeleteM_M
+	#define grpFreeM                      strFreeMatrix
+	#define grpDeleteM                    strDeleteMatrix
 	#define grpCopyM                      grpCopyM_M
 	#define grpCreateCopyM                grpCreateCopyM_M
 	#define grpGetDimensionM              grpGetDimensionM_M

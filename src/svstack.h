@@ -2,7 +2,7 @@
  * Name:        svstack.h
  * Description: Stacks interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0318170912X0802262253L00163
+ * File ID:     0318170912X0806260405L00154
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -59,7 +59,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svstack.c. */
-#define stkIsEmptyA_M(pstka_M) (!(pstka_M)->top)
+#define stkIsEmptyA_M(pstka_M) (0 == (pstka_M)->top)
 #define stkIsFullA_M(pstka_M) ((pstka_M)->arr.num == (pstka_M)->top)
 #define stkPushA_M(pstka_M, pitem_M, size_M) do { \
 	if (NULL != (pitem_M)) \
@@ -76,15 +76,6 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 } while (0)
 #define stkLevelA_M(pstka_M) ((pstka_M)->top)
 /* Macros for linked list represented stacks. */
-#define stkInitL_M(pstkl_M) do { \
-	strInitLinkedListSC(pstkl_M); \
-} while (0)
-#define stkFreeL_M(pstkl_M) do { \
-	strFreeLinkedListSC(pstkl_M); \
-} while (0)
-#define stkDeleteL_M(pstkl_M) do { \
-	strDeleteLinkedListSC(pstkl_M); \
-} while (0)
 #define stkIsEmptyL_M(pstkl_M) (!(*pstkl_M))
 #define stkPeepL_M(pitem_M, size_M, pstkl_M) (stkIsEmptyL_M(pstkl_M) ? false : (memcpy(pitem_M, (*pstkl_M)->pdata, size_M), true))
 #define stkLevelL_M(pstkl_M) (strLevelLinkedListSC(*(pstkl_M)))
@@ -100,10 +91,10 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
 	/* Macros for linked list represented stacks. */
-	#define stkInitL    stkInitL_M
-	#define stkFreeL    stkFreeL_M
+	#define stkInitL    strInitLinkedListSC
+	#define stkFreeL    strFreeLinkedListSC
 	#define stkCreateL  strCreateLinkedListSC
-	#define stkDeleteL  stkDeleteL_M
+	#define stkDeleteL  strDeleteLinkedListSC
 	#define stkIsEmptyL stkIsEmptyL_M
 	#define stkPeepL    stkPeepL_M
 	#define stkLevelL   stkLevelL_M
@@ -117,10 +108,10 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
 	/* Macros for linked list represented stacks. */
-	#define stkInitL    stkInitL_M
-	#define stkFreeL    stkFreeL_M
+	#define stkInitL    strInitLinkedListSC
+	#define stkFreeL    strFreeLinkedListSC
 	#define stkCreateL  strCreateLinkedListSC
-	#define stkDeleteL  stkDeleteL_M
+	#define stkDeleteL  strDeleteLinkedListSC
 	#define stkIsEmptyL stkIsEmptyL_M
 	#define stkPeepL    stkPeepL_M
 	#define stkLevelL   stkLevelL_M
@@ -134,10 +125,10 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPeepA    stkPeepA_M
 	#define stkLevelA   stkLevelA_M
 	/* Macros for linked list represented stacks. */
-	#define stkInitL    stkInitL_M
-	#define stkFreeL    stkFreeL_M
+	#define stkInitL    strInitLinkedListSC
+	#define stkFreeL    strFreeLinkedListSC
 	#define stkCreateL  strCreateLinkedListSC
-	#define stkDeleteL  stkDeleteL_M
+	#define stkDeleteL  strDeleteLinkedListSC
 	#define stkIsEmptyL stkIsEmptyL_M
 	#define stkPeepL    stkPeepL_M
 	#define stkLevelL   stkLevelL_M

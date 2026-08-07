@@ -92,9 +92,9 @@ void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
  */
 int svCBFCompareSizeTInteger(const void * px, const void * py)
 {
-	if (*(size_t *)px > *(size_t *)py) return  1;
-	if (*(size_t *)px < *(size_t *)py) return -1;
-	return 0;
+	if (*(size_t *)px > *(size_t *)py) return CBF_CMP_GT;
+	if (*(size_t *)px < *(size_t *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: svCBFComparePtrdiffTInteger
@@ -108,9 +108,9 @@ int svCBFCompareSizeTInteger(const void * px, const void * py)
  */
 int svCBFComparePtrdiffTInteger(const void * px, const void * py)
 {
-	if (*(ptrdiff_t *)px > *(ptrdiff_t *)py) return  1;
-	if (*(ptrdiff_t *)px < *(ptrdiff_t *)py) return -1;
-	return 0;
+	if (*(ptrdiff_t *)px > *(ptrdiff_t *)py) return CBF_CMP_GT;
+	if (*(ptrdiff_t *)px < *(ptrdiff_t *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: svCBFCompareUnsignedInteger
@@ -124,9 +124,9 @@ int svCBFComparePtrdiffTInteger(const void * px, const void * py)
  */
 int svCBFCompareUnsignedInteger(const void * px, const void * py)
 {
-	if (*(unsigned int *)px > *(unsigned int *)py) return  1;
-	if (*(unsigned int *)px < *(unsigned int *)py) return -1;
-	return 0;
+	if (*(unsigned int *)px > *(unsigned int *)py) return CBF_CMP_GT;
+	if (*(unsigned int *)px < *(unsigned int *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: svCBFCompareSignedInteger
@@ -140,9 +140,9 @@ int svCBFCompareUnsignedInteger(const void * px, const void * py)
  */
 int svCBFCompareSignedInteger(const void * px, const void * py)
 {
-	if (*(signed int *)px > *(signed int *)py) return  1;
-	if (*(signed int *)px < *(signed int *)py) return -1;
-	return 0;
+	if (*(signed int *)px > *(signed int *)py) return CBF_CMP_GT;
+	if (*(signed int *)px < *(signed int *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: svCBFCompareUnsignedCharacter
@@ -156,9 +156,9 @@ int svCBFCompareSignedInteger(const void * px, const void * py)
  */
 int svCBFCompareUnsignedCharacter(const void * px, const void * py)
 {
-	if (*(PUCHAR)px > *(PUCHAR)py) return  1;
-	if (*(PUCHAR)px < *(PUCHAR)py) return -1;
-	return 0;
+	if (*(PUCHAR)px > *(PUCHAR)py) return CBF_CMP_GT;
+	if (*(PUCHAR)px < *(PUCHAR)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Function name: svCBFCompareSignedCharacter
@@ -172,9 +172,9 @@ int svCBFCompareUnsignedCharacter(const void * px, const void * py)
  */
 int svCBFCompareSignedCharacter(const void * px, const void * py)
 {
-	if (*(signed char *)px > *(signed char *)py) return  1;
-	if (*(signed char *)px < *(signed char *)py) return -1;
-	return 0;
+	if (*(signed char *)px > *(signed char *)py) return CBF_CMP_GT;
+	if (*(signed char *)px < *(signed char *)py) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
 }
 
 /* Functions for bit streams. */
@@ -361,7 +361,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
-	REGISTER bool r = (0 != (((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata));
+	REGISTER bool r = BOOLIZE(((UCHART) 0x01 << (CHAR_BIT - 1)) & *pbstm->arrz.pdata);
 	REGISTER size_t i, j = strLevelArrayZ(&pbstm->arrz) - 1;
 	for (i = 0; i < j; ++i)
 	{
@@ -451,7 +451,7 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
  */
 bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
-	if (index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc)
+	if (SVASSERT(index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc))
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
 		return BOOLIZE(pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
@@ -758,7 +758,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  */
 void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	if (NULL != pkey && size && NULL != pbase)
+	if (SVASSERT(NULL != pkey && 0 != size && NULL != pbase))
 	{	/* Worth searching. */
 		REGISTER PUCHAR p = (PUCHAR) pbase;
 		REGISTER size_t n = num;

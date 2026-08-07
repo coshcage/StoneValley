@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0805261100L00896
+ * File ID:     0306170948B0806261100L00901
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -70,7 +70,7 @@ P_ARRAY_Z strCreateCharacterStringArrayZ(const char * pstr)
 		if (NULL == strInitCharacterStringArrayZ(parrz, pstr))
 		{	/* Allocation failure. */
 			free(parrz);
-			return NULL;
+			parrz = NULL;
 		}
 	}
 	return parrz;
@@ -120,7 +120,7 @@ ptrdiff_t strIndexOfArrayZ_O(P_ARRAY_Z parrz, const void * pitem, size_t size)
  */
 int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
-	if (strLevelArrayZ(parrz) > 0)
+	if (SVASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i = 0, j = strLevelArrayZ(parrz);
 		REGISTER PUCHAR p;
@@ -217,27 +217,30 @@ void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
  *      parrz Pointer to a sized array.
  *      pitem Pointer to an element as the searching target.
  *       size Size of an element.
+ *     cbfmch Pointer to a function that matches pitem to each elements in array.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  *       brev Input true  to search array in reverse.
  *            Input false to search array in order. That means to search the element from index 0 to the last index of array.
  * Return value:  (*) Index of element + 1. If function returned 0, it should mean pitem could not be found.
  * Caution:       Address of parrz Must Be Allocated first.
  */
-size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, bool brev)
+size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, CBF_COMPARE cbfmch, bool brev)
 {
-	if (strLevelArrayZ(parrz) > 0)
+	if (SVASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR p;
 		if (brev)
 		{
 			for (i = strLevelArrayZ(parrz), p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1); i >= 1; --i, p -= size)
-				if (0 == memcmp(p, pitem, size))
+				if (CBF_CMP_EQUAL == cbfmch(p, pitem))
 					return i;
 		}
 		else
 		{
 			for (i = 0, p = parrz->pdata; i < strLevelArrayZ(parrz); ++i, p += size)
-				if (0 == memcmp(p, pitem, size))
+				if (CBF_CMP_EQUAL == cbfmch(p, pitem))
 					return i + 1;
 		}
 	}
@@ -286,7 +289,7 @@ void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, siz
  */
 void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrink)
 {
-	if (index < strLevelArrayZ(parrz))
+	if (SVASSERT(index < strLevelArrayZ(parrz)))
 	{
 		if (0 != --parrz->num)
 			memmove
@@ -458,7 +461,7 @@ void * strBinarySearchArrayZ_O(P_ARRAY_Z parrz, const void * pkey, size_t size, 
  */
 void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 {
-	if (strLevelArrayZ(parrz) > 1 && size > 0)
+	if (SVASSERT(strLevelArrayZ(parrz) > 1 && size > 0))
 	{
 		REGISTER PUCHAR phead = parrz->pdata;
 		REGISTER PUCHAR ptail = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
@@ -493,7 +496,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bmax, bool brev)
 {
 	REGISTER void * prtn = NULL;
-	if (strLevelArrayZ(parrz) > 0)
+	if (SVASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR p;
@@ -532,14 +535,16 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, 
  *      parrz Pointer to a sized array.
  *      ptemp Pointer to a buffer whose size equals to each size of the element in the array.
  *       size Size of each element in the array.
- *     cbfcmp Pointer to a function that compares any two elements in array.
+ *     cbfmch Pointer to a function that matches ptemp to any element in array.
+ *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
+ *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  *    bshrink Input true to shrink array, otherwise input false.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
  */
-void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bshrink)
+void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfmch, bool bshrink)
 {
 	REGISTER size_t i,  j;
 	REGISTER PUCHAR px, py;
@@ -547,7 +552,7 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
 	{
 		memcpy(ptemp, px, size);
 		for (j = i + 1, py = parrz->pdata + j * size; j < strLevelArrayZ(parrz); ++j, py += size)
-			if (0 == cbfcmp(ptemp, py))
+			if (CBF_CMP_EQUAL == cbfmch(py, ptemp))
 				strRemoveItemArrayZ(parrz, size, j, bshrink), --j, py -= size;
 	}
 }
@@ -570,7 +575,7 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
  */
 bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bnext)
 {
-	if (strLevelArrayZ(parrz) > 1 && size > 0) /* Worth permuting. */
+	if (SVASSERT(strLevelArrayZ(parrz) > 1 && size > 0)) /* Worth permuting. */
 	{	/* ptrl always points the last element. */
 		REGISTER PUCHAR ptrl = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
 		REGISTER PUCHAR ptri, ptrj;
@@ -626,16 +631,16 @@ Lbl_End_Permuting:
  */
 bool strCombineNextArrayZ(P_ARRAY_Z parrzr, P_ARRAY_Z parrzn, size_t size, CBF_COMPARE cbfcmp)
 {	/* Assume that the array that parrzn contains has been assigned and sorted yet. */
-	if (parrzr->num > 0 && parrzr->num < parrzn->num)
+	if (SVASSERT(parrzr->num > 0 && parrzr->num < parrzn->num))
 	{
 		REGISTER size_t i, j = parrzr->num - 1;
 		REGISTER PUCHAR pa = &parrzr->pdata[size * j];
 		REGISTER PUCHAR pt = &parrzn->pdata[size * (parrzn->num - 1)];
 		/* Compare back through parrzn with parrzr to find a position as pa. */
 		for (i = 0; i < j; ++i, pt -= size, pa -= size)
-			if (0 != cbfcmp(pt, pa))
+			if (CBF_CMP_EQUAL != cbfcmp(pt, pa))
 				break;
-		if (0 == cbfcmp(pt, pa))
+		if (CBF_CMP_EQUAL == cbfcmp(pt, pa))
 			goto Lbl_End_Combination; /* Combination reaches at the end. */
 		if (NULL == (pt = (PUCHAR) svBinarySearch(pa, parrzn->pdata, parrzn->num, size, cbfcmp)))
 			goto Lbl_End_Combination; /* An element in parrzr doesn't match any element in parrzn. */
@@ -671,7 +676,7 @@ Lbl_End_Combination:
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrnd)(void))
 {
-	if (strLevelArrayZ(parrz) >= 2) /* It is worth to shuffle the array. */
+	if (SVASSERT(strLevelArrayZ(parrz) >= 2)) /* It is worth to shuffle the array. */
 	{
 		REGISTER size_t i, j;
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
@@ -728,7 +733,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 		/* Process the pattern to generate the longest prefix suffix(lps) array. */
 		while (k < parrptn->num)
 		{
-			if (memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, n), size) == 0)
+			if (CBF_CMP_EQUAL == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, n), size))
 			{
 				lps[k] = ++n;
 				++k;
@@ -749,7 +754,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 
 		while (i < parrtxt->num)
 		{
-			if (0 == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
+			if (CBF_CMP_EQUAL == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 			{
 				++j;
 				++i;
@@ -766,7 +771,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 				lps[j - 1] = j;
 			}
 			
-			else if (i < parrtxt->num && 0 != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
+			else if (i < parrtxt->num && CBF_CMP_EQUAL != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 			{
 				if (0 != j)
 					j = lps[j - 1];
@@ -846,7 +851,7 @@ int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAV
 					 * For example, for "ababab" and i == 1, the value of r remains 0 and z[i] becomes 0.
 					 * For string "aaaaaa" and i = 1, z[i] and r become 5.
 					 */
-					while (r < n && 0 == memcmp(pstr + size * (r - l), pstr + size * r, size))
+					while (r < n && CBF_CMP_EQUAL == memcmp(pstr + size * (r - l), pstr + size * r, size))
 						++r;
 					z[i] = r - l;
 					--r;
@@ -864,7 +869,7 @@ int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAV
 					{
 						/* Start from r and check manually. */
 						l = i;
-						while (r < n && 0 == memcmp(pstr + size * (r - l), pstr + size * r, size))
+						while (r < n && CBF_CMP_EQUAL == memcmp(pstr + size * (r - l), pstr + size * r, size))
 							++r;
 						z[i] = r - l;
 						--r;

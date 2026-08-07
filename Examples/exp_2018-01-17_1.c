@@ -36,6 +36,11 @@ size_t hash(const void * param)
 	return (size_t)*(char *)param;
 }
 
+int cbfmch(const void * px, const void * py)
+{
+	return (int)BOOLIZE(*(char *)px - *(char *)py);
+}
+
 int cbftvs(void * pitem, size_t param)
 {
 	stkPushA((P_STACK_A)param, pitem, sizeof(char));
@@ -73,7 +78,7 @@ int main(void)
 	// Print the source string.
 	printf("     %s\n", pstr);
 	for (i = 0; i < 35; ++i)
-		setInsertH(pseta, hash, pstr + i, sizeof(char));
+		setInsertH(pseta, hash, pstr + i, sizeof(char), cbfmch);
 	// Put the string into set.
 	// Set will absorb similar characters.
 	// So that we can calculate the frequency of each letter in string.

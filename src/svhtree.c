@@ -2,7 +2,7 @@
  * Name:        svhtree.c
  * Description: Heap tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737E0719261500L00268
+ * File ID:     0809171737E0719261650L00269
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -63,10 +63,11 @@ void treFreeHeapA(P_HEAP_A pheap)
 P_HEAP_A treCreateHeapA(size_t num, size_t size)
 {
 	REGISTER P_HEAP_A pheap = (P_HEAP_A) malloc(sizeof(HEAP_A));
-	if (NULL == pheap)
-		return NULL;
-	pheap->irear = 0;
-	strInitArrayZ(&pheap->hdarr, num, size);
+	if (NULL != pheap)
+	{
+		pheap->irear = 0;
+		strInitArrayZ(&pheap->hdarr, num, size);
+	}
 	return pheap;
 }
 
@@ -93,7 +94,7 @@ void treDeleteHeapA(P_HEAP_A pheap)
  */
 bool treIsEmptyHeapA_O(P_HEAP_A pheap)
 {
-	return !pheap->irear;
+	return 0 == pheap->irear;
 }
 
 /* Function name: treIsFullHeapA_O
@@ -143,7 +144,7 @@ void treMakeEmptyHeapA_O(P_HEAP_A pheap)
  */
 bool treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bmax)
 {
-	if (! treIsFullHeapA(pheap))
+	if (SVASSERT(! treIsFullHeapA(pheap)))
 	{
 		REGISTER PUCHAR px, py;
 		REGISTER size_t i, j;
@@ -255,7 +256,7 @@ bool treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
  */
 bool trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 {
-	if (! treIsEmptyHeapA(pheap))
+	if (SVASSERT(! treIsEmptyHeapA(pheap)))
 	{
 		if (NULL != pitem)
 		{

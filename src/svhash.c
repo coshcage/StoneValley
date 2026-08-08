@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0806261646L00634
+ * File ID:     0901171615K0808260000L00631
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -253,10 +253,7 @@ bool hshRemoveC(P_HSHTBL_C pht, CBF_HASH cbfhsh, const void * pkey, CBF_COMPARE 
 	REGISTER P_NODE_S pnode = hshSearchC(pht, cbfhsh, pkey, cbfmch);
 	if (NULL == pphead || NULL == *pphead || NULL == pnode)
 		return false;
-	if (*pphead == pnode) /* Put next item into bucket. */
-		*pphead = pnode->pnode;
-	pnode = strRemoveItemLinkedListSC(*pphead, pnode);
-	strDeleteNodeS(pnode);
+	strDeleteNodeS(strRemoveItemLinkedListSC(pphead, pnode));
 	return true;
 }
 

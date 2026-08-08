@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0806261810L02800
+ * File ID:     0905171125M0808260600L02595
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -90,6 +90,13 @@ typedef enum _en_FFMFLParamID {
 	_EGID_11_MAX
 } _FFMFLParamID;
 
+/* Vertex color structure used by Welsh Powell algorithm. */
+typedef struct _st_VTXCOLOR {
+	size_t vid;    /* Vertex ID. */
+	size_t degree; /* In degree plus out degree. */
+	size_t color;  /* Color starts from 1. 0 means not colored. */
+} _VTXCOLOR, * _P_VTXCOLOR;
+
 /* A macro to fetch an item of parameter array. */
 #define _FFMFL_PARAM_ARRAY(_idx) ((_idx)[(size_t *)param])
 
@@ -138,6 +145,10 @@ int        _grpCBFFFMFLFindInEdges            (void * pitem, size_t param);
 int        _grpCBFFFMFLFindMinimalTheta       (void * pitem, size_t param);
 int        _grpCBFFFMFLReduceFlowValue        (void * pitem, size_t param);
 int        _grpCBFFFMFLFillMinCutSet          (void * pitem, size_t param);
+/* Function declarations for Welsh Powell coloring algorithm. */
+int        _grpCBFWPCVLCompareDegrees         (const void * px, const void * py);
+int        _grpCBFWPCVLFillArray              (void * pitem, size_t param);
+int        _grpCBFWPCVLTestConnection         (void * pitem, size_t param);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFCompareInteger
@@ -307,14 +318,7 @@ int _grpCBFIndegreeVertex(void * pitem, size_t param)
 int _grpCBFRemoveEdgePuppet(void * pitem, size_t param)
 {
 	if (*(size_t *)param == ((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid)
-	{
-		P_VERTEX_L pvtx = (P_VERTEX_L)1[(size_t *)param];
-		if ((P_NODE_S)pitem == pvtx->adjlist) /* pitem is the header. */
-			pvtx->adjlist = ((P_NODE_S)pitem)->pnode;
-		else
-			strRemoveItemLinkedListSC(pvtx->adjlist, (P_NODE_S)pitem);
-		strDeleteNodeS((P_NODE_S)pitem);
-	}
+		strDeleteNodeS(strRemoveItemLinkedListSC(&((P_VERTEX_L)1[(size_t *)param])->adjlist, (P_NODE_S)pitem));
 	return CBF_CONTINUE;
 }
 
@@ -698,13 +702,7 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 		if (CBF_TERMINATE != strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return false; /* Edge doesn't exist. */
 		else
-		{
-			if (pvtx->adjlist != fd.pnode) /* fd is not a header. */
-				strRemoveItemLinkedListSC(pvtx->adjlist, fd.pnode);
-			else
-				pvtx->adjlist = fd.pnode->pnode;
-			strDeleteNodeS(fd.pnode);
-		}
+			strDeleteNodeS(strRemoveItemLinkedListSC(&pvtx->adjlist, fd.pnode));
 	}
 	return true;
 }
@@ -2226,6 +2224,167 @@ Lbl_FFMFL_Failed:
 	setFreeT(&vb);
 	queFreeL(&qlbl);
 	return false;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFWPCVLCompareDegrees
+ * Description:   This function is used to sort _VTXCOLOR structures in a queue list by descending order of degrees.
+ * Parameters:
+ *         px Pointer to a _VTXCOLOR structure.
+ *         py Pointer to another _VTXCOLOR structure.
+ * Return value:  The same value as callback comparison function returns.
+ *                Please refer to the prototype of CBF_COMPARE at svdef.h.
+ * Tip:           We intentionally swapped px with py to descend order.
+ */
+int _grpCBFWPCVLCompareDegrees(const void * px, const void * py)
+{	/* Sort linked list in descending order. */
+	if (((_P_VTXCOLOR)py)->degree > ((_P_VTXCOLOR)px)->degree) return CBF_CMP_GT;
+	if (((_P_VTXCOLOR)py)->degree < ((_P_VTXCOLOR)px)->degree) return CBF_CMP_LT;
+	return CBF_CMP_EQUAL;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFWPCVLFillArray
+ * Description:   This function is used fill a single list queue and the returning array of VTXREC to store colors.
+ * Parameters:
+ *      pitem Pointer to each VERTEX_L structure in a graph.
+ *      param Pointer to a size_t[4] array named a of which
+ *            a[0] stores a pointer to a queue,
+ *            a[1] stores a pointer to an array.
+ *            a[2] stores a pointer to a graph,
+ *            a[3] stores the next index of the array.
+ * Return value:  If there were a failure during inserting the queue, function would return value CBF_TERMINATE,
+ *                otherwise function would return value CBF_CONTINUE.
+ */
+int _grpCBFWPCVLFillArray(void * pitem, size_t param)
+{
+	REGISTER P_QUEUE_L   pqcolor = (P_QUEUE_L)0[(size_t *)param];
+	REGISTER P_ARRAY_Z   parr    = (P_ARRAY_Z)1[(size_t *)param];
+	REGISTER P_GRAPH_L   pgrp    = (P_GRAPH_L)2[(size_t *)param];
+	REGISTER P_VTXREC    prec    = (P_VTXREC)strLocateItemArrayZ(parr, sizeof(VTXREC), 3[(size_t *)param]);
+	_VTXCOLOR co;
+	
+	prec->vid   = co.vid   = ((P_VERTEX_L)pitem)->vid;
+	prec->color = co.color = 0;
+	co.degree = grpIndegreeVertexL(pgrp, co.vid) + grpOutdegreeVertexL(pgrp, co.vid);
+	
+	if (! queInsertL(pqcolor, &co, sizeof(_VTXCOLOR)))
+		return CBF_TERMINATE;
+	
+	++3[(size_t *)param];
+	return CBF_CONTINUE;
+}
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _grpCBFWPCVLTestConnection
+ * Description:   This function is used to test connections between a vertex and a set of vertices in a graph.
+ * Parameters:
+ *      pitem Pointer to each BSTNODE structure in a set and pdata of this structure points to a size_t integer.
+ *      param Pointer to a size_t[2] array named a of which
+ *            a[0] stores a pointer to a graph,
+ *            a[1] stores the vertex ID to be tested.
+ * Return value:  If there were a connection between the vertex and the vertex from a set of vertices,
+ *                function would return value CBF_TERMINATE, otherwise function would return value CBF_CONTINUE.
+ */
+int _grpCBFWPCVLTestConnection(void * pitem, size_t param)
+{
+	REGISTER size_t vid = *(size_t *)P2P_BSTNODE(pitem)->knot.pdata;
+	
+	if (grpAreAdjacentVerticesL((P_GRAPH_L)0[(size_t *)param], vid, 1[(size_t *)param], false, 0))
+		return CBF_TERMINATE;
+	
+	if (grpAreAdjacentVerticesL((P_GRAPH_L)0[(size_t *)param], 1[(size_t *)param], vid, false, 0))
+		return CBF_TERMINATE;
+	
+	return CBF_CONTINUE;
+}
+
+/* Function name: grpWelshPowellColorL
+ * Description:   Color vertices of an unweighted graph by Welsh Powell algorithm.
+ * Parameter:
+ *      pgrp Pointer to an adjacent list graph.
+ * Return value:  Pointer to a sized array which contains each vertex and its color.
+ *                Each element in this array is a VTXREC structure.
+ *                Color is a size_t integer that starts from 1. 0 indicates not colored.
+ *                If this function returned NULL, it would indicate a coloring failure.
+ * Caution:       Address of pgrp Must Be Allocated and Initialized first.
+ * Tip:           This algorithm cannot return the exactly minimal chromatic number of any graphs.
+ *                Welsh Powell algorithm gives you a rather possible color scheme of a graph.
+ */
+P_ARRAY_Z grpWelshPowellColorL(P_GRAPH_L pgrp)
+{
+	P_ARRAY_Z parr = strCreateArrayZ(grpVerticesCountL(pgrp), sizeof(VTXREC));
+	if (NULL != parr)
+	{
+		REGISTER P_NODE_S pnode, pnext;
+		QUEUE_L qcolor;
+		_VTXCOLOR co;
+		size_t color = 1;
+		size_t a[4];
+		
+		queInitL(&qcolor);
+		
+		a[0] = (size_t)&qcolor;
+		a[1] = (size_t)parr;
+		a[2] = (size_t)pgrp;
+		a[3] = 0;
+		if (CBF_TERMINATE == grpTraverseVerticesL(pgrp, _grpCBFWPCVLFillArray, (size_t)a, ETM_INORDER))
+		{
+			strDeleteArrayZ(parr);
+			parr = NULL;
+			goto Lbl_End;
+		}
+		
+		qcolor.pfront = (P_NODE_S) strMergeSortLinkedListSDC(qcolor.pfront, false, ENT_SINGLE, _grpCBFWPCVLCompareDegrees);
+		qcolor.prear  = strLocateLastItemSC(qcolor.pfront);
+		
+		while (! queIsEmptyL(&qcolor))
+		{
+			SET_T set;
+			
+			setInitT(&set);
+			
+			/* Enqueue the one with maximum degree in the entire queue. */
+			queRemoveL(&co, sizeof(_VTXCOLOR), &qcolor);
+			
+			/* Insert a vertex from the queue to a set. */
+			set = _setInsertBST(set, &co.vid, sizeof(size_t), _grpCBFCompareInteger);
+			
+			/* Color the current vertex in returning array. */
+			((P_VTXREC)strBinarySearchArrayZ(parr, &co.vid, sizeof(VTXREC), _grpCBFCompareInteger))->color = color;
+			
+			/* Traverse the color queue. */
+			for (pnode = qcolor.pfront; NULL != pnode;)
+			{
+				a[3] = ((_P_VTXCOLOR)pnode->pdata)->vid;
+				pnext = pnode->pnode;
+				
+				if (CBF_CONTINUE == setTraverseTDispatch(&set, _grpCBFWPCVLTestConnection, (size_t)(a + 2), treMorrisTraverseBYIn))
+				{
+					pnext = pnode->pnode;
+					
+					/* Treat the tail of queue correctly to preserve queue. */
+					if (qcolor.prear == pnode)
+						qcolor.prear = strLocatePreviousItemSC(qcolor.pfront, pnode);
+					
+					/* Dequeue. */
+					strDeleteNodeS(strRemoveItemLinkedListSC(&qcolor.pfront, pnode));
+					
+					/* Color the current vertex in returning array. */
+					((P_VTXREC)strBinarySearchArrayZ(parr, &a[3], sizeof(VTXREC), _grpCBFCompareInteger))->color = color;
+					
+					/* Insert the colored vertex into the set of a same color vertices. */
+					set = _setInsertBST(set, &a[3], sizeof(size_t), _grpCBFCompareInteger);
+				}
+				pnode = pnext;
+			}
+			++color;
+			setFreeT(&set);
+		}
+		queFreeL(&qcolor);
+	}
+Lbl_End:
+	return parr;
 }
 
 /* Code section for adjacent matrix representation of graphs. */

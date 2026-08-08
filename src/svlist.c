@@ -2,7 +2,7 @@
  * Name:        svlist.c
  * Description: Linked lists.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948C0806261816L01542
+ * File ID:     0306170948C0808260000L01552
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -521,13 +521,12 @@ P_NODE_S strLocateItemSC_N(P_NODE_S pnode, size_t incmtl)
 /* Function name: strInsertItemLinkedListSC
  * Description:   Insert an item into a linked list.
  * Parameters:
- *       list Pointer to the first NODE_S element of a linked list.
- *      pdest Pointer to the node you want to operate with.
+ *      plist Pointer to a single linked list.
+ *      pdest Pointer to the node in plist pointed list that you want to operate with.
  *      pnode Pointer to a single link node that you want to insert.
- *     bafter Input true to insert pnode after pdest.
+ *     bafter Input true  to insert pnode after  pdest.
  *            Input false to insert pnode before pdest.
- * Return value:  The same pointer as pnode will be returned if function works successfully.
- *                If function returned NULL, it should indicate an insertion failure.
+ * Return value:  N/A.
  * Tip:           No dead cycles for circular linked lists.
  *                Here is an example to load two plasmids:
  *                <test.c>
@@ -548,66 +547,72 @@ P_NODE_S strLocateItemSC_N(P_NODE_S pnode, size_t incmtl)
  *                    c = '4'; q->pnode = strCreateNodeS(&c, sizeof c); q = q->pnode;
  *                    c = '5'; q->pnode = strCreateNodeS(&c, sizeof c); q = q->pnode;
  *                    q->pnode = g; // Make a circle for g. g is 2 3 4 5.
- *                    DISUSE(strInsertItemLinkedListSC(h, d, g, false));
+ *                    strInsertItemLinkedListSC(&h, d, g, false);
  *                    strTraverseLinkedListSC_N(h, NULL, print, 0); // Print 1 2 3 4 5 6 7.
  *                    printf("\n"); strFreeLinkedListSC(&h); return 0;
  *                }
  */
-P_NODE_S strInsertItemLinkedListSC(LIST_S list, P_NODE_S pdest, P_NODE_S pnode, bool bafter)
+void strInsertItemLinkedListSC(P_LIST_S plist, P_NODE_S pdest, P_NODE_S pnode, bool bafter)
 {
-	if (SVASSERT(NULL != pdest && NULL != pnode))
+	if (NULL != pdest && NULL != pnode)
 	{
 		if (bafter)
 		{	/* Locate tail in pnode headed linked list. */
 			REGISTER P_NODE_S plast = strLocateLastItemSC(pnode);
 			plast->pnode = pdest->pnode;
-			return pdest->pnode = pnode;
+			pdest->pnode = pnode;
 		}
-		else /* Previous. */
+		else if (NULL != plist)
 		{
-			REGISTER P_NODE_S pr = strLocatePreviousItemSC(list, pdest);
+			REGISTER P_NODE_S pr = strLocatePreviousItemSC(*plist, pdest);
 			if (NULL != pr)
-				return strInsertItemLinkedListSC(list, pr, pnode, true);
+				strInsertItemLinkedListSC(NULL, pr, pnode, true);
 			else
 			{
-				pnode = strLocateLastItemSC(pnode);
-				return strInsertItemLinkedListSC(NULL, pnode, pdest, true);
+				*plist = pnode;
+				strInsertItemLinkedListSC(NULL, strLocateLastItemSC(pnode), pdest, true);
 			}
 		}
 	}
-	return NULL;
 }
 
 /* Function name: strRemoveItemLinkedListSC
  * Description:   Remove an item from a linked list.
  * Parameters:
- *       list Pointer to the first NODE_S element of a linked list.
- *      pnode Pointer to a single-pointer node you want to remove.
+ *      plist Pointer to a single linked list.
+ *      pnode Pointer to a single-pointer node you want to remove in the list.
  * Return value:  The same pointer as pnode.
- * Caution:       You may need to alter the header node when list equals pnode.
+ * Caution:       pnode must be in plist pointed list, otherwise the header of plist pointed list will be altered wrongly.
  * Tip:           No dead cycles for circular linked lists.
  *                Function will not release the address of pnode.
- *                Use strFreeNodeS(strRemoveItemLinkedListSC(list, pnode)); to free a removed node.
+ *                Use strFreeNodeS(strRemoveItemLinkedListSC(plist, pnode)); to free a removed node.
+ *                Or use strDeleteNodeS(strRemoveItemLinkedListSC(plist, pnode)); when pnode was dynamically allocated.
  */
-P_NODE_S strRemoveItemLinkedListSC(LIST_S list, P_NODE_S pnode)
+P_NODE_S strRemoveItemLinkedListSC(P_LIST_S plist, P_NODE_S pnode)
 {
-	P_NODE_S prev = strLocatePreviousItemSC(list, pnode);
-	P_NODE_S pnxt = pnode->pnode;
-	if (NULL != prev)
-		prev->pnode = pnxt;
-	pnode->pnode = NULL;
-	return pnode;
+	if (SVASSERT(NULL != plist && NULL != *plist))
+	{
+		REGISTER P_NODE_S prev = strLocatePreviousItemSC(*plist, pnode);
+		
+		if (NULL != prev)
+			prev->pnode = pnode->pnode;
+		else
+			*plist = pnode->pnode;
+		
+		return pnode;
+	}
+	return NULL;
 }
 
 /* Function name: strReverseLinkedListSC
  * Description:   Reverse a circular single pointer linked list.
  * Parameter:
  *     phead Pointer to the first node of the circular single linked list.
- * Return value:  Pointer to the new header of the circular single linked list.
+ * Return value:  Pointer to the new header that is the original tail of the circular single linked list.
  * Tip:           This function can not reverse a single linked list of which
  *                A->B->C->B.
  */
-P_NODE_S strReverseLinkedListSC(LIST_S phead)
+P_NODE_S strReverseLinkedListSC(P_NODE_S phead)
 {
 	REGISTER P_NODE_S prev = NULL;
 	REGISTER P_NODE_S pcur = phead;
@@ -1207,10 +1212,12 @@ P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 /* Function name: strRemoveItemLinkedListDC
  * Description:   Remove an item from a doubly pointer linked list.
  * Parameter:
- *     pnode Pointer to a double link node you want to remove.
+ *     pnode Pointer to a doubly linked node in the list you want to remove on.
  * Return value:  The same pointer as pnode.
+ * Caution:       If pnode is the header of the linked list you removed, alter the header to a new node by your own.
+ *                A new header can be NULL, or can be the previous node by pnode or the next node by pnode. Decide it on you own.
  * Tip:           No dead cycles for circular linked lists.
- *                Function will not release the address of pnode rather than put two pointers in pnode into value NULL.
+ *                Function will not release the address of pnode rather than put two directive pointers in pnode into value NULL.
  *                Use strFreeNodeD(strRemoveItemLinkedListDC(pnode)); to free a removed node.
  *                Use strDeleteNodeD(strRemoveItemLinkedListDC(pnode)); to delete an allocated node from list.
  */
@@ -1218,9 +1225,12 @@ P_NODE_D strRemoveItemLinkedListDC(P_NODE_D pnode)
 {
 	if (NULL != pnode->ppnode[PREV])
 		pnode->ppnode[PREV]->ppnode[NEXT] = pnode->ppnode[NEXT];
+	
 	if (NULL != pnode->ppnode[NEXT])
 		pnode->ppnode[NEXT]->ppnode[PREV] = pnode->ppnode[PREV];
+	
 	pnode->ppnode[PREV] = pnode->ppnode[NEXT] = NULL;
+	
 	return pnode;
 }
 

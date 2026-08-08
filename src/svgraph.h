@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S0806260343L00235
+ * File ID:     0901171625S0808260600L00237
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -50,6 +50,7 @@ typedef struct st_VTXREC {
 		ptrdiff_t udistance; /* Unsigned distance. */
 		size_t    sdistance; /* Signed distance. */
 		size_t    uindegree; /* Unsigned indegree. */
+		size_t    color;     /* Vertex color. */
 		bool      flag;      /* Boolean flag. */
 	};
 } VTXREC, * P_VTXREC;
@@ -87,6 +88,7 @@ P_LIST_D   grpDijkstraShortestPathL (P_GRAPH_L pgrp,    size_t       vids,    si
 bool       grpMinimalSpanningTreeL  (P_GRAPH_L pgrp);
 P_ARRAY_Z  grpTopologicalSortL      (P_GRAPH_L pgrp);
 bool       grpFordFulkersonMaxFlowL (P_SET_T * ppsmcut, P_GRAPH_L    pgrpc,   P_GRAPH_L    pgrpf,  size_t       vids,    size_t vide);
+P_ARRAY_Z  grpWelshPowellColorL     (P_GRAPH_L pgrp);
 /* Functions for adjacent matrix representation of graphs. */
 void *     grpInitM                 (P_GRAPH_M pgrp,    size_t       vtxc);
 void       grpFreeM_O               (P_GRAPH_M pgrp);

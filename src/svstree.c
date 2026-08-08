@@ -2266,7 +2266,7 @@ void treInitTrieA_O(P_TRIE_A ptrie)
  */
 void _treFreeTrieNode(P_TRIE_A ptrie, size_t size)
 {
-	if (SVASSERT(NULL != *ptrie))
+	if (NULL != *ptrie)
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR pdat = (*ptrie)->pdata;

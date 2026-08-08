@@ -268,7 +268,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CBF_TRAVERSE cbftvs2, CBF_TRAVERSE cbftvs3, size_t param)
 {
-	if (SVASSERT(NULL != pnode))
+	if (NULL != pnode)
 	{
 		REGISTER size_t i;
 		if (NULL != cbftvs1 && CBF_CONTINUE != cbftvs1(pnode, param))

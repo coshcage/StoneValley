@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0806261721L01074
+ * File ID:     0213191430N0808260000L01071
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -1001,10 +1001,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
 					return memcpy(pnode->pdata, pval, size); /* Fetch item's data and alter it. */
 				else
 				{
-					if (pmtx->datlst == pnode) /* pnode is the header of data list. */
-						pmtx->datlst = pnode->pnode;
-					else
-						strDeleteNodeS(strRemoveItemLinkedListSC(pmtx->datlst, pnode));
+					strDeleteNodeS(strRemoveItemLinkedListSC(&pmtx->datlst, pnode));
 					/* Update the Fenwick tree. */
 					_strBITAdd(l + 1, -1, &pmtx->bita);
 					/* Clear bit mask. */

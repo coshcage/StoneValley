@@ -84,7 +84,7 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
  */
 void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
 {
-	if (SVASSERT(strLevelArrayZ(parrz) > 0))
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		if (sizeof(UCHART) == size) /* size is one for byte, call memset directly. */
 			memset(parrz->pdata, (int)*(PUCHAR)pval, size * sizeof(UCHART) * strLevelArrayZ(parrz));
@@ -184,7 +184,7 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
  */
 void strFreeArrayZ_O(P_ARRAY_Z parrz)
 {
-	if (SVASSERT(NULL != parrz->pdata)) /* Circumvent freeing a NULL pointer. */
+	if (SV_ASSERT(NULL != parrz->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(parrz->pdata);
 		parrz->pdata = NULL;
@@ -220,7 +220,7 @@ void strDeleteArrayZ_O(P_ARRAY_Z parrz)
 void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
 {
 	pnode->pnode = NULL;
-	if (SVASSERT(0 != size))
+	if (SV_ASSERT(0 != size))
 	{
 		if (NULL == (pnode->pdata = (PUCHAR) malloc(size)))
 			return NULL; /* Buffer creation failed. */
@@ -266,7 +266,7 @@ P_NODE_S strCreateNodeS(const void * pval, size_t size)
  */
 void strFreeNodeS_O(P_NODE_S pnode)
 {
-	if (SVASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
+	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(pnode->pdata);
 		pnode->pdata = NULL;
@@ -301,7 +301,7 @@ void strDeleteNodeS_O(P_NODE_S pnode)
 void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
 {
 	pnode->ppnode[PREV] = pnode->ppnode[NEXT] = NULL;
-	if (SVASSERT(0 != size))
+	if (SV_ASSERT(0 != size))
 	{
 		if (NULL == (pnode->pdata = (PUCHAR) malloc(size)))
 			return NULL; /* Buffer creation failed. */
@@ -347,7 +347,7 @@ P_NODE_D strCreateNodeD(const void * pval, size_t size)
  */
 void strFreeNodeD_O(P_NODE_D pnode)
 {
-	if (SVASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
+	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
 	{
 		free(pnode->pdata);
 		pnode->pdata = NULL;

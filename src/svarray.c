@@ -120,7 +120,7 @@ ptrdiff_t strIndexOfArrayZ_O(P_ARRAY_Z parrz, const void * pitem, size_t size)
  */
 int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
-	if (SVASSERT(strLevelArrayZ(parrz) > 0))
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i = 0, j = strLevelArrayZ(parrz);
 		REGISTER PUCHAR p;
@@ -227,7 +227,7 @@ void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
  */
 size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, CBF_COMPARE cbfmch, bool brev)
 {
-	if (SVASSERT(strLevelArrayZ(parrz) > 0))
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR p;
@@ -289,7 +289,7 @@ void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, siz
  */
 void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrink)
 {
-	if (SVASSERT(index < strLevelArrayZ(parrz)))
+	if (SV_ASSERT(index < strLevelArrayZ(parrz)))
 	{
 		if (0 != --parrz->num)
 			memmove
@@ -461,7 +461,7 @@ void * strBinarySearchArrayZ_O(P_ARRAY_Z parrz, const void * pkey, size_t size, 
  */
 void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 {
-	if (SVASSERT(strLevelArrayZ(parrz) > 1 && size > 0))
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 1 && size > 0))
 	{
 		REGISTER PUCHAR phead = parrz->pdata;
 		REGISTER PUCHAR ptail = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
@@ -496,7 +496,7 @@ void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
 void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bmax, bool brev)
 {
 	REGISTER void * prtn = NULL;
-	if (SVASSERT(strLevelArrayZ(parrz) > 0))
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 0))
 	{
 		REGISTER size_t i;
 		REGISTER PUCHAR p;
@@ -575,7 +575,7 @@ void strUniqueArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbf
  */
 bool strPermuteArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bnext)
 {
-	if (SVASSERT(strLevelArrayZ(parrz) > 1 && size > 0)) /* Worth permuting. */
+	if (SV_ASSERT(strLevelArrayZ(parrz) > 1 && size > 0)) /* Worth permuting. */
 	{	/* ptrl always points the last element. */
 		REGISTER PUCHAR ptrl = parrz->pdata + (strLevelArrayZ(parrz) - 1) * size;
 		REGISTER PUCHAR ptri, ptrj;
@@ -631,7 +631,7 @@ Lbl_End_Permuting:
  */
 bool strCombineNextArrayZ(P_ARRAY_Z parrzr, P_ARRAY_Z parrzn, size_t size, CBF_COMPARE cbfcmp)
 {	/* Assume that the array that parrzn contains has been assigned and sorted yet. */
-	if (SVASSERT(parrzr->num > 0 && parrzr->num < parrzn->num))
+	if (SV_ASSERT(parrzr->num > 0 && parrzr->num < parrzn->num))
 	{
 		REGISTER size_t i, j = parrzr->num - 1;
 		REGISTER PUCHAR pa = &parrzr->pdata[size * j];
@@ -676,7 +676,7 @@ Lbl_End_Combination:
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrnd)(void))
 {
-	if (SVASSERT(strLevelArrayZ(parrz) >= 2)) /* It is worth to shuffle the array. */
+	if (SV_ASSERT(strLevelArrayZ(parrz) >= 2)) /* It is worth to shuffle the array. */
 	{
 		REGISTER size_t i, j;
 		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)

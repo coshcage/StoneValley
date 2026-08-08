@@ -144,7 +144,7 @@ void treMakeEmptyHeapA_O(P_HEAP_A pheap)
  */
 bool treInsertHeapA(P_HEAP_A pheap, const void * pitem, void * ptemp, size_t size, CBF_COMPARE cbfcmp, bool bmax)
 {
-	if (SVASSERT(! treIsFullHeapA(pheap)))
+	if (SV_ASSERT(! treIsFullHeapA(pheap)))
 	{
 		REGISTER PUCHAR px, py;
 		REGISTER size_t i, j;
@@ -256,7 +256,7 @@ bool treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
  */
 bool trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 {
-	if (SVASSERT(! treIsEmptyHeapA(pheap)))
+	if (SV_ASSERT(! treIsEmptyHeapA(pheap)))
 	{
 		if (NULL != pitem)
 		{

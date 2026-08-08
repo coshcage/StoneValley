@@ -463,7 +463,7 @@ P_NODE_S strLocateLastItemSC(LIST_S list)
 {
 	REGISTER P_NODE_S plast = list;
 	REGISTER P_NODE_S ptemp = NULL;
-	if (SVASSERT(NULL != list))
+	if (SV_ASSERT(NULL != list))
 	{
 		while ((NULL != plast->pnode) && (list != plast->pnode))
 		{
@@ -590,7 +590,7 @@ void strInsertItemLinkedListSC(P_LIST_S plist, P_NODE_S pdest, P_NODE_S pnode, b
  */
 P_NODE_S strRemoveItemLinkedListSC(P_LIST_S plist, P_NODE_S pnode)
 {
-	if (SVASSERT(NULL != plist && NULL != *plist))
+	if (SV_ASSERT(NULL != plist && NULL != *plist))
 	{
 		REGISTER P_NODE_S prev = strLocatePreviousItemSC(*plist, pnode);
 		
@@ -650,7 +650,7 @@ P_NODE_S strReverseLinkedListSC(P_NODE_S phead)
  */
 void strSwapNodeItemLinkedListSC(P_NODE_S pnodex, P_NODE_S pnodey)
 {
-	if (SVASSERT(pnodex->pdata != pnodey->pdata))
+	if (SV_ASSERT(pnodex->pdata != pnodey->pdata))
 	{	/* Worth swapping. */
 		PUCHAR temp;
 		svSwap(&pnodex->pdata, &temp, &pnodey->pdata, sizeof(PUCHAR));
@@ -1171,7 +1171,7 @@ P_NODE_D strLocateItemDC_N(P_NODE_D pnode, ptrdiff_t incmtl)
  */
 P_NODE_D strInsertItemLinkedListDC(P_NODE_D pdest, P_NODE_D pnode, bool bafter)
 {
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{
 		REGISTER P_NODE_D ptemp = NULL;
 		REGISTER P_NODE_D plast = pnode;
@@ -1245,7 +1245,7 @@ P_NODE_D strRemoveItemLinkedListDC(P_NODE_D pnode)
  */
 void strSwapNodeItemLinkedListDC(P_NODE_D pnodex, P_NODE_D pnodey)
 {
-	if (SVASSERT(pnodex->pdata != pnodey->pdata))
+	if (SV_ASSERT(pnodex->pdata != pnodey->pdata))
 	{	/* Worth swapping. */
 		PUCHAR tmp;
 		svSwap(&pnodex->pdata, &tmp, &pnodey->pdata, sizeof(PUCHAR));
@@ -1269,7 +1269,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
 #define _P2P_NODE_D(pnode) ((P_NODE_D) (pnode)) /* Cast a pointer to P_NODE_D. */
 	REGISTER void * plast = pfirst;
 	REGISTER void * ptemp = NULL;
-	if (SVASSERT(NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp)))
+	if (SV_ASSERT(NULL != pfirst && (ENT_SINGLE == ntp || ENT_DOUBLE == ntp)))
 	{
 		while
 		(
@@ -1343,7 +1343,7 @@ void * strIsCircularLinkedListSD(void * pfirst, NodeType ntp, bool brev)
  */
 bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx, void * pbuf, void * pnodey, size_t sizey, NodeType ntpy)
 {
-	if (SVASSERT(pnodex != pnodey))
+	if (SV_ASSERT(pnodex != pnodey))
 	{
 		REGISTER PUCHAR * ppdatax, * ppdatay;
 		
@@ -1413,7 +1413,7 @@ bool strSwapNodeContentLinkedListSDC(void * pnodex, size_t sizex, NodeType ntpx,
  */
 void * strMergeSortLinkedListSDC(void * list, bool bcircular, NodeType ntp, CBF_COMPARE cbfcmp)
 {
-	if (SVASSERT(NULL != list))
+	if (SV_ASSERT(NULL != list))
 	{
 		REGISTER void * p, * q, * e, * tail, * oldhead;
 		REGISTER size_t insize, nmerges, psize, qsize;

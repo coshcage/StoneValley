@@ -134,7 +134,7 @@ size_t queUsageAC_O(P_QUEUE_A pqueac)
  */
 void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
 {
-	if (SVASSERT(NULL != pitem)) /* Avoid copying from address NULL. */
+	if (NULL != pitem) /* Avoid copying from address NULL. */
 		memcpy(pqueac->arr.pdata + pqueac->rear * size, pitem, size);
 	pqueac->rear = (pqueac->rear + 1) % pqueac->arr.num;
 }
@@ -152,7 +152,7 @@ void queInsertAC_O(P_QUEUE_A pqueac, const void * pitem, size_t size)
  */
 void queRemoveAC_O(void * pitem, size_t size, P_QUEUE_A pqueac)
 {
-	if (SVASSERT(NULL != pitem))
+	if (NULL != pitem) /* Avoid accessing NULL address. */
 		memcpy(pitem, pqueac->arr.pdata + pqueac->front * size, size);
 	pqueac->front = (pqueac->front + 1) % pqueac->arr.num;
 }

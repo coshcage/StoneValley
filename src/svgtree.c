@@ -195,7 +195,7 @@ Lbl_Allocation_Failure:
  */
 int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{
 		QUEUE_L q;
 		queInitL(&q);
@@ -269,7 +269,7 @@ size_t treHeightG(P_TNODE_G pnode)
 void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
 	pnode->pdata = (PUCHAR) malloc(size);
-	if (SVASSERT(NULL != pitem && NULL != pnode->pdata))
+	if (SV_ASSERT(NULL != pitem && NULL != pnode->pdata))
 		memcpy(pnode->pdata, pitem, size);
 	return pnode->pdata;
 }
@@ -488,7 +488,7 @@ P_TNODE_G treSwapNodesG(P_TNODE_G prootx, P_TNODE_G pnodex, P_TNODE_G prooty, P_
 {
 	if
 	(
-		SVASSERT
+		SV_ASSERT
 		(
 			NULL != prootx && NULL != prooty &&
 			NULL != pnodex && NULL != pnodey &&

@@ -111,15 +111,19 @@ stdiv_t stdiv(size_t numerator, size_t denominator);
 /* Library optimization switch. */
 #define SV_OPTIMIZATION (SV_OPT_DISABLED)
 
+/* Use this macro to print a concise diagnostic information for assertion. */
+#define DBG_PRINT fprintf(stderr, "Assertion failure at line %d in file %s!\n", __LINE__, __FILE__)
+
 /* Library optimal switch for assertion. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#define SVASSERT(expr) true
+	#define SV_ASSERT(expr) true
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#define SVASSERT(expr) true
+	#define SV_ASSERT(expr) true
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#define SVASSERT(expr) true
+	#define SV_ASSERT(expr) true
 #else /* Optimization has been disabled. */
-	#define SVASSERT(expr) BOOLIZE(expr)
+	#include <stdio.h> /* Use fprintf and stderr for assertion. */
+	#define SV_ASSERT(expr) (BOOLIZE(expr) ? true : (DISUSE(DBG_PRINT), false))
 #endif
 
 #endif

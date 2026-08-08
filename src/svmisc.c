@@ -451,7 +451,7 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
  */
 bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
-	if (SVASSERT(index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc))
+	if (SV_ASSERT(index < (pbstm->arrz.num - 1) * CHAR_BIT + pbstm->bilc))
 	{
 		REGISTER stdiv_t st = stdiv(index, CHAR_BIT);
 		return BOOLIZE(pbstm->arrz.pdata[st.quot] & ((UCHART)0x01 << (CHAR_BIT - st.rem - 1)));
@@ -758,7 +758,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  */
 void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	if (SVASSERT(NULL != pkey && 0 != size && NULL != pbase))
+	if (SV_ASSERT(NULL != pkey && 0 != size && NULL != pbase))
 	{	/* Worth searching. */
 		REGISTER PUCHAR p = (PUCHAR) pbase;
 		REGISTER size_t n = num;

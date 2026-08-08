@@ -172,7 +172,7 @@ int treTraverseBYPost(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  */
 int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{
 		QUEUE_L q;
 		queInitL(&q);
@@ -314,7 +314,7 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CB
 int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
 	int r = CBF_CONTINUE;
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{
 		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
@@ -367,7 +367,7 @@ int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 int treMorrisTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
 	int r = CBF_CONTINUE;
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{
 		REGISTER P_TNODE_BY pcur   = pnode;
 		REGISTER P_TNODE_BY pright = NULL;
@@ -467,7 +467,7 @@ P_TNODE_BY treInsertLeftBY(P_TNODE_BY pnode, const void * pitem, size_t size)
 	if (NULL == pnode) /* If and only if pnode is a root node. */
 		return strCreateNodeD(pitem, size);
 	
-	if (SVASSERT(NULL == pnode->ppnode[LEFT]))
+	if (SV_ASSERT(NULL == pnode->ppnode[LEFT]))
 		return pnode->ppnode[LEFT] = strCreateNodeD(pitem, size);
 	
 	return NULL;
@@ -487,7 +487,7 @@ P_TNODE_BY treInsertRightBY(P_TNODE_BY pnode, const void * pitem, size_t size)
 	if (NULL == pnode) /* If and only if pnode is a root node. */
 		return strCreateNodeD(pitem, size);
 	
-	if (SVASSERT(NULL == pnode->ppnode[RIGHT]))
+	if (SV_ASSERT(NULL == pnode->ppnode[RIGHT]))
 		return pnode->ppnode[RIGHT] = strCreateNodeD(pitem, size);
 	
 	return NULL;
@@ -619,7 +619,7 @@ P_TNODE_BY treSearchDataBY(P_TNODE_BY pnode, const void * pitem, CBF_COMPARE cbf
  */
 bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
 {
-	if (SVASSERT(proot != pnode && NULL != proot && NULL != pnode))
+	if (SV_ASSERT(proot != pnode && NULL != proot && NULL != pnode))
 	{
 		FindingInfo fi;
 		
@@ -648,7 +648,7 @@ bool treDescendantBY(P_TNODE_BY proot, P_TNODE_BY pnode)
  */
 P_TNODE_BY treMergeNodesBY(P_TNODE_BY proot, const void * pitem, size_t size, P_TNODE_BY pleft, P_TNODE_BY pright)
 {	/* Return NULL while pright is a sub tree of pleft or pleft is a sub tree of pright. */
-	if (SVASSERT(! treDescendantBY(pleft, pright) && ! treDescendantBY(pright, pleft)))
+	if (SV_ASSERT(! treDescendantBY(pleft, pright) && ! treDescendantBY(pright, pleft)))
 	{
 		if (NULL == proot && NULL == (proot = strCreateNodeD(pitem, size)))
 			return NULL;
@@ -677,7 +677,7 @@ P_TNODE_BY treSwapNodesBY(P_TNODE_BY proot1, P_TNODE_BY pnode1, P_TNODE_BY proot
 {
 	if
 	(
-		SVASSERT
+		SV_ASSERT
 		(
 			NULL != proot1 && NULL != proot2  &&
 			NULL != pnode1 && NULL != pnode2  &&

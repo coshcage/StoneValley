@@ -257,7 +257,7 @@ void strSetMatrix_O(P_MATRIX pmtx, const void * pval, size_t size)
  */
 void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 {
-	if (SVASSERT(ln < pmtx->ln && col < pmtx->col && 0 != size))
+	if (SV_ASSERT(ln < pmtx->ln && col < pmtx->col && 0 != size))
 	{
 		REGISTER void * ptr = &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
 		if (NULL != pval)
@@ -281,7 +281,7 @@ void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size
  */
 void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, size_t size)
 {
-	if (SVASSERT(ln < pmtx->ln && col < pmtx->col && NULL != pval && 0 != size))
+	if (SV_ASSERT(ln < pmtx->ln && col < pmtx->col && NULL != pval && 0 != size))
 		return memcpy(&pmtx->arrz.pdata[(ln * pmtx->col + col) * size], pval, size);
 	return NULL;
 }
@@ -350,7 +350,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfmch)
  */
 bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, size_t sln, size_t scol, size_t size)
 {
-	if (SVASSERT(dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col))
+	if (SV_ASSERT(dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col))
 	{
 		REGISTER size_t i, j, k, l, o, p;
 		const size_t m = sln - dln, n = scol - dcol;
@@ -425,7 +425,7 @@ int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfag
  */
 int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 {
-	if (SVASSERT(pmtxa->ln == pmtxb->ln && pmtxa->col == pmtxb->col))
+	if (SV_ASSERT(pmtxa->ln == pmtxb->ln && pmtxa->col == pmtxb->col))
 	{
 		REGISTER size_t i, j;
 		for (i = 0, j = pmtxa->ln * pmtxa->col * size; i < j; i += size)
@@ -506,7 +506,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  */
 int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
-	if (SVASSERT(MAT_COL(_M3M_A) == MAT_LN(_M3M_B)))
+	if (SV_ASSERT(MAT_COL(_M3M_A) == MAT_LN(_M3M_B)))
 	{
 		REGISTER size_t i, j, k, m;
 		REGISTER PUCHAR ptrmc = MAT_DATA(_M3M_C);
@@ -676,7 +676,7 @@ P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
  */
 bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
 {
-	if (SVASSERT(ln < pbm->ln && col < pbm->col))
+	if (SV_ASSERT(ln < pbm->ln && col < pbm->col))
 	{	/* Right shift a UCHART block to compare its LSBit with 1. */
 		stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
 		return BOOLIZE(0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0)));
@@ -696,7 +696,7 @@ bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
  */
 bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 {
-	if (SVASSERT(ln < pbm->ln && col < pbm->col))
+	if (SV_ASSERT(ln < pbm->ln && col < pbm->col))
 	{
 		REGISTER UCHART t = 0x01;
 		REGISTER size_t i;
@@ -912,7 +912,7 @@ P_SPAMAT strCreateCopySparseMatrix(P_SPAMAT psrc, size_t size)
  */
 void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col, size_t size)
 {
-	if (SVASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
+	if (SV_ASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
 	{
 		REGISTER size_t i, j, l, m;
 		stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, CHAR_BIT);
@@ -966,7 +966,7 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
  */
 void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval, size_t size)
 {
-	if (SVASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
+	if (SV_ASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
 	{
 		REGISTER size_t i, j, l, m, s = 0;
 		REGISTER P_NODE_S pnode;
@@ -1054,7 +1054,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, void * pval
  */
 bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 {
-	if (SVASSERT(pdest->ln >= psrc->bmask.ln && pdest->col >= psrc->bmask.col))
+	if (SV_ASSERT(pdest->ln >= psrc->bmask.ln && pdest->col >= psrc->bmask.col))
 	{
 		REGISTER P_NODE_S pnode = psrc->datlst;
 		REGISTER size_t i, j;

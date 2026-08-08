@@ -249,7 +249,7 @@ int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
 P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
 {
 	REGISTER P_ARRAY_Z otbl = NULL;
-	if (SVASSERT(NULL != s && 0 != n))
+	if (SV_ASSERT(NULL != s && 0 != n))
 	{
 		REGISTER P_ARRAY_Z stbl = _treHFMCreateSymbolTable(s, n);
 		if (NULL != stbl)
@@ -316,7 +316,7 @@ P_ARRAY_Z treCreateHuffmanTable(const PUCHAR s, const size_t n)
  */
 P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const PUCHAR s, const size_t n)
 {
-	if (SVASSERT(NULL != s && 0 != n && NULL != ptable))
+	if (SV_ASSERT(NULL != s && 0 != n && NULL != ptable))
 	{	/* Both buffer and it's length are not empty. */
 		REGISTER P_BITSTREAM pbstm = strCreateBitStream();
 		REGISTER P_ARRAY_Z   pltbl = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
@@ -428,7 +428,7 @@ Lbl_Building_Failed:
  */
 P_BITSTREAM treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 {
-	if (SVASSERT(NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0))
+	if (SV_ASSERT(NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0))
 	{
 		P_BITSTREAM pbout = strCreateBitStream();
 		if (NULL != pbout)

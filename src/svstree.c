@@ -1784,7 +1784,7 @@ bool treInsertBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPAR
  */
 bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], const size_t num)
 {
-	if (SVASSERT(num > 0))
+	if (SV_ASSERT(num > 0))
 	{
 		REGISTER size_t i;
 		_P_BPT_INFO     pti;
@@ -1839,7 +1839,7 @@ bool _treMakeKeyChainBPT(P_QUEUE_L pquel, P_BPTNODE * pprev, PUCHAR * ppkeys[], 
  */
 bool treBulkLoadBPT(P_BPT pbpt, const size_t degree, PUCHAR pkeys[], size_t num)
 {
-	if (SVASSERT(num > 0 && degree > 2))
+	if (SV_ASSERT(num > 0 && degree > 2))
 	{
 		QUEUE_L q1, q2;
 		REGISTER size_t i;
@@ -2217,7 +2217,7 @@ bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	REGISTER P_BPTNODE pnode = *pbpt;
-	if (SVASSERT(NULL != pnode))
+	if (SV_ASSERT(NULL != pnode))
 	{	/* Remove key when tree is not empty. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		return _treBPTRemovePuppet(pbpt, pnode, degree >> 1, pkey, cbfcmp);
@@ -2346,7 +2346,7 @@ void treDeleteTrieA_O(P_TRIE_A ptrie, size_t size)
  */
 size_t * treSearchTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
-	if (SVASSERT(0 != num && 0 != size))
+	if (SV_ASSERT(0 != num && 0 != size))
 	{
 		REGISTER PUCHAR pbase = (PUCHAR) pstr;
 		while (NULL != *ptrie && 0 != num)

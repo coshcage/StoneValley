@@ -296,7 +296,7 @@ int _hshCBFCopyCPuppet(void * pitem, size_t param)
  */
 bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 {
-	if (SVASSERT(NULL != pdest))
+	if (SV_ASSERT(NULL != pdest))
 	{
 		size_t a[3];
 		

@@ -463,7 +463,7 @@ void grpDeleteL(P_GRAPH_L pgrp)
  *      pgrp Pointer to a graph.
  * Return value:  Number of vertices.
  * Caution:       Address of pgrp Must Be Allocated first.
- * Tip:           A macro version of this function named grpVerticesCountL_M is available.
+ * Tip:           This function can be macro inline to use grpVerticesCountL.
  */
 size_t grpVerticesCountL_O(P_GRAPH_L pgrp)
 {
@@ -997,7 +997,7 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 	REGISTER P_VTXREC pvru = (P_VTXREC)strBinarySearchArrayZ(parrd, &u, sizeof(VTXREC), _grpCBFCompareInteger);
 	REGISTER P_VTXREC pvrv = (P_VTXREC)strBinarySearchArrayZ(parrd, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 	
-	if (SVASSERT(NULL != pvru && NULL != pvrv))
+	if (SV_ASSERT(NULL != pvru && NULL != pvrv))
 	{
 		if (pvrv->sdistance > pvru->sdistance + ((P_EDGE)pitem)->sweight)
 		{
@@ -2506,7 +2506,7 @@ size_t grpGetDimensionM_O(P_GRAPH_M pgrp)
  */
 bool grpResizeM(P_GRAPH_M pgrp, size_t vtxc)
 {
-	if (SVASSERT(0 != vtxc && pgrp->ln == pgrp->col))
+	if (SV_ASSERT(0 != vtxc && pgrp->ln == pgrp->col))
 	{
 		REGISTER size_t ov = grpGetDimensionM(pgrp);
 
@@ -2686,7 +2686,7 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
  */
 int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (SVASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col))
+	if (SV_ASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col))
 	{
 		size_t j;
 		STACK_A stk;
@@ -2746,7 +2746,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  */
 int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
-	if (SVASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col)) /* The adjacent matrix is valid. */
+	if (SV_ASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col)) /* The adjacent matrix is valid. */
 	{
 		size_t i;
 		QUEUE_A q;

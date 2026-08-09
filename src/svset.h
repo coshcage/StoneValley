@@ -89,7 +89,7 @@ P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t    
 int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     TvsMtd              tm);
 int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     CBF_TRAVERSE_BYTREE cbftvsbyt);
 /* Function declarations for both hash set and tree set. */
-P_SET_H  setCreateHFromT        (P_SET_T ptset,  size_t       size,   size_t       buckets,   CBF_HASH     cbfhsh,         CBF_COMPARE cbfmch);
+P_SET_H  setCreateHFromT        (P_SET_T ptset,  size_t       size,   size_t       buckets,   CBF_HASH            cbfhsh,  CBF_COMPARE cbfmch);
 P_SET_T  setCreateTFromH        (P_SET_H phset,  size_t       size,   CBF_COMPARE  cbfcmp);
 
 /* Macros for function inline to accelerate execution speed. */

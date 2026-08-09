@@ -77,7 +77,7 @@ void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
 }
 
 /* Embed some callbacks for convenience hereinafter.
- * However, use-wise convenience may kill running efficiency without inline them.
+ * However, usage-wise convenience may kill running efficiency without inline them.
  * Use them as you need by making up your own mind.
  */
 
@@ -396,7 +396,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 {
 	REGISTER size_t j;
-	PUCHAR pt;
+	REGISTER PUCHAR pt;
 	if (++pbstm->bilc > CHAR_BIT)
 	{	/* Need to reallocate. */
 		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(UCHART)))
@@ -678,7 +678,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 	REGISTER PUCHAR px = (PUCHAR)pbase, py, p;
 	REGISTER size_t l, r;
 
-	PUCHAR ptemp = NULL;
+	REGISTER PUCHAR ptemp = NULL;
 	UCHART tmpbuf[BUFSIZ];
 	ptemp = size <= BUFSIZ ? tmpbuf : (PUCHAR) malloc(size);
 
@@ -738,6 +738,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 
 	if (tmpbuf != ptemp)
 		free(ptemp);
+	
 	return pbase;
 }
 

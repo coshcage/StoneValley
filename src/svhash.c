@@ -2,7 +2,7 @@
  * Name:        svhash.c
  * Description: Hash tables.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171615K0808260000L00631
+ * File ID:     0901171615K0809260546L00631
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -273,8 +273,8 @@ int _hshCBFCopyCPuppet(void * pitem, size_t param)
 {
 	return hshInsertC
 	(
-		(P_HSHTBL_C) 0[(size_t *)param],
-		(CBF_HASH)   1[(size_t *)param],
+		(P_HSHTBL_C)0[(size_t *)param],
+		(CBF_HASH)  1[(size_t *)param],
 		pitem,
 		2[(size_t *)param]
 	)
@@ -303,7 +303,7 @@ bool hshCopyC(P_HSHTBL_C pdest, CBF_HASH cbfhsh, P_HSHTBL_C psrc, size_t size)
 		a[0] = (size_t)pdest;
 		a[1] = (size_t)cbfhsh;
 		a[2] = size;
-		return CBF_CONTINUE != hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a) ? false : true;
+		return CBF_CONTINUE == hshTraverseC(psrc, _hshCBFCopyCPuppet, (size_t)a);
 	}
 	return false;
 }
@@ -605,7 +605,7 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 	a[1] = (size_t)cbfhsh1;
 	a[2] = (size_t)cbfhsh2;
 	a[3] = ALIGN_SIZET(size); /* We Must Align size before we transfer it into a[3]. */
-	return CBF_CONTINUE != hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a) ? false : true;
+	return CBF_CONTINUE == hshTraverseA(psrc, size, _hshCBFCopyOPuppet, (size_t)a);
 }
 
 #undef _FLAG

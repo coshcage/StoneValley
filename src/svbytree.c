@@ -576,7 +576,7 @@ P_TNODE_BY treGetParentNodeBY(P_TNODE_BY proot, P_TNODE_BY pchild)
 }
 
 /* Function name: treSearchDataBY
- * Description:   Search for the specific data in a binary tree.
+ * Description:   Search through a whole binary tree for the specific data.
  * Parameters:
  *      pnode Pointer to the first node that you want to start your searching procedure in a binary tree.
  *      pitem Pointer to the data you want to search.

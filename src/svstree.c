@@ -2,7 +2,7 @@
  * Name:        svstree.c
  * Description: Search trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737I0806261800L02543
+ * File ID:     0809171737I0809260645L02544
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -249,8 +249,8 @@ P_BSTNODE treBSTFindData_N(P_BSTNODE proot, const void * pitem, CBF_COMPARE cbfc
 /* AA-tree implementation is achieved in the following section. */
 
 /* Function declarations for AA-trees. */
-P_BSTNODE _treBSTSkewAA (P_BSTNODE pnode);
-P_BSTNODE _treBSTSplitAA(P_BSTNODE pnode);
+P_BSTNODE _treBSTSkewAA  (P_BSTNODE pnode);
+P_BSTNODE _treBSTSplitAA (P_BSTNODE pnode);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treBSTSkewAA
@@ -727,14 +727,15 @@ void * treInitRBTNode(P_RBTNODE pnode, const void * pitem, size_t size, RBTColor
 	return treInitBSTNode(&pnode->bstn, pitem, size, color);
 }
 
-/* Function name: treFreeRBTNode
+/* Function name: treFreeRBTNode_O
  * Description:   Retract a node which is allocated by function treInitRBTNode.
  * Parameter:
  *     pnode Pointer to the node you want to release.
  * Return value:  N/A.
  * Caution:       Address of pnode Must Be Allocated first.
+ * Tip:           A macro version of this function named treFreeRBTNode_M is available.
  */
-void treFreeRBTNode(P_RBTNODE pnode)
+void treFreeRBTNode_O(P_RBTNODE pnode)
 {
 	treFreeBSTNode(&pnode->bstn);
 }
@@ -841,7 +842,7 @@ P_RBT treCreateRBT(void)
  * Caution:       Address of prbt Must Be Allocated first.
  * Tip:           A macro version of this function named treDeleteRBT_M is available.
  */
-void treDeleteRBT(P_RBT prbt)
+void treDeleteRBT_O(P_RBT prbt)
 {
 	treFreeRBT(prbt);
 	free(prbt);
@@ -860,7 +861,7 @@ void treDeleteRBT(P_RBT prbt)
  */
 P_RBTNODE _treCopyRBTPuppet(P_RBTNODE pnode, P_RBTNODE proot, size_t size)
 {
-	REGISTER P_RBTNODE pp; /* Whose daddy is pp? Oh my! */
+	REGISTER P_RBTNODE pp; /* Whose daddy is pp? Oh my bad! */
 	if (NULL == pnode)
 		return NULL;
 	if (NULL != (pp = treCreateRBTNode(pnode->bstn.knot.pdata, size, _NODE_COLOR(pnode, const RBTColor), proot)))
@@ -2217,7 +2218,7 @@ bool _treBPTRemovePuppet(P_BPT pbpt, P_BPTNODE pnode, const size_t hdeg, const v
 bool treRemoveBPT(P_BPT pbpt, const size_t degree, const void * pkey, CBF_COMPARE cbfcmp)
 {
 	REGISTER P_BPTNODE pnode = *pbpt;
-	if (SV_ASSERT(NULL != pnode))
+	if (NULL != pnode)
 	{	/* Remove key when tree is not empty. */
 		pnode = _treLocateKeyInLeafBPT(pbpt, pkey, cbfcmp);
 		return _treBPTRemovePuppet(pbpt, pnode, degree >> 1, pkey, cbfcmp);

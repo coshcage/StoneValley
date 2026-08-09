@@ -208,7 +208,7 @@ P_ARRAY_Z strCreateCopyArrayZ(P_ARRAY_Z psrc, size_t size)
  */
 void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
 {
-	return index < strLevelArrayZ(parrz) ? parrz->pdata + index * size : NULL;
+	return SV_ASSERT(index < strLevelArrayZ(parrz)) ? &parrz->pdata[index * size] : NULL;
 }
 
 /* Function name: strLinearSearchArrayZ

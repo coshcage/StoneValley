@@ -57,7 +57,7 @@ typedef struct _st_SPTREC {
 typedef struct _st_EDGEREC {
 	size_t weight;  /* Weight value of this edge. */
 	size_t vids[2]; /* This edge connects vids[0] to vids[1]. */
-	bool   flag;    /* Values flag true or false to determine whether this edge is valid or not. */
+	bool   flag;    /* Value flag true or false to determine whether this edge is valid or not. */
 } _EDGEREC, * _P_EDGEREC;
 
 /* Label structure for max flow algorithm. */
@@ -94,7 +94,7 @@ typedef enum _en_FFMFLParamID {
 typedef struct _st_VTXCOLOR {
 	size_t vid;    /* Vertex ID. */
 	size_t degree; /* In degree plus out degree. */
-	size_t color;  /* Color starts from 1. 0 means not colored. */
+	size_t color;  /* Color starts from 1. 0 means not colored yet. */
 } _VTXCOLOR, * _P_VTXCOLOR;
 
 /* A macro to fetch an item of parameter array. */
@@ -2258,10 +2258,10 @@ int _grpCBFWPCVLCompareDegrees(const void * px, const void * py)
  */
 int _grpCBFWPCVLFillArray(void * pitem, size_t param)
 {
-	REGISTER P_QUEUE_L   pqcolor = (P_QUEUE_L)0[(size_t *)param];
-	REGISTER P_ARRAY_Z   parr    = (P_ARRAY_Z)1[(size_t *)param];
-	REGISTER P_GRAPH_L   pgrp    = (P_GRAPH_L)2[(size_t *)param];
-	REGISTER P_VTXREC    prec    = (P_VTXREC)strLocateItemArrayZ(parr, sizeof(VTXREC), 3[(size_t *)param]);
+	REGISTER P_QUEUE_L pqcolor = (P_QUEUE_L)0[(size_t *)param];
+	REGISTER P_ARRAY_Z parr    = (P_ARRAY_Z)1[(size_t *)param];
+	REGISTER P_GRAPH_L pgrp    = (P_GRAPH_L)2[(size_t *)param];
+	REGISTER P_VTXREC  prec    = (P_VTXREC)strLocateItemArrayZ(parr, sizeof(VTXREC), 3[(size_t *)param]);
 	_VTXCOLOR co;
 	
 	prec->vid   = co.vid   = ((P_VERTEX_L)pitem)->vid;

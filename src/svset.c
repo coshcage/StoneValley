@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0806261500L01167
+ * File ID:     0901171620L0809260610L01160
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -123,22 +123,17 @@ void setDeleteH_O(P_SET_H pset)
 P_SET_H setCreateCopyH(P_SET_H pset, size_t size)
 {
 	REGISTER P_SET_H prtn = setCreateH(strLevelArrayZ(pset));
-	
 	if (NULL != prtn)
 	{
 		REGISTER size_t i;
+		REGISTER P_NODE_S pnode;
 		
 		for (i = 0; i < strLevelArrayZ(pset); ++i)
 		{
-			REGISTER P_NODE_S pnode = *(P_NODE_S *)strLocateItemArrayZ(pset, sizeof(P_NODE_S), i);
-			
-			if (NULL != pnode)
-			{
-				*(P_NODE_S *)strLocateItemArrayZ(prtn, sizeof(P_NODE_S), i) = strCopyLinkedListSC(pnode, size);
-			}
+			pnode = *(P_NODE_S *)strLocateItemArrayZ(pset, sizeof(P_NODE_S), i);
+			*(P_NODE_S *)strLocateItemArrayZ(prtn, sizeof(P_NODE_S), i) = NULL != pnode ? strCopyLinkedListSC(pnode, size) : NULL;
 		}
 	}
-	
 	return prtn;
 }
 
@@ -297,7 +292,6 @@ int _setCBFUnionHPuppet(void * pitem, size_t param)
 	
 	if (NULL == hshSearchC(psetr, cbfhsh, pitem, cbfmch))
 		return hshInsertC(psetr, cbfhsh, pitem, 2[(size_t *)param]) ? CBF_CONTINUE : CBF_TERMINATE;
-	
 	return CBF_CONTINUE;
 }
 
@@ -495,7 +489,7 @@ Lbl_Empty_Set:
  * Return value:  The same value as callback function returns.
  * Caution:       Parameter pset Must Be Allocated first.
  *                The type of pitem of function cbftvs is the type of pointer to the element that you inserted into the set.
- * Tip:           A macro named setTraverseItemH_M is available.
+ * Tip:           This function can be macro inline to use setTraverseItemH.
  */
 int setTraverseItemH_O(P_SET_H pset, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -846,13 +840,12 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
 		BOOLIZE(4[(size_t *)param]) ==
 		(
 			NULL != *(P_SET_T *)3[(size_t *)param] &&
-			NULL == treBSTFindData_X
+			NULL != treBSTFindData_X
 			(
 				**(P_SET_T *)3[(size_t *)param],
 				((P_BSTNODE)pitem)->knot.pdata,
 				(CBF_COMPARE)1[(size_t *)param]
 			)
-			? false : true
 		)
 	)
 	{
@@ -1067,7 +1060,7 @@ int _setCBFCreateHFromTPuppet(void * pitem, size_t param)
 	REGISTER CBF_HASH cbfhsh = (CBF_HASH)2[(size_t *)param];
 	
 	if (NULL != hshSearchC(pset, cbfhsh, pdata, (CBF_COMPARE)3[(size_t *)param]))
-		return CBF_CONTINUE; /* Filter out repetition. */
+		return CBF_CONTINUE; /* Filter out repetitions. */
 	
 	return hshInsertC(pset, cbfhsh, pdata, 1[(size_t *)param]) ? CBF_CONTINUE : CBF_TERMINATE;
 }

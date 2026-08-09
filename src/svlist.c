@@ -330,7 +330,7 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
 			ptmp = pcur;
 		}
 	}
-	if (bClr) /* If list is a circular list, then restore it in the copy. */
+	if (bClr && NULL != pnew) /* If list is a circular list, then restore it in the copy. */
 		pnew->pnode = prtn;
 	return prtn;
 }
@@ -408,11 +408,13 @@ int strCompareLinkedListSC(LIST_S listx, LIST_S listy, CBF_COMPARE cbfcmp)
 P_NODE_S strSearchDataLinkedListSC(LIST_S list, const void * pitem, CBF_COMPARE cbfmch)
 {
 	FindingInfo fi;
+	
 	fi.result = NULL;
 	fi.pitem  = pitem;
 	fi.cbfmch = cbfmch;
 	fi.ntp    = ENT_SINGLE;
 	strTraverseLinkedListSC_X(list, NULL, _strCBFCompareNodeDataSD, (size_t)&fi);
+	
 	return (P_NODE_S)fi.result;
 }
 
@@ -735,7 +737,6 @@ LIST_S strQuickSortLinkedListS(LIST_S phead, CBF_COMPARE cbfcmp)
  */
 int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, size_t param, bool brev)
 {
-	int r = CBF_CONTINUE;
 	if (NULL != list)
 	{
 		if (list != pnil)
@@ -760,7 +761,7 @@ int strTraverseLinkedListDC_R(LIST_D list, P_NODE_D pnil, CBF_TRAVERSE cbftvs, s
 			}
 		}
 	}
-	return r;
+	return CBF_CONTINUE;
 }
 
 /* Function name: strTraverseLinkedListDC_A

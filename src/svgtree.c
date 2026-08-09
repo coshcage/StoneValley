@@ -37,6 +37,7 @@ typedef struct _st_GTreeCopy {
 /* Callback function for generic trees. */
 extern int _strCBFNodesCounter (void * pitem, size_t param);
 int _treCBFGNodeEnqueue        (void * pitem, size_t param);
+int _treCBFMatchTNodeGPointer  (const void * px, const void * py);
 int _treCBFGTreeLocateChild    (void * pitem, size_t param);
 int _treCBFCompareTNodeDataG   (void * pitem, size_t param);
 int _treCBFCopyTreeNodeG       (void * pitem, size_t param);
@@ -122,7 +123,7 @@ int _treCBFGTreeLocateChild(void * pitem, size_t param)
  *                otherwise function would return value CBF_CONTINUE.
  */
 int _treCBFCompareTNodeDataG(void * pitem, size_t param)
-{	/* The type of param is P_FindingInfo. */
+{	/* The real type of param is P_FindingInfo. */
 	if 
 	(
 		CBF_CMP_EQUAL == ((P_FindingInfo)param)->cbfmch
@@ -152,7 +153,7 @@ int _treCBFCopyTreeNodeG(void * pitem, size_t param)
 	size_t tptr;
 	REGISTER size_t i;
 	REGISTER _P_GTreeCopy ptc  = (_P_GTreeCopy)param;
-	REGISTER P_TNODE_G    pcur = (P_TNODE_G)pitem;
+	REGISTER P_TNODE_G    pcur = (P_TNODE_G)   pitem;
 	REGISTER P_TNODE_G    pnew = treCreateTNodeG(pcur->pdata, ptc->size);
 	
 	if (NULL == pnew)
@@ -542,13 +543,13 @@ P_TNODE_G treCopyG(P_TNODE_G proot, size_t size)
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treG2BYConvertPuppet
  * Description:   This function is used to cooperate with function treG2BYConvert to
- *                convert a generic tree into a possible equivalent binary tree.
+ *                convert a generic tree into a possibly equivalent binary tree.
  * Parameters:
  *      ppnil Pointer to pnode of the caller function.
  *      pnode Pointer to a node of the original generic tree.
  *       size Size of data in node.
  *        pql Pointer to a queue.
- * Return value:  Pointer to a TNODE_BY node.
+ * Return value:  Pointer to a TNODE_BY node that represents the root node of a binary tree.
  */
 P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P_QUEUE_L pql)
 {

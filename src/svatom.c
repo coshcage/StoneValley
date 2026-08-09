@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0720261600L00370
+ * File ID:     0306170948A0809260525L00372
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -91,16 +91,16 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
 		else
 		{
 			REGISTER size_t i, j;
-			if (sizeof(size_t) == size)
+			if (sizeof(size_t) != size)
+			{	/* Set the first element in the array from pval. */
+				memcpy(parrz->pdata, pval, size);
+				/* Repeat the previous item in the array but not the item of which pval pointed to fit the memory locality principle. */
+				for (i = strLevelArrayZ(parrz), j = size; i > 1; --i, j += size) memcpy(parrz->pdata + j, parrz->pdata + j - size, size);
+			}
+			else /* Size is sizeof(size_t). */
 			{	/* Optimized loop for size_t. */
 				REGISTER size_t * ps = (size_t *)parrz->pdata;
 				for (i = strLevelArrayZ(parrz), j = *(size_t *)pval; i >= 1; --i) *ps++ = j;
-			}
-			else
-			{	/* Set the first element in the array from pval. */
-				memcpy(parrz->pdata, pval, size);
-				/* Repeat the previous item in the array but not the item which pval pointed to fit the memory locality principle. */
-				for (i = strLevelArrayZ(parrz), j = size; i > 1; --i, j += size) memcpy(parrz->pdata + j, parrz->pdata + j - size, size);
 			}
 		}
 	}
@@ -126,7 +126,8 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 			free(parrz->pdata);
 			parrz->num = 0;
 		}
-		return (void *) (parrz->pdata = NULL);
+		parrz->pdata = NULL;
+		return NULL;
 	}
 	else
 	{
@@ -137,8 +138,9 @@ void * strResizeArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 				return NULL; /* Reallocation failure. Refer to luc0x61@codeberg.net */
 			else
 			{
-				parrz->num = num;
-				return (void *) (parrz->pdata = pnew);
+				parrz->num   = num;
+				parrz->pdata = pnew;
+				return (void *)pnew;
 			}
 		}
 		else
@@ -163,7 +165,7 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
 {
 	if (0 == incl)
 		return parrz->pdata;
-	if (incl > 0)
+	else if (incl > 0)
 		return strResizeArrayZ(parrz, strLevelArrayZ(parrz) + (size_t)incl, size);
 	else
 	{

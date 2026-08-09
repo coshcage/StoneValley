@@ -183,13 +183,13 @@ P_BSTNODE       treBSTInsertAVL        (P_BSTNODE       pnode,   const void * pi
 P_BSTNODE       treBSTRemoveAVL        (P_BSTNODE       pnode,   const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for red black trees. */
 void *          treInitRBTNode         (P_RBTNODE       pnode,   const void * pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
-void            treFreeRBTNode         (P_RBTNODE       pnode);
+void            treFreeRBTNode_O       (P_RBTNODE       pnode);
 P_RBTNODE       treCreateRBTNode       (const void *    pitem,   size_t       size,    RBTColor     color,   P_RBTNODE    parent);
 void            treDeleteRBTNode_O     (P_RBTNODE       pnode);
 void            treInitRBT_O           (P_RBT           prbt);
 void            treFreeRBT             (P_RBT           prbt);
 P_RBT           treCreateRBT           (void);
-void            treDeleteRBT           (P_RBT           prbt);
+void            treDeleteRBT_O         (P_RBT           prbt);
 P_RBTNODE       treCopyRBT             (P_RBTNODE       proot,   size_t       size);
 void            treInsertRBT           (P_RBT           prbt,    const void * pitem,   size_t       size,    CBF_COMPARE  cbfcmp);
 void            treRemoveRBT           (P_RBT           prbt,    const void * pitem,   CBF_COMPARE  cbfcmp);
@@ -255,12 +255,19 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	free(pbst_M); \
 } while (0)
 /* Macros for red black trees. */
+#define treFreeRBTNode_M(pnode_M) do { \
+	treFreeBSTNode(&(pnode_M)->bstn); \
+}
 #define treDeleteRBTNode_M(pnode_M) do { \
-	treFreeRBTNode(pnode_M); \
+	treFreeRBTNode_M(pnode_M); \
 	free(pnode_M); \
 } while (0)
 #define treInitRBT_M(prbt_M) do { \
 	*(prbt_M) = NULL; \
+} while (0)
+#define treDeleteRBT_M(prbt_M) do { \
+	treFreeRBT(prbt_M); \
+	free(prbt_M); \
 } while (0)
 /* Macros for B-plus trees. */
 #define _treInitBPTInfo_M(pbi_M) do { \
@@ -313,8 +320,10 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_M
 	/* Macros for red black trees. */
+	#define treFreeRBTNode       treFreeRBTNode_M
 	#define treDeleteRBTNode     treDeleteRBTNode_O
 	#define treInitRBT           treInitRBT_M
+	#define treDeleteRBT         treDeleteRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_O
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_M
@@ -344,8 +353,10 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_M
 	/* Macros for red black trees. */
+	#define treFreeRBTNode       treFreeRBTNode_M
 	#define treDeleteRBTNode     treDeleteRBTNode_M
 	#define treInitRBT           treInitRBT_M
+	#define treDeleteRBT         treDeleteRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_M
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_M
@@ -374,8 +385,10 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treInitBST           treInitBST_M
 	#define treDeleteBST         treDeleteBST_O
 	/* Macros for red black trees. */
+	#define treFreeRBTNode       treFreeRBTNode_M
 	#define treDeleteRBTNode     treDeleteRBTNode_M
 	#define treInitRBT           treInitRBT_M
+	#define treDeleteRBT         treDeleteRBT_M
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_M
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_O
@@ -404,8 +417,11 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 	#define treInitBST           treInitBST_O
 	#define treDeleteBST         treDeleteBST_O
 	/* Macros for red black trees. */
+	#define treFreeRBTNode       treFreeRBTNode_O
 	#define treDeleteRBTNode     treDeleteRBTNode_O
 	#define treInitRBT           treInitRBT_O
+	#define treDeleteRBT         treDeleteRBT_O
+	
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_O
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_O

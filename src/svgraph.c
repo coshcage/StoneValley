@@ -2773,7 +2773,7 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 				queFreeAC(&q);
 				strFreeBMap(&bmvist);
 				return CBF_TERMINATE;
-			}			
+			}
 			
 			for (i = 0; i < pgrp->ln; ++i)
 			{

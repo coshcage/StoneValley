@@ -1263,7 +1263,7 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	a[0] = vids;
 	a[1] = (size_t)&vb;
 	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a, ETM_INORDER_MORRIS))
-		goto Lbl_Cleanup; /* Allocation failure. Cleanup.*/
+		goto Lbl_Cleanup; /* Allocation failure. Cleanup. */
 
 	rec.vid       = vids;
 	rec.pvid      = vids;

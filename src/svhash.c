@@ -615,7 +615,7 @@ bool hshCopyA(P_HSHTBL_A pdest, CBF_HASH cbfhsh1, CBF_HASH cbfhsh2, P_HSHTBL_A p
 /* Function name: hshCBFHashString
  * Description:   Hash a zero terminated character string.
  * Parameter:
- *      pstr Pointer to a char array.
+ *      pkey Pointer to a char array (char *) and cast into (const void *).
  * Return value:  Hash result.
  * Notice:        This function utilizes DJB2 string hashing to provide users
  *                a function in the hope that it will be useful.

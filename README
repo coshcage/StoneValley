@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 171
 	Limitations ........................................................... 320
 	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 460
+	GNU Free Documentation License ........................................ 468
 
 iv  Scenario
 
@@ -336,6 +336,14 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	Please support the Free Software Foundation (https://www.fsf.org/).
 	Support the Electronic Frontier Foundation  (https://www.eff.org/).
 	
+	A sub table of contents of this appendix is listed here.
+	
+	[Contents]                                                    [Line number]
+	Preamble .............................................................. 333
+	Sub Table of Contents ................................................. 339
+	Technical Information ..................................................347
+	The Story About StoneValley ........................................... 464
+	
 	Technical Information
 
 	The purpose of this article is to give users some kinds of library CULTURAL perspective guidance rather than the data of performance when they are engaging in developing. It is said cultural guidance because the guidance itself is a reference but not a standard to let users to follow. The guidance gives you a possible way to build library up. It is never an ultimate way to write from.
@@ -360,7 +368,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	
 	Initial and create functions in StoneValley both exert heap memories. In a word, they use malloc like functions to allocate heap memory spaces. Free and delete function use function free in the standard C library to release heap memories. StoneValley had to resolve this for its architecture and thus brings users problems. If you manually set an internal pointer of a data structure to a stack memory, you cannot use initial functions or create functions to rewrite the pointer. Neither can you invoke free and delete functions to release the pointer.
 	
-	Two tips for safely manage main memories to users. First, use a create function to allot an entity, after the entity's life cycle, bring a delete function on it. Identically, use a init function to allot memories inside an entity, after the entity's life cycle, use a delete function to deallocate to ensure no leakages could be possible. Second, if you use create functions inside a data structure, before deleting this data structure, traverse it to delete pointers inside of it one by one before you delete this data structure itself by using a delete function on it. It says if a set contains subsets, release subsets before you release the parental set.
+	Two tips for safely manage main memories to users. First, use a create function to allot an entity, after the entity's life cycle, bring a delete function on it. Identically, use an initial function to allot memories inside an entity, after the entity's life cycle, use a delete function to deallocate to ensure no leakages could be possible. Second, if you use create functions inside a data structure, before deleting this data structure, traverse it to delete pointers inside of it one by one before you delete this data structure itself by using a delete function on it. It says if a set contains subsets, release subsets before you release the parental set.
 	
 	In conclusion, you can never free a stack initialized pointer on a heap, vice versa. And you need do life cycle management by yourself on data structure entities.
 
@@ -455,7 +463,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	The Story About StoneValley
 
-	To think about the integration of algorithms might be a valuable job. In 2016, I was considering this topic. And meanwhile, other coding projects urged me to write such a programming library. Yes, I needed a collection of algorithms and useful data structures. When you got well ready for your project, you are almost succeeded. I found all books about algorithms and data structures on my bookshelf and prepared to write StoneValley.
+	To think about the integration of algorithms might be a valuable job. In year 2016, I was considering this topic. And meanwhile, other coding projects urged me to write such a programming library. Yes, I needed a collection of algorithms and useful data structures. When you got well ready for your project, you are almost succeeded. I found all books about algorithms and data structures on my bookshelf and prepared to write StoneValley.
 
 xi
 

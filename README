@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 171
 	Limitations ........................................................... 320
 	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 343
+	GNU Free Documentation License ........................................ 460
 
 iv  Scenario
 
@@ -335,6 +335,123 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	We ought to be liberal to use good codes and safely browse the internet, therefor:
 	Please support the Free Software Foundation (https://www.fsf.org/).
 	Support the Electronic Frontier Foundation  (https://www.eff.org/).
+	
+	Technical Information
+
+	The purpose of this article is to give users some kinds of library CULTURAL perspective guidance rather than the data of performance when they are engaging in developing. It is said cultural guidance because the guidance itself is a reference but not a standard to let users to follow. The guidance gives you a possible way to build library up. It is never an ultimate way to write from.
+
+	1) Macro Guidance
+
+	By categorizing macros, we could see two types of macros, they are macros for representing data and macros for abstract expressions. It is insipid to talk about the first type. Because they are merely another form of literal data. For example, macro SV_LIB_VER is actually a string representing library version. And SV_LIB_VER_VAL converts it into an integer to let uses to calculate. For another example, macro PREV is 1 and NEXT is 0. They direct programs to index two pointers in a double linked list node. While macro LEFT is 0 and RIGHT is 1. They are used to direct programs to index in a binary tree node. As we will know, a double linked list node is a binary tree node with different indexing interpretation. Use these macros as you need and you have to refer to a specific data structure for its macros to their usages.
+
+	The second type of macros varies from usage to formation. We can see a bunch of macros in header files to inline existing functions. Except these macros, macro P2P_TNODE_BY is used to convert pointers. It is an abbreviation form of type casting expression. As we know, macros with arguments allow users to input parameters that are separate by comma. During expansion, parameters are automatically expanding to their respective positions. For instance, of macro #define fun(a_M, b_M) ((a_M)++ + (b_M)), when we use a = fun(a, ++a); in expression will cause severe side effect and compilation issue probably. So just don't repeat one variable in these macros to avoid problems.
+
+	2) Callback Type Summary
+
+	As long as the revolving of developing, callbacks become more and more versatile than from their origins. There are four types of callbacks in total currently. They are traversals, comparisons, hash functions and algebraic functions. A comparison bifurcates to a relation and a match checker. While algebraic functions contains all the ways to do calculations.
+	
+	When using traversals, return a CBF_CONTINUE to continue to traverse the next structure. Returning CBF_TERMINATE in a callback can either cause termination or traversal to end and returning CBF_TERMINATE to the caller. To use this trait, first we need to know whether a caller would be interrupted and we may notify the caller with a CBF_TERMINATE value when we meet something in a data structure that urges us to return. After we returned CBF_TERMINATE, no CBF_CONTINUE value would be effective any more in the remaining traversal procedures. So can we do math calculations. To return CBF_TERMINATE to abort math calculation, to return CBF_CONTINUE to let calculations go by invoking an algebraic function.
+	
+	For comparisons, in a relative comparison case, relations comprise greater than, equal to and less than. Users need to return CBF_CMP_GT, CBF_CMP_EQUAL and CBF_CMP_LT depending on the situation. Sometimes a user needs to return CBF_CMP_GT when px is less than py, CBF_CMP_LT when px is greater than py to make an inverse sort to an array. Since CBF_CMP_EQUAL is 0, it means no difference. Zero is also the integral value of boolean value false in C. So that we can say true means data are different, false means data are equivalent. Note that during a match function, a BOOLIZE expression conversion need to be done to avoid truncating side effects. When truncating effect occurs, different data can cause an equivalent return value. Both relations and match checkers are of CBF_COMPARE type. In practice, relations are usually named cbfcmp while match checkers are named cbfmch.
+
+	3) Memory Allocation
+
+	In this section, we are about to discuss when to allot memory and when to free memory. There are two main types of memories, stack memory and heap memory for a process's memory space. Local variables are usually stored on stacks while function malloc exploits heap memories. To make a funny analogy, stacks expand from heaven to the earth that is a stack increases its address when accumulating and a heap builds from the bottom of the hell toward the earth that is a heap reduces its address when growth. Realities can vary.
+	
+	Initial and create functions in StoneValley both exert heap memories. In a word, they use malloc like functions to allocate heap memory spaces. Free and delete function use function free in the standard C library to release heap memories. StoneValley had to resolve this for its architecture and thus brings users problems. If you manually set an internal pointer of a data structure to a stack memory, you cannot use initial functions or create functions to rewrite the pointer. Neither can you invoke free and delete functions to release the pointer.
+	
+	Two tips for safely manage main memories to users. First, use a create function to allot an entity, after the entity's life cycle, bring a delete function on it. Identically, use a init function to allot memories inside an entity, after the entity's life cycle, use a delete function to deallocate to ensure no leakages could be possible. Second, if you use create functions inside a data structure, before deleting this data structure, traverse it to delete pointers inside of it one by one before you delete this data structure itself by using a delete function on it. It says if a set contains subsets, release subsets before you release the parental set.
+	
+	In conclusion, you can never free a stack initialized pointer on a heap, vice versa. And you need do life cycle management by yourself on data structure entities.
+
+	4) Assertion Usage
+	
+	The crucial idea to use assertions is to make avoidance in loops and recursions. In most cases, assertions are used to test prerequisites when programs enter a sub routine. When library optimizing switch is switched off, assertions are put in charge to detect errors. When library optimizing is switched on, library leaves debug mode, it assumes that prerequisites are all met. But in a loop, such a condition that is usually to be asserted must be guaranteed every time it loops. So do these assertions need to be guaranteed when a program recurs. It is dangerous to turn off checks during loop and recursion since these conditions are used to terminate repetitions. No check means an infinite loop.
+
+	5) Control Flow Manipulation
+	
+	Making codes into spaghetti is a charlatan way. Masters would utilize goto statements as possible as they can. Who says structural programming is the only engineering way? StoneValley does use goto statements with a trade off between spaghetti code and high efficiency. Indeed, sometimes structural programs increase coding complexity that would further incur a white elephant code. Even more, over modularization not only increases the code complexity that makes programmers hard to do maintenance but also brings difficult-to-optimize codes to puff your object files. It is time to consider to use a little bit gotos and do some demodularizations as your code base getting larger and larger. Here are three examples:
+	
+	First, when control flows converge to one way, we need gotos to eliminate unnecessities.
+	
+	int * CreateSumOfThreeOutOfZeros(a, b, c)
+	int a;
+	int b;
+	int c;
+	{
+		int * p = malloc(sizeof(int));
+		if (0 == a)
+		{
+			free(p);
+			return NULL;
+		}
+		if (0 == b)
+		{
+			free(p);
+			return NULL;
+		}
+		if (0 == c)
+		{
+			free(p);
+			return NULL;
+		}
+		*p = a + b + c;
+		return p;
+	}
+	
+	It is better to write:
+	
+	int * CreateSumOfThreeOutOfZeros(a, b, c)
+	int a;
+	int b;
+	int c;
+	{
+		int * p = malloc(sizeof(int));
+		if (0 == a || 0 == b || 0 == c)
+			goto end;
+		
+		*p = a + b + c;
+		return p;
+	end:
+		free(p);
+		return NULL;
+	}
+	
+	Okay, please forget about this following way for the sake of my illustrating purpose, will you?
+	
+	int * CreateSumOfThreeOutOfZeros(int a, int b, int c)
+	{
+		if (0 == a || 0 == b || 0 == c)
+			return NULL;
+		else
+		{
+			int * p = malloc(sizeof(int));
+			*p = a + b + c;
+			return p;
+		}
+	}
+	
+	Second, your flows were intrinsically difficult, consider to use gotos to reduce complexity. In this circumstance, I cannot give you an elegant example for the reason that no examples will cover realities fitfully and the example itself will be difficult to write. To find some occurrences in StoneValley instead is my recommendation.
+	
+	Third, do not over use traversal functions instead of using loops by yourself to traverse. Looping expedient brings quite obvious benefits than using traverse functions. A traversal needs to intake a pointer to parameter of an array of data, although sometimes, such a traversal would be inlined by a compiler. In most cases, once traversal caller met traversal callback, it would expand stacks and branch into that to consume both running time and space.
+	
+	6) Traversal Method
+	
+	To talk about traversals, we should better categorize them by data structure types first. We can roughly classify data structures into linear ones and non linear ones. For non linear ones, we can find binary trees by inheritance complexity, generic trees are trees and graphs beside. Traversals just differ from methods on them.
+	
+	For linear data structures, caution that we must figure out what direction we used to traverse linear structures, specifically, whether we traverse them from tail to head that is reversely or from head to tail orderly. A recursive traversal function can generate a routine either reversely or orderly depending whether it recurs first or calls its callback first. A loop traverse caller needs users to specify a boolean parameter to indicate its direction so that it can traverse linear structures in bidirection too.
+	
+	Trees differ from linear data structures. Especially for binary trees, we can perform pre-order, in-order and post-order on binary trees. We can also exert pre-order and in-order Morris traversals. Since Morris traversals traverse binary trees by manipulating child pointers rather recurring. They run a little bit faster than normal traversals. But the drawback is that we cannot traverse the same binary tree during we Morris traverse it because Morris traversals break tree nodes apart during working so badly that we cannot normally traverse a same tree in Morris traversals. As for generic trees, only level-order traversals can be performed onto.
+
+	Graph theory brings us two methods of traversal. They are breadth first traversal and depth first traversal. Both two types of traversals can be performed on either adjacent list graphs and adjacent matrix graphs.
+	
+	Traversal function callers bear recursions. It means that a tail recursive optimization might be performed by a compiler to optimize them. If you are not sure your compiler will optimize recursions just use a looping one instead.
+	
+	7) Recursion Reduction
+	
+	Recursion brings us issues as troublesome as we were supposed to write it. The first problem is the efficiency. A recursive function would run 2 to 4 times slower than an equivalent non recursive one in practice of course without further optimization. Every time a caller calls itself, function parameters are expanded on the stack. This brings us extra time and space consuming. No need to say after calling itself, a recursive function needs to retract stacks and jumps to the starting position of itself.
+	
+	The solution to address it is to use a loop instead of recursion or use an artificial, user programmed stack to mimic recursive callings. By precisely control how many parameters we need to recur a function adding them on a stack rather than adding all possible parameters on a stack, we can not only increase execution speed but also reduce stack memory spaces as many as possible.
 
 	The Story About StoneValley
 

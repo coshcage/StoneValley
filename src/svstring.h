@@ -165,7 +165,7 @@ void *      strMergeSortedArrayZ           (P_ARRAY_Z    pdest,    P_ARRAY_Z    
 void *      strBinarySearchArrayZ_O        (P_ARRAY_Z    parrz,    const void * pkey,      size_t       size,    CBF_COMPARE  cbfcmp);
 void        strReverseArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size);
 void *      strGetLimitationArrayZ         (P_ARRAY_Z    parrz,    size_t       size,      CBF_COMPARE  cbfcmp,  bool         bmax,   bool        brev);
-void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, bool        bshrink);
+void        strUniqueArrayZ                (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfmch, bool        bshrink);
 bool        strPermuteArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    CBF_COMPARE  cbfcmp, bool        bnext);
 bool        strCombineNextArrayZ           (P_ARRAY_Z    parrzr,   P_ARRAY_Z    parrzn,    size_t       size,    CBF_COMPARE  cbfcmp);
 void        strShuffleArrayZ               (P_ARRAY_Z    parrz,    void *       ptemp,     size_t       size,    size_t     (*nxtrnd)(void));
@@ -238,7 +238,7 @@ void *      strResizeMatrix                (P_MATRIX     pmtx,     size_t       
 void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * pval,    size_t       size);
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
-void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfcmp);
+void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfmch);
 bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t  scol,  size_t   size);
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);

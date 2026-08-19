@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0722260015L00633
+ * File ID:     0608260445A0819260145L00715
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -28,10 +28,11 @@
  * Usages of svaps:
  * $ ./svaps help
  * $ ./svaps version
- * $ ./svaps list 5 str
- * $ ./svaps list strCreate*
+ * $ ./svaps list -n 5 str
+ * $ ./svaps list 'str*' -n 'str*'
+ * $ ./svaps list 'strCreate*'
  * $ ./svaps list strCreateArrayZ strDeleteArrayZ
- *
+ * $ ./svaqs l -fn 'str*' | sort # Sort str leading functions by their file locations.
  */
 %option noyywrap
 
@@ -200,7 +201,38 @@ static int cbfcmpstr(const void * px, const void * py)
 
 %%
 
-#define PRINT_NAMES printf("%zd\t%s\t%s\n", ++0[(size_t *)param], SZCFILE[pfc->filenameindex], pfc->fname)
+enum
+{
+	ENC_NONE,
+	ENC_NAME,
+	ENC_FILE,
+	ENC_COUNT
+};
+
+size_t column_content[3] = { ENC_COUNT, ENC_FILE, ENC_NAME };
+
+char column_buffer[4][BUFSIZ] = { 0 };
+
+#define ASSIGN_COLUMN_BUFFER(ncol) do { \
+	switch (column_content[ncol]) { \
+	case ENC_NONE:  column_buffer[ncol][0] = 0; break; \
+	case ENC_NAME:  sprintf(column_buffer[ncol], "%s\t", pfc->fname); break; \
+	case ENC_FILE:  sprintf(column_buffer[ncol], "%s\t", SZCFILE[pfc->filenameindex]); break; \
+	case ENC_COUNT: sprintf(column_buffer[ncol], "%zd\t", counter); break; \
+	} \
+} while(0)
+
+#define PRINT_NAMES  do { \
+	size_t counter = ++0[(size_t *)param]; \
+	ASSIGN_COLUMN_BUFFER(0); \
+	ASSIGN_COLUMN_BUFFER(1); \
+	ASSIGN_COLUMN_BUFFER(2); \
+	sprintf(column_buffer[3], "%s%s%s", column_buffer[0], column_buffer[1], column_buffer[2]); \
+	if (0 != column_buffer[3][0] && !isspace(column_buffer[3][0])) \
+		printf("%s\n", column_buffer[3]); \
+} while (0)
+
+#define STR_BAD_COMMAND "Bad command: '%s'. Type help to show helpful contents.\n"
 
 extern int svCBFCompareSizeTInteger(const void * px, const void * py);
 
@@ -260,12 +292,13 @@ static int cbftvsListAllRelevant(void * pitem, size_t param)
 
 static void PrintHelp(void)
 {
-	printf("list: List relevant functions by a name.\n\tUsage: list [all|*|name|name*|number name]\n\tExamples:\n\tlist all\n\tlist *\n\tlist str*\n\tlist strCreateArrayZ\n\tlist 5 str\n\tNotice:\n\tNumber equals to an editorial distance to the following name.\n");
-	printf("apropos: List relevant functions by keywords.\n\tUsage: apropos [key1 key2 ... keyn]\n\tExample:\n\tapropos create arrayz\n");
-	printf("version: Show StoneValley library version.\n");
-	printf("help: Show this content.\n");
-	printf("exit: Exit program.\n");
-	printf("quit: Ditto.\n");
+	printf("list/l:      List relevant functions by a name.\n\tUsage: list [-[c|f|n]] [all|*|name|name*|(number) name]\n");
+	printf("\tExamples:\n\tlist all\n\tlist -fnc all\n\tlist -n all\n\tlist *\n\tlist str*\n\tlist -c str* -cn grp*\n\tlist strCreateArrayZ\n\tlist 5 str 6 grp\n\tNotice:\n\t(number) equals to an editorial distance to the subsequent name.\n");
+	printf("apropos/a:   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -n create arrayz\n");
+	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name of a function.\n\t-n means to print function name.\n\t-cfn is the default way to print.\n\tIf you do not specify, program would print names by -cfn order.\n");
+	printf("version/v:   Show StoneValley library version.\n");
+	printf("help/h:      Show this content.\n");
+	printf("exit/quit/q: Exit program.\n");
 }
 
 #define _MIN(a, b) ((a) > (b) ? (b) : (a))
@@ -369,10 +402,10 @@ static void RewindArrStr(P_ARRAY_Z parr)
 static int cbftvsListAproposItems(void * pitem, size_t param)
 {
 	P_TNODE_BY pnode = P2P_TNODE_BY(pitem);
-	P_FunRecord pfc = (P_FunRecord)pnode->pdata;
-	P_SET_T pseta = (P_SET_T)0[(size_t *)param];
-	P_SET_T psetb = (P_SET_T)1[(size_t *)param];
-	P_ARRAY_Z parr = (P_ARRAY_Z)2[(size_t *)param];
+	P_FunRecord pfc  = (P_FunRecord)pnode->pdata;
+	P_SET_T pseta    = (P_SET_T)  0[(size_t *)param];
+	P_SET_T psetb    = (P_SET_T)  1[(size_t *)param];
+	P_ARRAY_Z parr   = (P_ARRAY_Z)2[(size_t *)param];
 	char namebuf[MATSIZ];
 	size_t i;
 	
@@ -445,41 +478,90 @@ static void CommandParser(FILE * fpin)
 		p = strtok(cmdbuf, " \t\v\r\n");
 		bpstr = false;
 		
+		column_content[0] = ENC_COUNT;
+		column_content[1] = ENC_FILE;
+		column_content[2] = ENC_NAME;
+		
 		while (NULL != p)
 		{
 			if (0 == i) /* p is the first token. */
 			{
-				if (0 == strcmp(p, "list"))
+				if (0 == p[1]) /* String p has one character. */
 				{
-					f = EF_LIST;
-				}
-				else if (0 == strcmp(p, "apropos"))
-				{
-					f = EF_APROPOS;
-				}
-				else if (0 == strcmp(p, "version"))
-				{
-					svPrintVersion();
-					break;
-				}
-				else if (0 == strcmp(p, "help"))
-				{
-					PrintHelp();
-					break;
-				}
-				else if (0 == strcmp(p, "exit") || 0 == strcmp(p, "quit"))
-				{
-					goto Lbl_Exit;
+					switch (p[0])
+					{
+					case 'l':
+						f = EF_LIST;
+						break;
+					case 'a':
+						f = EF_APROPOS;
+						break;
+					case 'v':
+						svPrintVersion();
+						break;
+					case 'h':
+						PrintHelp();
+						break;
+					case 'q':
+						goto Lbl_Exit;
+						break;
+					default:
+						printf(STR_BAD_COMMAND, p);
+						break;
+					}
 				}
 				else
 				{
-					printf("Bad command: '%s'. Type help to show helpful contents.\n", p);
-					break;
+					if (0 == strcmp(p, "list"))
+					{
+						f = EF_LIST;
+					}
+					else if (0 == strcmp(p, "apropos"))
+					{
+						f = EF_APROPOS;
+					}
+					else if (0 == strcmp(p, "version"))
+					{
+						svPrintVersion();
+						break;
+					}
+					else if (0 == strcmp(p, "help"))
+					{
+						PrintHelp();
+						break;
+					}
+					else if (0 == strcmp(p, "exit") || 0 == strcmp(p, "quit"))
+					{
+						goto Lbl_Exit;
+					}
+					else
+					{
+						printf(STR_BAD_COMMAND, p);
+						break;
+					}
 				}
 			}
 			else
 			{
-				if (EF_LIST == f)
+				if ('-' == p[0])
+				{
+					size_t m = strlen(p), n;
+					
+					for (n = 0; n < 3; ++n)
+						column_content[n] = ENC_NONE;
+					
+					for (n = 0; n < m && n < 3; ++n)
+					{
+						switch (p[n + 1])
+						{
+						case 'f': column_content[n] = ENC_FILE; break;
+						case 'n': column_content[n] = ENC_NAME; break;
+						case 'c': column_content[n] = ENC_COUNT; break;
+						}
+					}
+					--i; /* Swallow this parameter. */
+				}
+				else if (EF_LIST == f)
 				{
 					if (0 == strcmp(p, "all") || '*' == p[0])
 					{

@@ -186,10 +186,10 @@ P_MATRIX strCreateCopyMatrix(P_MATRIX psrc, size_t size)
  */
 void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 {
-	const size_t ol = pmtx->ln;
-	const size_t k  = size * col;
-	REGISTER size_t oc = pmtx->col;
 	REGISTER size_t i, j;
+	const size_t ol = pmtx->ln;
+	const size_t oc = pmtx->col;
+	const size_t k  = size * col;
 	if (ln * col > ol * oc) /* Matrix becomes bigger. */
 	{
 		if (NULL != strResizeArrayZ(&pmtx->arrz, ln * col, size))
@@ -199,7 +199,7 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 				j = (i - 1) * size;
 				memmove(&pmtx->arrz.pdata[j * col], &pmtx->arrz.pdata[j * oc], k);
 			}
-			pmtx->ln = ln;
+			pmtx->ln  = ln;
 			pmtx->col = col;
 			return pmtx->arrz.pdata;
 		}
@@ -215,14 +215,14 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 		}
 		if (NULL != strResizeArrayZ(&pmtx->arrz, ln * col, size))
 		{
-			pmtx->ln = ln;
+			pmtx->ln  = ln;
 			pmtx->col = col;
 			return pmtx->arrz.pdata;
 		}
 		pmtx->ln = pmtx->col = 0;
 		return NULL;
 	}
-	pmtx->ln = ln;
+	pmtx->ln  = ln;
 	pmtx->col = col;
 	return pmtx->arrz.pdata;
 }

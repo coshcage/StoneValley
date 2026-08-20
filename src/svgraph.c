@@ -699,7 +699,7 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 		fd.vertex.weight = weight;
 		fd.cbftvs        = NULL;
 		fd.param         = 0;
-		if (CBF_TERMINATE != strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
+		if (CBF_CONTINUE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return false; /* Edge doesn't exist. */
 		else
 			strDeleteNodeS(strRemoveItemLinkedListSC(&pvtx->adjlist, fd.pnode));
@@ -2768,7 +2768,7 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		{
 			queRemoveAC(&vid, sizeof(size_t), &q);
 
-			if (CBF_TERMINATE == cbftvs((void *)vid, param))
+			if (CBF_CONTINUE != cbftvs((void *)vid, param))
 			{
 				queFreeAC(&q);
 				strFreeBMap(&bmvist);

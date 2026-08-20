@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 171
 	Limitations ........................................................... 320
 	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 468
+	GNU Free Documentation License ........................................ 478
 
 iv  Scenario
 
@@ -342,7 +342,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	Preamble .............................................................. 333
 	Sub Table of Contents ................................................. 339
 	Technical Information ..................................................347
-	The Story About StoneValley ........................................... 464
+	The Story About StoneValley ........................................... 474
 	
 	Technical Information
 
@@ -359,6 +359,16 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	As long as the revolving of developing, callbacks become more and more versatile than from their origins. There are four types of callbacks in total currently. They are traversals, comparisons, hash functions and algebraic functions. A comparison bifurcates to a relation and a match checker. While algebraic functions contains all the ways to do calculations.
 	
 	When using traversals, return a CBF_CONTINUE to continue to traverse the next structure. Returning CBF_TERMINATE in a callback can either cause termination or traversal to end and returning CBF_TERMINATE to the caller. To use this trait, first we need to know whether a caller would be interrupted and we may notify the caller with a CBF_TERMINATE value when we meet something in a data structure that urges us to return. After we returned CBF_TERMINATE, no CBF_CONTINUE value would be effective any more in the remaining traversal procedures. So can we do math calculations. To return CBF_TERMINATE to abort math calculation, to return CBF_CONTINUE to let calculations go by invoking an algebraic function.
+	
+	Let us dig deeper into two traversal returning values CBF_CONTINUE and CBF_TERMINATE. As we defined in header svdef.h before, CBF_CONTINUE is 0 and CBF_TERMINATE is 1. No matter how we test a callback's returning value in the library, we use this way:
+	
+	if (CBF_CONTINUE != cbftvs(pitem, param))
+	{
+		/* TODO: Free memory if possible. */
+		return CBF_TERMINATE;
+	}
+	
+	Why don't we use CBF_TERMINATE == cbftvs() to test? Since CBF_CONTINUE and CBF_TERMINATE are respectively contradictory boolean values, that is ! CBF_CONTINUE == CBF_TERMINATE. We do so for the reason that CBF_TERMINATE == cbftvs() expands terminate conditions that we do not want this happen. Because CBF_TERMINATE is 1, to test CBF_TERMINATE == cbftvs() is to test 1 == cbftvs(), so if 1 == cbftvs(), caller would be break. What if cbftvs returned 2? As we mentioned before, we are testing 1 == cbftvs() to expect it to be true to break. Now cbftvs returns 2 and thus makes caller to continue to call callback with no stop. And this belated stop may bring us hazardous data issue that sometimes cbftvs affects data out of our consideration. Furthermore, in the callback's caller, due to we always return either CBF_CONTINUE or CBF_TERMINATE after testing cbftvs, return values for callers are restricted to true and false bringing us less uncertainties to handle that further makes our programs robust as possible as it can be.
 	
 	For comparisons, in a relative comparison case, relations comprise greater than, equal to and less than. Users need to return CBF_CMP_GT, CBF_CMP_EQUAL and CBF_CMP_LT depending on the situation. Sometimes a user needs to return CBF_CMP_GT when px is less than py, CBF_CMP_LT when px is greater than py to make an inverse sort to an array. Since CBF_CMP_EQUAL is 0, it means no difference. Zero is also the integral value of boolean value false in C. So that we can say true means data are different, false means data are equivalent. Note that during a match function, a BOOLIZE expression conversion need to be done to avoid truncating side effects. When truncating effect occurs, different data can cause an equivalent return value. Both relations and match checkers are of CBF_COMPARE type. In practice, relations are usually named cbfcmp while match checkers are named cbfmch.
 

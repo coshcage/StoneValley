@@ -33,7 +33,7 @@
 typedef HSHTBL_C SET_H, * P_SET_H;
 
 /* Definition of sets using binary search trees.
- * Also known as ordered set, which means elements in sets are comparable.
+ * Also known as ordered set, which means elements in such a set are comparable.
  */
 typedef BST SET_T, * P_SET_T;
 

@@ -257,7 +257,7 @@ P_BITSTREAM     treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  s)
 /* Macros for red black trees. */
 #define treFreeRBTNode_M(pnode_M) do { \
 	treFreeBSTNode(&(pnode_M)->bstn); \
-}
+} while (0)
 #define treDeleteRBTNode_M(pnode_M) do { \
 	treFreeRBTNode_M(pnode_M); \
 	free(pnode_M); \

@@ -127,7 +127,7 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 		return SVC_FILE_IO;
 	
 	/* Write compressed data. */
-	if (strLevelArrayZ(&pbstm->arrz) != fwrite(pbstm->arrz.pdata, sizeof(bitstrem_block_t), strLevelArrayZ(&pbstm->arrz), fpout))
+	if (strLevelArrayZ(&pbstm->arrz) != fwrite(pbstm->arrz.pdata, sizeof(bitstream_block_t), strLevelArrayZ(&pbstm->arrz), fpout))
 		return SVC_FILE_IO;
 	
 	/* Cleanup. */
@@ -207,14 +207,14 @@ SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin)
 	bsin.nbil = (size_t)c;
 	
 	/* Allot memory for compressed stream. */
-	if (NULL == strInitArrayZ(&bsin.arrz, k, sizeof(bitstrem_block_t)))
+	if (NULL == strInitArrayZ(&bsin.arrz, k, sizeof(bitstream_block_t)))
 	{
 		strDeleteArrayZ(parrTable);
 		return SVC_ALLOCATION;
 	}
 	
 	/* Read compressed data. */
-	if (k != fread(bsin.arrz.pdata, sizeof(bitstrem_block_t), k, fpin))
+	if (k != fread(bsin.arrz.pdata, sizeof(bitstream_block_t), k, fpin))
 	{
 		strFreeArrayZ(&bsin.arrz);
 		strDeleteArrayZ(parrTable);

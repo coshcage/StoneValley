@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0820261339L00483
+ * File ID:     0914171200J0820260930L00477
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -44,23 +44,23 @@ typedef struct _st_HFMNOD {
 } _HFMNOD, * _P_HFMNOD;
 
 /* File-level function declarations here. */
-P_ARRAY_Z  _treHFMCreateSymbolTable          (const char * s,     size_t       n);
-int        _treCBFHFMCompareSymbolFreqInNode (const void * x,     const void * y);
+P_ARRAY_Z  _treHFMCreateSymbolTable          (const char * str,   size_t       num);
+int        _treCBFHFMCompareSymbolFreqInNode (const void * px,    const void * py);
 P_TNODE_BY _treHFMBuildHuffmanTree           (P_ARRAY_Z    stbl);
 int        _treCBFHFMFillSymbolTable         (void *       pitem, size_t       param);
-int        _treCBFHFMCompareSymbolFreq       (const void * x,     const void * y);
+int        _treCBFHFMCompareSymbolFreq       (const void * px,    const void * py);
 P_TNODE_BY _treHFMRebuildHuffmanTree         (P_ARRAY_Z    stbl);
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _treHFMCreateSymbolTable
  * Description:   This function is used to create a symbol by symbol frequency.
  * Parameters:
- *          s Pointer to the buffer you want to encoding with.
- *          n Length of the buffer.
+ *        str Pointer to the buffer you want to encoding with.
+ *        num Length of the buffer.
  * Return value:  Pointer to a newly created array as a large semi-product symbol table.
  * Tip:           You need to delete array after using.
  */
-P_ARRAY_Z _treHFMCreateSymbolTable(const char * s, size_t n)
+P_ARRAY_Z _treHFMCreateSymbolTable(const char * str, size_t num)
 {
 	REGISTER P_ARRAY_Z pt = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
 	if (NULL != pt)
@@ -74,8 +74,8 @@ P_ARRAY_Z _treHFMCreateSymbolTable(const char * s, size_t n)
 			(psi + i)->freq = 0;
 		}
 		/* Count symbol frequency. */
-		for (i = 0; i < n; ++i)
-			++(psi + (UCHART)*(s + i))->freq;
+		for (i = 0; i < num; ++i)
+			++(psi + (UCHART)*(str + i))->freq;
 	}
 	return pt;
 }
@@ -84,19 +84,19 @@ P_ARRAY_Z _treHFMCreateSymbolTable(const char * s, size_t n)
  * Function name: _treCBFHFMCompareSymbolFreqInNode
  * Description:   Compare symbol by its frequency between nodes.
  * Parameters:
- *          x Pointer to any node pointer in a heap array. Cast into (void *).
- *          y Pointer to any node pointer in a heap array. Cast into (void *).
+ *         px Pointer to any node pointer in a heap array. Cast into (void *).
+ *         py Pointer to any node pointer in a heap array. Cast into (void *).
  * Return value:  Please refer to the type definition of CBF_COMPARE in svdef.h.
  */
-int _treCBFHFMCompareSymbolFreqInNode(const void * x, const void * y)
+int _treCBFHFMCompareSymbolFreqInNode(const void * px, const void * py)
 {
 	REGISTER size_t f0, f1;
-	f0 = (NULL == (*(P_TNODE_BY *)x)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)x)->ppnode[RIGHT] ?
-		((_P_HFMNOD) (*(P_TNODE_BY *)x)->pdata)->NodeData.psbinf->freq :
-		((_P_HFMNOD) (*(P_TNODE_BY *)x)->pdata)->NodeData.sbfreq);
-	f1 = (NULL == (*(P_TNODE_BY *)y)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)y)->ppnode[RIGHT] ?
-		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.psbinf->freq :
-		((_P_HFMNOD) (*(P_TNODE_BY *)y)->pdata)->NodeData.sbfreq);
+	f0 = (NULL == (*(P_TNODE_BY *)px)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)px)->ppnode[RIGHT] ?
+		((_P_HFMNOD) (*(P_TNODE_BY *)px)->pdata)->NodeData.psbinf->freq :
+		((_P_HFMNOD) (*(P_TNODE_BY *)px)->pdata)->NodeData.sbfreq);
+	f1 = (NULL == (*(P_TNODE_BY *)py)->ppnode[LEFT] && NULL == (*(P_TNODE_BY *)py)->ppnode[RIGHT] ?
+		((_P_HFMNOD) (*(P_TNODE_BY *)py)->pdata)->NodeData.psbinf->freq :
+		((_P_HFMNOD) (*(P_TNODE_BY *)py)->pdata)->NodeData.sbfreq);
 	if (f0 > f1) return CBF_CMP_GT;
 	if (f0 < f1) return CBF_CMP_LT;
 	return CBF_CMP_EQUAL;
@@ -223,34 +223,34 @@ int _treCBFHFMFillSymbolTable(void * pitem, size_t param)
  * Function name: _treCBFHFMCompareSymbolFreq
  * Description:   Compare symbols by their frequencices.
  * Parameters:
- *          x Pointer to any symbol in array. And cast it into (void *).
- *          y Pointer to any symbol in array. And cast it into (void *).
+ *         px Pointer to any symbol in array. And cast it into (void *).
+ *         py Pointer to any symbol in array. And cast it into (void *).
  * Return value:  Please refer to the type definition of CBF_COMPARE in svdef.h.
  */
-int _treCBFHFMCompareSymbolFreq(const void * x, const void * y)
+int _treCBFHFMCompareSymbolFreq(const void * px, const void * py)
 {
 	/* Sort frequency from high to low. This would speed up retrieving. */
-	if (((_P_SMBINF)x)->freq < ((_P_SMBINF)y)->freq) return CBF_CMP_GT;
-	if (((_P_SMBINF)x)->freq > ((_P_SMBINF)y)->freq) return CBF_CMP_LT;
+	if (((_P_SMBINF)px)->freq < ((_P_SMBINF)py)->freq) return CBF_CMP_GT;
+	if (((_P_SMBINF)px)->freq > ((_P_SMBINF)py)->freq) return CBF_CMP_LT;
 	return CBF_CMP_EQUAL;
 }
 
 /* Function name: treCreateHuffmanTable
  * Description:   Create a Huffman encoding symbol table.
  * Parameters:
- *          s The buffer you want to encode.
- *          n Number of symbols in the buffer. The unit of n is sizeof(unsigned char).
+ *        str The buffer you want to encode.
+ *        num Number of symbols in the buffer. The unit of num is sizeof(char).
  * Return value:  Pointer to a new created sized array.
  *                Each element in the sized array that this function returned is a HFM_SYMBOL structure.
  *                If any error occurred during encoding, function would be interrupted and return NULL.
  * Tip:           Symbol table is important for decoding. You may need to store the symbol table onto an external disk.
  */
-P_ARRAY_Z treCreateHuffmanTable(const char * s, const size_t n)
+P_ARRAY_Z treCreateHuffmanTable(const char * str, size_t num)
 {
 	REGISTER P_ARRAY_Z otbl = NULL;
-	if (SV_ASSERT(NULL != s && 0 != n))
+	if (SV_ASSERT(NULL != str && 0 != num))
 	{
-		REGISTER P_ARRAY_Z stbl = _treHFMCreateSymbolTable(s, n);
+		REGISTER P_ARRAY_Z stbl = _treHFMCreateSymbolTable(str, num);
 		if (NULL != stbl)
 		{
 			P_TNODE_BY proot = _treHFMBuildHuffmanTree(stbl);
@@ -293,13 +293,13 @@ P_ARRAY_Z treCreateHuffmanTable(const char * s, const size_t n)
  *     ptable Input a pointer to a symbol table.
  *            Call function treCreateHuffmanTable to generate a symbol table.
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
- *          s The buffer you want to encode.
- *          n Number of elements in the buffer. The unit of n is sizeof(unsigned char).
+ *        str The buffer you want to encode.
+ *        num Number of elements in the buffer. The unit of num is sizeof(char).
  * Return value:  Pointer to a new created bit stream. This bit stream stores the encoded string.
  *                If any error occurred during encoding, function would be interrupted and return a NULL pointer.
  * Tip:           A symbol table is important for decoding.
  *                You may get a symbol table after invoking function treCreateHuffmanTable by transferring
- *                the same buffer s of treHuffmanEncoding into function treCreateHuffmanTable.
+ *                the same buffer str of treHuffmanEncoding into function treCreateHuffmanTable.
  *                This function can encode sub string but uses the symbol table of a whole string.
  * Usage:         #include <stdio.h> // Invoke function printf.
  *                #define STR1 "This is a test, and that is another test."
@@ -307,57 +307,51 @@ P_ARRAY_Z treCreateHuffmanTable(const char * s, const size_t n)
  *                P_ARRAY_Z par = treCreateHuffmanTable(STR1, strlen(STR1) + 1);
  *                P_BITSTREAM pbi = treHuffmanEncoding(par, STR2, strlen(STR2) + 1);
  *                P_BITSTREAM pbo = treHuffmanDecoding(par, pbi);
- *                printf("%s\n", pbo->arrz.pdata);	
+ *                printf("%s\num", pbo->arrz.pdata);	
  *                strDeleteBitStream(pbi);
  *                strDeleteBitStream(pbo);
  *                strDeleteArrayZ(par);
  *                Result: This
  */
-P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const char * s, const size_t n)
+P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const char * str, size_t num)
 {
-	if (SV_ASSERT(NULL != s && 0 != n && NULL != ptable))
-	{	/* Both buffer and it's length are not empty. */
-		REGISTER P_BITSTREAM pbstm = strCreateBitStream();
-		REGISTER P_ARRAY_Z   pltbl = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
-		if (NULL != pbstm && NULL != pltbl)
-		{
-			REGISTER size_t i, j;
-			REGISTER _P_SMBINF psi;
-			REGISTER P_HFM_SYMBOL pstbl;
-			
-			/* Expand symbol table. */
-			for (i = 0; i < strLevelArrayZ(ptable); ++i)
-			{
-				pstbl = (P_HFM_SYMBOL)strLocateItemArrayZ(ptable, sizeof(HFM_SYMBOL), i);
-				psi   = (_P_SMBINF)strLocateItemArrayZ(pltbl, sizeof(_SMBINF), (size_t)pstbl->name);
-				psi->Symbol = *pstbl;
-			}
-			
-			/* Compress. */
-			for (i = 0; i < n; ++i)
-			{
-				psi = (_P_SMBINF)strLocateItemArrayZ(pltbl, sizeof(_SMBINF), (UCHART)s[i]);
-				/* Fill bit stream. */
-				for (j = 1; j <= psi->Symbol.bits; ++j)
-					strBitStreamAdd(pbstm, ((size_t)1 << (psi->Symbol.bits - j)) & psi->Symbol.sgnb);
-			}
-		}
-		
+	if (SV_ASSERT(NULL != str && 0 != num && NULL != ptable))
+	{	/* Both buffer and its length are not empty. */
+		REGISTER P_ARRAY_Z pltbl = strCreateArrayZ(_SMB_TBL_LEN, sizeof(_SMBINF));
 		/* Cannot create large table. */
-		if (NULL == pltbl && NULL != pbstm)
-		{
-			strDeleteBitStream(pbstm);
-			pbstm = NULL;
-		}
-		
-		/* Delete the large table. */
 		if (NULL != pltbl)
-			strDeleteArrayZ(pltbl);
-		
-		return pbstm;
+		{
+			REGISTER P_BITSTREAM pbstm = strCreateBitStream();
+			if (NULL != pbstm)
+			{
+				REGISTER size_t i, j, k, l, m;
+				REGISTER _P_SMBINF psi;
+				REGISTER P_HFM_SYMBOL pstbl;
+				
+				/* Expand symbol table. */
+				for (i = 0, k = strLevelArrayZ(ptable); i < k; ++i)
+				{
+					pstbl = (P_HFM_SYMBOL)strLocateItemArrayZ(ptable, sizeof(HFM_SYMBOL), i);
+					psi   = (_P_SMBINF)strLocateItemArrayZ(pltbl, sizeof(_SMBINF), (size_t)pstbl->name);
+					psi->Symbol = *pstbl;
+				}
+				
+				/* Compress. */
+				for (i = 0, k = num; i < k; ++i)
+				{
+					psi = (_P_SMBINF)strLocateItemArrayZ(pltbl, sizeof(_SMBINF), (UCHART)str[i]);
+					/* Fill bit stream. */
+					for (j = 1, l = psi->Symbol.bits, m = psi->Symbol.sgnb; j <= l; ++j)
+						strBitStreamAdd(pbstm, ((size_t)1 << (l - j)) & m);
+				}
+				
+				/* Delete the large table after use. */
+				strDeleteArrayZ(pltbl);
+				return pbstm;
+			}
+		}
 	}
-	/* Cannot find appropriate symbol table. */
-	return NULL;
+	return NULL; /* Cannot find appropriate symbol table. */
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -417,7 +411,7 @@ Lbl_Building_Failed:
  * Parameters:
  *     ptable Pointer to a symbol table which is used to decode.
  *            Each element in the array that ptable pointed is a HFM_SYMBOL structure.
- *          s The encoded bit stream you want to decode.
+ *      pbstm The encoded bit stream you want to decode.
  * Return value:  Pointer to a new created sized array. This array stores the decoded character string.
  *                If any error occurred during decoding, function would be interrupted and return NULL.
  * Caution:       Parameter ptable must be allocated first.
@@ -425,9 +419,9 @@ Lbl_Building_Failed:
  *                You may either get a bit stream as the parameter of function treHuffmanDecoding to decode from the return value of function treHuffmanEncoding.
  *                Please refer to function treHuffmanEncoding for more details of usages in advance.
  */
-P_ARRAY_Z treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
+P_ARRAY_Z treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM pbstm)
 {
-	if (SV_ASSERT(NULL != s && NULL != ptable && strLevelArrayZ(ptable) > 0))
+	if (SV_ASSERT(NULL != pbstm && NULL != ptable && strLevelArrayZ(ptable) > 0))
 	{
 		P_ARRAY_Z parrzo = strCreateArrayZ(BUFSIZ, sizeof(char)); /* Output array pointer. */
 		if (NULL != parrzo)
@@ -453,9 +447,9 @@ P_ARRAY_Z treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM s)
 						++i;
 						continue;
 					}
-					if (j >= (strLevelArrayZ(&s->arrz) - 1) * BITSTREAM_BLOCK_BIT + s->nbil)
+					if (j >= (strLevelArrayZ(&pbstm->arrz) - 1) * BITSTREAM_BLOCK_BIT + pbstm->nbil)
 						break;
-					if (strBitStreamLocate(s, j++))
+					if (strBitStreamLocate(pbstm, j++))
 						pnode = pnode->ppnode[RIGHT];
 					else
 						pnode = pnode->ppnode[LEFT];

@@ -118,9 +118,9 @@ typedef MATRIX BITMAT, * P_BITMAT;
 
 /* Definition of sparse matrix structure. */
 typedef struct st_SPAMAT {
-	ARRAY_Z bita;  /* Fenwick tree/Binary indexed tree array. */
-	BITMAT bmask;  /* Data bit mask. */
-	LIST_S datlst; /* Data list. */
+	ARRAY_Z bita;   /* Fenwick tree/Binary indexed tree array. */
+	BITMAT  bmask;  /* Data bit mask. */
+	LIST_S  datlst; /* Data list. */
 } SPAMAT, * P_SPAMAT;
 
 /* A structure describes finding information for nodes. */

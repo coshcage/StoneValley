@@ -2,7 +2,7 @@
  * Name:        svcompress.c
  * Description: Compress files.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0120211637B0513250000L00234
+ * File ID:     0120211637B0820262335L00250
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -25,130 +25,128 @@
 #include "svcompress.h"
 #include "svtree.h"
 
-/* Magical number that used to distinguish file type. */
-UCHART magicNumber[] = { 'S', 'V', 'C', 'F' };
+#define _GET_ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* Magic buffer size macro. */
-#define MGC_BUF_SIZ (sizeof magicNumber / sizeof magicNumber[0])
+static signed char _svcGetEndianness(void);
 
-/* SVCF_File_structure:_________________
- * |Length:  |Name:                    |
- * |---------|-------------------------|
- * |UCHART[4]|Magical number.          |
- * |UCHART   |Platform integer length. |
- * |UCHART   |Symbol table length.     |
- * |N/A      |Symbol table.            |
- * |         |                         |
- * |size_t   |Compressed data length.  |
- * |UCHART   |Remaining bits.          |
- * |N/A      |Compressed data.         |
- * |_________|_________________________|
+/* SVCF_File_structure:___________________________________
+ * |Length:     |Name:                                   |
+ * |------------|----------------------------------------|
+ * |signed char |Platform integer length and endianness. |
+ * |UCHART      |Symbol table length.                    |
+ * |N/A         |Symbol table.                           |
+ * |            |                                        |
+ * |size_t      |Compressed data length.                 |
+ * |UCHART      |The number of remaining bits.           |
+ * |N/A         |Compressed data.                        |
+ * |____________|________________________________________|
  */
 
- /* Function name: svcCompressFile
-  * Description:   Compress a file to a file.
-  * Parameters:
-  *      fpout Pointer to the output file.
-  *       fpin Pointer to the input file.
-  * Return value:  Error code.
-  *                Please refer to the SVCERROR enumeration at file 'svcompress.h'.
-  */
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _svcGetEndianness
+ * Description:   Get endianness during run time.
+ * Parameters:    N/A
+ * Return value:   1 Little endian.
+ *                -1 Big endian.
+ */
+static signed char _svcGetEndianness(void)
+{
+	size_t t = 1;
+	return BOOLIZE(*(char *)&t) ? 1 : -1;
+}
+
+/* Function name: svcCompressFile
+ * Description:   Compress a file to a file.
+ * Parameters:
+ *      fpout Pointer to the output file.
+ *       fpin Pointer to the input file.
+ * Return value:  Error code.
+ *                Please refer to the SVCERROR enumeration at file 'svcompress.h'.
+ */
 SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 {
-	int c;
-	UCHART uc;
-	size_t i = 0, j, k;
+	REGISTER int c;
+	REGISTER size_t i = 0;
 	P_BITSTREAM pbstm = NULL;
 	ARRAY_Z arrInBuffer, * parrTable = NULL;
-	SVCERROR rtn = SVC_NONE;
-
+	
 	if (NULL == fpin || NULL == fpout)
 		return SVC_FILE_OPEN;
+	
 	if (NULL == strInitArrayZ(&arrInBuffer, BUFSIZ, sizeof(UCHART)))
 		return SVC_ALLOCATION;
+	
 	/* Read fpin into buffer in the memory. */
 	while (EOF != (c = fgetc(fpin)))
 	{
-		arrInBuffer.pdata[i] = (UCHART)c;
-		if (++i >= strLevelArrayZ(&arrInBuffer))
-		{
-			if (NULL == strResizeBufferedArrayZ(&arrInBuffer, sizeof(UCHART), +BUFSIZ))
-			{
-				rtn = SVC_ALLOCATION;
-				goto Lbl_Compress_Error;
-			}
-		}
+		arrInBuffer.pdata[i] = (UCHART) c;
+		if (++i >= strLevelArrayZ(&arrInBuffer) && NULL == strResizeBufferedArrayZ(&arrInBuffer, sizeof(UCHART), +BUFSIZ))
+			goto Lbl_Compress_Error;
 	}
-	/* Fit buffer size to i. */
-	if (NULL == strResizeArrayZ(&arrInBuffer, i, sizeof(UCHART)))
-	{
-		rtn = SVC_ALLOCATION;
+	
+	/* Create symbol table. */
+	if (NULL == (parrTable = treCreateHuffmanTable((const char *)arrInBuffer.pdata, i)))
 		goto Lbl_Compress_Error;
-	}
-
+	
 	/* Compress data. */
-	if (NULL == (parrTable = treCreateHuffmanTable(arrInBuffer.pdata, i)))
-	{
-		rtn = SVC_COMPRESS;
+	if (NULL == (pbstm = treHuffmanEncoding(parrTable, (const char *)arrInBuffer.pdata, i)))
 		goto Lbl_Compress_Error;
-	}
-	if (NULL == (pbstm = treHuffmanEncoding(parrTable, arrInBuffer.pdata, i)))
-	{
-		rtn = SVC_COMPRESS;
-		goto Lbl_Compress_Error;
-	}
-	if (NULL == parrTable)
-	{	/* Can not output symbol table. */
-		strDeleteBitStream(pbstm);
-		rtn = SVC_COMPRESS;
-		goto Lbl_Compress_Error;
-	}
+	
 	/* Free in-buffer array. */
 	strFreeArrayZ(&arrInBuffer);
 
 	/* // In testing case, print decoded text out to show correctness.
 	{
-		P_BITSTREAM pbsout;
-		pbsout = treHuffmanDecoding(parrTable, pbstm);
-		strDeleteBitStream(pbsout);
+		P_ARRAY_Z pout;
+		pout = treHuffmanDecoding(parrTable, pbstm);
+		strDeleteArrayZ(pout);
 	}
 	*/
-
-	/* Write magical number. */
-	fwrite(magicNumber, MGC_BUF_SIZ, sizeof magicNumber[0], fpout);
-	/* Write file header which is a UCHART variable that indicates platform integer length. */
-	uc = sizeof(size_t);
-	fwrite(&uc, sizeof uc, 1, fpout);
+	
+	/* Write file header which is a UCHART variable that indicates platform integer length and endianness. */
+	if (EOF == fputc((signed char)sizeof(size_t) * _svcGetEndianness(), fpout))
+		return SVC_FILE_IO;
+	
 	/* Write symbol table length. */
-	uc = (UCHART)parrTable->num;
-	fwrite(&uc, sizeof uc, 1, fpout);
+	if (EOF == fputc(parrTable->num, fpout))
+		return SVC_FILE_IO;
+	
 	/* Write symbol table. */
-	k = strLevelArrayZ(parrTable) * sizeof(HFM_SYMBOL);
-	for (j = 0; j < k; ++j)
-		fputc(parrTable->pdata[j], fpout);
+	if (strLevelArrayZ(parrTable) != fwrite(parrTable->pdata, sizeof(HFM_SYMBOL), strLevelArrayZ(parrTable), fpout))
+		return SVC_FILE_IO;
+	
 	/* Delete symbol table. */
 	strDeleteArrayZ(parrTable);
+	
 	/* Write compressed data length. */
-	j = strLevelArrayZ(&pbstm->arrz);
-	fwrite(&j, sizeof j, 1, fpout);
-	/* Write remaining bits. */
-	uc = (UCHART)pbstm->bilc;
-	fwrite(&uc, sizeof uc, 1, fpout);
+	if (1 != fwrite(&pbstm->arrz.num, sizeof(size_t), 1, fpout))
+		return SVC_FILE_IO;
+	
+	/* Write the number of remaining bits. */
+	if (EOF == fputc(pbstm->nbil, fpout))
+		return SVC_FILE_IO;
+	
 	/* Write compressed data. */
-	for (j = 0; j < strLevelArrayZ(&pbstm->arrz); ++j)
-		fputc(pbstm->arrz.pdata[j], fpout);
+	if (strLevelArrayZ(&pbstm->arrz) != fwrite(pbstm->arrz.pdata, sizeof(bitstrem_block_t), strLevelArrayZ(&pbstm->arrz), fpout))
+		return SVC_FILE_IO;
+	
 	/* Cleanup. */
 	strDeleteBitStream(pbstm);
+	
 	return SVC_NONE;
-
+	
 Lbl_Compress_Error:
+	/* Cleanup. */
 	if (NULL != pbstm)
 		strDeleteBitStream(pbstm);
+	
 	if (NULL != parrTable)
 		strDeleteArrayZ(parrTable);
+	
 	if (NULL != arrInBuffer.pdata)
 		strFreeArrayZ(&arrInBuffer);
-	return rtn;
+	
+	return SVC_COMPRESS;
 }
 
 /* Function name: svcDecompressFile
@@ -161,74 +159,92 @@ Lbl_Compress_Error:
  */
 SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin)
 {
-	int c;
-	UCHART uc;
-	size_t i, j, k;
-	P_ARRAY_Z parrTable;
-	BITSTREAM bsin, * pbsout;
-	UCHART magicBuffer[MGC_BUF_SIZ];
+	size_t k;
+	REGISTER int c;
+	BITSTREAM bsin;
+	REGISTER size_t i, j;
+	P_ARRAY_Z parrTable, parro;
 
 	if (NULL == fpin || NULL == fpout)
 		return SVC_FILE_OPEN;
-	/* Read magical number. */
-	fread(magicBuffer, sizeof magicNumber[0], MGC_BUF_SIZ, fpin);
-	if (0 != memcmp(magicBuffer, magicNumber, sizeof magicNumber))
+	
+	/* Clear to decompress. */
+	clearerr(fpin);
+	
+	/* Read platform length and endianness. */
+	if (EOF == (c = (signed char)fgetc(fpin)))
 		return SVC_FILE_TYPE;
-	/* Read platform length. */
-	fread(&uc, sizeof(UCHART), 1, fpin);
-	if (sizeof(size_t) != (size_t)uc)
+	if (_svcGetEndianness() * c < 0 || sizeof(size_t) != (size_t)_GET_ABS(c))
 		return SVC_PLATFORM;
+	
 	/* Read symbol table length. */
-	fread(&uc, sizeof(UCHART), 1, fpin);
-	j = uc * sizeof(HFM_SYMBOL);
+	if (EOF == (c = fgetc(fpin)))
+		return SVC_FILE_TYPE;
+	
+	if (NULL == (parrTable = strCreateArrayZ(c, sizeof(HFM_SYMBOL))))
+		return SVC_ALLOCATION;
+	
 	/* Read symbol table. */
-	parrTable = strCreateArrayZ(uc, sizeof(HFM_SYMBOL));
-	for (i = 0; i < j; ++i)
+	if ((size_t)c != fread(parrTable->pdata, sizeof(HFM_SYMBOL), c, fpin))
 	{
-		if (EOF == (c = fgetc(fpin)))
-		{
-			strDeleteArrayZ(parrTable);
-			return SVC_FILE_TYPE;
-		}
-		parrTable->pdata[i] = (UCHART)c;
+		strDeleteArrayZ(parrTable);
+		return SVC_FILE_IO;
 	}
+	
 	/* Read compressed data length. */
-	fread(&k, sizeof(size_t), 1, fpin);
-	/* Read remaining bits. */
-	fread(&uc, sizeof uc, 1, fpin);
-	bsin.bilc = (size_t)uc;
-	if (NULL == strInitArrayZ(&bsin.arrz, k, sizeof(UCHART)))
+	if (1 != fread(&k, sizeof(size_t), 1, fpin))
+	{
+		strDeleteArrayZ(parrTable);
+		return SVC_FILE_IO;
+	}
+	
+	/* Read the number of remaining bits. */
+	if (EOF == (c = fgetc(fpin)))
+	{
+		strDeleteArrayZ(parrTable);
+		return SVC_FILE_TYPE;
+	}
+	bsin.nbil = (size_t)c;
+	
+	/* Allot memory for compressed stream. */
+	if (NULL == strInitArrayZ(&bsin.arrz, k, sizeof(bitstrem_block_t)))
 	{
 		strDeleteArrayZ(parrTable);
 		return SVC_ALLOCATION;
 	}
+	
 	/* Read compressed data. */
-	for (i = 0; i < k; ++i)
+	if (k != fread(bsin.arrz.pdata, sizeof(bitstrem_block_t), k, fpin))
 	{
-		if (EOF == (c = fgetc(fpin)))
-		{
-			strDeleteArrayZ(parrTable);
-			strFreeBitStream(&bsin);
-			return SVC_FILE_TYPE;
-		}
-		bsin.arrz.pdata[i] = (UCHART)c;
-	}
-	/* Decompress. */
-	if (NULL == (pbsout = treHuffmanDecoding(parrTable, &bsin)))
-	{
+		strFreeArrayZ(&bsin.arrz);
 		strDeleteArrayZ(parrTable);
-		strFreeBitStream(&bsin);
+		return SVC_FILE_IO;
+	}
+	
+	/* Decompress. */
+	if (NULL == (parro = treHuffmanDecoding(parrTable, &bsin)))
+	{
+		strFreeArrayZ(&bsin.arrz);
+		strDeleteArrayZ(parrTable);
 		return SVC_DECOMPRESS;
 	}
+	
 	/* Cleanup. */
+	strFreeArrayZ(&bsin.arrz);
 	strDeleteArrayZ(parrTable);
-	strFreeBitStream(&bsin);
+	
 	/* Output result. */
-	for (i = 0; i < pbsout->arrz.num; ++i)
-		fputc(pbsout->arrz.pdata[i], fpout);
+	for (i = 0, j = strLevelArrayZ(parro); i < j; ++i)
+	{
+		if (EOF == fputc(parro->pdata[i], fpout))
+		{
+			strDeleteArrayZ(parro);
+			return SVC_FILE_IO;
+		}
+	}
+	
 	/* Cleanup. */
-	strDeleteBitStream(pbsout);
+	strDeleteArrayZ(parro);
 	return SVC_NONE;
 }
-#undef MGC_BUF_SIZ
 

@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0808260600L02595
+ * File ID:     0905171125M0808260600L02959
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *

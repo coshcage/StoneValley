@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0808260000L00521
+ * File ID:     0306170921Y0821260022L00540
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -25,6 +25,7 @@
 #define _SVSTRING_H_
 
 #include "svdef.h"
+#include <limits.h> /* Using macro UCHAR_MAX, CHAR_BIT. */
 
 /* The following two macros are used to address nodes pointers for NODE_D structures. */
 #define PREV 1
@@ -78,10 +79,28 @@ typedef enum en_NodeType {
 	ENT_SINGLE
 } NodeType;
 
+/* Bit stream block type. */
+typedef size_t bitstrem_block_t;
+
+/* Number of bits in a bit stream block. */
+#define BITSTREAM_BLOCK_BIT (sizeof(bitstrem_block_t) * CHAR_BIT)
+
+/* Pointer to a bit stream block to index.
+ * Usage: BITSTREAM_BLOCK(pbstm)[0] = BITSTREAM_BLOCK_MAX;
+ */
+#define BITSTREAM_BLOCK(pbstm_M) ((bitstrem_block_t *)(pbstm_M)->arrz.pdata)
+
+/* Maximum value of a bit stream block. */
+#define BITSTREAM_BLOCK_MAX (~(bitstrem_block_t)0)
+
+/* Note that block size does not affect efficiency virtually,
+ *  we just provided users a different memory addressing way.
+ */
+
 /* Definition of bit stream. */
 typedef struct st_BITSTREAM {
-	ARRAY_Z arrz; /* Array that contains the stream data. */
-	size_t  bilc; /* Number of bits in the last char. */
+	ARRAY_Z arrz; /* Array that contains blocks of stream data. */
+	size_t  nbil; /* Number of bits in the last block. */
 } BITSTREAM, * P_BITSTREAM;
 
 /* Definition of common matrix structure. */
@@ -335,7 +354,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #define strSetValueMatrix_M(pmtx_M, ln_M, col_M, pval_M, size_M) \
 	(memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)))
 #define strCopyBMap_M(pdest_M, psrc_M) (strCopyMatrix((pdest_M), (psrc_M), sizeof(UCHART)))
-#define strBitStreamIsEmpty_M(pbstm_M) (strLevelArrayZ(&(pbstm_M)->arrz) <= 1 && 0 == (pbstm_M)->bilc)
+#define strBitStreamIsEmpty_M(pbstm_M) (strLevelArrayZ(&(pbstm_M)->arrz) <= 1 && 0 == (pbstm_M)->nbil)
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE

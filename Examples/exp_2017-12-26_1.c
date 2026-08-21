@@ -20,7 +20,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 //
 #include <stdio.h>
-#include <limits.h>
 #include "svstring.h"
 #include "svtree.h"
 
@@ -30,31 +29,33 @@
 /* This function illustrates how to use Huffman algorithm to compress data. */
 int main(void)
 {
-	P_ARRAY_Z ptbl = NULL; /* Used to store a symbol table. */
-	P_BITSTREAM pbsout, pbsin; /* Bit streams that used to contain data. */
+	P_ARRAY_Z ptbl = NULL, pout; /* Used to store a symbol table. */
+	P_BITSTREAM pbsin; /* Bit streams that used to contain data. */
 	/* Encode string. Caution that table is important for decoding. */
-	if (NULL == (ptbl = treCreateHuffmanTable((const PUCHAR)SZ_STR, sizeof(SZ_STR))))
+	if (NULL == (ptbl = treCreateHuffmanTable(SZ_STR, sizeof(SZ_STR))))
 	{
 		fprintf(stderr, "Error! Can not create symbol table.\n");
 		return __LINE__;
 	}
-	if (NULL == (pbsin = treHuffmanEncoding(ptbl, (const PUCHAR)SZ_STR, sizeof(SZ_STR))))
+	if (NULL == (pbsin = treHuffmanEncoding(ptbl, SZ_STR, sizeof(SZ_STR))))
 	{
-		fprintf(stderr, "Error! Can not Encode.\n");
+		fprintf(stderr, "Error! Can not encode.\n");
 		return __LINE__;
 	}
-	printf("%zd/%zd bits.\n", CHAR_BIT * (strLevelArrayZ(&pbsin->arrz) - 1) + pbsin->bilc, CHAR_BIT * sizeof(SZ_STR));
-	if (NULL == (pbsout = treHuffmanDecoding(ptbl, pbsin)))
+	printf("%zd/%zd bits.\n", BITSTREAM_BLOCK_BIT * (strLevelArrayZ(&pbsin->arrz) - 1) + pbsin->nbil, CHAR_BIT * sizeof(SZ_STR));
+	if (NULL == (pout = treHuffmanDecoding(ptbl, pbsin)))
 	{
-		fprintf(stderr, "Error! Can not Decode.\n");
+		strDeleteBitStream(pbsin);
+		strDeleteArrayZ(ptbl);
+		fprintf(stderr, "Error! Can not decode.\n");
 		return __LINE__;
 	}
 	/* Print the original string. */
-	printf("%s\n", (char *)pbsout->arrz.pdata);
-	/* Don't forget to free bit streams and symbol table after use. */
-	strDeleteBitStream(pbsout);
+	printf("%s\n", (char *)pout->pdata);
+	/* Don't forget to free the bit stream and symbol table after use. */
 	strDeleteBitStream(pbsin);
 	strDeleteArrayZ(ptbl);
+	strDeleteArrayZ(pout);
 	return 0;
 }
 

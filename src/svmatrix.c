@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0808260000L01071
+ * File ID:     0213191430N0821260018L01087
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -23,7 +23,6 @@
 
 #include <stdlib.h> /* Using function malloc, free. */
 #include <string.h> /* Using function memcpy, memset, memmove. */
-#include <limits.h> /* Using macro CHAR_BIT. */
 #include "svstring.h"
 
 /* Function name: strInitMatrix
@@ -547,7 +546,22 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  * bm(3,x) 0.0 0 0 0
  *         0 0 0 0..
  * Bytes arranged in sequence, therefore this bit map has 3 consecutive bytes totally.
+ * A bmap_block_t block is a size_t block which equals 2 bytes in a 16-bit system
+ *  or 4 bytes in a 32-bit system or 8 bytes in a 64-bit system.
+ * Note that block size does not affect efficiency virtually,
+ *  we just provided users a different memory addressing way.
  */
+
+/* Bit map block type. */
+typedef size_t bmap_block_t;
+
+/* Number of bits in a bit map block. */
+#define BMAP_BLOCK_BIT (sizeof(bmap_block_t) * CHAR_BIT)
+
+/* Pointer to a bit map block to index.
+ * Usage: BMAP_BLOCK(pbm)[0] = 0;
+ */
+#define BMAP_BLOCK(pbmap_M) ((bmap_block_t *)(pbmap_M)->arrz.pdata)
 
 /* Function name: strInitBMap
  * Description:   Initialize a bit matrix.
@@ -564,16 +578,16 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  */
 void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bini, bool bval)
 {
-	stdiv_t dr = stdiv(ln * col, CHAR_BIT); /* ln bit * col bit / CHAR_BIT. */
+	stdiv_t dr = stdiv(ln * col, BMAP_BLOCK_BIT); /* line number * column number / BMAP_BLOCK_BIT. */
 	
-	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(UCHART)))
+	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(BMAP_BLOCK_BIT)))
 	{
 		pbm->ln = pbm->col = 0;
 		return NULL;
 	}
 	
 	if (bini)
-		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, sizeof(UCHART) * pbm->arrz.num);
+		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, sizeof(BMAP_BLOCK_BIT) * pbm->arrz.num);
 	
 	pbm->ln  = ln;
 	pbm->col = col;
@@ -645,7 +659,7 @@ void strDeleteBMap_O(P_BITMAT pbm)
  */
 void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
 {
-	return strCopyMatrix(pdest, psrc, sizeof(UCHART));
+	return strCopyMatrix(pdest, psrc, sizeof(BMAP_BLOCK_BIT));
 }
 
 /* Function name: strCreateCopyBMap
@@ -660,7 +674,7 @@ P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
 {
 	REGISTER P_BITMAT prtn = strCreateBMap(psrc->ln, psrc->col, false, false);
 	if (NULL != prtn)
-		strCopyMatrix(prtn, psrc, sizeof(UCHART));
+		strCopyMatrix(prtn, psrc, sizeof(BMAP_BLOCK_BIT));
 	return prtn;
 }
 
@@ -677,9 +691,9 @@ P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
 bool strGetBitBMap(P_BITMAT pbm, size_t ln, size_t col)
 {
 	if (SV_ASSERT(ln < pbm->ln && col < pbm->col))
-	{	/* Right shift a UCHART block to compare its LSBit with 1. */
-		stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
-		return BOOLIZE(0x01 & (pbm->arrz.pdata[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? CHAR_BIT - dr.rem : 0)));
+	{	/* Right shift a bmap_block_t block to compare its least significant bit with 1. */
+		stdiv_t dr = stdiv(ln * pbm->col + col + 1, BMAP_BLOCK_BIT);
+		return BOOLIZE(0x1 & (BMAP_BLOCK(pbm)[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? BMAP_BLOCK_BIT - dr.rem : 0)));
 	}
 	return false; /* Over size. */
 }
@@ -698,18 +712,19 @@ bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 {
 	if (SV_ASSERT(ln < pbm->ln && col < pbm->col))
 	{
-		REGISTER UCHART t = 0x01;
+		REGISTER bmap_block_t t = 0x1;
 		REGISTER size_t i;
-		stdiv_t dr = stdiv(ln * pbm->col + col + 1, CHAR_BIT);
+		stdiv_t dr = stdiv(ln * pbm->col + col + 1, BMAP_BLOCK_BIT);
 		
-		/* Left shift t and pile it onto the specific UCHART block. */
-		t <<= (dr.rem ? CHAR_BIT - dr.rem : 0);
+		/* Left shift t and pile it onto the specific bmap_block_t block. */
+		t <<= (dr.rem ? BMAP_BLOCK_BIT - dr.rem : 0);
 		i = dr.rem ? dr.quot : dr.quot - 1;
-		pbm->arrz.pdata[i] = (UCHART)
+		
+		BMAP_BLOCK(pbm)[i] = (bmap_block_t)
 		(
 			bval ?
-			pbm->arrz.pdata[i] | t :
-			pbm->arrz.pdata[i] & (~t)
+			BMAP_BLOCK(pbm)[i] | t :
+			BMAP_BLOCK(pbm)[i] & ~t
 		);
 		return true;
 	}
@@ -717,6 +732,7 @@ bool strSetBitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bval)
 }
 
 /* Functions for sparse matrices are implemented bellow. */
+
 /* Sectional function declarations. */
 void   _strBITAdd (size_t idx, ptrdiff_t val,  P_ARRAY_Z parrz);
 size_t _strBITSum (size_t idx, P_ARRAY_Z parrz);

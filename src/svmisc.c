@@ -188,7 +188,7 @@ int svCBFCompareSignedCharacter(const void * px, const void * py)
  */
 void * strInitBitStream(P_BITSTREAM pbstm)
 {
-	strInitArrayZ(&pbstm->arrz, 1, sizeof(bitstrem_block_t));
+	strInitArrayZ(&pbstm->arrz, 1, sizeof(bitstream_block_t));
 	pbstm->nbil = 0;
 	return pbstm->arrz.pdata;
 }
@@ -254,9 +254,9 @@ void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
 {
 	if (strLevelArrayZ(&pdest->arrz) != strLevelArrayZ(&psrc->arrz))
 	{
-		if (NULL != strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(bitstrem_block_t))) /* Balance buffer length. */
+		if (NULL != strResizeArrayZ(&pdest->arrz, strLevelArrayZ(&psrc->arrz), sizeof(bitstream_block_t))) /* Balance buffer length. */
 		{
-			if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(bitstrem_block_t)))
+			if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(bitstream_block_t)))
 			{
 				pdest->nbil = psrc->nbil;
 				return pdest->arrz.pdata;
@@ -265,7 +265,7 @@ void * strCopyBitStream(P_BITSTREAM pdest, P_BITSTREAM psrc)
 	}
 	else
 	{
-		if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(bitstrem_block_t)))
+		if (NULL != strCopyArrayZ(&pdest->arrz, &psrc->arrz, sizeof(bitstream_block_t)))
 		{
 			pdest->nbil = psrc->nbil;
 			return pdest->arrz.pdata;
@@ -289,7 +289,7 @@ P_BITSTREAM strCreateCopyBitStream(P_BITSTREAM psrc)
 	if (NULL != prtn)
 	{
 		prtn->nbil = 0;
-		if (NULL == strInitArrayZ(&prtn->arrz, strLevelArrayZ(&psrc->arrz), sizeof(bitstrem_block_t)))
+		if (NULL == strInitArrayZ(&prtn->arrz, strLevelArrayZ(&psrc->arrz), sizeof(bitstream_block_t)))
 		{	/* Allocation failure. */
 			free(prtn);
 			prtn = NULL;
@@ -329,7 +329,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 	
 	if (++pbstm->nbil > BITSTREAM_BLOCK_BIT)
 	{
-		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(bitstrem_block_t)))
+		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(bitstream_block_t)))
 		{
 			--pbstm->nbil; /* Decrease bit number. */
 			return false;  /* Allocation failure. */
@@ -343,13 +343,13 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 		
 		/* Promote the least significant bit in the previous block. */
 		if (0x1 & BITSTREAM_BLOCK(pbstm)[i - 1])
-			BITSTREAM_BLOCK(pbstm)[i] |= ((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1));
+			BITSTREAM_BLOCK(pbstm)[i] |= ((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1));
 	}
 	
 	BITSTREAM_BLOCK(pbstm)[0] >>= 1;
 	
 	if (value) /* Alter the most significant bit of the first block. */
-		BITSTREAM_BLOCK(pbstm)[0] |= ((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1));
+		BITSTREAM_BLOCK(pbstm)[0] |= ((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1));
 	
 	return true;
 }
@@ -365,7 +365,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
-	REGISTER bool r = BOOLIZE(((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[0]);
+	REGISTER bool r = BOOLIZE(((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[0]);
 	REGISTER size_t n = strLevelArrayZ(&pbstm->arrz);
 	REGISTER size_t i, j = n >= 1 ? n - 1 : 0;
 	
@@ -374,7 +374,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 		BITSTREAM_BLOCK(pbstm)[i] <<= 1;
 		
 		/* Descend the most significant bit in the next block onto the current block. */
-		if (((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[i + 1])
+		if (((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[i + 1])
 			++BITSTREAM_BLOCK(pbstm)[i];
 	}
 	
@@ -385,7 +385,7 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 	{
 		if (n > 1)
 		{
-			strResizeArrayZ(&pbstm->arrz, n - 1, sizeof(bitstrem_block_t));
+			strResizeArrayZ(&pbstm->arrz, n - 1, sizeof(bitstream_block_t));
 			pbstm->nbil = BITSTREAM_BLOCK_BIT;
 		}
 	}
@@ -405,11 +405,11 @@ bool strBitStreamPop(P_BITSTREAM pbstm)
 bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 {
 	REGISTER size_t j;
-	REGISTER bitstrem_block_t * pt;
+	REGISTER bitstream_block_t * pt;
 	
 	if (++pbstm->nbil > BITSTREAM_BLOCK_BIT)
 	{	/* Need to reallocate. */
-		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(bitstrem_block_t)))
+		if (NULL == strResizeArrayZ(&pbstm->arrz, strLevelArrayZ(&pbstm->arrz) + 1, sizeof(bitstream_block_t)))
 		{
 			--pbstm->nbil; /* Decrease bit number. */
 			return false;  /* Allocation failure. */
@@ -420,11 +420,11 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 	j = BITSTREAM_BLOCK_BIT - pbstm->nbil;
 	pt = &(BITSTREAM_BLOCK(pbstm)[strLevelArrayZ(&pbstm->arrz) - 1]);
 	
-	*pt = (bitstrem_block_t)
+	*pt = (bitstream_block_t)
 	(
 		value ?
-		(*pt | ((bitstrem_block_t)  0x1  << j)) : /* Pad 1. */
-		(*pt & ((bitstrem_block_t)(BITSTREAM_BLOCK_MAX - (bitstrem_block_t)1) << j)) /* Pad 0. */
+		(*pt | ((bitstream_block_t)  0x1  << j)) : /* Pad 1. */
+		(*pt & ((bitstream_block_t)(BITSTREAM_BLOCK_MAX - (bitstream_block_t)1) << j)) /* Pad 0. */
 	);
 	
 	return true;
@@ -445,14 +445,14 @@ bool strBitStreamExtract(P_BITSTREAM pbstm)
 	REGISTER bool r = BOOLIZE
 	(
 		BITSTREAM_BLOCK(pbstm)[n - 1] &
-		((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - pbstm->nbil))
+		((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - pbstm->nbil))
 	);
 	
 	if (--pbstm->nbil < 1)
 	{	/* Need to reallocate. */
 		if (n > 1)
 		{
-			if (NULL != strResizeArrayZ(&pbstm->arrz, n - 1, sizeof(bitstrem_block_t)))
+			if (NULL != strResizeArrayZ(&pbstm->arrz, n - 1, sizeof(bitstream_block_t)))
 				pbstm->nbil = BITSTREAM_BLOCK_BIT;
 		}
 	}
@@ -474,7 +474,7 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 	if (SV_ASSERT(index < (strLevelArrayZ(&pbstm->arrz) - 1) * BITSTREAM_BLOCK_BIT + pbstm->nbil))
 	{
 		REGISTER stdiv_t st = stdiv(index, BITSTREAM_BLOCK_BIT);
-		return BOOLIZE(BITSTREAM_BLOCK(pbstm)[st.quot] & ((bitstrem_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - st.rem - 1)));
+		return BOOLIZE(BITSTREAM_BLOCK(pbstm)[st.quot] & ((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - st.rem - 1)));
 	}
 	return false;
 }

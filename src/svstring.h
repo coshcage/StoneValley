@@ -80,18 +80,18 @@ typedef enum en_NodeType {
 } NodeType;
 
 /* Bit stream block type. */
-typedef size_t bitstrem_block_t;
+typedef size_t bitstream_block_t;
 
 /* Number of bits in a bit stream block. */
-#define BITSTREAM_BLOCK_BIT (sizeof(bitstrem_block_t) * CHAR_BIT)
+#define BITSTREAM_BLOCK_BIT (sizeof(bitstream_block_t) * CHAR_BIT)
 
 /* Pointer to a bit stream block to index.
  * Usage: BITSTREAM_BLOCK(pbstm)[0] = BITSTREAM_BLOCK_MAX;
  */
-#define BITSTREAM_BLOCK(pbstm_M) ((bitstrem_block_t *)(pbstm_M)->arrz.pdata)
+#define BITSTREAM_BLOCK(pbstm_M) ((bitstream_block_t *)(pbstm_M)->arrz.pdata)
 
 /* Maximum value of a bit stream block. */
-#define BITSTREAM_BLOCK_MAX (~(bitstrem_block_t)0)
+#define BITSTREAM_BLOCK_MAX (~(bitstream_block_t)0)
 
 /* Note that block size does not affect efficiency virtually,
  *  we just provided users a different memory addressing way.

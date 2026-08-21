@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0821260022L00540
+ * File ID:     0306170921Y0821260552L00536
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -86,16 +86,12 @@ typedef size_t bitstream_block_t;
 #define BITSTREAM_BLOCK_BIT (sizeof(bitstream_block_t) * CHAR_BIT)
 
 /* Pointer to a bit stream block to index.
- * Usage: BITSTREAM_BLOCK(pbstm)[0] = BITSTREAM_BLOCK_MAX;
+ * Usage: BITSTREAM_BLOCK(pbstm)[index] = BITSTREAM_BLOCK_MAX;
  */
 #define BITSTREAM_BLOCK(pbstm_M) ((bitstream_block_t *)(pbstm_M)->arrz.pdata)
 
 /* Maximum value of a bit stream block. */
 #define BITSTREAM_BLOCK_MAX (~(bitstream_block_t)0)
-
-/* Note that block size does not affect efficiency virtually,
- *  we just provided users a different memory addressing way.
- */
 
 /* Definition of bit stream. */
 typedef struct st_BITSTREAM {

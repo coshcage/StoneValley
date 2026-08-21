@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0821260018L01087
+ * File ID:     0213191430N0821260600L01085
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -546,10 +546,8 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
  * bm(3,x) 0.0 0 0 0
  *         0 0 0 0..
  * Bytes arranged in sequence, therefore this bit map has 3 consecutive bytes totally.
- * A bmap_block_t block is a size_t block which equals 2 bytes in a 16-bit system
+ * Practically, a bmap_block_t block is a size_t block which equals 2 bytes in a 16-bit system
  *  or 4 bytes in a 32-bit system or 8 bytes in a 64-bit system.
- * Note that block size does not affect efficiency virtually,
- *  we just provided users a different memory addressing way.
  */
 
 /* Bit map block type. */
@@ -559,7 +557,7 @@ typedef size_t bmap_block_t;
 #define BMAP_BLOCK_BIT (sizeof(bmap_block_t) * CHAR_BIT)
 
 /* Pointer to a bit map block to index.
- * Usage: BMAP_BLOCK(pbm)[0] = 0;
+ * Usage: BMAP_BLOCK(pbm)[index] = 0;
  */
 #define BMAP_BLOCK(pbmap_M) ((bmap_block_t *)(pbmap_M)->arrz.pdata)
 

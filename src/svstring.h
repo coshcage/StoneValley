@@ -32,7 +32,7 @@
 #define NEXT 0
 
 /* An enumeration of binary search methods and their abbreviations.
- * Choose a rational constant as you wish when you are calling svBinarySearchDispatch.
+ * Choose a rational constant as you wish when you are invoking svBinarySearchDispatch.
  */
 typedef enum en_BSearch {
 	EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
@@ -86,7 +86,7 @@ typedef size_t bitstream_block_t;
 #define BITSTREAM_BLOCK_BIT (sizeof(bitstream_block_t) * CHAR_BIT)
 
 /* Pointer to a bit stream block to index.
- * Usage: BITSTREAM_BLOCK(pbstm)[index] = BITSTREAM_BLOCK_MAX;
+ * Usage: BITSTREAM_BLOCK(pbstm)[index] = (bitstream_block_t)BITSTREAM_BLOCK_MAX;
  */
 #define BITSTREAM_BLOCK(pbstm_M) ((bitstream_block_t *)(pbstm_M)->arrz.pdata)
 

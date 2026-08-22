@@ -32,7 +32,7 @@ typedef struct st_STACK_A {
 	ARRAY_Z arr; /* Stack data buffer. */
 } STACK_A, * P_STACK_A;
 
-/* Linked-list implementation of stacks. */
+/* Linked list implementation of stacks. */
 typedef LIST_S STACK_L, * P_STACK_L;
 
 /* Functions for array represented stacks. */

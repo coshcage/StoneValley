@@ -34,7 +34,7 @@
 
 /* Common data types. */
 typedef unsigned char   UCHART;
-typedef unsigned char * PUCHAR; /* Usually, sizeof(unsigned char) == 1. */
+typedef unsigned char * PUCHAR; /* Usually, sizeof(unsigned char) equals 1. */
 
 /* Convert the result of an expression into a boolean value. */
 #define BOOLIZE(exp_term) (!!(exp_term))
@@ -58,7 +58,7 @@ typedef int (* CBF_COMPARE)  (const void *, const void *);
  * otherwise, traversal would continue to run till traversal function reached the end.
  * Uses need to reference to the caller for more details of callback usage.
  *
- * A typical comparing function would like the following lines of codes
+ * A typical comparison function would be like the following lines of codes
  * in which MYTYPE is a type that user defined previously:
  * int cbfcmp(const void * px, const void * py) {
  *     if (*(MYTYPE *)px > *(MYTYPE *)py) return CBF_CMP_GT;
@@ -80,7 +80,7 @@ typedef struct st_stdiv_t {
 	size_t rem;  /* Remainder. */
 } stdiv_t;
 
-/* A utility function used to print library version. */
+/* A utility function to print library version and legal information. */
 void svPrintVersion(void);
 
 /* Unsigned integer division. */

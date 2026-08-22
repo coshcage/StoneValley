@@ -27,7 +27,7 @@
 #include "svstring.h"
 #include "svset.h"
 
-/* Structure of a vertex for adjacency-list representation of graphs. */
+/* Structure of a vertex for adjacency list representation of graphs. */
 typedef struct st_VERTEX_L {
 	size_t vid;     /* Vertex ID. */
 	LIST_S adjlist; /* Adjacency list. */
@@ -55,7 +55,7 @@ typedef struct st_VTXREC {
 	};
 } VTXREC, * P_VTXREC;
 
-/* Adjacency-list representation of graphs. */
+/* Adjacency list representation of graphs. */
 typedef SET_T GRAPH_L, * P_GRAPH_L;
 
 /* Adjacent matrix representation of graphs. */
@@ -107,7 +107,7 @@ size_t     grpIndegreeVertexM       (P_GRAPH_M pgrp,    size_t       vid);
 size_t     grpOutdegreeVertexM      (P_GRAPH_M pgrp,    size_t       vid);
 int        grpDFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
 int        grpBFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
-/* Functions for both adjacent matrix representation of graphs and adjacent list representation of graphs. */
+/* Functions for both adjacent matrix representation of graphs and adjacency list representation of graphs. */
 P_GRAPH_L  grpCreateLFromM          (P_GRAPH_M pgrpm);
 P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 
@@ -169,7 +169,7 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
  *     | |size_t|____vid|___1| | |P_NODE_S|pnode|___*--+ |P_NODE_S|pnode|NULL|
  *     | |LIST_S|adjlist|___*--+ |PUCHAR__|pdata|___*|   |PUCHAR__|pdata|___*|
  *  _  |                                            |                       |
- * G | |  Here is a SET_T that       _EDGE__________+        _EDGE__________+
+ * G | |  Here is a SET_T that is    _EDGE__________+        _EDGE__________+
  * R | | / used to contain vertices.|size_t|___vid|2|       |size_t|___vid|3|
  * A | |/                           |size_t|weight|4|       |size_t|weight|5|
  * P*--+-+_VERTEX_L__________  +-+_P_NODE_S__________

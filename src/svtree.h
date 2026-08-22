@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0820260949L00539
+ * File ID:     0809171737V0822261309L00548
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -421,7 +421,6 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treDeleteRBTNode     treDeleteRBTNode_O
 	#define treInitRBT           treInitRBT_O
 	#define treDeleteRBT         treDeleteRBT_O
-	
 	/* Macros for B-plus trees. */
 	#define _treInitBPTInfo      _treInitBPTInfo_O
 	#define _treDeleteBPTInfo    _treDeleteBPTInfo_O
@@ -437,7 +436,9 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 
 #endif
 
-/* # A valid AA binary search tree will be...
+/* Some guidance listed below as a reference to illustrate tree memory diagrams.
+ * __________________________________________
+ * # A valid AA binary search tree will be...
  *  _P_BST__    2
  * |*_______|  / \
  *  |         1   3
@@ -462,9 +463,8 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
  *   |_____NULL|_____NULL|*____|_____1|
  *             _int______ |
  *            |0x00000001|+
- * __________________________________________________________
- * # A trie which formed after inserting "cat", "cd" and "c",
- *   and an appendix to (const char *)"lynx" tailed string "cat".
+ * __________________________________________________________________________________________________________________________
+ * # A trie which is formed after inserting "cat", "cd" and "c", and an appendix to (const char *)"lynx" tailed string "cat".
  *  _P_TRIE_
  * |*_______|
  *  |
@@ -496,12 +496,12 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
  *       |size_t|          appendix|      *--+_char[5]_
  *       |UCHART|______________flag|___TRUE| |_"lynx"__|
  *
- * ## Because the using of reference counters, this trie implementation
- *    allows users to insert a same string repeatedly.
- * ____________________________________________________________________
- *  _P_BPT_  # A B-plus tree in memory.
- * |*______| # Consider that you are playing a game.
- *  |        # Each structure is a room and each '*' is a door.
+ * Because it uses reference counters, this trie implementation allows users to insert a same string repeatedly.
+ * _______________________________________________________________________________________________________________
+ * # A 3 degree B-plus tree in memory.
+ *  _P_BPT_  # To understand this diagram,
+ * |*______| # consider that you are playing a game,
+ *  |        # and each structure is a room and each '*' is a door.
  *  +>+>+>+_BPTNODE___________________________
  *  | | | |___value|_____________name|____size| +>+___BPT_INFO___________
  *  | | | |NULL____|ppnode[PARENTPTR]|P_NODE_D| | |_ARRAY_Z_:keyarr______| +>+__BPT_KEY_INFO______ ____________________
@@ -530,10 +530,19 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
  *  |     |___value|_____________name|____size| +>+___BPT_INFO___________
  *  +<-----*_______|ppnode[PARENTPTR]|P_NODE_D| | |_ARRAY_Z_:keyarr______| +>+__BPT_KEY_INFO______
  *        |NULL____|ppnode[NEXTPTR]__|P_NODE_D| | |___size_t|num____|___1| | |PUCHAR____|P_BPTNODE|
- *        |size____|name_____________|value___| | |___PUCHAR|pdata__|___*->+ |pkey______|pchild___|
- * *Data  |PUCHAR__|pdata____________|_______*->+ |P_BPTNODE|headptr|NULL|   |0x0000FFF0|NULL_____|
- *  array___________________________________
+ * The    |size____|name_____________|value___| | |___PUCHAR|pdata__|___*->+ |pkey______|pchild___|
+ * Data   |PUCHAR__|pdata____________|_______*->+ |P_BPTNODE|headptr|NULL|   |0x0000FFF0|NULL_____|
+ * Array____________________________________
  * |Address|0x0000FFF0|0x0000FFF4|0x0000FFF8|
  * |Data___|_________3|_________1|_________2|
+ *
+ * This is the equivalent B-plus tree to the aforementioned one.
+ * You can see that a B-plus tree stores item pointers rather than items.
+ * Pointers are repeated in both internal nodes and leaves, this is the feature of B-plus trees.
+ *      ___
+ *     |2|3|
+ *   _/  |  \_
+ *  |1|>|2|>|3|>(NULL)
+ * Leaves nodes are sorted linked list to link items from the smallest one to the biggest one.
  */
 

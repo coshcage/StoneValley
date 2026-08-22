@@ -44,7 +44,7 @@ typedef struct st_DEQUE_DL {
 } DEQUE_DL, * P_DEQUE_DL;
 
 /* Function declarations here. */
-/* Functions for circular queues that use fixed-size arrays. */
+/* Functions for circular queues that use fixed size arrays. */
 void *     queInitAC        (P_QUEUE_A  pqueac, size_t       num,   size_t     size);
 void       queFreeAC        (P_QUEUE_A  pqueac);
 P_QUEUE_A  queCreateAC      (size_t     num,    size_t       size);

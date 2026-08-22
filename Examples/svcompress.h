@@ -2,7 +2,7 @@
  * Name:        svcompress.h
  * Description: Compress files.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0120211637A0820262338L00067
+ * File ID:     0120211637A0822261342L00068
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -46,6 +46,7 @@ SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin);
 /* A file listed below to give users an example to launch the svcompress module.
 // Name:        svcf.c
 // Description: Launcher of compress/decompress files for the svcompress module.
+// Usage:       $ cc *.c -o svcf; cat a.txt | ./svcf -c > b.bin; cat b.bin | ./svcf -d > c.txt; diff a.txt c.txt;
 #include <stdio.h>
 #include <string.h>
 #include "svcompress.h"

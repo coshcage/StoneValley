@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0819260145L00715
+ * File ID:     0608260445A0822261333L00713
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -234,8 +234,6 @@ char column_buffer[4][BUFSIZ] = { 0 };
 
 #define STR_BAD_COMMAND "Bad command: '%s'. Type help to show helpful contents.\n"
 
-extern int svCBFCompareSizeTInteger(const void * px, const void * py);
-
 /* StoneValley source file name array. */
 const char * SZCFILE[] =
 {
@@ -295,7 +293,7 @@ static void PrintHelp(void)
 	printf("list/l:      List relevant functions by a name.\n\tUsage: list [-[c|f|n]] [all|*|name|name*|(number) name]\n");
 	printf("\tExamples:\n\tlist all\n\tlist -fnc all\n\tlist -n all\n\tlist *\n\tlist str*\n\tlist -c str* -cn grp*\n\tlist strCreateArrayZ\n\tlist 5 str 6 grp\n\tNotice:\n\t(number) equals to an editorial distance to the subsequent name.\n");
 	printf("apropos/a:   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -n create arrayz\n");
-	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name of a function.\n\t-n means to print function name.\n\t-cfn is the default way to print.\n\tIf you do not specify, program would print names by -cfn order.\n");
+	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name of a function.\n\t-n means to print function name.\n\t-cfn is the default way to print.\n\tIf you did not specify, program would have to print names by -cfn order.\n");
 	printf("version/v:   Show StoneValley library version.\n");
 	printf("help/h:      Show this content.\n");
 	printf("exit/quit/q: Exit program.\n");
@@ -372,7 +370,7 @@ static int cbftvsFuzzyQuery(void * pitem, size_t param)
 	return CBF_CONTINUE;
 }
 
-static bool IsStrNumeric(char * str)
+static bool IsNumericString(char * str)
 {
 	char * p = str;
 	
@@ -385,7 +383,7 @@ static bool IsStrNumeric(char * str)
 	return true;
 }
 
-static void RewindArrStr(P_ARRAY_Z parr)
+static void ReclaimStringArray(P_ARRAY_Z parr)
 {
 	size_t i;
 	
@@ -582,7 +580,7 @@ static void CommandParser(FILE * fpin)
 					}
 					else
 					{
-						if (IsStrNumeric(p))
+						if (IsNumericString(p))
 						{
 							j = (size_t) atoll(p);
 						}
@@ -645,7 +643,7 @@ static void CommandParser(FILE * fpin)
 			if (NULL != psetc) setDeleteT(psetc);
 		}
 		
-		RewindArrStr(&arrstr);
+		ReclaimStringArray(&arrstr);
 		f = EF_NONE;
 		k = 0;
 		

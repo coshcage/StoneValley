@@ -581,14 +581,14 @@ void * strInitBMap(P_BITMAT pbm, size_t ln, size_t col, bool bini, bool bval)
 {
 	stdiv_t dr = stdiv(ln * col, BMAP_BLOCK_BIT); /* line number * column number / BMAP_BLOCK_BIT. */
 	
-	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, sizeof(BMAP_BLOCK_BIT)))
+	if (NULL == strInitArrayZ(&pbm->arrz, dr.rem ? dr.quot + 1 : dr.quot, BMAP_BLOCK_BIT))
 	{
 		pbm->ln = pbm->col = 0;
 		return NULL;
 	}
 	
 	if (bini)
-		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, sizeof(BMAP_BLOCK_BIT) * pbm->arrz.num);
+		memset(pbm->arrz.pdata, bval ? ~(unsigned int)0 : (int)false, BMAP_BLOCK_BIT * pbm->arrz.num);
 	
 	pbm->ln  = ln;
 	pbm->col = col;
@@ -660,7 +660,7 @@ void strDeleteBMap_O(P_BITMAT pbm)
  */
 void * strCopyBMap_O(P_BITMAT pdest, P_BITMAT psrc)
 {
-	return strCopyMatrix(pdest, psrc, sizeof(BMAP_BLOCK_BIT));
+	return strCopyMatrix(pdest, psrc, BMAP_BLOCK_BIT);
 }
 
 /* Function name: strCreateCopyBMap
@@ -675,7 +675,7 @@ P_BITMAT strCreateCopyBMap(P_BITMAT psrc)
 {
 	REGISTER P_BITMAT prtn = strCreateBMap(psrc->ln, psrc->col, false, false);
 	if (NULL != prtn)
-		strCopyMatrix(prtn, psrc, sizeof(BMAP_BLOCK_BIT));
+		strCopyMatrix(prtn, psrc, BMAP_BLOCK_BIT);
 	return prtn;
 }
 

@@ -325,8 +325,8 @@ P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const char * str, size_t num)
 			if (NULL != pbstm)
 			{
 				REGISTER size_t i, j, k, l, m;
-				REGISTER _P_SMBINF psi;
 				REGISTER P_HFM_SYMBOL pstbl;
+				REGISTER _P_SMBINF psi;
 				
 				/* Expand symbol table. */
 				for (i = 0, k = strLevelArrayZ(ptable); i < k; ++i)

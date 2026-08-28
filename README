@@ -409,7 +409,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	4) Assertion Usage
 	
-	The crucial idea to use assertions is to make avoidance in loops and recursions. In most cases, assertions are used to test prerequisites when programs enter a sub routine. When library optimizing switch is switched off, assertions are put in charge to detect errors. When library optimizing is switched on, library leaves debug mode, it assumes that prerequisites are all met. But in a loop, such a condition that is usually to be asserted must be guaranteed every time it loops. So do these assertions need to be guaranteed when a program recurs. It is dangerous to turn off checks during loop and recursion since these conditions are used to terminate repetitions. No check means an infinite loop.
+	The crucial idea to use assertions is to make avoidance in loops and recursions. In most cases, assertions are used to test prerequisites when programs enter a sub routine. When library optimizing switch is switched off, assertions are put in charge to detect errors. When library optimizing is switched on, library leaves debug mode, it assumes that prerequisites are all met. But in a loop, such a condition that is usually to be asserted must be guaranteed every time it loops. So do these assertions need to be guaranteed when a program recurs. It is dangerous to turn off checks during loop and recursion since these conditions are used to terminate repetitions. No check means an incontinent loop.
 
 	5) Control Flow Manipulation
 	

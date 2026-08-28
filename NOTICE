@@ -8,7 +8,18 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 This file is used to trace bugs.
+_______________________________________________________________________________
+Mr. Woodpecker's
 
+Here lists a notice from Mr. Woodpecker to give users a fast adaptation to accommodate StoneValley.
+
+1. When upgrading to version 1.3.4.1 and above, notice your calls for function svSwap, parameter list pleft, pright, ptemp and size had been altered to pleft, ptemp, pright and size.
+
+2. Using version 1.3.4.3 may give you a better way to locate potential bugs by using SV_ASSERT. Refer to README to get to know the usage of assertion.
+
+May bugs stay away from you, fellow saplings.
+Uncle Woodpecker.
+_______________________________________________________________________________
 Logs:
 
 12-26-2017: Bug fixed in Huffman coding tree.
@@ -154,7 +165,6 @@ Logs:
 08-08-2026: Library updated. Version 1.3.4.1.
 08-21-2026: Library updated. Version 1.3.4.3.
 _______________________________________________________________________________
-
 09-24-2018:
 	Red-black tree has been cut off instead of an AA-tree. No apparent bugs. B-plus tree may hide bugs. B-plus tree is too big to invite bugs.
 10-14-2018:

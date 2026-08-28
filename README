@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 171
 	Limitations ........................................................... 320
 	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 478
+	GNU Free Documentation License ........................................ 503
 
 iv  Scenario
 
@@ -342,7 +342,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	Preamble .............................................................. 333
 	Sub Table of Contents ................................................. 339
 	Technical Information ..................................................347
-	The Story About StoneValley ........................................... 474
+	The Story About StoneValley ........................................... 499
 	
 	Technical Information
 
@@ -371,10 +371,35 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	Why don't we use CBF_TERMINATE == cbftvs() to test? Since CBF_CONTINUE and CBF_TERMINATE are respectively contradictory boolean values, that is ! CBF_CONTINUE == CBF_TERMINATE. We do so for the reason that CBF_TERMINATE == cbftvs() expands terminate conditions that we do not want this happen. Because CBF_TERMINATE is 1, to test CBF_TERMINATE == cbftvs() is to test 1 == cbftvs(), so if 1 == cbftvs(), caller would be break. What if cbftvs returned 2? As we mentioned before, we are testing 1 == cbftvs() to expect it to be true to break. Now cbftvs returns 2 and thus makes caller to continue to call callback with no stop. And this belated stop may bring us hazardous data issue that sometimes cbftvs affects data out of our consideration. Furthermore, in the callback's caller, due to we always return either CBF_CONTINUE or CBF_TERMINATE after testing cbftvs, return values for callers are restricted to true and false bringing us less uncertainties to handle that further makes our programs robust as possible as it can be.
 	
 	For comparisons, in a relative comparison case, relations comprise greater than, equal to and less than. Users need to return CBF_CMP_GT, CBF_CMP_EQUAL and CBF_CMP_LT depending on the situation. Sometimes a user needs to return CBF_CMP_GT when px is less than py, CBF_CMP_LT when px is greater than py to make an inverse sort to an array. Since CBF_CMP_EQUAL is 0, it means no difference. Zero is also the integral value of boolean value false in C. So that we can say true means data are different, false means data are equivalent. Note that during a match function, a BOOLIZE expression conversion need to be done to avoid truncating side effects. When truncating effect occurs, different data can cause an equivalent return value. Both relations and match checkers are of CBF_COMPARE type. In practice, relations are usually named cbfcmp while match checkers are named cbfmch.
+	
+	Here is an example of truncating side effect that we have to avoid from happening.
+	
+	#include <stdio.h>
+	#include <stdint.h>
+	#include "svdef.h"
+
+	int erroneous_cbfmch(const void * px, const void * py)
+	{
+		return *(uint64_t *)px - *(uint64_t *)py;
+	}
+
+	int correct_cbfmch(const void * px, const void * py)
+	{
+		return (int)BOOLIZE(*(uint64_t *)px - *(uint64_t *)py);
+	}
+
+	int main()
+	{
+		uint64_t a = 0x0100000000000000ULL;
+		uint64_t b = 0;
+		printf("%s\n", CBF_CMP_EQUAL == erroneous_cbfmch(&a, &b) ? "EQUAL" : "NOT EQUAL"); // Prints EQUAL.
+		printf("%s\n", CBF_CMP_EQUAL ==   correct_cbfmch(&a, &b) ? "EQUAL" : "NOT EQUAL"); // Prints NOT EQUAL.
+		return 0;
+	}
 
 	3) Memory Allocation
 
-	In this section, we are about to discuss when to allot memory and when to free memory. There are two main types of memories, stack memory and heap memory for a process's memory space. Local variables are usually stored on stacks while function malloc exploits heap memories. To make a funny analogy, stacks expand from heaven to the earth that is a stack increases its address when accumulating and a heap builds from the bottom of the hell toward the earth that is a heap reduces its address when growth. Realities can vary.
+	In this section, we are about to discuss when to allot memory and when to free memory. There are two main types of memories, stack memory and heap memory for a process's memory space. Local variables are usually stored on stacks while function malloc exploits heap memories. To make a funny analogy, stacks expand from heaven to the earth that is a stack increases its address when accumulating and a heap builds from the bottom of the hell toward the earth surface that is a heap reduces its address when growth. Realities can vary.
 	
 	Initial and create functions in StoneValley both exert heap memories. In a word, they use malloc like functions to allocate heap memory spaces. Free and delete function use function free in the standard C library to release heap memories. StoneValley had to resolve this for its architecture and thus brings users problems. If you manually set an internal pointer of a data structure to a stack memory, you cannot use initial functions or create functions to rewrite the pointer. Neither can you invoke free and delete functions to release the pointer.
 	

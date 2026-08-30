@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0830261035L00729
+ * File ID:     0608260445A0830261200L00734
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -58,12 +58,14 @@ ARRAY_Z arrbuf;
 PUCHAR  pbuf;
 
 int len;
+int glineno;
 
 typedef struct st_FunRecord {
 	char * fname;
 	char * fdesc;
 	char * record;
 	char * prototype;
+	int    lineno;
 	size_t filenameindex;
 } FunRecord, * P_FunRecord;
 
@@ -146,6 +148,7 @@ static int cbfcmpstr(const void * px, const void * py)
 		if (';' != yytext[strlen(yytext) - 2])
 		{
 			DissectAComment();
+			gfc.lineno = glineno + 1;
 			gfc.prototype = strdup(yytext);
 			treInsertRBT(pdb, &gfc, sizeof(gfc), cbfcmpstr);
 		}
@@ -197,6 +200,7 @@ static int cbfcmpstr(const void * px, const void * py)
 		len = sprintf((char *)pbuf, "%s", yytext);
 		CheckBufferSize(len);
 	}
+	++glineno;
 }
 
 %%
@@ -219,7 +223,7 @@ char column_buffer[4][BUFSIZ] = { 0 };
 	switch (column_content[ncol]) { \
 	case ENC_NONE:  column_buffer[ncol][0] = 0; break; \
 	case ENC_NAME:  sprintf(column_buffer[ncol], "%s\t", pfc->fname); break; \
-	case ENC_FILE:  sprintf(column_buffer[ncol], "%s\t", SZCFILE[pfc->filenameindex]); break; \
+	case ENC_FILE:  sprintf(column_buffer[ncol], "%s:%d\t", SZCFILE[pfc->filenameindex], pfc->lineno); break; \
 	case ENC_COUNT: sprintf(column_buffer[ncol], "%zd\t", counter); break; \
 	} \
 } while(0)
@@ -297,7 +301,7 @@ static void PrintHelp(void)
 	printf("list/l:      List relevant functions by a name.\n\tUsage: list [-[c|f|n|i|p]] [all|*|name|name*|(number) name]\n");
 	printf("\tExamples:\n\tlist all\n\tlist -p all\n\tlist -fnc all\n\tlist -n all\n\tlist *\n\tlist str*\n\tlist -c str* -cn grp*\n\tlist strCreateArrayZ\n\tlist 5 str 6 grp\n\tNotice:\n\t(number) equals to an editorial distance to the subsequent name.\n\tNote that list all* is a bad command that produces nothing.\n");
 	printf("apropos/a:   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n|i|p]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -np create arrayz\n");
-	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name of a function.\n\t-n means to print function name.\n\t-i means to choose to print internal functions.\n\t-p means to choose to print public functions.\n\t-cfnip is the default way to print.\n\t-cfn equals to -cfnip, -cfnpi, -icfnp, -cifpn and so on.\n\tIf you did not specify, program would have to print names by -cfnip order.\n");
+	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name and the line number of a function.\n\t-n means to print function name.\n\t-i means to choose to print internal functions.\n\t-p means to choose to print public functions.\n\t-cfnip is the default way to print.\n\t-cfn equals to -cfnip, -cfnpi, -icfnp, -cifpn and so on.\n\tIf you did not specify, program would have to print names by -cfnip order.\n");
 	printf("version/v:   Show StoneValley library version.\n");
 	printf("help/h:      Show this content.\n");
 	printf("exit/quit/q: Exit program.\n");
@@ -687,6 +691,7 @@ int main(int argc, char * argv[])
 		
 		if (NULL != fpin)
 		{
+			glineno = 0;
 			gfc.filenameindex = i;
 			yyrestart(fpin);
 			yylex();

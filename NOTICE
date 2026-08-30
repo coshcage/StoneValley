@@ -20,6 +20,25 @@ Here lists a notice from Mr. Woodpecker to give users a fast adaptation to accom
 May bugs stay away from you, fellow saplings.
 Uncle Woodpecker.
 _______________________________________________________________________________
+Techno Today
+
+Techno Today is an idea sharing issue for StoneValley.
+
+To Expose or Not, This Is A Question
+Considering iterators, as I heard, a design pattern that is used to visit each element in an amalgamation by some order to not to expose the intrinsic structure of the amalgamation. In a word, a neat traversal method. By designing traversals for StoneValley, I was engaging in this topic.
+For example, a single pointer node is defined as follow in svstring.h:
+typedef struct st_NODE_S {
+	struct st_NODE_S * pnode;
+	PUCHAR pdata;
+} NODE_S, * P_NODE_S;
+It is clear that pnode is a pointer to store the address of another node, and pdata is a pointer to the node's data. To Traverse single linked list need users to bring a traversal callback as a parameter. This callback, however, points to each NODE_S rather than pdata during calling. In the callback, in order to visit data, we have to convert pitem from (void *) into P_NODE_S and then fetch pdata through pitem. Taking pitem as P_NODE_S totally exposed NODE_S structure to users. Is it a good way to do so? While I think it is a trade off. Let me explain then.
+I need more maneuverability to NODE_S that inevitably brings complicating to switch between pointers to users.
+At first, I think it is a better way to display NODE_S's internal to give users more possibility to control over a linked list. Thus we can alter the sequence of two single nodes in a callback for a linked list. I seldom do such work, that is to switch nodes sequence in a linked list by traversals. Until I need to free both a single list and a double list, this way to visit ironically facilitates me. Function _strCBFDeleteNode at file svlist.c can simultaneously delete a single node and a double node effortlessly thanks to pitem points to nodes but not pdata.
+May be pitem should be a second pointer to pdata of a node, that is (pitem = &node.pdata). In this manner, not only can we visit pnode, but we can also calculate the pointer to NODE_S by use something like (pnode_s = container_of(pitem)) in a callback. But the second pointer forces users to indirect twice to fetch the data of a node that brings us some trouble. (*(char *)pitem = 'A';) mistakenly tore pdata of that single node instead of altering it's data. If you don't inform users, users would do whatever they can. If you do inform users, users may not listen to you. While it's complicated in practice.
+No need to say frequently altering lower the stability of APIs that brings users a quagmire and a nightmare to use. At last, I had to keep the original design.
+
+Hey, it is from StoneValley programming library but not stone valley resort's lay.
+_______________________________________________________________________________
 Logs:
 
 12-26-2017: Bug fixed in Huffman coding tree.

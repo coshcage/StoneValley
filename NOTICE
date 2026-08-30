@@ -37,7 +37,7 @@ At first, I think it is a better way to display NODE_S's internal to give users 
 May be pitem should be a second pointer to pdata of a node, that is (pitem = &node.pdata). In this manner, not only can we visit pnode, but we can also calculate the pointer to NODE_S by use something like (pnode_s = container_of(pitem)) in a callback. But the second pointer forces users to indirect twice to fetch the data of a node that brings us some trouble. (*(char *)pitem = 'A';) mistakenly tore pdata of that single node instead of altering it's data. If you don't inform users, users would do whatever they can. If you do inform users, users may not listen to you. While it's complicated in practice.
 No need to say frequently altering lower the stability of APIs that brings users a quagmire and a nightmare to use. At last, I had to keep the original design.
 
-Hey, it is from StoneValley programming library but not stone valley resort's lay.
+Hey, it is from StoneValley programming library but not the stone valley resort's bay.
 _______________________________________________________________________________
 Logs:
 

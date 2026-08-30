@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 171
 	Limitations ........................................................... 320
 	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 503
+	GNU Free Documentation License ........................................ 511
 
 iv  Scenario
 
@@ -499,6 +499,14 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	The Story About StoneValley
 
 	To think about the integration of algorithms might be a valuable job. In year 2016, I was considering this topic. And meanwhile, other coding projects urged me to write such a programming library. Yes, I needed a collection of algorithms and useful data structures. When you got well ready for your project, you are almost succeeded. I found all books about algorithms and data structures on my bookshelf and prepared to write StoneValley.
+	
+	You cannot shock the market without preparing, I mean, that is what the Lockheed Martin company and it's Skunk works do and I learned such a way from them then. If you publish your whole plan publicly, perhaps nobody gonna buy yours. By contrast, if you well planed after investigating the market and use a little bit time to let your code brew, you will always get a good result. It was the time for me to consider designing a data structure library, finding a name for it, writing it's initial codes and choosing a suitable time to bash the market.
+
+	The aim was simple. It's tasks were not quite easy. How was I supposed to combine almost every algorithm and data structures under one architecture? I didn't even know at least ten percent algorithms in this world. I gotta find a fine reference. Then I found the C Plus Plus Standard Template Library also known as STL. A valuable tutorial during that time to teach users to use STL was from a Taiwanese professor JJ. Hou. He wrote a book called The Annotated STL Sources and published a serial of videos to explain STL in detail. I grabbed this materials for guarantee and absorbed perhaps the very essence of STL. Plus the books I have read about algorithms, at least I gained confidence to finish this task. Admittedly, I conceived a lot for StoneValley.
+	
+	The next thing that thwarted me to give birth to StoneValley was it's name. I have noticed STL stood for Standard Template Library. However, Common Data Structure Library is too common. Algorithm Utility is too usual. While I was reading a book called An Eclectic Prose From The World's Most Famous Thinkers. It wrote: "Poets are enchanting their poems in the valley." I thought: "Formal languages are languages, poems are language distillates. Algorithms are program poems. I decide to name it StoneValley for the reason that I will enchant my poems in the valley and I need exactly a collection of solid codes of algorithms, each function is as solid as a stone."
+	
+	I quickly dropped STL and regarded it as a not so good designation. Too many concepts have been involved in STL like vector, container, comparator, allocator, functor made me not only perplexed but also sick. "What the hell are those aliens?" I thought. "They made to many concepts to glue algorithms and data structures together and eventually made it gruesome to me to learn." My purpose was steady and solid: "Algorithms are procedures to solve problems written as functions. An algorithm needs a way to manipulate data called data structure. Basically data structure is the way that data being represented in main memory. How about dividing library modules apart by data structures?" I thought. "Since it not a viable way to categorize algorithms into modules by the way to build them, such as force enumerate, greedy, divide and conquer, prune, dynamic program and heuristic."
 
 xi
 

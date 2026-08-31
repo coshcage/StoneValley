@@ -24,7 +24,7 @@ Techno Today
 
 Techno Today is an idea sharing issue for StoneValley.
 
-To Expose or Not, This Is A Question
+To Expose or Not, This Is A Question.
 Considering iterators, as I heard, a design pattern that is used to visit each element in an amalgamation by some order to not to expose the intrinsic structure of the amalgamation. In a word, a neat traversal method. By designing traversals for StoneValley, I was engaging in this topic.
 For example, a single pointer node is defined as follow in svstring.h:
 typedef struct st_NODE_S {
@@ -37,7 +37,78 @@ At first, I think it is a better way to display NODE_S's internal to give users 
 Maybe pitem should be a second pointer to pdata of a node, that is (pitem = &node.pdata). In this manner, not only can we visit pnode, but we can also calculate the pointer to NODE_S by use something like (pnode_s = container_of(pitem)) in a callback. But the second pointer forces users to indirect twice to fetch the data of a node that brings us some trouble. (*(char *)pitem = 'A';) mistakenly tore pdata of that single node instead of altering it's data. If you don't inform users, users would do whatever they can. If you do inform users, users may not listen to you. While it's complicated in practice.
 No need to say frequently altering lower the stability of APIs that brings users a quagmire and a nightmare to use. At last, I had to keep the original design.
 
-Hey, it is from StoneValley programming library but not the stone valley resort's bay.
+Does Adding Pointers Add Troubles? Well, It Depends.
+Let us reminisce about the type of a single pointer node in StoneValley:
+typedef struct st_NODE_S {
+	struct st_NODE_S * pnode;
+	PUCHAR pdata;
+} NODE_S, * P_NODE_S;
+What is pnode doing here for? It stands as a pointer to the next entity that shows the connection between nodes. It embodies an order of two nodes. It is possible for us to visit them from the first to the second. It is impossible for programmers to visit them from the second to the first. pnode defines the relation between single nodes. It guides the Central Processing Unit to read memory in a sequence.
+Beside of it, a single node needs to store various data. The question is how we arrange data for a node. An usual way is to pad data beneath the node. Plus a pointer to the next entity, it comes:
+struct st_NODE_S_FAM {
+	struct st_NODE_S_FAM * pnext;
+	int data[0];
+};
+To understand this, you must unearth something from the C Programming Standard called the Flexible Array Member. Let me tell you about it, here, structure member data is a syntactic variable, it is not a real array, neither a pointer. As a syntactic variable, if we semantically write pnode->data[0] = 1; through variable data, we can visit each integer from an integer array and variable data itself doesn't occupy memory space at all.
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+	struct st_NODE_S_FAM {
+		struct st_NODE_S_FAM * pnext;
+		int data[0];
+	} * pnode;
+	
+	pnode = (struct st_NODE_S_FAM *)malloc(sizeof(struct st_NODE_S_FAM) + sizeof(int) * 3);
+	pnode->data[0] = 1;
+	pnode->data[1] = 2;
+	pnode->data[2] = 3;
+	
+	printf("sizeof(struct st_NODE_S_FAM) == %zd\n", sizeof(struct st_NODE_S_FAM));
+	printf("sizeof(pnode) == %zd\n", sizeof(pnode));
+	printf("sizeof(*pnode) == %zd\n", sizeof(*pnode));
+	
+	free(pnode);
+	
+	return 0;
+}
+We will get three lines of 8 after running the above code.
+Comparing st_NODE_S_FAM to st_NODE_S, pdata takes one pointer length to store the address of data. Every time we visit data from a st_NODE_S_FAM node, the data is padded under pnext pointer. Every time we visit data from a st_NODE_S node, we have to read pdata first to know the address of the data. The data might be stored somewhere else in the main memory sea, maybe far from the st_NODE_S node. Intuitively, to access data from a st_NODE_S node adds the number of chance of cache miss that could slowdown accessing speed for a bunch of node entities. But when we investigate dynamic memory allocation deeper inside, we can find things are not always being true like that. Some allocators align the size of memory you want to allot first and allot small memories together. For example, by running pnode->pdata = malloc(sizeof(int)); promptly after running P_NODE_S pnode = malloc(sizeof(st_NODE_S)); you will get two very close addresses for pnode and pnode->pdata, that pnode juxtaposes pnode->pdata not so far in memory. In contrary, huge padding data made addressing difficult though such as:
+struct st_NODE_S_FAM {
+	struct st_NODE_S_FAM * pnext;
+	int data[8192];
+} nodea, nodeb;
+nodea.pnext = &nodeb; nodeb.pnext = NULL;
+To separate node and data brings us another benefit, that is we can store whatever type of data we want to in a node. That is we can combine any type of data to a node. With switching between pointer types, we have the ability to access them, arbitrary data, effortlessly. If we just need to know how many data there are stored in a single list without accessing each data, we need only count the number of nodes. Nodes are aggregated together in main memory besides their data. This accelerates the speed to tally the sum of entities.
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct st_NODE_S {
+	struct st_NODE_S * pnode;
+	unsigned char * pdata;
+} NODE_S, * P_NODE_S;
+
+int main()
+{
+	P_NODE_S pnode = (P_NODE_S)malloc(sizeof(NODE_S));
+	if (NULL != pnode)
+	{
+		pnode->pdata = (unsigned char *)malloc(sizeof(int) * 3);
+		if (NULL != pnode->pdata)
+		{
+			0[(int *)pnode->pdata] = 1;
+			1[(int *)pnode->pdata] = 2;
+			2[(int *)pnode->pdata] = 3;
+			printf("%p\n", pnode);
+			printf("%p\n", pnode->pdata);
+			free(pnode->pdata);
+		}
+		free(pnode);
+	}
+	return 0;
+}
+
+Hey, it's from StoneValley programming library but not the stone valley resort's bay. It is Techno Today!
 _______________________________________________________________________________
 Logs:
 

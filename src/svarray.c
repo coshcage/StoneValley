@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0806261100L00901
+ * File ID:     0306170948B0906261601L00901
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -693,7 +693,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
  *    parrtxt Pointer to the sized array that represents the text to search.
  *    parrptn Pointer to the sized array which contains the pattern.
  *       size Size of each element in both parrtxt and parrptn.
- *     cbftvs Callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
+ *     cbftvs Pointer to a callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
@@ -791,7 +791,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
  *    parrtxt Pointer to the sized array that represents the text to search.
  *    parrptn Pointer to the sized array which contains the pattern.
  *       size Size of each element in both parrtxt and parrptn.
- *     cbftvs Callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in the text array.
+ *     cbftvs Pointer to a callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in the text array.
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.

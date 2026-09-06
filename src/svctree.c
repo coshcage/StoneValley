@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0820260930L00477
+ * File ID:     0914171200J0906261514L00477
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -25,7 +25,7 @@
 #include "svtree.h"
 
 /* A macro that defines the maximum symbol table length. */
-#define _SMB_TBL_LEN ((size_t) (UCHAR_MAX + 1))
+#define _SMB_TBL_LEN ((size_t) ((size_t)UCHAR_MAX + 1))
 
  /* Symbol information of Huffman trees. */
 typedef struct _st_SMBINF {

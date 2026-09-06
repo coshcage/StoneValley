@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0821260552L00536
+ * File ID:     0306170921Y0906261600L00537
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -144,8 +144,9 @@ void *      svQuickSort                    (void *       pbase,    size_t       
 void *      svMergeSort                    (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svHeapSort                     (void *       pbase,    size_t       num,       size_t       size,    CBF_COMPARE  cbfcmp);
 void *      svBinarySearch                 (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
-void *      svBinarySearchDispatch         (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp, BSearch method);
+void *      svBinarySearchDispatch         (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp, BSearch      method);
 ptrdiff_t   svIndexOf_O                    (const void * pbase,    const void * pitem,     size_t       size);
+int         svB5SSearchCharacterString     (const char * haystack, size_t       hlen,      const char * needle,  size_t       nlen,   bool        bovlp,  CBF_TRAVERSE cbftvs, size_t   param);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
@@ -226,7 +227,7 @@ P_NODE_D    strRemoveItemLinkedListDC      (P_NODE_D     pnode);
 void        strSwapNodeItemLinkedListDC    (P_NODE_D     pnodex,   P_NODE_D     pnodey);
 /* Functions for both single linked lists and doubly linked lists. */
 void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       bool         brev);
-bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t  sizey, NodeType ntpy);
+bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t       sizey,  NodeType ntpy);
 void *      strMergeSortLinkedListSDC      (void *       list,     bool         bcircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
 /* Functions for bit streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
@@ -254,7 +255,7 @@ void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * 
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
 void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfmch);
-bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t  scol,  size_t   size);
+bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,   size_t   size);
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);

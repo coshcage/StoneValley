@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0820261341L00933
+ * File ID:     0306170948D0906261610L01066
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -929,5 +929,138 @@ void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num,
 ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
 {
 	return (ptrdiff_t) ((ptrdiff_t)pitem - (ptrdiff_t)pbase) / (ptrdiff_t)size;
+}
+
+/* Function name: svB5SSearchCharacterString
+ * Description:   Find needles in a haystack by Boyer-Moore-Horspool with Bad Needle Fast String (BMHBNFS) matching.
+ * Parameters:
+ *   haystack Pointer to the text string you want to search.
+ *       hlen Length of haystack.
+ *     needle Pointer to the pattern you want to find in text.
+ *       nlen Length of needle.
+ *      bovlp Input true to search string in an overlapping manner.
+ *            For example, to search "aa" in "aaa", function calls its callback 2 times.
+ *            Input false to search string in a non-overlapping manner.
+ *            For instance, to search "aa" in "aaa", function calls its callback for only 1 time.
+ *     cbftvs Pointer to a callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
+ *      param Parameter that is used to transfer into callback function.
+ * Return value:  The same value as callback function cbftvs returned.
+ *                Caution that function would return CBF_CONTINUE even if it encountered allocation failures and errors.
+ * Tip:           This function is a partially specialized version for character string matching comparing to strKMPSearchArrayZ and strZSearchArrayZ.
+ *                The latter two are generalized versions for string matching which give you a probably worse performance to character strings.
+ *                This function provides users a more efficient way to match character strings.
+ * Usage:         <test.c>
+ *                #include <stdio.h>
+ *                #include "svstring.h"
+ *                int cbftvs(void * pitem, size_t param) {
+ *                    printf("%zu\n", (size_t)pitem - param);
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int main() {
+ *                    const char * str = "mississippi";
+ *                    svB5SSearchCharacterString(str, 11, "i", 1, false, cbftvs, (size_t)str); // Returns 1 4 7 10.
+ *                    return 0;
+ *                }
+ */
+int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * needle, size_t nlen, bool bovlp, CBF_TRAVERSE cbftvs, size_t param)
+{
+#define _ALPHABET_SIZE     ((size_t) ((size_t)UCHAR_MAX + 1))
+#define _HALF_BUFFER_SIZE  (BUFSIZ >> 1)
+#define _STACK_BUFFER_SIZE (_HALF_BUFFER_SIZE <= 0 ? _ALPHABET_SIZE : _HALF_BUFFER_SIZE) /* Choose an environmental dependent size to buffers. */
+	if (SV_ASSERT(0 != hlen && 0 != nlen && hlen >= nlen))
+	{
+		REGISTER size_t i, m = nlen - 1, n = nlen, pos, k;
+		REGISTER ptrdiff_t j;
+		ptrdiff_t * border;
+		size_t    rawstk1[_STACK_BUFFER_SIZE];
+		ptrdiff_t rawstk2[_STACK_BUFFER_SIZE];
+		size_t    badchar[_ALPHABET_SIZE];
+		size_t * suffix  = n <= (BUFSIZ >> 1) ? rawstk1 : (size_t *)malloc(nlen * sizeof(size_t));
+		
+		if (NULL == suffix)
+			return CBF_CONTINUE; /* Allocation failure. */
+		
+		if (n <= _STACK_BUFFER_SIZE)
+			border = rawstk2;
+		else if (NULL == (border = (ptrdiff_t *)malloc(nlen * sizeof(ptrdiff_t))))
+		{
+			free(suffix);
+			return CBF_CONTINUE;
+		}
+		
+		/* Build lookup tables. */
+		for (i = 0; i < _ALPHABET_SIZE; ++i)
+			badchar[i] = n;
+		
+		for (i = 0; i < m; ++i)
+			badchar[(UCHART)needle[i]] = n - i - 1;
+		
+		border[0] = -1;
+		j = -1;
+		
+		for (i = 1; i < n; ++i)
+		{
+			while (j >= 0 && needle[i - 1] != needle[j])
+				j = border[j];
+			
+			++j;
+			border[i] = j;
+		}
+		
+		j = border[m];
+		suffix[m] = 0;
+		
+		for (i = n; i > 0; --i)
+		{
+			if (j < 0)
+				suffix[i - 1] = n - i;
+			
+			if (j >= 0 && needle[j] != needle[i - 1])
+				suffix[i - 1] = i - j - 1;
+			
+			if (j >= 0)
+				j = border[j];
+		}
+		
+		if (rawstk2 != border)
+			free(border);
+		
+		pos = 0;
+		k = hlen - nlen;
+		
+		while (pos <= k) /* Loop through all occurrences */
+		{
+			j = m;
+			while (j >= 0 && needle[j] == haystack[pos + j]) /* Scan from right to left. */
+				--j;
+			
+			if (j < 0) /* Pattern found. */
+			{
+				if (CBF_CONTINUE != cbftvs((char *)haystack + pos, param))
+				{
+					if (rawstk1 != suffix)
+						free(suffix);
+					
+					return CBF_TERMINATE;
+				}
+				/* Move past current match to find next occurrence. */
+				pos += bovlp ? 1 : n;  /* Set to 1 for overlapping matches, nlen for non overlapping. */
+			}
+			else
+			{
+				REGISTER size_t x = badchar[(UCHART)haystack[pos + j]];
+				REGISTER size_t y = suffix[j];
+				/* Use the maximum shift which is the most efficient way. */
+				pos += (x > y ? x : y);
+			}
+		}
+		
+		if (rawstk1 != suffix)
+			free(suffix);
+	}
+	return CBF_CONTINUE;
+#undef _STACK_BUFFER_SIZE
+#undef _HALF_BUFFER_SIZE
+#undef _ALPHABET_SIZE
 }
 

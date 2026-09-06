@@ -2,7 +2,7 @@
  * Name:        svaqs.l
  * Description: StoneValley API Query System.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0608260445A0830261242L00722
+ * File ID:     0608260445A0906260947L00722
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -228,7 +228,7 @@ char column_buffer[4][BUFSIZ] = { 0 };
 	} \
 } while (0)
 
-#define STR_BAD_COMMAND "Bad command: '%s'. Type help to show helpful contents.\n"
+#define STR_BAD_COMMAND "\033[1;91mBad command:\033[0m '%s'. Type help to show helpful contents.\n"
 
 /* StoneValley source file name array. */
 const char * SZCFILE[] =
@@ -286,13 +286,13 @@ static int cbftvsListAllRelevant(void * pitem, size_t param)
 
 static void PrintHelp(void)
 {
-	printf("list/l:      List relevant functions by a name.\n\tUsage: list [-[c|f|n|i|p]] [all|*|name|name*|(number) name]\n");
+	printf("\033[32mlist/l:\033[0m      List relevant functions by a name.\n\tUsage: list [-[c|f|n|i|p]] [all|*|name|name*|(number) name]\n");
 	printf("\tExamples:\n\tlist all\n\tlist -p all\n\tlist -fnc all\n\tlist -n all\n\tlist *\n\tlist str*\n\tlist -c str* -cn grp*\n\tlist strCreateArrayZ\n\tlist 5 str 6 grp\n\tNotice:\n\t(number) equals to an editorial distance to the subsequent name.\n\tNote that list all* is a bad command that produces nothing.\n");
-	printf("apropos/a:   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n|i|p]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -np create arrayz\n");
+	printf("\033[32mapropos/a:\033[0m   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n|i|p]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -np create arrayz\n");
 	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name and the line number of a function.\n\t-n means to print function name.\n\t-i means to choose to print internal functions.\n\t-p means to choose to print public functions.\n\t-cfnip is the default way to print.\n\t-cfn equals to -cfnip, -cfnpi, -icfnp, -cifpn and so on.\n\tIf you did not specify, program would have to print names by -cfnip order.\n");
-	printf("version/v:   Show StoneValley library version.\n");
-	printf("help/h:      Show this content.\n");
-	printf("exit/quit/q: Exit program.\n");
+	printf("\033[32mversion/v:\033[0m   Show StoneValley library version.\n");
+	printf("\033[32mhelp/h:\033[0m      Show this content.\n");
+	printf("\033[32mexit/quit/q:\033[0m Exit program.\n");
 }
 
 #define _MIN(a, b) ((a) > (b) ? (b) : (a))
@@ -359,7 +359,7 @@ static int cbftvsFuzzyQuery(void * pitem, size_t param)
 	{
 		if (0 == strcmp((const char *)1[(size_t *)param], pfc->fname))
 		{
-			printf("NAME___________________________________________________________________________\n%s\n\nSYNOPSIS\n%c%s.\n\nDESCRIPTION\n%s\n\nPROTOTYPE\n%s\n", pfc->fname, toupper(pfc->fdesc[0]), pfc->fdesc + 1, pfc->record, pfc->prototype);
+			printf("\033[1;37;44mNAME___________________________________________________________________________\033[0m\n\033[1;31m%s\033[0m\n\033[1;37;44mSYNOPSIS\033[0m\n\033[4;93m%c%s.\033[0m\n\033[1;37;44mDESCRIPTION\033[0m\n\033[0;32m%s\033[0m\n\033[1;37;44mPROTOTYPE\033[0m\n\033[0m%s\033[0m\n", pfc->fname, toupper(pfc->fdesc[0]), pfc->fdesc + 1, pfc->record, pfc->prototype);
 			return CBF_CONTINUE;
 		}
 	}
@@ -687,7 +687,7 @@ int main(int argc, char * argv[])
 			fpin = NULL;
 		}
 		else
-			fprintf(stderr, "WARNING: Cannot open file \"%s\"!\n", SZCFILE[i]);
+			fprintf(stderr, "\033[1;95mWARNING:\033[0m Cannot open file \"%s\"!\n", SZCFILE[i]);
 	}
 	
 	strFreeArrayZ(&arrbuf);

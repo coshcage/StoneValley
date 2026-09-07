@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0906261601L00901
+ * File ID:     0306170948B0906262345L00900
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -727,11 +727,12 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 	if (NULL != lps)
 	{	/* i is the index for parrtxt. j is the index for parrptn. */
 		REGISTER size_t i = 0, j = 0, n = 0, k = 1;
+		const size_t cpn = parrptn->num, ctn = parrtxt->num;
 		
 		lps[0] = 0; /* lps[0] is always 0. */
 		
 		/* Process the pattern to generate the longest prefix suffix(lps) array. */
-		while (k < parrptn->num)
+		while (k < cpn)
 		{
 			if (CBF_CMP_EQUAL == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, k), _P_ARRAY_Z_ITEM_M(parrptn, size, n), size))
 			{
@@ -752,7 +753,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 			}
 		}
 
-		while (i < parrtxt->num)
+		while (i < ctn)
 		{
 			if (CBF_CMP_EQUAL == memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 			{
@@ -760,18 +761,17 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 				++i;
 			}
 			
-			if (j == parrptn->num)
+			if (cpn == j)
 			{
 				if (CBF_CONTINUE != cbftvs(parrtxt->pdata + (i - j) * size, param))
 				{
 					free(lps);
 					return CBF_TERMINATE;
 				}
-				
 				lps[j - 1] = j;
+				j = 0;
 			}
-			
-			else if (i < parrtxt->num && CBF_CMP_EQUAL != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
+			else if (i < ctn && CBF_CMP_EQUAL != memcmp(_P_ARRAY_Z_ITEM_M(parrptn, size, j), _P_ARRAY_Z_ITEM_M(parrtxt, size, i), size))
 			{
 				if (0 != j)
 					j = lps[j - 1];
@@ -779,7 +779,6 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 					++i;
 			}
 		}
-		
 		free(lps);
 	}
 	return CBF_CONTINUE;

@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0906261610L01066
+ * File ID:     0306170948D0907260011L01068
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -966,7 +966,7 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 {
 #define _ALPHABET_SIZE     ((size_t) ((size_t)UCHAR_MAX + 1))
 #define _HALF_BUFFER_SIZE  (BUFSIZ >> 1)
-#define _STACK_BUFFER_SIZE (_HALF_BUFFER_SIZE <= 0 ? _ALPHABET_SIZE : _HALF_BUFFER_SIZE) /* Choose an environmental dependent size to buffers. */
+#define _STACK_BUFFER_SIZE (_HALF_BUFFER_SIZE < _ALPHABET_SIZE ? _ALPHABET_SIZE : _HALF_BUFFER_SIZE) /* Choose an environmental dependent size to buffers. */
 	if (SV_ASSERT(0 != hlen && 0 != nlen && hlen >= nlen))
 	{
 		REGISTER size_t i, m = nlen - 1, n = nlen, pos, k;
@@ -1012,11 +1012,14 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 		
 		for (i = n; i > 0; --i)
 		{
-			if (j < 0)
-				suffix[i - 1] = n - i;
+			k = i - 1;
 			
-			if (j >= 0 && needle[j] != needle[i - 1])
-				suffix[i - 1] = i - j - 1;
+			if (j < 0)
+				suffix[k] = n - i;
+			else if (j >= 0 && needle[j] != needle[k])
+				suffix[k] = k - j;
+			else
+				suffix[k] = n;
 			
 			if (j >= 0)
 				j = border[j];
@@ -1050,8 +1053,7 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 			{
 				REGISTER size_t x = badchar[(UCHART)haystack[pos + j]];
 				REGISTER size_t y = suffix[j];
-				/* Use the maximum shift which is the most efficient way. */
-				pos += (x > y ? x : y);
+				pos += (x > y ? x : y - 1); /* Use the maximum shift which is the most efficient way. */
 			}
 		}
 		

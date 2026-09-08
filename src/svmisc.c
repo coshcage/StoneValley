@@ -935,9 +935,9 @@ ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
  * Description:   Find needles in a haystack by Boyer-Moore-Horspool with Bad Needle Fast String (BMHBNFS) matching.
  * Parameters:
  *   haystack Pointer to the text string you want to search.
- *       hlen Length of haystack.
+ *       hlen Length of haystack by chars.
  *     needle Pointer to the pattern you want to find in text.
- *       nlen Length of needle.
+ *       nlen Length of needle also by chars.
  *      bovlp Input true to search string in an overlapping manner.
  *            For example, to search "aa" in "aaa", function calls its callback 2 times.
  *            Input false to search string in a non-overlapping manner.
@@ -966,7 +966,7 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 {
 #define _ALPHABET_SIZE     ((size_t) ((size_t)UCHAR_MAX + 1))
 #define _HALF_BUFFER_SIZE  (BUFSIZ >> 1)
-#define _STACK_BUFFER_SIZE (_HALF_BUFFER_SIZE < _ALPHABET_SIZE ? _ALPHABET_SIZE : _HALF_BUFFER_SIZE) /* Choose an environmental dependent size to buffers. */
+#define _STACK_BUFFER_SIZE (_HALF_BUFFER_SIZE < _ALPHABET_SIZE ? _ALPHABET_SIZE : _HALF_BUFFER_SIZE) /* Choose an environmentally dependent size to buffers. */
 	if (SV_ASSERT(0 != hlen && 0 != nlen && hlen >= nlen))
 	{
 		REGISTER size_t i, m = nlen - 1, n = nlen, pos, k;
@@ -975,14 +975,14 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 		size_t    rawstk1[_STACK_BUFFER_SIZE];
 		ptrdiff_t rawstk2[_STACK_BUFFER_SIZE];
 		size_t    badchar[_ALPHABET_SIZE];
-		size_t * suffix  = n <= (BUFSIZ >> 1) ? rawstk1 : (size_t *)malloc(nlen * sizeof(size_t));
+		size_t * suffix  = n <= _HALF_BUFFER_SIZE ? rawstk1 : (size_t *)malloc(n * sizeof(size_t));
 		
 		if (NULL == suffix)
 			return CBF_CONTINUE; /* Allocation failure. */
 		
 		if (n <= _STACK_BUFFER_SIZE)
 			border = rawstk2;
-		else if (NULL == (border = (ptrdiff_t *)malloc(nlen * sizeof(ptrdiff_t))))
+		else if (NULL == (border = (ptrdiff_t *)malloc(n * sizeof(ptrdiff_t))))
 		{
 			free(suffix);
 			return CBF_CONTINUE;
@@ -1029,7 +1029,7 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 			free(border);
 		
 		pos = 0;
-		k = hlen - nlen;
+		k = hlen - n;
 		
 		while (pos <= k) /* Loop through all occurrences */
 		{
@@ -1046,14 +1046,14 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 					
 					return CBF_TERMINATE;
 				}
-				/* Move past current match to find next occurrence. */
-				pos += bovlp ? 1 : n;  /* Set to 1 for overlapping matches, nlen for non overlapping. */
+				/* Move the past current match to find the next occurrence. */
+				pos += (const bool)bovlp ? 1 : n;  /* Set to 1 for overlapping matches, nlen for non overlapping. */
 			}
 			else
 			{
 				REGISTER size_t x = badchar[(UCHART)haystack[pos + j]];
 				REGISTER size_t y = suffix[j];
-				pos += (x > y ? x : y - 1); /* Use the maximum shift which is the most efficient way. */
+				pos += x > y ? x : y - 1; /* Use the maximum shift which is the most efficient way. */
 			}
 		}
 		

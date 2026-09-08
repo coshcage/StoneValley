@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0906261514L00477
+ * File ID:     0914171200J0908260118L00480
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -297,21 +297,24 @@ P_ARRAY_Z treCreateHuffmanTable(const char * str, size_t num)
  *        num Number of elements in the buffer. The unit of num is sizeof(char).
  * Return value:  Pointer to a new created bit stream. This bit stream stores the encoded string.
  *                If any error occurred during encoding, function would be interrupted and return a NULL pointer.
- * Tip:           A symbol table is important for decoding.
+ * Tip:           Symbol table is important for decoding.
  *                You may get a symbol table after invoking function treCreateHuffmanTable by transferring
- *                the same buffer str of treHuffmanEncoding into function treCreateHuffmanTable.
- *                This function can encode sub string but uses the symbol table of a whole string.
- * Usage:         #include <stdio.h> // Invoke function printf.
+ *                the same buffer str and its length of treHuffmanEncoding into function treCreateHuffmanTable.
+ *                This function can encode the sub string but uses the symbol table of a whole string.
+ * Usage:         <test.c>
+ *                #include <stdio.h>
+ *                #include <string.h>
+ *                #include "svtree.h"
  *                #define STR1 "This is a test, and that is another test."
- *                #define STR2 "This" // Sub string.
- *                P_ARRAY_Z par = treCreateHuffmanTable(STR1, strlen(STR1) + 1);
- *                P_BITSTREAM pbi = treHuffmanEncoding(par, STR2, strlen(STR2) + 1);
- *                P_BITSTREAM pbo = treHuffmanDecoding(par, pbi);
- *                printf("%s\num", pbo->arrz.pdata);	
- *                strDeleteBitStream(pbi);
- *                strDeleteBitStream(pbo);
- *                strDeleteArrayZ(par);
- *                Result: This
+ *                #define STR2 "This" // A sub string from STR1.
+ *                int main() { // Use strlen(STR1) + 1) to ensure that '\0' has been encoded.
+ *                    P_ARRAY_Z   pt = treCreateHuffmanTable(STR1, strlen(STR1) + 1);  // Get a symbol table.
+ *                    P_BITSTREAM pb = treHuffmanEncoding(pt, STR2, strlen(STR2) + 1); // Use the same symbol to encode STR2.
+ *                    P_ARRAY_Z   pa = treHuffmanDecoding(pt, pb); // Decode from encoded bit stream.
+ *                    printf("%s\n", (char *)pa->pdata); // Print This\0
+ *                    strDeleteArrayZ(pa); strDeleteBitStream(pb);
+ *                    strDeleteArrayZ(pt); return 0;
+ *                }
  */
 P_BITSTREAM treHuffmanEncoding(P_ARRAY_Z ptable, const char * str, size_t num)
 {
@@ -416,7 +419,7 @@ Lbl_Building_Failed:
  *                If any error occurred during decoding, function would be interrupted and return NULL.
  * Caution:       Parameter ptable must be allocated first.
  * Tip:           You could get a symbol table after invoking function treCreateHuffmanTable by the same string you want to encode as a parameter.
- *                You may either get a bit stream as the parameter of function treHuffmanDecoding to decode from the return value of function treHuffmanEncoding.
+ *                You may either get a bit stream as the parameter of this function to decode from the return value of function treHuffmanEncoding.
  *                Please refer to function treHuffmanEncoding for more details of usages in advance.
  */
 P_ARRAY_Z treHuffmanDecoding(P_ARRAY_Z ptable, P_BITSTREAM pbstm)

@@ -42,7 +42,7 @@ typedef struct st_NODE_S {
 	PUCHAR pdata;
 } NODE_S, * P_NODE_S;
 What is pnode doing here for? It stands as a pointer to the next entity that shows the connection between nodes. It embodies an order of two nodes. It is possible for us to visit them from the first to the second. It is impossible for programmers to visit them from the second to the first. pnode defines the relation between single nodes. It guides the Central Processing Unit to read memory in a sequence.
-Beside of it, a single node needs to store various data. The question is how we arrange data for a node. An usual way is to pad data beneath the node. Plus a pointer to the next entity, it comes:
+Beside of it, a single node needs to store various data. The question is how we arrange data for a node. A usual way is to pad data beneath the node. Plus a pointer to the next entity, it comes:
 struct st_NODE_S_FAM {
 	struct st_NODE_S_FAM * pnext;
 	int data[0];

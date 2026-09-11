@@ -21,7 +21,7 @@
  *
  */
 
-#include <string.h> /* Using function memset, memcmp, memcpy. */
+#include <string.h> /* Use function memset, memcmp, memcpy. */
 #include "svhash.h"
 
 /* Functions for separate chaining hash table. */

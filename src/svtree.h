@@ -303,7 +303,7 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#include <stdlib.h> /* Using function free. */
+	#include <stdlib.h> /* Use function free. */
 	/* Functions in svbtree.c. */
 	#define treInitBY            treInitBY_M
 	#define treDeleteBY          treDeleteBY_O
@@ -336,7 +336,7 @@ P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treFreeTrieA         treFreeTrieA_O
 	#define treDeleteTrieA       treDeleteTrieA_O
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#include <stdlib.h> /* Using function free. */
+	#include <stdlib.h> /* Use function free. */
 	/* Functions in svbtree.c. */
 	#define treInitBY            treInitBY_M
 	#define treDeleteBY          treDeleteBY_M

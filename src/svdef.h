@@ -24,7 +24,7 @@
 #ifndef _SVDEF_H_
 #define _SVDEF_H_
 
-#include <stddef.h>  /* Using type size_t, ptrdiff_t. */
+#include <stddef.h>  /* Use type size_t, ptrdiff_t. */
 #include <stdbool.h> /* Boolean type and constants. */
 
 /* Library version. */

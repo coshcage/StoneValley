@@ -21,7 +21,7 @@
  *
  */
 
-#include <stdio.h>  /* Using macro BUFSIZ. */
+#include <stdio.h>  /* Use macro BUFSIZ. */
 #include "svtree.h"
 
 /* A macro that defines the maximum symbol table length. */

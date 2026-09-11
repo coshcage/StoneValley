@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function free. */
-#include <string.h> /* Using function memcpy, memset. */
+#include <stdlib.h> /* Use function free. */
+#include <string.h> /* Use function memcpy, memset. */
 #include "svgraph.h"
 #include "svqueue.h"
 #include "svstack.h"

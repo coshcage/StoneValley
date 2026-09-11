@@ -21,9 +21,9 @@
  *
  */
 
-#include <stdio.h>  /* Using macro BUFSIZ, function printf. */
-#include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memmove. */
+#include <stdio.h>  /* Use macro BUFSIZ, function printf. */
+#include <stdlib.h> /* Use function malloc, free. */
+#include <string.h> /* Use function memcpy, memmove. */
 #include "svstring.h"
 
 /* Function name: svPrintVersion
@@ -522,7 +522,7 @@ void strBitStreamReverse(P_BITSTREAM pbstm)
 void svShellSort(void * pbase, void * ptemp, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
 	REGISTER size_t g, gap;
-	/* Using Marcin Ciura's gap sequence. */
+	/* Use Marcin Ciura's gap sequence. */
 	size_t gaps[] = { 701, 301, 132, 57, 23, 10, 4, 1 };
 	for (g = 0; g < (const size_t) (sizeof(gaps) / sizeof(gaps[0])); ++g)
 	{

@@ -113,7 +113,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for circular queues. */
 	#define queIsInitialAC queIsInitialAC_M
 	#define queUsageAC     queUsageAC_M
@@ -132,7 +132,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queFirstDL     queFirstDL_M
 	#define queLastDL      queLastDL_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for circular queues. */
 	#define queIsInitialAC queIsInitialAC_M
 	#define queUsageAC     queUsageAC_M
@@ -151,7 +151,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	#define queFirstDL     queFirstDL_M
 	#define queLastDL      queLastDL_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for circular queues. */
 	#define queIsInitialAC queIsInitialAC_M
 	#define queUsageAC     queUsageAC_M

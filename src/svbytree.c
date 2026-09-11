@@ -21,7 +21,7 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, free. */
+#include <stdlib.h> /* Use function malloc, free. */
 #include "svtree.h"
 #include "svqueue.h"
 

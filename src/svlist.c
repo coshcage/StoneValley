@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, realloc, free. */
-#include <string.h> /* Using function memcmp, memcpy, memmove. */
+#include <stdlib.h> /* Use function malloc, realloc, free. */
+#include <string.h> /* Use function memcmp, memcpy, memmove. */
 #include "svstring.h"
 
 /* File level function declarations go here. */

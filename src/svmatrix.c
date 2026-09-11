@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memset, memmove. */
+#include <stdlib.h> /* Use function malloc, free. */
+#include <string.h> /* Use function memcpy, memset, memmove. */
 #include "svstring.h"
 
 /* Function name: strInitMatrix

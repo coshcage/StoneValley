@@ -82,7 +82,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for array represented stacks. */
 	#define stkIsEmptyA stkIsEmptyA_M
 	#define stkIsFullA  stkIsFullA_M
@@ -99,7 +99,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPeepL    stkPeepL_M
 	#define stkLevelL   stkLevelL_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for array represented stacks. */
 	#define stkIsEmptyA stkIsEmptyA_M
 	#define stkIsFullA  stkIsFullA_M
@@ -116,7 +116,7 @@ size_t    stkLevelL_O   (P_STACK_L pstkl);
 	#define stkPeepL    stkPeepL_M
 	#define stkLevelL   stkLevelL_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for array represented stacks. */
 	#define stkIsEmptyA stkIsEmptyA_M
 	#define stkIsFullA  stkIsFullA_M

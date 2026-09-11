@@ -25,7 +25,7 @@
 #define _SVSTRING_H_
 
 #include "svdef.h"
-#include <limits.h> /* Using macro UCHAR_MAX, CHAR_BIT. */
+#include <limits.h> /* Use macro UCHAR_MAX, CHAR_BIT. */
 
 /* The following two macros are used to address nodes pointers for NODE_D structures. */
 #define PREV 1
@@ -355,7 +355,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 
 /* Library optimal switch. */
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
-	#include <string.h> /* Using function memcpy. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
 	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
@@ -391,8 +391,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strDeleteBMap             strDeleteMatrix
 	#define strCopyBMap               strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
-	#include <stdlib.h> /* Using function free. */
-	#include <string.h> /* Using function memcpy. */
+	#include <stdlib.h> /* Use function free. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
 	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
@@ -428,8 +428,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	#define strDeleteBMap             strDeleteMatrix
 	#define strCopyBMap               strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
-	#include <stdlib.h> /* Using function free. */
-	#include <string.h> /* Using function memcpy. */
+	#include <stdlib.h> /* Use function free. */
+	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
 	#define svIndexOf                 svIndexOf_M
 	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M

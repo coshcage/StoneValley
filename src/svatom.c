@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, realloc, free. */
-#include <string.h> /* Using function memcpy. */
+#include <stdlib.h> /* Use function malloc, realloc, free. */
+#include <string.h> /* Use function memcpy. */
 #include "svstring.h"
 
 /* Function name: strInitArrayZ

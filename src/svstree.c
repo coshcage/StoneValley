@@ -21,8 +21,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy, memmove. */
+#include <stdlib.h> /* Use function malloc, free. */
+#include <string.h> /* Use function memcpy, memmove. */
 #include "svtree.h"
 
 /* A macro describes children nodes pointers of a BST node. */

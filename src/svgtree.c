@@ -22,8 +22,8 @@
  *
  */
 
-#include <stdlib.h> /* Using function malloc, free. */
-#include <string.h> /* Using function memcpy. */
+#include <stdlib.h> /* Use function malloc, free. */
+#include <string.h> /* Use function memcpy. */
 #include "svtree.h"
 #include "svqueue.h"
 

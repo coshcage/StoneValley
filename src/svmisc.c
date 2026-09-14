@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0909260246L01066
+ * File ID:     0306170948D0909260246L01067
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -945,7 +945,7 @@ ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
  *     cbftvs Pointer to a callback function. Every time cbftvs is called, pitem points to the occurrence of pattern in text.
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
- *                Caution that function would return CBF_CONTINUE even if it encountered allocation failures and errors.
+ * Caution:       This function would return CBF_TERMINATE if it encountered allocation failures and errors.
  * Tip:           This function is a partially specialized version for character string matching comparing to strKMPSearchArrayZ and strZSearchArrayZ.
  *                The latter two are generalized versions for string matching which give you a probably worse performance to character strings.
  *                This function provides users a more efficient way to match character strings.
@@ -978,14 +978,14 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 		size_t *    suffix = n <= _HALF_BUFFER_SIZE ? rawstk1 : (size_t *)malloc(n * sizeof(size_t));
 		
 		if (NULL == suffix)
-			return CBF_CONTINUE; /* Allocation failure. */
+			return CBF_TERMINATE; /* Allocation failure. */
 		
 		if (n <= _STACK_BUFFER_SIZE)
 			border = rawstk2;
 		else if (NULL == (border = (ptrdiff_t *)malloc(n * sizeof(ptrdiff_t))))
 		{
 			free(suffix);
-			return CBF_CONTINUE;
+			return CBF_TERMINATE; /* Allocation failure. */
 		}
 		
 		/* Build lookup tables. */
@@ -1057,8 +1057,9 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 		
 		if (rawstk1 != suffix)
 			free(suffix);
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 #undef _STACK_BUFFER_SIZE
 #undef _HALF_BUFFER_SIZE
 #undef _ALPHABET_SIZE

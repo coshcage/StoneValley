@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0808260600L02959
+ * File ID:     0905171125M0914261053L02957
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -718,10 +718,7 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
  */
 int _grpCBFCopyVertices(void * pitem, size_t param)
 {
-	if (grpInsertVertexL((P_GRAPH_L)param, ((P_VERTEX_L)pitem)->vid))
-		return CBF_CONTINUE;
-	else
-		return CBF_TERMINATE;
+	return grpInsertVertexL((P_GRAPH_L)param, ((P_VERTEX_L)pitem)->vid) ? CBF_CONTINUE : CBF_TERMINATE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -737,10 +734,7 @@ int _grpCBFCopyVertices(void * pitem, size_t param)
  */
 int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
 {
-	if (grpInsertEdgeL((P_GRAPH_L)1[(size_t *)param], 0[(size_t *)param], ((P_EDGE)pitem)->vid, ((P_EDGE)pitem)->weight))
-		return CBF_CONTINUE;
-	else
-		return CBF_TERMINATE;
+	return grpInsertEdgeL((P_GRAPH_L)1[(size_t *)param], 0[(size_t *)param], ((P_EDGE)pitem)->vid, ((P_EDGE)pitem)->weight) ? CBF_CONTINUE : CBF_TERMINATE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -2681,8 +2675,9 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
  *      cbftvs Pointer to a callback function.
  *             The pitem parameter of the callback function is the current vid size_t integer cast into (void *).
  *       param Additional information for each vertex.
- * Return value:  The same value as callback function returns.
+ * Return value:  The same value as callback function returns except for errors.
  * Caution:       Address of pgrp Must Be Allocated first.
+ *                This function would return CBF_TERMINATE if it encountered allocation errors or received wrong parameters.
  */
 int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -2694,12 +2689,12 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		REGISTER size_t i;
 		
 		if (NULL == stkInitA(&stk, pgrp->ln, sizeof(size_t)))
-			return CBF_CONTINUE;
+			return CBF_TERMINATE;
 		
 		if (NULL == strInitBMap(&bmvist, 1, pgrp->ln, true, false))
 		{
 			stkFreeA(&stk);
-			return CBF_CONTINUE;
+			return CBF_TERMINATE;
 		}
 
 		stkPushA(&stk, &vid, sizeof(size_t));
@@ -2729,8 +2724,9 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		}
 		stkFreeA(&stk);
 		strFreeBMap(&bmvist);
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 }
 
 /* Function name: grpBFSM
@@ -2741,8 +2737,9 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  *     cbftvs Pointer to a callback function.
  *            The pitem parameter of the callback function is the current vid size_t integer cast into (void *).
  *      param Additional information for each vertex.
- * Return value:  The same value as callback function returns.
+ * Return value:  The same value as callback function returns except for errors.
  * Caution:       Address of pgrp Must Be Allocated first.
+ *                This function would return CBF_TERMINATE if it encountered allocation errors or received wrong parameters.
  */
 int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -2753,12 +2750,12 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		BITMAT bmvist;
 		
 		if (NULL == queInitAC(&q, pgrp->ln, sizeof(size_t)))
-			return CBF_CONTINUE;
+			return CBF_TERMINATE;
 
 		if (NULL == strInitBMap(&bmvist, 1, pgrp->ln, true, false))
 		{
 			queFreeAC(&q);
-			return CBF_CONTINUE;
+			return CBF_TERMINATE;
 		}
 
 		queInsertAC(&q, &vid, sizeof(size_t));
@@ -2786,8 +2783,9 @@ int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 		}
 		queFreeAC(&q);
 		strFreeBMap(&bmvist);
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 }
 
 /* Function name: grpCreateLFromM

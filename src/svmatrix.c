@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0821260910L01088
+ * File ID:     0213191430N0821260910L01090
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -462,6 +462,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *            Please refer to the definition of type CBF_ALGEBRA.
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
  * Caution:       Address of ppmtx[0], ppmtx[1] and ppmtx[2] Must Be Allocated first.
+ *                CBF_TERMINATE would be returned if this function received wrong parameters.
  * Tip:           Users could use this function to multiply a matrix with another like this way:
  *                <test.c>
  *                #include <string.h>
@@ -530,8 +531,9 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 				ptrmc += size;
 			}
 		}
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 }
 
 #undef MAT_LN

@@ -2,7 +2,7 @@
  * Name:        svgtree.c
  * Description: Generic trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737H0806261638L00610
+ * File ID:     0809171737H0914261019L00614
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  * Copyright (C) 2026      Sarah Silva @github.com/sah524
@@ -51,13 +51,14 @@ P_TNODE_BY _treG2BYConvertPuppet(P_BYTREE ppnil, P_TNODE_G pnode, size_t size, P
  * Parameters:
  *      pitem Pointer to each node in the parent.
  *      param Pointer to a linked list queue.
- * Return value:  CBF_CONTINUE only.
+ * Return value:  CBF_CONTINUE  if no error happened.
+ *                CBF_TERMINATE if function erroneously allocated.
  */
 int _treCBFGNodeEnqueue(void * pitem, size_t param)
 {
 	REGISTER P_QUEUE_L pq = (P_QUEUE_L)param;
-	if (NULL != pitem)
-		queInsertL(pq, pitem, sizeof(P_TNODE_G));
+	if (NULL != pitem && ! queInsertL(pq, pitem, sizeof(P_TNODE_G)))
+		return CBF_TERMINATE;
 	return CBF_CONTINUE;
 }
 
@@ -205,8 +206,11 @@ int treTraverseGLevel(P_TNODE_G pnode, CBF_TRAVERSE cbftvs, size_t param)
 		{
 			queRemoveL(&pnode, sizeof(P_TNODE_G), &q);
 			/* Enqueue all the children of the current node. */
-			if (strLevelArrayZ(&pnode->children) > 0)
-				strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false);
+			if (CBF_CONTINUE != strTraverseArrayZ(&pnode->children, sizeof(P_TNODE_G), _treCBFGNodeEnqueue, (size_t)&q, false))
+			{	/* Never forget to free queue before exiting. */
+				queFreeL(&q);
+				return CBF_TERMINATE;
+			}
 			/* Visit the current node. */
 			if (NULL != cbftvs && CBF_CONTINUE != cbftvs(pnode, param))
 			{	/* Never forget to free queue here. */
@@ -270,7 +274,7 @@ size_t treHeightG(P_TNODE_G pnode)
 void * treInitTNodeG(P_TNODE_G pnode, const void * pitem, size_t size)
 {
 	pnode->pdata = (PUCHAR) malloc(size);
-	if (SV_ASSERT(NULL != pitem && NULL != pnode->pdata))
+	if (NULL != pitem && NULL != pnode->pdata)
 		memcpy(pnode->pdata, pitem, size);
 	return pnode->pdata;
 }

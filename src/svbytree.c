@@ -55,7 +55,7 @@ int _treCBFParentRetriever(void * pitem, size_t param)
 		return CBF_TERMINATE;
 	}
 	
-	return CBF_CONTINUE; /* Continue searching. */
+	return CBF_CONTINUE; /* Continue to search. */
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.

@@ -697,8 +697,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
  *      param Parameter that is used to transfer into callback function.
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
- *                This function would still return CBF_CONTINUE if there were an allocation failure occurred,
- *                unless callback function cbftvs returned CBF_TERMINATE would break the caller to return CBF_TERMINATE.
+ *                This function would return CBF_TERMINATE if there were an allocation failure occurred.
  *                Parameter size shall not equal to zero.
  * Usage:         <test.c>
  *                #include <stdio.h>
@@ -780,8 +779,9 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
 			}
 		}
 		free(lps);
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 }
 
 /* Function name: strZSearchArrayZ
@@ -795,8 +795,7 @@ int strKMPSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TR
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       Address of parrtxt and parrptn Must Be Allocated first.
  *                Parameter size shall not equal to zero.
- *                This function would still return CBF_CONTINUE if there were an allocation failure occurred,
- *                unless callback function cbftvs returned CBF_TERMINATE would break the caller to return CBF_TERMINATE.
+ *                This function would return CBF_TERMINATE if there were an allocation failure occurred.
  * Tip:           Z algorithm references to geeksforgeeks.org.
  *                This function will take O(m + n + 1) extra memory space where m is the pattern length and n is the text length.
  * Usage:         <test.c>
@@ -894,7 +893,8 @@ int strZSearchArrayZ(P_ARRAY_Z parrtxt, P_ARRAY_Z parrptn, size_t size, CBF_TRAV
 			}
 		}
 		free(z);
+		return CBF_CONTINUE;
 	}
-	return CBF_CONTINUE;
+	return CBF_TERMINATE;
 }
 

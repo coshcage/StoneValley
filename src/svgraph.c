@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0914261053L02957
+ * File ID:     0905171125M0915260252L02959
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -2299,7 +2299,9 @@ int _grpCBFWPCVLTestConnection(void * pitem, size_t param)
  *      pgrp Pointer to an adjacent list graph.
  * Return value:  Pointer to a sized array which contains each vertex and its color.
  *                Each element in this array is a VTXREC structure.
- *                Color is a size_t integer that starts from 1. 0 indicates not colored.
+ *                In this array, VTXREC structures are arranged increasingly by vertex IDs.
+ *                Performing a binary search by vid could let you fetch colors efficiently.
+ *                Color is a size_t integer that starts from 1. 0 indicates not colored yet.
  *                If this function returned NULL, it would indicate a coloring failure.
  * Caution:       Address of pgrp Must Be Allocated and Initialized first.
  * Tip:           This algorithm cannot return the exactly minimal chromatic number of any graphs.
@@ -2322,7 +2324,7 @@ P_ARRAY_Z grpWelshPowellColorL(P_GRAPH_L pgrp)
 		a[1] = (size_t)parr;
 		a[2] = (size_t)pgrp;
 		a[3] = 0;
-		if (CBF_TERMINATE == grpTraverseVerticesL(pgrp, _grpCBFWPCVLFillArray, (size_t)a, ETM_INORDER))
+		if (CBF_TERMINATE == grpTraverseVerticesL(pgrp, _grpCBFWPCVLFillArray, (size_t)a, ETM_INORDER)) /* Arrange vids in the array increasingly. */
 		{
 			strDeleteArrayZ(parr);
 			parr = NULL;

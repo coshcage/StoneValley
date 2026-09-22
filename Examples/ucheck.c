@@ -21,7 +21,7 @@
 //
 // Usage:
 // Compile and use this file after you have just received StoneValley source before you start programming with StoneValley to justify the configuration of the library.
-// It cannot guarantee the authenticity of StoneValley source code you have received.
+// It cannot guarantee the authenticity of StoneValley source code that you have received.
 // Take care and good luck!
 //
 // Compilation guide:
@@ -33,6 +33,12 @@
 // 1: Library integrity check failed.
 // 2: SV_OPTIMIZATION failed to configure.
 // 3: SET_TREE_USING  failed to configure.
+//
+// Warning: COMPILE ucheck.c whenever you want to start to program StoneValley.
+//          And then check the output of this program to test configurations.
+//          Do NOT miss a compilation before you run this ucheck.
+//          Cross compilers produce platform specific checks only after you compile and RUN ucheck.
+// Briefing: Compile and run make you strong.
 //
 #include <stdio.h>
 #include "svstring.h"

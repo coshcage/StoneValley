@@ -488,7 +488,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	Graph theory brings us two methods of traversal. They are breadth first traversal and depth first traversal. Both two types of traversals can be performed on either adjacent list graphs and adjacent matrix graphs.
 	
-	Traversal function callers bear recursions. It means that a tail recursive optimization might be performed by a compiler to optimize them. If you are not sure your compiler will optimize recursions just use a looping one instead.
+	Traversal function callers bear recursions. It means that a tail recursive optimization might be performed by a compiler to optimize them. If you are not sure your compiler will optimize recursions, just use a looping one instead.
 	
 	7) Recursion Reduction
 	

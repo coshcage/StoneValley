@@ -2228,7 +2228,7 @@ Lbl_FFMFL_Failed:
  *         py Pointer to another _VTXCOLOR structure.
  * Return value:  The same value as callback comparison function returns.
  *                Please refer to the prototype of CBF_COMPARE at svdef.h.
- * Tip:           We intentionally swapped px with py to descend order.
+ * Tip:           We intentionally swapped px with py to descending order.
  */
 int _grpCBFWPCVLCompareDegrees(const void * px, const void * py)
 {	/* Sort linked list in descending order. */

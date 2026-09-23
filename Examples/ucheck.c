@@ -1,6 +1,6 @@
 //
 //  ucheck.c
-//  This file is used to do before programming checklist for the library.
+//  YoU finish before programming CHECKlist for the library.
 //  Created by cosh.cage#hotmail.com on 09/22/26.
 //  License:  LGPLv3
 //  Platform: Cross Platform.
@@ -73,10 +73,10 @@ const char * SZ_SV_FILE_ALL[FILE_NUM] =
 	"svtree.h"
 };
 
-#define SZ_ALERT_SIZEOF_PLATFORM_INTEGER "\e[46m[ALERT]\e[m   Platform integer size                      = %zu\n"
-#define SZ_ALERT_SIZEOF_UCHART           "\e[46m[ALERT]\e[m   Unsigned char size                         = %zu\n"
-#define SZ_ALERT_SIZEOF_PUCHAR           "\e[46m[ALERT]\e[m   Unsigned char pointer size                 = %zu\n"
-#define SZ_ALERT_SIZEOF_PFUNCTION        "\e[46m[ALERT]\e[m   Function pointer size                      = %zu\n"
+#define SZ_ALERT_SIZEOF_PLATFORM_INTEGER "\e[46m  [ALERT]\e[m Platform integer size                        = %zu\n"
+#define SZ_ALERT_SIZEOF_UCHART           "\e[46m  [ALERT]\e[m Unsigned char size                           = %zu\n"
+#define SZ_ALERT_SIZEOF_PUCHAR           "\e[46m  [ALERT]\e[m Unsigned char pointer size                   = %zu\n"
+#define SZ_ALERT_SIZEOF_PFUNCTION        "\e[46m  [ALERT]\e[m Function pointer size                        = %zu\n"
 
 #define SZ_WARNING_YES "\e[92mYES\e[m"
 #define SZ_WARNING_NO  "\e[31mNO\e[m"
@@ -88,11 +88,11 @@ const char * SZ_SV_FILE_ALL[FILE_NUM] =
 #define SZ_CONFIG_ON  "\e[92mON\e[m"
 #define SZ_CONFIG_OFF "\e[31mOFF\e[m"
 
-#define SZ_CONFIG_DISUSE                 "\e[44m[CONFIG]\e[m  Macro DISUSE:                                %s\n"
-#define SZ_CONFIG_REGISTER               "\e[44m[CONFIG]\e[m  Macro REGISTER:                              %s\n"
-#define SZ_CONFIG_SV_OPTIMIZATION_STAT   "\e[44m[CONFIG]\e[m  Library optimization:                        %s\n"
-#define SZ_CONFIG_SET_TREE_USING_STAT    "\e[44m[CONFIG]\e[m  Binary search tree for set:                  %s\n"
-#define SZ_CONFIG_ERROR                  "\e[44m[CONFIG]\e[m  \e[31mError configuration:\e[m                         %s\n"
+#define SZ_CONFIG_DISUSE                 "\e[105m [CONFIG]\e[m Macro DISUSE:                                %s\n"
+#define SZ_CONFIG_REGISTER               "\e[105m [CONFIG]\e[m Macro REGISTER:                              %s\n"
+#define SZ_CONFIG_SV_OPTIMIZATION_STAT   "\e[105m [CONFIG]\e[m Library optimization:                        %s\n"
+#define SZ_CONFIG_SET_TREE_USING_STAT    "\e[105m [CONFIG]\e[m Binary search tree for set:                  %s\n"
+#define SZ_CONFIG_ERROR                  "\e[105m [CONFIG]\e[m \e[31mError configuration:\e[m                         %s\n"
 
 int main(int argc)
 {
@@ -159,16 +159,16 @@ int main(int argc)
 	switch (SV_OPTIMIZATION)
 	{
 	case SV_OPT_MINISIZE:
-		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_MINISIZE");
+		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_\e[93mMINISIZE\e[m");
 		break;
 	case SV_OPT_MAXSPEED:
-		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_MAXSPEED");
+		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_\e[33mMAXSPEED\e[m");
 		break;
 	case SV_OPT_FULLOPTM:
-		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_FULLOPTM");
+		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_\e[31mFULLOPTM\e[m");
 		break;
 	case SV_OPT_DISABLED:
-		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_DISABLED");
+		printf(SZ_CONFIG_SV_OPTIMIZATION_STAT, "SV_OPT_\e[0mDISABLED\e[m");
 		break;
 	default:
 		printf(SZ_CONFIG_ERROR, "SV_OPTIMIZATION");
@@ -178,10 +178,10 @@ int main(int argc)
 	switch (SET_TREE_USING)
 	{
 	case SET_TREE_AA:
-		printf(SZ_CONFIG_SET_TREE_USING_STAT, "SET_TREE_AA");
+		printf(SZ_CONFIG_SET_TREE_USING_STAT, "SET_TREE_\e[34;101mAA\e[m");
 		break;
 	case SET_TREE_AVL:
-		printf(SZ_CONFIG_SET_TREE_USING_STAT, "SET_TREE_AVL");
+		printf(SZ_CONFIG_SET_TREE_USING_STAT, "SET_TREE_\e[91;104mAVL\e[m");
 		break;
 	default:
 		printf(SZ_CONFIG_ERROR, "SET_TREE_USING");

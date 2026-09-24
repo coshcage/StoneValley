@@ -254,6 +254,7 @@ Logs:
 08-21-2026: Library updated. Version 1.3.4.3.
 09-06-2026: Library updated. Version 1.3.4.4.
 09-06-2026: Library refined. Version 1.3.4.5.
+09-24-2026: Library refined. Version 1.3.4.6.
 _______________________________________________________________________________
 09-24-2018:
 	Red-black tree has been cut off instead of an AA-tree. No apparent bugs. B-plus tree may hide bugs. B-plus tree is too big to invite bugs.

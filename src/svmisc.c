@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0909260246L01067
+ * File ID:     0306170948D0909260246L01071
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -288,14 +288,18 @@ P_BITSTREAM strCreateCopyBitStream(P_BITSTREAM psrc)
 	REGISTER P_BITSTREAM prtn = (P_BITSTREAM) malloc(sizeof(BITSTREAM));
 	if (NULL != prtn)
 	{
+		REGISTER size_t sn = strLevelArrayZ(&psrc->arrz);
 		prtn->nbil = 0;
-		if (NULL == strInitArrayZ(&prtn->arrz, strLevelArrayZ(&psrc->arrz), sizeof(bitstream_block_t)))
+		if (NULL == strInitArrayZ(&prtn->arrz, sn, sizeof(bitstream_block_t)))
 		{	/* Allocation failure. */
 			free(prtn);
 			prtn = NULL;
 		}
 		else
+		{
+			memcpy(prtn->arrz.pdata, psrc->arrz.pdata, sn * sizeof(bitstream_block_t));
 			prtn->nbil = psrc->nbil;
+		}
 	}
 	return prtn;
 }

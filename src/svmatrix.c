@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1001260813L01319
+ * File ID:     0213191430N1001261123L01317
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -651,7 +651,6 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 				else
 				{
 					strSetValueMatrix(&maug, i, j, pnil, size);
-					
 					/* Test whether pmtx is a diagonal matrix. */
 					if (diag && 0 != memcmp(pnil, strFetchValuePointerMatrix(pmtx, i, j - aln, size), size))
 						diag = false;
@@ -689,8 +688,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 			{
 				if (i == j)
 				{
-					ptmp = strFetchValuePointerMatrix(&maug, i, j, size);
-					if (0 == memcmp(pnil, ptmp, size))
+					if (0 == memcmp(pnil, strFetchValuePointerMatrix(&maug, i, j, size), size))
 					{	/* Find non zero element. */
 						for (n = j + 1; n < aln; ++n)
 						{
@@ -709,7 +707,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 					}
 					
 					/* Put the first non zero leading line in a vector. */
-					memcpy(pvec, ptmp, size);
+					memcpy(pvec, strFetchValuePointerMatrix(&maug, i, j, size), size);
 					
 					if (0 != memcmp(pidt, pvec, size))
 						for (n = j; n < acol; ++n)

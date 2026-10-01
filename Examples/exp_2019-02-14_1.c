@@ -107,10 +107,10 @@ int main(void)
 	if (NULL == (pmconv  = strCreateMatrix(2,  2, sizeof(char)))) {
 		c = 1; goto Lbl_Clr;
 	}
-	// Assemble cbfalg array for strM3Matrix.
+	// Assemble cbfalg array for strMultiplyMatrix.
 	cbfalg[0] = Plus;
 	cbfalg[1] = Times;
-	// Assemble ppmat for strM3Matrix.
+	// Assemble ppmat for strMultiplyMatrix.
 	ppmat[0] = pmtemp; // Matrix C.
 	ppmat[1] = pmconv; // Matrix A.
 	ppmat[2] = pmword; // Matrix B.
@@ -122,14 +122,14 @@ int main(void)
 	// Print big letter 'E'.
 	PrintMatrix(pmword, 5);
 	printf("\nAfter converting:\n\n");
-	strM3Matrix(ppmat, &c, sizeof(char), cbfalg); // Flip.
-	strM2Matrix(pmimage, pmtemp, sizeof(char), Minus); // Move right down.
+	strMultiplyMatrix(ppmat, &c, sizeof(char), cbfalg); // Flip.
+	strMatrixMatrix(pmimage, pmtemp, sizeof(char), Minus); // Move right down.
 	// Assemble matrix header. Subtract every y by 5.
 	mat.arrz.pdata = pmimage->arrz.pdata;
 	mat.arrz.num = pmimage->arrz.num;
 	mat.ln = 1;
 	mat.col = pmimage->col;
-	c = 5; strM1Matrix(&mat, &c, sizeof(char), Minus); // Move up.
+	c = 5; strMathMatrix(&mat, &c, sizeof(char), Minus); // Move up.
 	PrintMatrix(pmimage, 6); // Print converted 'E'mage.
 	c = 0;
 Lbl_Clr:

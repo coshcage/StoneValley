@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1001260738L01319
+ * File ID:     0213191430N1001260813L01319
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -400,7 +400,7 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 	return false;
 }
 
-/* Function name: strM1Matrix
+/* Function name: strMathMatrix
  * Description:   Do calculation on each element in a matrix with the value that pval pointed.
  * Parameters:
  *       pmtx Pointer to a matrix.
@@ -414,9 +414,9 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           Users could use this function to multiply a number with a matrix like this way:
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
- *                float f = 2.0f; strM1Matrix(pmtx, &f, sizeof(float), mul);
+ *                float f = 2.0f; strMathMatrix(pmtx, &f, sizeof(float), mul);
  */
-int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfagb)
+int strMathMatrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfagb)
 {
 	REGISTER size_t i, j;
 	for (i = 0, j = pmtx->ln * pmtx->col * size; i < j; i += size)
@@ -425,7 +425,7 @@ int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfag
 	return CBF_CONTINUE;
 }
 
-/* Function name: strM2Matrix
+/* Function name: strMatrixMatrix
  * Description:   Do calculation between two matrices,
  *                and store the result into the matrix that pmtxa pointed.
  * Parameters:
@@ -440,9 +440,9 @@ int strM1Matrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfag
  * Caution:       Address of pmtxa and pmtxb Have to Be Allocated first.
  * Tip:           Users could use this function to add a matrix with another like this way:
  *                int plus(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
- *                strM2Matrix(pmtxa, pmtxb, sizeof(float), plus);
+ *                strMatrixMatrix(pmtxa, pmtxb, sizeof(float), plus);
  */
-int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
+int strMatrixMatrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 {
 	if (SV_ASSERT(pmtxa->ln == pmtxb->ln && pmtxa->col == pmtxb->col))
 	{
@@ -455,15 +455,15 @@ int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 	return CBF_TERMINATE;
 }
 
-/* An enumeration describes index of matrices. */
-typedef enum _en_M3Matrix  { _M3M_C, _M3M_A, _M3M_B } _M3Matrix;
+/* An enumeration describes index of matrices during multiplication. */
+typedef enum _en_MatrixMultiplication { _EMM_C, _EMM_A, _EMM_B } _MatrixMultiplication;
 
 /* Macros used to fetch line number and column number and data pointers of matrices. */
 #define MAT_LN(index)   ((const size_t)ppmtx[index]->ln)
 #define MAT_COL(index)  ((const size_t)ppmtx[index]->col)
 #define MAT_DATA(index) (ppmtx[index]->arrz.pdata)
 
-/* Function name: strM3Matrix
+/* Function name: strMultiplyMatrix
  * Description:   Do multiplication between two matrices A and B, and store the result into matrix C.
  *                Thus, C := A * B. Notice that A * B != B * A.
  * Parameters:
@@ -508,7 +508,7 @@ typedef enum _en_M3Matrix  { _M3M_C, _M3M_A, _M3M_B } _M3Matrix;
  *                    strSetMatrix(&mc, &tmp, sizeof(float));
  *                    memcpy(ma.arrz.pdata, a, sizeof a);
  *                    memcpy(mb.arrz.pdata, b, sizeof b);
- *                    strM3Matrix(pm, &tmp, sizeof(float), alg); Print(&mc);
+ *                    strMultiplyMatrix(pm, &tmp, sizeof(float), alg); Print(&mc);
  *                    strFreeMatrix(&mc); strFreeMatrix(&ma); strFreeMatrix(&mb);
  *                    return 0;
  *                }
@@ -522,21 +522,21 @@ typedef enum _en_M3Matrix  { _M3M_C, _M3M_A, _M3M_B } _M3Matrix;
  *                 \__/ij   /__|  ik kj
  *                          k:=1
  */
-bool strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
+bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
-	if (SV_ASSERT(MAT_COL(_M3M_A) == MAT_LN(_M3M_B)))
+	if (SV_ASSERT(MAT_COL(_EMM_A) == MAT_LN(_EMM_B)))
 	{
 		REGISTER size_t i, j, k, m;
-		REGISTER PUCHAR ptrmc = MAT_DATA(_M3M_C);
-		for (i = 0; i < MAT_LN(_M3M_A); ++i)
+		REGISTER PUCHAR ptrmc = MAT_DATA(_EMM_C);
+		for (i = 0; i < MAT_LN(_EMM_A); ++i)
 		{
-			m = i * MAT_COL(_M3M_A);
-			for (j = 0; j < MAT_COL(_M3M_B); ++j)
+			m = i * MAT_COL(_EMM_A);
+			for (j = 0; j < MAT_COL(_EMM_B); ++j)
 			{
-				for (k = 0; k < MAT_COL(_M3M_A); ++k)
+				for (k = 0; k < MAT_COL(_EMM_A); ++k)
 				{
-					memcpy(ptemp, &MAT_DATA(_M3M_A)[(m + k) * size], size);
-					pcbfagb[EMA_MUL](ptemp, &MAT_DATA(_M3M_B)[(k * MAT_COL(_M3M_B) + j) * size]);
+					memcpy(ptemp, &MAT_DATA(_EMM_A)[(m + k) * size], size);
+					pcbfagb[EMA_MUL](ptemp, &MAT_DATA(_EMM_B)[(k * MAT_COL(_EMM_B) + j) * size]);
 					if (0 == k)
 						memcpy(ptrmc, ptemp, size);
 					else
@@ -615,7 +615,7 @@ bool strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfa
  *                    strCopyMatrix(&ma, &mm, sizeof(MYTYPE));
  *                    strInvertMatrix(&mm, &zero, &unit, sizeof(MYTYPE), pcbfagb);
  *                    strCopyMatrix(&mb, &mm, sizeof(MYTYPE));
- *                    strM3Matrix(pp, &unit, sizeof(MYTYPE), pcbfagb);
+ *                    strMultiplyMatrix(pp, &unit, sizeof(MYTYPE), pcbfagb);
  *                    PrintMatrix(&mc); // Print identity matrix.
  *                    strFreeMatrix(&mm);
  *                    return 0;

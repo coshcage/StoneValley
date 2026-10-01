@@ -267,9 +267,9 @@ void *      strGetValueMatrix              (void *       pval,     P_MATRIX     
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
 void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfmch);
 bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,   size_t   size);
-int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
-int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
-bool        strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
+int         strMathMatrix                  (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
+int         strMatrixMatrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
+bool        strMultiplyMatrix              (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
 bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[4]);
 /* Functions for bit matrices/maps. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);

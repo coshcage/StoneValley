@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1001260618L01350
+ * File ID:     0213191430N1001260738L01319
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -22,7 +22,7 @@
  */
 
 #include <stdlib.h> /* Use function malloc, free. */
-#include <string.h> /* Use function memcpy, memset, memmove. */
+#include <string.h> /* Use function memcpy, memset, memmove, memcmp. */
 #include "svstring.h"
 
 /* Function name: strInitMatrix
@@ -636,7 +636,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 		REGISTER PUCHAR pvec;
 		REGISTER void * ptmp;
 		const size_t aln = pmtx->ln, acol = aln << 1;
-		REGISTER size_t i, j, l, m = size * acol, n, x, y;
+		REGISTER size_t i, j, m = size * acol, n, x, y;
 		
 		if (NULL == strInitMatrix(&maug, aln + 2, acol, size))
 			return false; /* Allocation failure. */
@@ -673,7 +673,6 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 					}
 				}
 			}
-			rtn = true;
 			goto Lbl_End;
 		}
 		
@@ -700,9 +699,9 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 						}
 						
 						if (n >= aln)
-						{	/* Matrix is singular. */
+						{
 							rtn = false;
-							goto Lbl_End;
+							goto Lbl_End; /* Matrix is singular. */
 						}
 						
 						/* Line swap. */
@@ -741,40 +740,10 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 			{
 				x = aln - i - 1;
 				y = aln - j - 1;
-				
 				if (0 != x)
 				{
-					if (x == y)
-					{
-						if (0 == memcmp(pnil, strFetchValuePointerMatrix(&maug, x, y, size), size))
-						{	/* Find non zero element. */
-							for (n = j + 1, l = aln - n - 1; n < aln; ++n)
-							{
-								l = aln - n - 1;
-								if (0 != memcmp(pnil, strFetchValuePointerMatrix(&maug, l, j, size), size))
-									break;
-							}
-
-							if (n >= aln)
-							{	/* Matrix is singular. */
-								rtn = false;
-								goto Lbl_End;
-							}
-
-							/* Line swap. */
-							svSwap(strFetchValuePointerMatrix(&maug, l, 0, size), pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
-						}
-
-						/* Put the first non zero leading line in a vector. */
-						memcpy(pvec, strFetchValuePointerMatrix(&maug, x, y, size), size);
-
-						if (0 != memcmp(pidt, pvec, size))
-							for (n = j; n < acol; ++n)
-								pcbfagb[EMA_DIV](strFetchValuePointerMatrix(&maug, x, n, size), pvec);
-
-						if (i < aln - 1)
-							memcpy(pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
-					}
+					if (x == y && i < aln - 1)
+						memcpy(pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
 					else
 					{
 						memcpy(pvec + m, pvec, m);

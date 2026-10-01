@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N0821260910L01090
+ * File ID:     0213191430N1001260618L01350
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -241,6 +241,25 @@ void strSetMatrix_O(P_MATRIX pmtx, const void * pval, size_t size)
 	strSetArrayZ(&pmtx->arrz, pval, size);
 }
 
+/* Function name: strFetchValuePointerMatrix_O
+ * Description:   Return a pointer to the value in matrix by specified line and column number.
+ * Parameters:
+ *       pmtx Pointer to a matrix you want to operate with.
+ *         ln Number of line in the matrix. Line number starts from 0.
+ *        col Number of column in the matrix. Column number starts from 0.
+ *       size Size of each element in the matrix.
+ * Return value:  Pointer to the value on the specific position in matrix.
+ *                If function returned NULL, it would indicate that parameter ln or col might be out of range.
+ * Caution:       Address of pmtx Must Be Allocated first.
+ * Tip:           A macro version of this function named strFetchValuePointerMatrix_M is available.
+ */
+void * strFetchValuePointerMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
+{
+	if (SV_ASSERT(ln < pmtx->ln && col < pmtx->col && 0 != size))
+		return &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
+	return NULL;
+}
+
 /* Function name: strGetValueMatrix
  * Description:   Return the value and its pointer from the specific position in a matrix.
  * Parameters:
@@ -258,7 +277,7 @@ void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size
 {
 	if (SV_ASSERT(ln < pmtx->ln && col < pmtx->col && 0 != size))
 	{
-		REGISTER void * ptr = &pmtx->arrz.pdata[(ln * pmtx->col + col) * size];
+		REGISTER void * ptr = strFetchValuePointerMatrix(pmtx, ln, col, size);
 		if (NULL != pval)
 			memcpy(pval, ptr, size);
 		return ptr;
@@ -278,7 +297,7 @@ void * strGetValueMatrix(void * pval, P_MATRIX pmtx, size_t ln, size_t col, size
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           A macro version of this function named strSetValueMatrix_M is available.
  */
-void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, void * pval, size_t size)
+void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, const void * pval, size_t size)
 {
 	if (SV_ASSERT(ln < pmtx->ln && col < pmtx->col && NULL != pval && 0 != size))
 		return memcpy(&pmtx->arrz.pdata[(ln * pmtx->col + col) * size], pval, size);
@@ -351,21 +370,22 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 {
 	if (SV_ASSERT(dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col))
 	{
-		REGISTER size_t i, j, k, l, o, p;
-		const size_t m = sln - dln, n = scol - dcol;
-		if (psrc->ln - sln < pdest->ln - dln)
-			o = psrc->ln;
-		else
-			o = pdest->ln;
-		if (psrc->col - scol < pdest->col - dcol)
-			p = psrc->col;
-		else
-			p = pdest->col;
-		for (i = sln; i < o; ++i)
+		REGISTER size_t i, j, k, l, m, n;
+		
+		i = psrc->ln - sln;
+		j = pdest->ln - dln;
+		m = i < j ? i : j;
+		
+		i = psrc->col - scol;
+		j = pdest->col - dcol;
+		n = i < j ? i : j;
+		
+		for (i = 0; i < m; ++i)
 		{
-			k = (i - m) * pdest->col - n;
-			l = i * psrc->col;
-			for (j = scol; j < p; ++j)
+			k = dln + (i * pdest->col) + dcol;
+			l = sln + (i * psrc->col) + scol;
+			
+			for (j = 0; j < n; ++j)
 			{
 				memmove
 				(
@@ -435,9 +455,8 @@ int strM2Matrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbfagb)
 	return CBF_TERMINATE;
 }
 
-/* Enumeration describes index of matrices and algebraic operations on matrices. */
+/* An enumeration describes index of matrices. */
 typedef enum _en_M3Matrix  { _M3M_C, _M3M_A, _M3M_B } _M3Matrix;
-typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
 
 /* Macros used to fetch line number and column number and data pointers of matrices. */
 #define MAT_LN(index)   ((const size_t)ppmtx[index]->ln)
@@ -457,12 +476,11 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *      ptemp Pointer to a buffer that can hold an element.
  *            Size of the buffer that ptemp pointed shall equal to parameter size.
  *       size Size of each element in the matrix.
- * pcbfagb[2] pcbfagb[0] stores the pointer to a function that can perform addition.
- *            pcbfagb[1] stores the pointer to a function that can perform multiplication.
- *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
+ * pcbfagb[2] pcbfagb[EMA_ADD] stores the pointer to a function that can perform addition.
+ *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.
+ *            Please refer to the definition of type CBF_ALGEBRA and enumeration MatrixAlgebra.
+ * Return value:  true indicates calculation succeeded. false indicates calculation failed.
  * Caution:       Address of ppmtx[0], ppmtx[1] and ppmtx[2] Must Be Allocated first.
- *                CBF_TERMINATE would be returned if this function received wrong parameters.
  * Tip:           Users could use this function to multiply a matrix with another like this way:
  *                <test.c>
  *                #include <string.h>
@@ -482,7 +500,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *                    float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, tmp = 0.0f;
  *                    float b[] = { 3.0f, 2.0f, 1.0f, 6.0f, 5.0f, 4.0f };
  *                    CBF_ALGEBRA alg[2]; P_MATRIX pm[3];
- *                    alg[0] = add; alg[1] = mul;
+ *                    alg[EMA_ADD] = add; alg[EMA_MUL] = mul;
  *                    pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
  *                    strInitMatrix(&ma, 2, 3, sizeof(float));
  *                    strInitMatrix(&mb, 3, 2, sizeof(float));
@@ -504,7 +522,7 @@ typedef enum _en_M3Algebra { _M3A_ADD, _M3A_MUL }     _M3Algebra;
  *                 \__/ij   /__|  ik kj
  *                          k:=1
  */
-int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
+bool strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
 	if (SV_ASSERT(MAT_COL(_M3M_A) == MAT_LN(_M3M_B)))
 	{
@@ -518,27 +536,269 @@ int strM3Matrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfag
 				for (k = 0; k < MAT_COL(_M3M_A); ++k)
 				{
 					memcpy(ptemp, &MAT_DATA(_M3M_A)[(m + k) * size], size);
-					if (CBF_CONTINUE != pcbfagb[_M3A_MUL](ptemp, &MAT_DATA(_M3M_B)[(k * MAT_COL(_M3M_B) + j) * size]))
-						return CBF_TERMINATE;
+					pcbfagb[EMA_MUL](ptemp, &MAT_DATA(_M3M_B)[(k * MAT_COL(_M3M_B) + j) * size]);
 					if (0 == k)
 						memcpy(ptrmc, ptemp, size);
 					else
-					{
-						if (CBF_CONTINUE != pcbfagb[_M3A_ADD](ptrmc, ptemp))
-							return CBF_TERMINATE;
-					}
+						pcbfagb[EMA_ADD](ptrmc, ptemp);
 				}
 				ptrmc += size;
 			}
 		}
-		return CBF_CONTINUE;
+		return true;
 	}
-	return CBF_TERMINATE;
+	return false;
 }
 
 #undef MAT_LN
 #undef MAT_COL
 #undef MAT_DATA /* Undefine used macros. */
+
+/* Function name: strInvertMatrix
+ * Description:   Invert a matrix.
+ * Parameters:
+ *       pmtx Pointer to a matrix.
+ *       pnil Pointer to a zero element.
+ *       pidt Pointer to an identity or unit element.
+ *       size Size of each element you used.
+ * pcbfagb[4] pcbfagb[0] is omitted. Usually set to NULL.
+ *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.
+ *            pcbfagb[EMA_SUB] stores the pointer to a function that can perform subtraction.
+ *            pcbfagb[EMA_DIV] stores the pointer to a function that can perform division.
+ *            Please refer to the definition of type CBF_ALGEBRA and enumeration MatrixAlgebra.
+ * Return value:  true indicates calculation succeeded. false indicates calculation failed.
+ * Caution:       Address of ppmtx Must Be Allocated first.
+ *                If function returned false, data of pmtx could be contaminated.
+ *                That is, pmtx is not the original matrix before you invoke this function.
+ * Tip:           A comprehensive guide:
+ *                <test.c>
+ *                #include <stdio.h>
+ *                #include <stdlib.h>
+ *                #include <string.h>
+ *                #include "svstring.h"
+ *                typedef float MYTYPE;
+ *                void PrintMatrix(P_MATRIX pm) {
+ *                    size_t i, j;
+ *                    for (i = 0; i < pm->ln; ++i) {
+ *                        for (j = 0; j < pm->col; ++j)
+ *                            printf("%g ", *(MYTYPE *)strFetchValuePointerMatrix(pm, i, j, sizeof(MYTYPE)));
+ *                        printf("\n");
+ *                    }
+ *                }
+ *                int cbfadd(const void * px, const void * py) {
+ *                    *(MYTYPE *)px += *(MYTYPE *)py;
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int cbfmul(const void * px, const void * py) {
+ *                    *(MYTYPE *)px *= *(MYTYPE *)py;
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int cbfsub(const void * px, const void * py) {
+ *                    *(MYTYPE *)px -= *(MYTYPE *)py;
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int cbfdiv(const void * px, const void * py) {
+ *                    *(MYTYPE *)px /= *(MYTYPE *)py;
+ *                    return CBF_CONTINUE;
+ *                }
+ *                int main() {
+ *                    CBF_ALGEBRA pcbfagb[4] = {cbfadd, cbfmul, cbfsub, cbfdiv};
+ *                    MYTYPE data[] = { 1.0f, 1.0f, 3.0f, 3.0f, 6.0f, 4.0f, 2.0f, 4.0f, 3.0f };
+ *                    MYTYPE zero = 0.0f, unit = 1.0f;
+ *                    MATRIX mm, mc, ma, mb;
+ *                    P_MATRIX pp[] = { &mc, &mb, &ma };
+ *                    strInitMatrix(&mm, 3, 3, sizeof(MYTYPE));
+ *                    strInitMatrix(&ma, 3, 3, sizeof(MYTYPE));
+ *                    strInitMatrix(&mb, 3, 3, sizeof(MYTYPE));
+ *                    strInitMatrix(&mc, 3, 3, sizeof(MYTYPE));
+ *                    memcpy(mm.arrz.pdata, data, sizeof(data));
+ *                    strCopyMatrix(&ma, &mm, sizeof(MYTYPE));
+ *                    strInvertMatrix(&mm, &zero, &unit, sizeof(MYTYPE), pcbfagb);
+ *                    strCopyMatrix(&mb, &mm, sizeof(MYTYPE));
+ *                    strM3Matrix(pp, &unit, sizeof(MYTYPE), pcbfagb);
+ *                    PrintMatrix(&mc); // Print identity matrix.
+ *                    strFreeMatrix(&mm);
+ *                    return 0;
+ *                }
+ *                Result and explanation:
+ *                If A^(-1) = B then A * B = B * A = E. (A^(-1) is A's inversion, E is an identity matrix.)
+ *                A = | 1 1 3 | B = |  2   9 -14 | E = | 1 0 0 |
+ *                    | 3 6 4 |     | -1  -3   5 |     | 0 1 0 |
+ *                    | 2 4 3 |     |  0  -2   3 |     | 0 0 1 |
+ */
+bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t size, CBF_ALGEBRA pcbfagb[4])
+{
+	if (SV_ASSERT(pmtx->ln == pmtx->col && 0 != size))
+	{
+		MATRIX maug; /* Augmented matrix. */
+		bool rtn = true;
+		bool diag = true;
+		REGISTER PUCHAR pvec;
+		REGISTER void * ptmp;
+		const size_t aln = pmtx->ln, acol = aln << 1;
+		REGISTER size_t i, j, l, m = size * acol, n, x, y;
+		
+		if (NULL == strInitMatrix(&maug, aln + 2, acol, size))
+			return false; /* Allocation failure. */
+		
+		/* Load identity matrix. */
+		for (i = 0; i < aln; ++i)
+		{
+			for (j = aln; j < acol; ++j)
+			{
+				if (i + aln == j)
+					strSetValueMatrix(&maug, i, j, pidt, size);
+				else
+				{
+					strSetValueMatrix(&maug, i, j, pnil, size);
+					
+					/* Test whether pmtx is a diagonal matrix. */
+					if (diag && 0 != memcmp(pnil, strFetchValuePointerMatrix(pmtx, i, j - aln, size), size))
+						diag = false;
+				}
+			}
+		}
+		
+		if (diag) /* pmtx is a diagonal matrix. */
+		{
+			for (i = 0; i < aln; ++i)
+			{
+				for (j = 0; j < aln; ++j)
+				{
+					if (i == j)
+					{
+						strSetValueMatrix(&maug, 0, 0, strFetchValuePointerMatrix(pmtx, i, j, size), size);
+						strSetValueMatrix(pmtx, i, j, pidt, size);
+						pcbfagb[EMA_DIV](strFetchValuePointerMatrix(pmtx, i, j, size), strFetchValuePointerMatrix(&maug, 0, 0, size));
+					}
+				}
+			}
+			rtn = true;
+			goto Lbl_End;
+		}
+		
+		/* Load augmented matrix. */
+		strProjectMatrix(&maug, 0, 0, pmtx, 0, 0, size);
+
+		/* Posit to vector in augmented matrix. */
+		pvec = (PUCHAR) strFetchValuePointerMatrix(&maug, aln, 0, size);
+		
+		/* Transform the lower triangular matrix. */
+		for (i = 0; i < aln; ++i)
+		{
+			for (j = i; j < aln; ++j)
+			{
+				if (i == j)
+				{
+					ptmp = strFetchValuePointerMatrix(&maug, i, j, size);
+					if (0 == memcmp(pnil, ptmp, size))
+					{	/* Find non zero element. */
+						for (n = j + 1; n < aln; ++n)
+						{
+							if (0 != memcmp(pnil, strFetchValuePointerMatrix(&maug, n, j, size), size))
+								break;
+						}
+						
+						if (n >= aln)
+						{	/* Matrix is singular. */
+							rtn = false;
+							goto Lbl_End;
+						}
+						
+						/* Line swap. */
+						svSwap(strFetchValuePointerMatrix(&maug, n, 0, size), pvec, strFetchValuePointerMatrix(&maug, i, 0, size), m);
+					}
+					
+					/* Put the first non zero leading line in a vector. */
+					memcpy(pvec, ptmp, size);
+					
+					if (0 != memcmp(pidt, pvec, size))
+						for (n = j; n < acol; ++n)
+							pcbfagb[EMA_DIV](strFetchValuePointerMatrix(&maug, i, n, size), pvec);
+					
+					if (i < aln - 1)
+						memcpy(pvec, strFetchValuePointerMatrix(&maug, i, 0, size), m);
+				}
+				else
+				{
+					memcpy(pvec + m, pvec, m);
+					
+					ptmp = strFetchValuePointerMatrix(&maug, j, i, size);
+					if (0 != memcmp(pidt, ptmp, size))
+						for (n = i; n < acol; ++n)
+							pcbfagb[EMA_MUL](pvec + m + size * n, ptmp);
+					
+					for (n = i; n < acol; ++n)
+						pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, j, n, size), pvec + m + size * n);
+				}
+			}
+		}
+		
+		/* Transform the upper triangular matrix. */
+		for (i = 0; i < aln; ++i)
+		{
+			for (j = i; j < aln; ++j)
+			{
+				x = aln - i - 1;
+				y = aln - j - 1;
+				
+				if (0 != x)
+				{
+					if (x == y)
+					{
+						if (0 == memcmp(pnil, strFetchValuePointerMatrix(&maug, x, y, size), size))
+						{	/* Find non zero element. */
+							for (n = j + 1, l = aln - n - 1; n < aln; ++n)
+							{
+								l = aln - n - 1;
+								if (0 != memcmp(pnil, strFetchValuePointerMatrix(&maug, l, j, size), size))
+									break;
+							}
+
+							if (n >= aln)
+							{	/* Matrix is singular. */
+								rtn = false;
+								goto Lbl_End;
+							}
+
+							/* Line swap. */
+							svSwap(strFetchValuePointerMatrix(&maug, l, 0, size), pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
+						}
+
+						/* Put the first non zero leading line in a vector. */
+						memcpy(pvec, strFetchValuePointerMatrix(&maug, x, y, size), size);
+
+						if (0 != memcmp(pidt, pvec, size))
+							for (n = j; n < acol; ++n)
+								pcbfagb[EMA_DIV](strFetchValuePointerMatrix(&maug, x, n, size), pvec);
+
+						if (i < aln - 1)
+							memcpy(pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
+					}
+					else
+					{
+						memcpy(pvec + m, pvec, m);
+
+						ptmp = strFetchValuePointerMatrix(&maug, y, x, size);
+						if (0 != memcmp(pidt, ptmp, size))
+							for (n = x - i; n < acol; ++n)
+								pcbfagb[EMA_MUL](pvec + m + size * n, ptmp);
+
+						for (n = y; n < acol; ++n)
+							pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, y, n, size), pvec + m + size * n);
+					}
+				}
+			}
+		}
+		
+		strProjectMatrix(pmtx, 0, 0, &maug, 0, aln, size); /* Output result. */
+		
+	Lbl_End:
+		strFreeMatrix(&maug);
+		return rtn;
+	}
+	return false;
+}
 
 /* Assume that we have a bit map that contains 4 lines and 5 columns.
  *         0 1 2 3 4

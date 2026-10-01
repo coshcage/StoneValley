@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y0906261600L00537
+ * File ID:     0306170921Y1001260618L00554
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -112,6 +112,16 @@ typedef struct st_MATRIX {
  *     unless the callee should return CBF_CONTINUE to calculate continually.
  */
 typedef CBF_COMPARE CBF_ALGEBRA;
+
+/* Definition of indices of functions pointers on matrices.
+ * These values could be used to index CBF_ALGEBRA pcbfagb[2] and pcbfagb[4] array.
+ */
+typedef enum en_MatrixAlgebra {
+	EMA_ADD,
+	EMA_MUL,
+	EMA_SUB,
+	EMA_DIV
+} MatrixAlgebra;
 
 /* Definition of bit matrix structure. */
 typedef MATRIX BITMAT, * P_BITMAT;
@@ -252,13 +262,15 @@ void *      strCopyMatrix                  (P_MATRIX     pdest,    P_MATRIX     
 P_MATRIX    strCreateCopyMatrix            (P_MATRIX     psrc,     size_t       size);
 void *      strResizeMatrix                (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * pval,    size_t       size);
+void *      strFetchValuePointerMatrix_O   (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
-void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
+void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
 void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfmch);
 bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,   size_t   size);
 int         strM1Matrix                    (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strM2Matrix                    (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
-int         strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
+bool        strM3Matrix                    (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
+bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[4]);
 /* Functions for bit matrices/maps. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);
@@ -348,6 +360,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #define strSetMatrix_M(pmtx_M, pval_M, size_M) do { \
 	strSetArrayZ(&(pmtx_M)->arrz, (pval_M), (size_M)); \
 } while (0)
+#define strFetchValuePointerMatrix_M(pmtx_M, ln_M, col_M, size_M) (&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)])
 #define strSetValueMatrix_M(pmtx_M, ln_M, col_M, pval_M, size_M) \
 	(memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)))
 #define strCopyBMap_M(pdest_M, psrc_M) (strCopyMatrix((pdest_M), (psrc_M), sizeof(UCHART)))
@@ -357,148 +370,152 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #if   SV_OPTIMIZATION == SV_OPT_MINISIZE
 	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
-	#define svIndexOf                 svIndexOf_M
-	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
+	#define svIndexOf                  svIndexOf_M
+	#define strBitStreamIsEmpty        strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
-	#define strFreeArrayZ             strFreeArrayZ_O
-	#define strDeleteArrayZ           strDeleteArrayZ_O
-	#define strFreeNodeS              strFreeNodeS_M
-	#define strDeleteNodeS            strDeleteNodeS_O
-	#define strFreeNodeD              strFreeNodeD_M
-	#define strDeleteNodeD            strDeleteNodeD_O
+	#define strFreeArrayZ              strFreeArrayZ_O
+	#define strDeleteArrayZ            strDeleteArrayZ_O
+	#define strFreeNodeS               strFreeNodeS_M
+	#define strDeleteNodeS             strDeleteNodeS_O
+	#define strFreeNodeD               strFreeNodeD_M
+	#define strDeleteNodeD             strDeleteNodeD_O
 	/* Macros for sized arrays. */
-	#define strLevelArrayZ            strLevelArrayZ_M
-	#define strCopyArrayZ             strCopyArrayZ_M
-	#define strMoveArrayZ             strMoveArrayZ_M
-	#define strLocateItemArrayZ       strLocateItemArrayZ_M
-	#define strIndexOfArrayZ          strIndexOfArrayZ_M
-	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
+	#define strLevelArrayZ             strLevelArrayZ_M
+	#define strCopyArrayZ              strCopyArrayZ_M
+	#define strMoveArrayZ              strMoveArrayZ_M
+	#define strLocateItemArrayZ        strLocateItemArrayZ_M
+	#define strIndexOfArrayZ           strIndexOfArrayZ_M
+	#define strBinarySearchArrayZ      strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
-	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
-	#define strInitLinkedListSC       strInitLinkedListSC_M
-	#define strDeleteLinkedListSC     strDeleteLinkedListSC_O
-	#define strLocateItemSC           strLocateItemSC_R
-	#define strTraverseLinkedListDC_X strTraverseLinkedListDC_A
-	#define strInitLinkedListDC       strInitLinkedListDC_M
-	#define strDeleteLinkedListDC     strDeleteLinkedListDC_O
-	#define strLocateItemDC           strLocateItemDC_R
+	#define strTraverseLinkedListSC_X  strTraverseLinkedListSC_A
+	#define strInitLinkedListSC        strInitLinkedListSC_M
+	#define strDeleteLinkedListSC      strDeleteLinkedListSC_O
+	#define strLocateItemSC            strLocateItemSC_R
+	#define strTraverseLinkedListDC_X  strTraverseLinkedListDC_A
+	#define strInitLinkedListDC        strInitLinkedListDC_M
+	#define strDeleteLinkedListDC      strDeleteLinkedListDC_O
+	#define strLocateItemDC            strLocateItemDC_R
 	/* Macros for matrices. */
-	#define strFreeMatrix             strFreeMatrix_O
-	#define strDeleteMatrix           strDeleteMatrix_O
-	#define strSetMatrix              strSetMatrix_M
-	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeMatrix
-	#define strDeleteBMap             strDeleteMatrix
-	#define strCopyBMap               strCopyBMap_M
+	#define strFreeMatrix              strFreeMatrix_O
+	#define strDeleteMatrix            strDeleteMatrix_O
+	#define strSetMatrix               strSetMatrix_M
+	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
+	#define strSetValueMatrix          strSetValueMatrix_M
+	#define strFreeBMap                strFreeMatrix
+	#define strDeleteBMap              strDeleteMatrix
+	#define strCopyBMap                strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED
 	#include <stdlib.h> /* Use function free. */
 	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
-	#define svIndexOf                 svIndexOf_M
-	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
+	#define svIndexOf                  svIndexOf_M
+	#define strBitStreamIsEmpty        strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
-	#define strFreeArrayZ             strFreeArrayZ_M
-	#define strDeleteArrayZ           strDeleteArrayZ_M
-	#define strFreeNodeS              strFreeNodeS_M
-	#define strDeleteNodeS            strDeleteNodeS_M
-	#define strFreeNodeD              strFreeNodeD_M
-	#define strDeleteNodeD            strDeleteNodeD_M
+	#define strFreeArrayZ              strFreeArrayZ_M
+	#define strDeleteArrayZ            strDeleteArrayZ_M
+	#define strFreeNodeS               strFreeNodeS_M
+	#define strDeleteNodeS             strDeleteNodeS_M
+	#define strFreeNodeD               strFreeNodeD_M
+	#define strDeleteNodeD             strDeleteNodeD_M
 	/* Macros for sized arrays. */
-	#define strLevelArrayZ            strLevelArrayZ_M
-	#define strCopyArrayZ             strCopyArrayZ_M
-	#define strMoveArrayZ             strMoveArrayZ_M
-	#define strLocateItemArrayZ       strLocateItemArrayZ_M
-	#define strIndexOfArrayZ          strIndexOfArrayZ_M
-	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
+	#define strLevelArrayZ             strLevelArrayZ_M
+	#define strCopyArrayZ              strCopyArrayZ_M
+	#define strMoveArrayZ              strMoveArrayZ_M
+	#define strLocateItemArrayZ        strLocateItemArrayZ_M
+	#define strIndexOfArrayZ           strIndexOfArrayZ_M
+	#define strBinarySearchArrayZ      strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
-	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_N
-	#define strInitLinkedListSC       strInitLinkedListSC_M
-	#define strDeleteLinkedListSC     strDeleteLinkedListSC_M
-	#define strLocateItemSC           strLocateItemSC_N
-	#define strTraverseLinkedListDC_X strTraverseLinkedListDC_N
-	#define strInitLinkedListDC       strInitLinkedListDC_M
-	#define strDeleteLinkedListDC     strDeleteLinkedListDC_M
-	#define strLocateItemDC           strLocateItemDC_N
+	#define strTraverseLinkedListSC_X  strTraverseLinkedListSC_N
+	#define strInitLinkedListSC        strInitLinkedListSC_M
+	#define strDeleteLinkedListSC      strDeleteLinkedListSC_M
+	#define strLocateItemSC            strLocateItemSC_N
+	#define strTraverseLinkedListDC_X  strTraverseLinkedListDC_N
+	#define strInitLinkedListDC        strInitLinkedListDC_M
+	#define strDeleteLinkedListDC      strDeleteLinkedListDC_M
+	#define strLocateItemDC            strLocateItemDC_N
 	/* Macros for matrices. */
-	#define strFreeMatrix             strFreeMatrix_M
-	#define strDeleteMatrix           strDeleteMatrix_M
-	#define strSetMatrix              strSetMatrix_M
-	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeMatrix
-	#define strDeleteBMap             strDeleteMatrix
-	#define strCopyBMap               strCopyBMap_M
+	#define strFreeMatrix              strFreeMatrix_M
+	#define strDeleteMatrix            strDeleteMatrix_M
+	#define strSetMatrix               strSetMatrix_M
+	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
+	#define strSetValueMatrix          strSetValueMatrix_M
+	#define strFreeBMap                strFreeMatrix
+	#define strDeleteBMap              strDeleteMatrix
+	#define strCopyBMap                strCopyBMap_M
 #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM
 	#include <stdlib.h> /* Use function free. */
 	#include <string.h> /* Use function memcpy. */
 	/* Macros for miscellaneous data structures. */
-	#define svIndexOf                 svIndexOf_M
-	#define strBitStreamIsEmpty       strBitStreamIsEmpty_M
+	#define svIndexOf                  svIndexOf_M
+	#define strBitStreamIsEmpty        strBitStreamIsEmpty_M
 	/* Macros for atomic structures. */
-	#define strFreeArrayZ             strFreeArrayZ_M
-	#define strDeleteArrayZ           strDeleteArrayZ_M
-	#define strFreeNodeS              strFreeNodeS_M
-	#define strDeleteNodeS            strDeleteNodeS_M
-	#define strFreeNodeD              strFreeNodeD_M
-	#define strDeleteNodeD            strDeleteNodeD_M
+	#define strFreeArrayZ              strFreeArrayZ_M
+	#define strDeleteArrayZ            strDeleteArrayZ_M
+	#define strFreeNodeS               strFreeNodeS_M
+	#define strDeleteNodeS             strDeleteNodeS_M
+	#define strFreeNodeD               strFreeNodeD_M
+	#define strDeleteNodeD             strDeleteNodeD_M
 	/* Macros for sized arrays. */
-	#define strLevelArrayZ            strLevelArrayZ_M
-	#define strCopyArrayZ             strCopyArrayZ_M
-	#define strMoveArrayZ             strMoveArrayZ_M
-	#define strLocateItemArrayZ       strLocateItemArrayZ_M
-	#define strIndexOfArrayZ          strIndexOfArrayZ_M
-	#define strBinarySearchArrayZ     strBinarySearchArrayZ_M
+	#define strLevelArrayZ             strLevelArrayZ_M
+	#define strCopyArrayZ              strCopyArrayZ_M
+	#define strMoveArrayZ              strMoveArrayZ_M
+	#define strLocateItemArrayZ        strLocateItemArrayZ_M
+	#define strIndexOfArrayZ           strIndexOfArrayZ_M
+	#define strBinarySearchArrayZ      strBinarySearchArrayZ_M
 	/* Macros for linked lists. */
-	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
-	#define strInitLinkedListSC       strInitLinkedListSC_M
-	#define strDeleteLinkedListSC     strDeleteLinkedListSC_M
-	#define strLocateItemSC           strLocateItemSC_R
-	#define strTraverseLinkedListDC_X strTraverseLinkedListDC_A
-	#define strInitLinkedListDC       strInitLinkedListDC_M
-	#define strDeleteLinkedListDC     strDeleteLinkedListDC_M
-	#define strLocateItemDC           strLocateItemDC_R
+	#define strTraverseLinkedListSC_X  strTraverseLinkedListSC_A
+	#define strInitLinkedListSC        strInitLinkedListSC_M
+	#define strDeleteLinkedListSC      strDeleteLinkedListSC_M
+	#define strLocateItemSC            strLocateItemSC_R
+	#define strTraverseLinkedListDC_X  strTraverseLinkedListDC_A
+	#define strInitLinkedListDC        strInitLinkedListDC_M
+	#define strDeleteLinkedListDC      strDeleteLinkedListDC_M
+	#define strLocateItemDC            strLocateItemDC_R
 	/* Macros for matrices. */
-	#define strFreeMatrix             strFreeMatrix_M
-	#define strDeleteMatrix           strDeleteMatrix_M
-	#define strSetMatrix              strSetMatrix_M
-	#define strSetValueMatrix         strSetValueMatrix_M
-	#define strFreeBMap               strFreeMatrix
-	#define strDeleteBMap             strDeleteMatrix
-	#define strCopyBMap               strCopyBMap_M
+	#define strFreeMatrix              strFreeMatrix_M
+	#define strDeleteMatrix            strDeleteMatrix_M
+	#define strSetMatrix               strSetMatrix_M
+	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
+	#define strSetValueMatrix          strSetValueMatrix_M
+	#define strFreeBMap                strFreeMatrix
+	#define strDeleteBMap              strDeleteMatrix
+	#define strCopyBMap                strCopyBMap_M
 #else /* Optimization has been disabled. */
 	/* Macros for miscellaneous data structures. */
-	#define svIndexOf                 svIndexOf_O
-	#define strBitStreamIsEmpty       strBitStreamIsEmpty_O
+	#define svIndexOf                  svIndexOf_O
+	#define strBitStreamIsEmpty        strBitStreamIsEmpty_O
 	/* Macros for atomic structures. */
-	#define strFreeArrayZ             strFreeArrayZ_O
-	#define strDeleteArrayZ           strDeleteArrayZ_O
-	#define strFreeNodeS              strFreeNodeS_O
-	#define strDeleteNodeS            strDeleteNodeS_O
-	#define strFreeNodeD              strFreeNodeD_O
-	#define strDeleteNodeD            strDeleteNodeD_O
+	#define strFreeArrayZ              strFreeArrayZ_O
+	#define strDeleteArrayZ            strDeleteArrayZ_O
+	#define strFreeNodeS               strFreeNodeS_O
+	#define strDeleteNodeS             strDeleteNodeS_O
+	#define strFreeNodeD               strFreeNodeD_O
+	#define strDeleteNodeD             strDeleteNodeD_O
 	/* Macros for sized arrays. */
-	#define strLevelArrayZ            strLevelArrayZ_O
-	#define strCopyArrayZ             strCopyArrayZ_O
-	#define strMoveArrayZ             strMoveArrayZ_O
-	#define strLocateItemArrayZ       strLocateItemArrayZ_O
-	#define strIndexOfArrayZ          strIndexOfArrayZ_O
-	#define strBinarySearchArrayZ     strBinarySearchArrayZ_O
+	#define strLevelArrayZ             strLevelArrayZ_O
+	#define strCopyArrayZ              strCopyArrayZ_O
+	#define strMoveArrayZ              strMoveArrayZ_O
+	#define strLocateItemArrayZ        strLocateItemArrayZ_O
+	#define strIndexOfArrayZ           strIndexOfArrayZ_O
+	#define strBinarySearchArrayZ      strBinarySearchArrayZ_O
 	/* Macros for linked lists. */
-	#define strTraverseLinkedListSC_X strTraverseLinkedListSC_A
-	#define strInitLinkedListSC       strInitLinkedListSC_O
-	#define strDeleteLinkedListSC     strDeleteLinkedListSC_O
-	#define strLocateItemSC           strLocateItemSC_N
-	#define strTraverseLinkedListDC_X strTraverseLinkedListDC_A
-	#define strInitLinkedListDC       strInitLinkedListDC_O
-	#define strDeleteLinkedListDC     strDeleteLinkedListDC_O
-	#define strLocateItemSC           strLocateItemSC_N
+	#define strTraverseLinkedListSC_X  strTraverseLinkedListSC_A
+	#define strInitLinkedListSC        strInitLinkedListSC_O
+	#define strDeleteLinkedListSC      strDeleteLinkedListSC_O
+	#define strLocateItemSC            strLocateItemSC_N
+	#define strTraverseLinkedListDC_X  strTraverseLinkedListDC_A
+	#define strInitLinkedListDC        strInitLinkedListDC_O
+	#define strDeleteLinkedListDC      strDeleteLinkedListDC_O
+	#define strLocateItemSC            strLocateItemSC_N
 	/* Macros for matrices. */
-	#define strFreeMatrix             strFreeMatrix_O
-	#define strDeleteMatrix           strDeleteMatrix_O
-	#define strSetMatrix              strSetMatrix_O
-	#define strSetValueMatrix         strSetValueMatrix_O
-	#define strFreeBMap               strFreeBMap_O
-	#define strDeleteBMap             strDeleteBMap_O
-	#define strCopyBMap               strCopyBMap_O
+	#define strFreeMatrix              strFreeMatrix_O
+	#define strDeleteMatrix            strDeleteMatrix_O
+	#define strSetMatrix               strSetMatrix_O
+	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_O
+	#define strSetValueMatrix          strSetValueMatrix_O
+	#define strFreeBMap                strFreeBMap_O
+	#define strDeleteBMap              strDeleteBMap_O
+	#define strCopyBMap                strCopyBMap_O
 #endif
 
 #endif

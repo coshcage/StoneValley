@@ -348,18 +348,18 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *                CBF_CMP_LT:    listx is less than listy.    (<).
  *                The following table shows characteristics about this function:
  *                listx  listy result
- *                abcde  abdef CBF_CMP_LT
- *                bcdef  abcde CBF_CMP_GT
- *                abcde  abcde CBF_CMP_EQUAL
- *                abc    abcd  CBF_CMP_LT
- *                abcd   abc   CBF_CMP_GT
- *                b      acd   CBF_CMP_GT
- *                acd    b     CBF_CMP_LT
- *                a      bcd   CBF_CMP_LT
- *                bcd    a     CBF_CMP_GT
- *                NULL   NULL  CBF_CMP_EQUAL
- *                NULL   a     CBF_CMP_LT
- *                a      NULL  CBF_CMP_GT
+ *                abcde  abdef (<) CBF_CMP_LT
+ *                bcdef  abcde (>) CBF_CMP_GT
+ *                abcde  abcde (=) CBF_CMP_EQUAL
+ *                abc    abcd  (<) CBF_CMP_LT
+ *                abcd   abc   (>) CBF_CMP_GT
+ *                b      acd   (>) CBF_CMP_GT
+ *                acd    b     (<) CBF_CMP_LT
+ *                a      bcd   (<) CBF_CMP_LT
+ *                bcd    a     (>) CBF_CMP_GT
+ *                NULL   NULL  (=) CBF_CMP_EQUAL
+ *                NULL   a     (<) CBF_CMP_LT
+ *                a      NULL  (>) CBF_CMP_GT
  * Caution:       Data in each node of two linked lists must be in the same size.
  * Tip:           No dead cycles for circular linked lists.
  */

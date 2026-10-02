@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1001260618L00554
+ * File ID:     0306170921Y1001262035L00554
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -265,7 +265,7 @@ void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * 
 void *      strFetchValuePointerMatrix_O   (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
-void *      strTransposeMatrix             (P_MATRIX     pmtx,     size_t       size,    CBF_COMPARE  cbfmch);
+bool        strTransposeMatrix             (P_MATRIX     pmtx,     P_MATRIX     ptmp,    size_t       size);
 bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,   size_t   size);
 int         strMathMatrix                  (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strMatrixMatrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);

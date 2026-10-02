@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1001261123L01317
+ * File ID:     0213191430N1001262025L01328
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -307,41 +307,48 @@ void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, const void * pv
 /* Function name: strTransposeMatrix
  * Description:   Transpose a matrix that is to swap line and column index for each element in a matrix.
  * Parameters:
- *       pmtx Pointer to a matrix.
- *       size Size of each element in the matrix.
- *     cbfmch Pointer to a callback function that uses to match each element in the matrix.
- *            Two parameters of cbfmch may point to any element in the matrix.
- *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
- *            Please refer to svdef.h to see more details about type CBF_COMPARE.
- * Return value:  pmtx->arrz.pdata
- *                If this function returned value NULL, it would indicate an allocation failure.
+ *       pmtx Pointer to a matrix to be transposed.
+ *       ptmp Pointer to a temporary buffer matrix.
+ *            If this value was set to NULL, function would create a new buffer.
+ *            If pmtx overlapped ptmp, function would create a new buffer too.
+ *            (*) ptmp should have a same element size value and a same buffer length to pmtx's.
+ *       size Size of each element in matrix pmtx and ptmp.
+ * Return value:  Function would return [true] if it succeeded.
+ *                Otherwise function would return [false].
  * Caution:       Address of pmtx Must Be Allocated first.
  */
-void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfmch)
+bool strTransposeMatrix(P_MATRIX pmtx, P_MATRIX ptmp, size_t size)
 {
 	MATRIX mtxt = { 0 };
-	if (NULL != strCopyMatrix(&mtxt, pmtx, size))
+	
+	if (NULL == ptmp)
+		ptmp = &mtxt;
+	else if (ptmp->arrz.pdata == pmtx->arrz.pdata) /* Data of pmtx and ptmp shall not overlap. */
+		ptmp = &mtxt;
+	
+	if (NULL != strCopyMatrix(ptmp, pmtx, size))
 	{
-		REGISTER size_t i, j, m, n;
-		REGISTER void * pa, * pb;
-		size_t t;
-		for (i = 0; i < mtxt.ln; ++i)
+		REGISTER PUCHAR psrc = ptmp->arrz.pdata;
+		REGISTER size_t i, j, ln = ptmp->col, col = ptmp->ln;
+		
+		for (i = 0; i < ln; ++i)
 		{
-			m = i * size;
-			for (j = 0; j < mtxt.col; ++j)
+			for (j = 0; j < col; ++j)
 			{
-				n = j * size;
-				pa = &mtxt.arrz.pdata[mtxt.col * m + n];
-				pb = &pmtx->arrz.pdata[mtxt.ln * n + m];
-				if (CBF_CMP_EQUAL != cbfmch(pb, pa))
-					memcpy(pb, pa, size);
+				memcpy(&pmtx->arrz.pdata[(j * col + i) * size], psrc, size);
+				psrc += size;
 			}
 		}
-		svSwap(&pmtx->ln, &t, &pmtx->col, sizeof(size_t));
-		strFreeMatrix(&mtxt);
-		return pmtx->arrz.pdata;
+		
+		pmtx->ln  = ln;
+		pmtx->col = col;
+		
+		if (&mtxt == ptmp)
+			strFreeMatrix(ptmp);
+		
+		return true;
 	}
-	return NULL;
+	return false;
 }
 
 /* Function name: strProjectMatrix
@@ -359,7 +366,7 @@ void * strTransposeMatrix(P_MATRIX pmtx, size_t size, CBF_COMPARE cbfmch)
  * Caution:       Address of pdest and psrc Must Be Allocated first.
  *                All line number dln, sln and column number dcol, scol start from 0.
  * Tip:           Assume that we have two matrices A and B, then a projection can be the following situation.
- *                strProjectMatrix(&A, 1, 1, &B, 1, 1);
+ *                strProjectMatrix(&A, 1, 1, &B, 1, 1, size);
  *                Before projection:        : After projection:
  *                A=| a b c d | B=| q r s | : A=| a b c d | B=| q r s |
  *                  | e f g h |   | t u v | :   | e u.v.h |   | t u v |
@@ -370,30 +377,34 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 {
 	if (SV_ASSERT(dln < pdest->ln && dcol < pdest->col && sln < psrc->ln && scol < psrc->col))
 	{
-		REGISTER size_t i, j, k, l, m, n;
+		const size_t dc = pdest->col, sc = psrc->col;
+		REGISTER size_t i, j, m, n, dl, sl;
 		
-		i = psrc->ln - sln;
+		i = psrc->ln  - sln;
 		j = pdest->ln - dln;
 		m = i < j ? i : j;
 		
-		i = psrc->col - scol;
+		i = psrc->col  - scol;
 		j = pdest->col - dcol;
 		n = i < j ? i : j;
 		
+		dl = dln;
+		sl = sln;
+		
 		for (i = 0; i < m; ++i)
 		{
-			k = dln + (i * pdest->col) + dcol;
-			l = sln + (i * psrc->col) + scol;
-			
 			for (j = 0; j < n; ++j)
 			{
 				memmove
 				(
-					&pdest->arrz.pdata[(k + j) * size],
-					&psrc->arrz.pdata[(l + j) * size],
+					&pdest->arrz.pdata[(dl * dc + dcol + j) * size],
+					&psrc->arrz.pdata [(sl * sc + scol + j) * size],
 					size
 				);
 			}
+			
+			++dl;
+			++sl;
 		}
 		return true;
 	}

@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1001262035L00554
+ * File ID:     0306170921Y1001262035L00555
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -114,13 +114,14 @@ typedef struct st_MATRIX {
 typedef CBF_COMPARE CBF_ALGEBRA;
 
 /* Definition of indices of functions pointers on matrices.
- * These values could be used to index CBF_ALGEBRA pcbfagb[2] and pcbfagb[4] array.
+ * These values could be used to index CBF_ALGEBRA pcbfagb[2] and pcbfagb[5] array.
  */
 typedef enum en_MatrixAlgebra {
 	EMA_ADD,
 	EMA_MUL,
 	EMA_SUB,
-	EMA_DIV
+	EMA_DIV,
+	EMA_CMP
 } MatrixAlgebra;
 
 /* Definition of bit matrix structure. */
@@ -270,7 +271,7 @@ bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       
 int         strMathMatrix                  (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strMatrixMatrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 bool        strMultiplyMatrix              (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
-bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[4]);
+bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[5]);
 /* Functions for bit matrices/maps. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);

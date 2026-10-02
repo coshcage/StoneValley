@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1001262025L01328
+ * File ID:     0213191430N1002260046L01336
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -22,7 +22,7 @@
  */
 
 #include <stdlib.h> /* Use function malloc, free. */
-#include <string.h> /* Use function memcpy, memset, memmove, memcmp. */
+#include <string.h> /* Use function memcpy, memset, memmove. */
 #include "svstring.h"
 
 /* Function name: strInitMatrix
@@ -402,7 +402,6 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 					size
 				);
 			}
-			
 			++dl;
 			++sl;
 		}
@@ -576,6 +575,7 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.
  *            pcbfagb[EMA_SUB] stores the pointer to a function that can perform subtraction.
  *            pcbfagb[EMA_DIV] stores the pointer to a function that can perform division.
+ *            pcbfagb[EMA_CMP] stores the pointer to a function that can perform comparison.
  *            Please refer to the definition of type CBF_ALGEBRA and enumeration MatrixAlgebra.
  * Return value:  true indicates calculation succeeded. false indicates calculation failed.
  * Caution:       Address of ppmtx Must Be Allocated first.
@@ -612,8 +612,12 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *                    *(MYTYPE *)px /= *(MYTYPE *)py;
  *                    return CBF_CONTINUE;
  *                }
+ *                int cbfcmp(const void * px, const void * py) {
+ *                    if (*(MYTYPE *)px == *(MYTYPE *)py) return CBF_CMP_EQUAL;
+ *                    return ! CBF_CMP_EQUAL;
+ *                }
  *                int main() {
- *                    CBF_ALGEBRA pcbfagb[4] = {cbfadd, cbfmul, cbfsub, cbfdiv};
+ *                    CBF_ALGEBRA pcbfagb[5] = {cbfadd, cbfmul, cbfsub, cbfdiv, cbfcmp};
  *                    MYTYPE data[] = { 1.0f, 1.0f, 3.0f, 3.0f, 6.0f, 4.0f, 2.0f, 4.0f, 3.0f };
  *                    MYTYPE zero = 0.0f, unit = 1.0f;
  *                    MATRIX mm, mc, ma, mb;
@@ -637,60 +641,64 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *                    | 3 6 4 |     | -1  -3   5 |     | 0 1 0 |
  *                    | 2 4 3 |     |  0  -2   3 |     | 0 0 1 |
  */
-bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t size, CBF_ALGEBRA pcbfagb[4])
+bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t size, CBF_ALGEBRA pcbfagb[5])
 {
 	if (SV_ASSERT(pmtx->ln == pmtx->col && 0 != size))
 	{
 		MATRIX maug; /* Augmented matrix. */
 		bool rtn = true;
-		bool diag = true;
-		REGISTER PUCHAR pvec;
 		REGISTER void * ptmp;
+		REGISTER PUCHAR pvec1, pvec2; /* Two vectors. */
 		const size_t aln = pmtx->ln, acol = aln << 1;
 		REGISTER size_t i, j, m = size * acol, n, x, y;
 		
 		if (NULL == strInitMatrix(&maug, aln + 2, acol, size))
 			return false; /* Allocation failure. */
-		
-		/* Load identity matrix. */
-		for (i = 0; i < aln; ++i)
-		{
-			for (j = aln; j < acol; ++j)
-			{
-				if (i + aln == j)
-					strSetValueMatrix(&maug, i, j, pidt, size);
-				else
-				{
-					strSetValueMatrix(&maug, i, j, pnil, size);
-					/* Test whether pmtx is a diagonal matrix. */
-					if (diag && 0 != memcmp(pnil, strFetchValuePointerMatrix(pmtx, i, j - aln, size), size))
-						diag = false;
-				}
-			}
-		}
-		
-		if (diag) /* pmtx is a diagonal matrix. */
-		{
+		else
+		{	/* This scope is for diagonal matrix testing and identity matrix loading. */
+			REGISTER bool bdiag = true;
+			/* Load identity matrix. */
 			for (i = 0; i < aln; ++i)
 			{
-				for (j = 0; j < aln; ++j)
+				for (j = aln; j < acol; ++j)
 				{
-					if (i == j)
+					if (i + aln == j)
+						strSetValueMatrix(&maug, i, j, pidt, size);
+					else
 					{
-						strSetValueMatrix(&maug, 0, 0, strFetchValuePointerMatrix(pmtx, i, j, size), size);
-						strSetValueMatrix(pmtx, i, j, pidt, size);
-						pcbfagb[EMA_DIV](strFetchValuePointerMatrix(pmtx, i, j, size), strFetchValuePointerMatrix(&maug, 0, 0, size));
+						strSetValueMatrix(&maug, i, j, pnil, size);
+						/* Test whether pmtx is a diagonal matrix. */
+						if (bdiag && CBF_CMP_EQUAL != pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pmtx, i, j - aln, size), pnil))
+							bdiag = false;
 					}
 				}
 			}
-			goto Lbl_End;
+			
+			if (bdiag) /* pmtx is a diagonal matrix. */
+			{
+				for (i = 0; i < aln; ++i)
+				{
+					for (j = 0; j < aln; ++j)
+					{
+						if (i == j)
+						{
+							memcpy(maug.arrz.pdata, strFetchValuePointerMatrix(pmtx, i, j, size), size);
+							strSetValueMatrix(pmtx, i, j, pidt, size);
+							pcbfagb[EMA_DIV](strFetchValuePointerMatrix(pmtx, i, j, size), maug.arrz.pdata);
+						}
+					}
+				}
+				goto Lbl_End;
+			}
 		}
 		
 		/* Load augmented matrix. */
-		strProjectMatrix(&maug, 0, 0, pmtx, 0, 0, size);
-
-		/* Posit to vector in augmented matrix. */
-		pvec = (PUCHAR) strFetchValuePointerMatrix(&maug, aln, 0, size);
+		for (i = 0, j = aln * size; i < aln; ++i)
+			memcpy(&maug.arrz.pdata[i * m], &pmtx->arrz.pdata[i * j], j);
+		
+		/* Pointers to vectors in the augmented matrix. */
+		pvec1 = (PUCHAR) strFetchValuePointerMatrix(&maug, aln, 0, size);
+		pvec2 = pvec1 + m;
 		
 		/* Transform the lower triangular matrix. */
 		for (i = 0; i < aln; ++i)
@@ -699,11 +707,11 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 			{
 				if (i == j)
 				{
-					if (0 == memcmp(pnil, strFetchValuePointerMatrix(&maug, i, j, size), size))
+					if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(&maug, i, j, size), pnil))
 					{	/* Find non zero element. */
 						for (n = j + 1; n < aln; ++n)
 						{
-							if (0 != memcmp(pnil, strFetchValuePointerMatrix(&maug, n, j, size), size))
+							if (CBF_CMP_EQUAL != pcbfagb[EMA_CMP](strFetchValuePointerMatrix(&maug, n, j, size), pnil))
 								break;
 						}
 						
@@ -714,30 +722,30 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 						}
 						
 						/* Line swap. */
-						svSwap(strFetchValuePointerMatrix(&maug, n, 0, size), pvec, strFetchValuePointerMatrix(&maug, i, 0, size), m);
+						svSwap(strFetchValuePointerMatrix(&maug, n, 0, size), pvec1, strFetchValuePointerMatrix(&maug, i, 0, size), m);
 					}
 					
 					/* Put the first non zero leading line in a vector. */
-					memcpy(pvec, strFetchValuePointerMatrix(&maug, i, j, size), size);
+					memcpy(pvec1, strFetchValuePointerMatrix(&maug, i, j, size), size);
 					
-					if (0 != memcmp(pidt, pvec, size))
+					if (CBF_CMP_EQUAL != pcbfagb[EMA_CMP](pvec1, pidt))
 						for (n = j; n < acol; ++n)
-							pcbfagb[EMA_DIV](strFetchValuePointerMatrix(&maug, i, n, size), pvec);
+							pcbfagb[EMA_DIV](strFetchValuePointerMatrix(&maug, i, n, size), pvec1);
 					
 					if (i < aln - 1)
-						memcpy(pvec, strFetchValuePointerMatrix(&maug, i, 0, size), m);
+						memcpy(pvec1, strFetchValuePointerMatrix(&maug, i, 0, size), m);
 				}
 				else
 				{
-					memcpy(pvec + m, pvec, m);
+					memcpy(pvec2, pvec1, m);
 					
 					ptmp = strFetchValuePointerMatrix(&maug, j, i, size);
-					if (0 != memcmp(pidt, ptmp, size))
+					if (CBF_CMP_EQUAL != pcbfagb[EMA_CMP](ptmp, pidt))
 						for (n = i; n < acol; ++n)
-							pcbfagb[EMA_MUL](pvec + m + size * n, ptmp);
+							pcbfagb[EMA_MUL](pvec2 + size * n, ptmp);
 					
 					for (n = i; n < acol; ++n)
-						pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, j, n, size), pvec + m + size * n);
+						pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, j, n, size), pvec2 + size * n);
 				}
 			}
 		}
@@ -752,25 +760,25 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 				if (0 != x)
 				{
 					if (x == y && i < aln - 1)
-						memcpy(pvec, strFetchValuePointerMatrix(&maug, x, 0, size), m);
+						memcpy(pvec1, strFetchValuePointerMatrix(&maug, x, 0, size), m);
 					else
 					{
-						memcpy(pvec + m, pvec, m);
+						memcpy(pvec2, pvec1, m);
 
 						ptmp = strFetchValuePointerMatrix(&maug, y, x, size);
-						if (0 != memcmp(pidt, ptmp, size))
+						if (CBF_CMP_EQUAL != pcbfagb[EMA_CMP](ptmp, pidt))
 							for (n = x - i; n < acol; ++n)
-								pcbfagb[EMA_MUL](pvec + m + size * n, ptmp);
+								pcbfagb[EMA_MUL](pvec2 + size * n, ptmp);
 
 						for (n = y; n < acol; ++n)
-							pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, y, n, size), pvec + m + size * n);
+							pcbfagb[EMA_SUB](strFetchValuePointerMatrix(&maug, y, n, size), pvec2 + size * n);
 					}
 				}
 			}
 		}
-		
-		strProjectMatrix(pmtx, 0, 0, &maug, 0, aln, size); /* Output result. */
-		
+		/* Output result. */
+		for (i = 0, j = aln * size; i < aln; ++i)
+			memcpy(&pmtx->arrz.pdata[i * j], &maug.arrz.pdata[i * m + j], j);
 	Lbl_End:
 		strFreeMatrix(&maug);
 		return rtn;

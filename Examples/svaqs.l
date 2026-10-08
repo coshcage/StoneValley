@@ -290,7 +290,7 @@ static void PrintHelp(void)
 	printf("\tExamples:\n\tlist all\n\tlist -p all\n\tlist -fnc all\n\tlist -n all\n\tlist *\n\tlist str*\n\tlist -c str* -cn grp*\n\tlist strCreateArrayZ\n\tlist 5 str 6 grp\n\tNotice:\n\t(number) equals to an editorial distance to the subsequent name.\n\tNote that list all* is a bad command that produces nothing.\n");
 	printf("\033[32mapropos/a:\033[0m   List relevant functions by keywords.\n\tUsage: apropos [-[c|f|n|i|p]] [key_1 key_2 ... key_n]\n\tExample:\n\tapropos create arrayz\n\tapropos -np create arrayz\n");
 	printf("\tNotice:\n\t-c means to print counter number.\n\t-f means to print file name and the line number of a function.\n\t-n means to print function name.\n\t-i means to choose to print internal functions.\n\t-p means to choose to print public functions.\n\t-cfnip is the default way to print.\n\t-cfn equals to -cfnip, -cfnpi, -icfnp, -cifpn and so on.\n\tIf you did not specify, program would have to print names by -cfnip order.\n");
-	printf("\033[32mversion/v:\033[0m   Show StoneValley library version.\n");
+	printf("\033[32mversion/v:\033[0m   Show StoneValley library version for the time when this program was compiled. (Not the version that is printed when this program is searching for.)\n");
 	printf("\033[32mhelp/h:\033[0m      Show this content.\n");
 	printf("\033[32mexit/quit/q:\033[0m Exit program.\n");
 }

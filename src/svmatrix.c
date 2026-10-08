@@ -688,7 +688,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 						}
 					}
 				}
-				goto Lbl_End;
+				goto Lbl_End_Inversion; /* Successfully end. Exit with true. */
 			}
 		}
 		
@@ -715,10 +715,10 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 								break;
 						}
 						
-						if (n >= aln)
+						if (aln == n)
 						{
 							rtn = false;
-							goto Lbl_End; /* Matrix is singular. */
+							goto Lbl_End_Inversion; /* Matrix is singular. */
 						}
 						
 						/* Line swap. */
@@ -779,7 +779,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 		/* Output result. */
 		for (i = 0, j = aln * size; i < aln; ++i)
 			memcpy(&pmtx->arrz.pdata[i * j], &maug.arrz.pdata[i * m + j], j);
-	Lbl_End:
+	Lbl_End_Inversion:
 		strFreeMatrix(&maug);
 		return rtn;
 	}

@@ -341,7 +341,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
 		pbstm->nbil = 1;
 	}
 	
-	for (i = strLevelArrayZ(&pbstm->arrz) - 1; i >= 1; --i)
+	for (i = strLevelArrayZ(&pbstm->arrz) - 1; i > 0; --i)
 	{	/* Right shift 1. */
 		BITSTREAM_BLOCK(pbstm)[i] >>= 1;
 		

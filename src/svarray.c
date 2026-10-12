@@ -233,7 +233,7 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, C
 		REGISTER PUCHAR p;
 		if (brev)
 		{
-			for (i = strLevelArrayZ(parrz), p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1); i >= 1; --i, p -= size)
+			for (i = strLevelArrayZ(parrz), p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1); i > 0; --i, p -= size)
 				if (CBF_CMP_EQUAL == cbfmch(p, pitem))
 					return i;
 		}
@@ -507,7 +507,7 @@ void * strGetLimitationArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, 
 			prtn = p = (PUCHAR)strLocateItemArrayZ(parrz, size, strLevelArrayZ(parrz) - 1);
 			if (strLevelArrayZ(parrz) > 1)
 			{
-				for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i, p -= size)
+				for (i = strLevelArrayZ(parrz) - 1; i > 0; --i, p -= size)
 				{
 					r = cbfcmp(p, prtn);
 					if (bmax ? r > 0 : r < 0)
@@ -679,7 +679,7 @@ void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrn
 	if (SV_ASSERT(strLevelArrayZ(parrz) >= 2)) /* It is worth to shuffle the array. */
 	{
 		REGISTER size_t i, j;
-		for (i = strLevelArrayZ(parrz) - 1; i >= 1; --i)
+		for (i = strLevelArrayZ(parrz) - 1; i > 0; --i)
 		{
 			j = nxtrnd() % (i + 1);
 			svSwap(parrz->pdata + size * i, ptemp, parrz->pdata + size * j, size);

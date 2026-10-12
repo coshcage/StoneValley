@@ -257,6 +257,7 @@ Logs:
 09-24-2026: Library refined. Version 1.3.4.6.
 10-01-2026: Library refined. Version 1.3.4.7. Bug fixed with function strProjectMatrix. Function strInvertMatrix was added.
 10-02-2026: Library refined. Version 1.3.4.9. Bug fixed in function strTransposeMatrix.
+10-12-2026: Library refined. Version 1.3.5.0. Add function strStandardMaxSimplexMatrix.
 _______________________________________________________________________________
 09-24-2018:
 	Red-black tree has been cut off instead of an AA-tree. No apparent bugs. B-plus tree may hide bugs. B-plus tree is too big to invite bugs.

@@ -100,7 +100,7 @@ void strSetArrayZ(P_ARRAY_Z parrz, const void * pval, size_t size)
 			else /* Size is sizeof(size_t). */
 			{	/* Optimized loop for size_t. */
 				REGISTER size_t * ps = (size_t *)parrz->pdata;
-				for (i = strLevelArrayZ(parrz), j = *(size_t *)pval; i >= 1; --i) *ps++ = j;
+				for (i = strLevelArrayZ(parrz), j = *(size_t *)pval; i > 0; --i) *ps++ = j;
 			}
 		}
 	}

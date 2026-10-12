@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1001262035L00555
+ * File ID:     0306170921Y1012261000L00556
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -157,7 +157,7 @@ void *      svHeapSort                     (void *       pbase,    size_t       
 void *      svBinarySearch                 (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp);
 void *      svBinarySearchDispatch         (const void * pkey,     const void * pbase,     size_t       num,     size_t       size,   CBF_COMPARE cbfcmp, BSearch      method);
 ptrdiff_t   svIndexOf_O                    (const void * pbase,    const void * pitem,     size_t       size);
-int         svB5SSearchCharacterString     (const char * haystack, size_t       hlen,      const char * needle,  size_t       nlen,   bool        bovlp,  CBF_TRAVERSE cbftvs, size_t   param);
+int         svB5SSearchCharacterString     (const char * haystack, size_t       hlen,      const char * needle,  size_t       nlen,   bool        bovlp,  CBF_TRAVERSE cbftvs,     size_t   param);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
@@ -238,7 +238,7 @@ P_NODE_D    strRemoveItemLinkedListDC      (P_NODE_D     pnode);
 void        strSwapNodeItemLinkedListDC    (P_NODE_D     pnodex,   P_NODE_D     pnodey);
 /* Functions for both single linked lists and doubly linked lists. */
 void *      strIsCircularLinkedListSD      (void *       pfirst,   NodeType     ntp,       bool         brev);
-bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t       sizey,  NodeType ntpy);
+bool        strSwapNodeContentLinkedListSDC(void *       pnodex,   size_t       sizex,     NodeType     ntpx,    void *       pbuf,   void *      pnodey, size_t       sizey,      NodeType ntpy);
 void *      strMergeSortLinkedListSDC      (void *       list,     bool         bcircular, NodeType     ntp,     CBF_COMPARE  cbfcmp);
 /* Functions for bit streams. */
 void *      strInitBitStream               (P_BITSTREAM  pbstm);
@@ -267,11 +267,12 @@ void *      strFetchValuePointerMatrix_O   (P_MATRIX     pmtx,     size_t       
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
 bool        strTransposeMatrix             (P_MATRIX     pmtx,     P_MATRIX     ptmp,    size_t       size);
-bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,   size_t   size);
+bool        strProjectMatrix               (P_MATRIX     pdest,    size_t       dln,     size_t       dcol,    P_MATRIX     psrc,   size_t      sln,      size_t       scol,       size_t   size);
 int         strMathMatrix                  (P_MATRIX     pmtx,     const void * pval,    size_t       size,    CBF_ALGEBRA  cbfagb);
 int         strMatrixMatrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 bool        strMultiplyMatrix              (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
 bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[5]);
+P_MATRIX    strStandardMaxSimplexMatrix    (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    const void * pnbigm, size_t      size,     CBF_ALGEBRA  pcbfagb[5], int *    prpt);
 /* Functions for bit matrices/maps. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);

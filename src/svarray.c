@@ -113,8 +113,8 @@ ptrdiff_t strIndexOfArrayZ_O(P_ARRAY_Z parrz, const void * pitem, size_t size)
  *       size Element size of an array.
  *     cbftvs Pointer to a callback function.
  *      param Parameter which can be transferred into callback function.
- *       brev Input true to traverse array from the first item to the last item.
- *            Input false to traverse array in reverse.
+ *       brev Input true  to traverse array in reverse.
+ *            Input false to traverse array from the first item to the last item.
  * Return value:  The same value as callback function returns.
  * Caution:       Address of parrz Must Be Allocated first.
  */

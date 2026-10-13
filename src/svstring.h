@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1012261000L00556
+ * File ID:     0306170921Y1012262345L00549
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -138,7 +138,7 @@ typedef struct st_SPAMAT {
 typedef struct st_FindingInfo {
 	void *       result; /* Finding result. */
 	const void * pitem;  /* Finding target. */
-	CBF_COMPARE  cbfmch; /* Comparison function. */
+	CBF_COMPARE  cbfmch; /* Match function. */
 	NodeType     ntp;    /* Type of target. */
 } FindingInfo, * P_FindingInfo;
 
@@ -262,7 +262,7 @@ void        strDeleteMatrix_O              (P_MATRIX     pmtx);
 void *      strCopyMatrix                  (P_MATRIX     pdest,    P_MATRIX     psrc,    size_t       size);
 P_MATRIX    strCreateCopyMatrix            (P_MATRIX     psrc,     size_t       size);
 void *      strResizeMatrix                (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
-void        strSetMatrix_O                 (P_MATRIX     pmtx,     const void * pval,    size_t       size);
+void        strSetMatrix                   (P_MATRIX     pmtx,     const void * pval,    size_t       size);
 void *      strFetchValuePointerMatrix_O   (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     size_t       size);
 void *      strGetValueMatrix              (void *       pval,     P_MATRIX     pmtx,    size_t       ln,      size_t       col,    size_t      size);
 void *      strSetValueMatrix_O            (P_MATRIX     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
@@ -272,7 +272,7 @@ int         strMathMatrix                  (P_MATRIX     pmtx,     const void * 
 int         strMatrixMatrix                (P_MATRIX     pmtxa,    P_MATRIX     pmtxb,   size_t       size,    CBF_ALGEBRA  cbfagb);
 bool        strMultiplyMatrix              (P_MATRIX     ppmtx[3], void *       ptemp,   size_t       size,    CBF_ALGEBRA  pcbfagb[2]);
 bool        strInvertMatrix                (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    size_t       size,   CBF_ALGEBRA pcbfagb[5]);
-P_MATRIX    strStandardMaxSimplexMatrix    (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    const void * pnbigm, size_t      size,     CBF_ALGEBRA  pcbfagb[5], int *    prpt);
+P_MATRIX    strStandardMaxSimplexMatrix    (P_MATRIX     pmtx,     const void * pnil,    const void * pidt,    const void * pnbm,   size_t      size,     CBF_ALGEBRA  pcbfagb[5], int *    prpt);
 /* Functions for bit matrices/maps. */
 void *      strInitBMap                    (P_BITMAT     pbm,      size_t       ln,      size_t       col,     bool         bini,   bool        bval);
 void        strFreeBMap_O                  (P_BITMAT     pbm);
@@ -359,9 +359,6 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	strFreeMatrix_M(pmtx_M); \
 	free(pmtx_M); \
 } while (0)
-#define strSetMatrix_M(pmtx_M, pval_M, size_M) do { \
-	strSetArrayZ(&(pmtx_M)->arrz, (pval_M), (size_M)); \
-} while (0)
 #define strFetchValuePointerMatrix_M(pmtx_M, ln_M, col_M, size_M) (&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)])
 #define strSetValueMatrix_M(pmtx_M, ln_M, col_M, pval_M, size_M) \
 	(memcpy(&(pmtx_M)->arrz.pdata[((ln_M) * (pmtx_M)->col + (col_M)) * (size_M)], (pval_M), (size_M)))
@@ -400,7 +397,6 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	/* Macros for matrices. */
 	#define strFreeMatrix              strFreeMatrix_O
 	#define strDeleteMatrix            strDeleteMatrix_O
-	#define strSetMatrix               strSetMatrix_M
 	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
 	#define strSetValueMatrix          strSetValueMatrix_M
 	#define strFreeBMap                strFreeMatrix
@@ -438,7 +434,6 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	/* Macros for matrices. */
 	#define strFreeMatrix              strFreeMatrix_M
 	#define strDeleteMatrix            strDeleteMatrix_M
-	#define strSetMatrix               strSetMatrix_M
 	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
 	#define strSetValueMatrix          strSetValueMatrix_M
 	#define strFreeBMap                strFreeMatrix
@@ -476,7 +471,6 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	/* Macros for matrices. */
 	#define strFreeMatrix              strFreeMatrix_M
 	#define strDeleteMatrix            strDeleteMatrix_M
-	#define strSetMatrix               strSetMatrix_M
 	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_M
 	#define strSetValueMatrix          strSetValueMatrix_M
 	#define strFreeBMap                strFreeMatrix
@@ -512,7 +506,6 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	/* Macros for matrices. */
 	#define strFreeMatrix              strFreeMatrix_O
 	#define strDeleteMatrix            strDeleteMatrix_O
-	#define strSetMatrix               strSetMatrix_O
 	#define strFetchValuePointerMatrix strFetchValuePointerMatrix_O
 	#define strSetValueMatrix          strSetValueMatrix_O
 	#define strFreeBMap                strFreeBMap_O

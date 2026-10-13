@@ -2,7 +2,7 @@
  * Name:        svatom.c
  * Description: Atomic structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948A0809260525L00372
+ * File ID:     0306170948A1012262330L00375
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -66,8 +66,11 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
 	{
 		if (NULL == strInitArrayZ(parrz, num, size))
 		{	/* Allocation failure. */
-			free(parrz);
-			parrz = NULL;
+			if (0 != num && 0 != size)
+			{
+				free(parrz);
+				parrz = NULL;
+			}
 		}
 	}
 	return parrz;

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1012261000L01760
+ * File ID:     0213191430N1012262356L01821
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -226,7 +226,7 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
 	return pmtx->arrz.pdata;
 }
 
-/* Function name: strSetMatrix_O
+/* Function name: strSetMatrix
  * Description:   Fill up a matrix with a specific value.
  * Parameters:
  *       pmtx Pointer to a matrix you want to fill.
@@ -234,11 +234,25 @@ void * strResizeMatrix(P_MATRIX pmtx, size_t ln, size_t col, size_t size)
  *       size Size of each element.
  * Return value:  N/A.
  * Caution:       Address of pmtx Must Be Allocated first.
- * Tip:           A macro version of this function named strSetMatrix_M is available.
  */
-void strSetMatrix_O(P_MATRIX pmtx, const void * pval, size_t size)
+void strSetMatrix(P_MATRIX pmtx, const void * pval, size_t size)
 {
-	strSetArrayZ(&pmtx->arrz, pval, size);
+	if (SV_ASSERT(pmtx->ln > 0 && NULL != pval))
+	{
+		REGISTER size_t i, j, k;
+		ARRAY_Z a;
+		
+		/* Make a dummy header. */
+		a.pdata = pmtx->arrz.pdata;
+		a.num   = pmtx->col;
+		
+		/* Fill one row first. */
+		strSetArrayZ(&a, pval, size);
+		
+		/* Repeat to fill the rest of matrix. */
+		for (j = a.num * size, k = pmtx->ln, i = 1; i < k; ++i)
+			memcpy(&pmtx->arrz.pdata[i * j], &pmtx->arrz.pdata[(i - 1) * j], j);
+	}
 }
 
 /* Function name: strFetchValuePointerMatrix_O
@@ -793,7 +807,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *       pmtx Pointer to a data matrix.
  *       pnil Pointer to a zero element.
  *       pidt Pointer to an identity or unit element.
- *     pnbigm Pointer to a very small negative number whose abstract value is very big called M.
+ *       pnbm Pointer to a very small negative number whose abstract value is very big called M.
  *       size Size of each element you used.
  * pcbfagb[5] pcbfagb[EMA_ADD] stores the pointer to a function that can perform addition.
  *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.
@@ -804,16 +818,16 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *       prpt Pointer to an integer to report the calculation result. Set this parameter to NULL to omit it.
  *            The value of prpt pointed can be as follows after invoking:
  *            0: Could not solve.
- *            1: The corresponding data matrix had one optimal solution.
- *            2: The corresponding data matrix had multiple optimal solutions and this function returned only one.
- *            3: The corresponding data matrix had no bounded solution.
- *            4: No solution can be produced by this function.
+ *            1: No solution could be produced by this function.
+ *            2: The corresponding data matrix had no bounded solution.
+ *            3: The corresponding data matrix had one optimal solution.
+ *            4: The corresponding data matrix had multiple optimal solutions and this function returned only one.
  * Return value:  This function would create and return a pointer to a matrix that represents a solution.
  *                If function returned NULL, it would indicate an error.
  * Caution:       Address of pmtx and pcbfagb Must Be Allocated and set first.
  *                This function would not contaminate pmtx if it failed.
  * Tip:           A comprehensive guide:
- *                i) Let us make a linear programming example.
+ *                (i) Let us make a linear programming example.
  *                Suppose we have a linear equality group and a constraint of variable like these:
  *                9 * x1 +  4 * x2 <= 360;
  *                4 * x1 +  5 * x2 <= 200;
@@ -844,7 +858,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *                Matrix/vector B = Transpose(7,12,0,0,0);
  *                Max z = A * B = 428;
  *
- *                ii) Let us make a further example to illustrate the big M method.
+ *                (ii) Let us make a further example to illustrate the big M method.
  *                The big M method is to solve a linear programming problem if a standard max simplex method does not have an identity base matrix.
  *                Suppose we have a standard max simplex problem:
  *                5 * x1 +      x2 +     x3 + 8 * x4 = 10;
@@ -867,7 +881,28 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *                1.67 1.67   0   0
  *                   5    3   0   0
  *
- *                iii) Code reference listed below.
+ *                (iii) Let us convert the above maximum problem into the corresponded minimum problem.
+ *                Suppose we have this standard min simplex problem:
+ *                5 * x1 +      x2 +     x3 + 8 * x4 = 10;
+ *                2 * x1 +  4 * x2 + 3 * x3 + 2 * x4 = 10;
+ *                x1, x2, x3, x4 >= 0;
+ *                Solve: min(-5 * x1 - 3 * x2 - 2 * x3 - 4 * x4);
+ *                Then we apply the big M method. Notice that big M is positive for minimum simplex method.
+ *                5 * x1 +      x2 +     x3 + 8 * x4 + x5      = 10;
+ *                2 * x1 +  4 * x2 + 3 * x3 + 2 * x4      + x6 = 10;
+ *                x1, x2, x3, x4, x5, x6 >= 0;
+ *                Solve: min(-5 * x1 - 3 * x2 - 2 * x3 - 4 * x4 + M * x5 + M * x6);
+ *                Here goes our simplex data matrix:
+ *                x1  x2  x3  x4  x5  x6
+ *                5   1   1   8   1   0  10
+ *                2   4   3   2   0   1  10
+ *                5   3   2   4   M   M   0
+ *                Where M = 999999;
+ *                Note that we cannot use this function to solve the above minimum problem.
+ *                Because this function is only suitable to solve standard maximum problem.
+ *                Part (iii) is intended to give you a possible way to convert a minimum to a maximum to calculate later on.
+ *
+ *                (iv) Code reference listed below.
  *                <test.c>
  *                #include <stdio.h>
  *                #include <string.h>
@@ -905,15 +940,15 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *                }
  *                int main() {
  *                    int r = 0;
- *                    MYTYPE nbigm = -999999, nil = 0, idt = 1;
+ *                    MYTYPE nbm = -999999, nil = 0, idt = 1;
  *                    // MYTYPE d[] = {9,4,1,0,0,360,4,5,0,1,0,200,3,10,0,0,1,300,7,12,0,0,0,0};
- *                    MYTYPE d[] = {5,1,1,8,1,0,10,2,4,3,2,0,1,10,5,3,2,4,nbigm,nbigm,0};
+ *                    MYTYPE d[] = {5,1,1,8,1,0,10,2,4,3,2,0,1,10,5,3,2,4,nbm,nbm,0};
  *                    CBF_ALGEBRA pcbfagb[5] = {cbfadd, cbfmul, cbfsub, cbfdiv, cbfcmp};
  *                    // P_MATRIX p = strCreateMatrix(4, 6, sizeof(MYTYPE));
  *                    P_MATRIX p = strCreateMatrix(3, 7, sizeof(MYTYPE)), pr;
  *                    memcpy(p->arrz.pdata, d, sizeof(d));
  *                    PrintMatrix(p);
- *                    pr = strStandardMaxSimplexMatrix(p, &nil, &idt, &nbigm, sizeof(MYTYPE), pcbfagb, &r);
+ *                    pr = strStandardMaxSimplexMatrix(p, &nil, &idt, &nbm, sizeof(MYTYPE), pcbfagb, &r);
  *                    printf("r=%d\n", r);
  *                    if (NULL != pr) {
  *                        PrintMatrix(pr);
@@ -924,42 +959,44 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *                }
  *                The result of the above code is explained in the aforementioned text.
  */
-P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, const void * pnbigm, size_t size, CBF_ALGEBRA pcbfagb[5], int * prpt)
+P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, const void * pnbm, size_t size, CBF_ALGEBRA pcbfagb[5], int * prpt)
 {
 	enum _en_SIMPLEX_REPORT {
 		_ESR_CANNOT_SOLVE = 0,
-		_ESR_ONE_OPTIMAL  = 1,
-		_ESR_MULTIPAL     = 2,
-		_ESR_NO_BOUNDED   = 3,
-		_ESR_NONE         = 4
+		_ESR_NONE         = 1,
+		_ESR_NO_BOUNDED   = 2,
+		_ESR_ONE_OPTIMAL  = 3,
+		_ESR_MULTIPAL     = 4
 	};
 	if (NULL != prpt)
-		*prpt = _ESR_CANNOT_SOLVE; /* Bad solution. */
+		*prpt = _ESR_CANNOT_SOLVE; /* Preset and signify a bad solution. */
 	
-	if (SV_ASSERT(pmtx->ln >= 2 && pmtx->col >= 2))
+	if (SV_ASSERT(pmtx->ln >= 2 && pmtx->col >= 2 && pmtx->ln <= pmtx->col))
 	{
+		int irpt = _ESR_CANNOT_SOLVE;
 		REGISTER size_t i, j, k, l;
+		REGISTER PUCHAR p;
 		REGISTER bool b;
 		
-		if (pcbfagb[EMA_CMP](pnbigm, pnil) >= CBF_CMP_EQUAL)
-			return NULL; /* The value of pnbigm is not negative. */
+		if (pcbfagb[EMA_CMP](pnbm, pnil) >= CBF_CMP_EQUAL)
+			return NULL; /* The value of pnbm is not negative. */
 		
 		/* Count big Ms. */
-		for (i = pmtx->col - 2, j = 0; i > 0; --i)
-			if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pmtx, pmtx->ln - 1, i, size), pnbigm))
+		for (j = 0, i = pmtx->col - 2; i > 0; --i)
+			if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pmtx, pmtx->ln - 1, i, size), pnbm))
 				++j;
 		
 		i = pmtx->ln - 1;
 		
-		if (j != pmtx->col) /* If j == pmtx->col, then pmtx is invalid. */
+		if (j < pmtx->col - 1) /* If the number of big M variables is less than pmtx->col - 1, then pmtx is invalid. */
 		{
-			PUCHAR ptbase = malloc(size * 3);
-			PUCHAR ptmp[] = { ptbase, ptbase + size, ptbase + (size << 1) };
 			enum _en_MAT_AUG_ROW_IDX {
 				_EMARI_THETA,
 				_EMARI_COSTB,
 				_EMARI_MAX
 			};
+			PUCHAR ptbase = malloc(size * 3);
+			PUCHAR ptmp[] = { ptbase, ptbase + size, ptbase + (size << 1) };
 			P_MATRIX pxbs = strCreateMatrix(2, i, sizeof(size_t));
 			P_MATRIX paug = strCreateMatrix(_EMARI_MAX, i, size);
 			P_MATRIX pdat = strCreateMatrix(pmtx->ln + 2, pmtx->col, size);
@@ -971,27 +1008,30 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 			if (NULL != prtn)
 			{
 				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t));
-				REGISTER PUCHAR p = strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size);
 				
-				/* Construct simplex table. */
+				p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size);
+				
+				/* Construct simplex data table. */
 				for (memcpy(p, pnil, size), i = 1; i < pdat->col; ++i)
 					memcpy(p + i * size, p + (i - 1) * size, size); /* Clean the appendix of pdat. */
 				l = pdat->col * size;
 				memcpy(p + l, p, l); /* Born for speed. */
-				strProjectMatrix(pdat, 0, 0, pmtx, 0, 0, size); /* Copy pmtx to pdat. */
+				for (j = pmtx->col * size, i = 0; i < pmtx->ln; ++i) /* Copy pmtx to pdat. */
+					memcpy(strFetchValuePointerMatrix(pdat, i, 0, size), strFetchValuePointerMatrix(pmtx, i, 0, size), j);
 				strSetMatrix(paug, pnil, size); /* Clean paug. */
 				
-				/* Choose base variables. */	
-				if (NULL != pmi) /* Construct base variable identity matrix reference to choose base variables. */
-				{
+				/* Choose base variables. */
+				if (NULL != pmi)
+				{	/* Construct base variable identity matrix reference to choose respective base variables. */
 					for (k = 0, i = pdat->col - 1; i > 0; --i)
 					{
 						b = true;
 						for (j = 0; j < pmi->ln; ++j)
 						{
-							if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, j, i - 1, size), pnil))
+							p = (PUCHAR) strFetchValuePointerMatrix(pdat, j, i - 1, size);
+							if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](p, pnil))
 								*(size_t *)strFetchValuePointerMatrix(pmi, k, j, sizeof(size_t)) = (size_t)false;
-							else if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, j, i - 1, size), pidt))
+							else if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](p, pidt))
 								*(size_t *)strFetchValuePointerMatrix(pmi, k, j, sizeof(size_t)) = (size_t)true;
 							else
 								if (b)
@@ -1012,13 +1052,17 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 						*(size_t *)strFetchValuePointerMatrix(pxbs, 0, i, sizeof(size_t)) =
 						*(size_t *)strFetchValuePointerMatrix(pmi, pmi->ln - i - 1, pmi->ln, sizeof(size_t));
 						
-						/* Fill cost b according to pxbs. */
-						memcpy(strFetchValuePointerMatrix(paug, _EMARI_COSTB, i, size), strFetchValuePointerMatrix(pdat, pdat->ln - 3, k - 1, size), size);
+						if (k > 0) /* Fill cost b according to pxbs. */
+							memcpy(strFetchValuePointerMatrix(paug, _EMARI_COSTB, i, size), strFetchValuePointerMatrix(pdat, pdat->ln - 3, k - 1, size), size);
+						else
+						{
+							b = false;
+							goto Lbl_No_Base;
+						}
 					}
 					
 					/* Test whether pmi is an identity matrix. */
-					b = true;
-					for (i = 0; i < pmi->ln; ++i)
+					for (b = true, i = 0; i < pmi->ln; ++i)
 					{
 						for (j = pmi->ln; j > 0; --j)
 						{
@@ -1030,6 +1074,7 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 						}
 					}
 					
+				Lbl_No_Base:
 					strDeleteMatrix(pmi); /* Delete pmi after test. */
 					
 					if (! b) /* Can not find base matrix. */
@@ -1038,16 +1083,16 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				else
 					goto Lbl_Simplex_Done;
 				
-			Lbl_Simplex_Find_Sigma:
+			Lbl_Tally_Sigma:
 				/* Calculate sigma and test if it is optimal. */
 				memcpy(strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), strFetchValuePointerMatrix(pxbs, 0, 0, sizeof(size_t)), sizeof(size_t) * pxbs->col);
 				svQuickSort(strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger);
 				
 				for (i = 0; i < pdat->col - 1; ++i)
 				{
-					size_t a = i + 1;
+					size_t d = i + 1;
 					
-					if (NULL != svBinarySearch(&a, strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger))
+					if (NULL != svBinarySearch(&d, strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger))
 						memcpy(strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size), pnil, size); /* dat[dat.ln - 2][i] = 0; */
 					else /* Only calculate non base variables. */
 					{
@@ -1060,40 +1105,37 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 						{
 							/* t[1] = cb[j]; */
 							memcpy(ptmp[1], strFetchValuePointerMatrix(paug, _EMARI_COSTB, j, size), size);
-							/* t[1] *= dat[i][j]; */
+							/* t[1] *= dat[j][i]; */
 							pcbfagb[EMA_MUL](ptmp[1], strFetchValuePointerMatrix(pdat, j, i, size));
 							/* t[0] += t[1]; */
 							pcbfagb[EMA_ADD](ptmp[0], ptmp[1]);
 						}
 						
-						/* t[3] -= t[0]; */
+						/* t[2] -= t[0]; */
 						pcbfagb[EMA_SUB](ptmp[2], ptmp[0]);
-						/* dat[dat.ln - 2][i] = t[3]; */
+						/* dat[dat.ln - 2][i] = t[2]; */
 						memcpy(strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size), ptmp[2], size);
 					}
 				}
 				
 				/* t[0] = dat[dat.ln - 2][0]; */
 				memcpy(ptmp[0], strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size), size);
-				for (i = 0, k = 0, b = true; i < pdat->col - 1; ++i)
+				for (k = 0, b = true, i = 0; i < pdat->col - 1; ++i)
 				{
-					p = strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size);
+					p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size);
 					
 					if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL)
 					{
 						if (b)
 							b = false; /* Positive number exists. */
 						
-						for (l = 0, j = 0; j < pdat->ln - 2; ++j)
+						for (l = 0, j = 0; j < pdat->ln - 3; ++j)
 							if (pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, j, i, size), pnil) <= CBF_CMP_EQUAL)
 								++l;
 						
 						if (l == pdat->ln - 3)
 						{
-							if (NULL != prpt)
-								*prpt = _ESR_NO_BOUNDED; /* No bounded solution. */
-							strDeleteMatrix(prtn);
-							prtn = NULL;
+							irpt = _ESR_NO_BOUNDED; /* No bounded solution. */
 							goto Lbl_Simplex_Done;
 						}
 					}
@@ -1106,67 +1148,42 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				}
 				
 				if (b) /* Found optimal result. */
+					goto Lbl_Output_Result;
+				
+				/* Calculate theta. */
+				for (b = true, l = paug->col, i = 0; i < paug->col; ++i)
 				{
-					if (NULL != prpt)
+					REGISTER PUCHAR p2;
+					
+					p = (PUCHAR) strFetchValuePointerMatrix(paug, _EMARI_THETA, i, size);
+					memcpy(p, strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size);
+					
+					p2 = strFetchValuePointerMatrix(pdat, i, k, size);
+					if (pcbfagb[EMA_CMP](p2, pnil) > CBF_CMP_EQUAL) /* dat[i][k] is positive. */
 					{
-						*prpt = _ESR_ONE_OPTIMAL; /* One optimal solution. */
-						for (i = 0; i < pdat->col - 1; ++i)
+						pcbfagb[EMA_DIV](p, strFetchValuePointerMatrix(pdat, i, k, size)); /* theta /= dat[i][k]; */
+						
+						if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL) /* Theta is positive. */
 						{
-							size_t c = i + 1;
-							if (NULL == svBinarySearch(&c, strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger))
-							{	/* dat[dat->ln - 2][i] is a non base sigma value. */
-								if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size), pnil)) /* dat[dat->ln - 2][i] is zero. */
-								{
-									*prpt = _ESR_MULTIPAL; /* Multiple optimal solution. */
-									break;
-								}
+							if (b) /* Find the minimal value. */
+							{
+								memcpy(ptmp[0], p, size);
+								b = false;
+								l = i;
+							}
+							else if (pcbfagb[EMA_CMP](p, ptmp[0]) < CBF_CMP_EQUAL) 
+							{
+								memcpy(ptmp[0], p, size);
+								l = i;
 							}
 						}
 					}
-					
-					/* Clean output matrix. */
-					for (p = prtn->arrz.pdata, memcpy(p, pnil, size), i = 1; i < prtn->col; ++i)
-						memcpy(p + i * size, p + (i - 1) * size, size);
-					l = prtn->col * size;
-					memcpy(p + l, p, l);
-					
-					for (i = 0; i < pxbs->col; ++i)
-					{
-						j = *(size_t *)strFetchValuePointerMatrix(pxbs, 0, i, sizeof(size_t)) - 1;
-						
-						if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, pdat->ln - 3, j, size), pnbigm))
-						{
-							if (NULL != prpt)
-								*prpt = _ESR_NONE; /* No solution. */
-							strDeleteMatrix(prtn);
-							prtn = NULL;
-							goto Lbl_Simplex_Done;
-						}
-						
-						memcpy(strFetchValuePointerMatrix(prtn, 0, j, size), strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size);
-						memcpy(strFetchValuePointerMatrix(prtn, 1, j, size), strFetchValuePointerMatrix(paug, _EMARI_COSTB, i, size), size);
-					}
-					
-					goto Lbl_Simplex_Done;
 				}
 				
-				/* Calculate theta. */
-				for (i = 0, l = 0; i < paug->col; ++i)
-				{
-					p = strFetchValuePointerMatrix(paug, _EMARI_THETA, i, size);
-					memcpy(p, strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size);
-					pcbfagb[EMA_DIV](p, strFetchValuePointerMatrix(pdat, i, k, size)); /* theta /= dat[i][k]; */
-
-					if (0 == i)
-						memcpy(ptmp[0], p, size);
-					else if (pcbfagb[EMA_CMP](p, ptmp[0]) < CBF_CMP_EQUAL) /* Find the minimal value. */
-					{
-						memcpy(ptmp[0], p, size);
-						l = i;
-					}
-				}
+				if (l == paug->col) /* No valid theta can be calculated. */
+					goto Lbl_Output_Result;
 				
-				/* Choose a variable to get out of base corresponding to theta and change cost coefficient of base. */
+				/* Choose a variable to get out of base corresponding to theta and change the cost coefficient of base. */
 				*(size_t *)strFetchValuePointerMatrix(pxbs, 0, l, sizeof(size_t)) = k + 1;
 				memcpy(strFetchValuePointerMatrix(paug, _EMARI_COSTB, l, size), strFetchValuePointerMatrix(pdat, pdat->ln - 3, k, size), size);
 				
@@ -1188,10 +1205,54 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 					}
 				}
 				
-				goto Lbl_Simplex_Find_Sigma;
+				goto Lbl_Tally_Sigma;
 			}
 			
+		Lbl_Output_Result:
+			irpt = _ESR_ONE_OPTIMAL; /* One optimal solution. */
+			for (i = 0; i < pdat->col - 1; ++i)
+			{
+				size_t d = i + 1;
+				if (NULL == svBinarySearch(&d, strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger))
+				{	/* dat[dat->ln - 2][i] is a non base sigma value. */
+					if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size), pnil)) /* dat[dat->ln - 2][i] is zero. */
+					{
+						irpt = _ESR_MULTIPAL; /* Multiple optimal solution. */
+						break;
+					}
+				}
+			}
+			
+			/* Clean output matrix. */
+			for (p = prtn->arrz.pdata, memcpy(p, pnil, size), i = 1; i < prtn->col; ++i)
+				memcpy(p + i * size, p + (i - 1) * size, size);
+			l = prtn->col * size;
+			memcpy(p + l, p, l); /* Fill the second row. */
+			
+			for (i = 0; i < pxbs->col; ++i)
+			{
+				j = *(size_t *)strFetchValuePointerMatrix(pxbs, 0, i, sizeof(size_t)) - 1;
+				
+				if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pdat, pdat->ln - 3, j, size), pnbm))
+				{
+					irpt = _ESR_NONE; /* No solution. */
+					goto Lbl_Simplex_Done;
+				}
+				
+				memcpy(strFetchValuePointerMatrix(prtn, 0, j, size), strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size);
+				memcpy(strFetchValuePointerMatrix(prtn, 1, j, size), strFetchValuePointerMatrix(paug, _EMARI_COSTB,  i, size), size);
+			}
+					
 		Lbl_Simplex_Done:
+			if (irpt < _ESR_ONE_OPTIMAL)
+			{
+				strDeleteMatrix(prtn);
+				prtn = NULL;
+			}
+			
+			if (NULL != prpt)
+				*prpt = irpt;
+			
 			if (NULL != ptbase)
 				free(ptbase);
 			

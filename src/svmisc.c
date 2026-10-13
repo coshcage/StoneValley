@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0909260246L01071
+ * File ID:     0306170948D0909260246L01074
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -369,7 +369,7 @@ bool strBitStreamPush(P_BITSTREAM pbstm, bool value)
  */
 bool strBitStreamPop(P_BITSTREAM pbstm)
 {
-	REGISTER bool r = BOOLIZE(((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[0]);
+	REGISTER bool   r = BOOLIZE(((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - 1)) & BITSTREAM_BLOCK(pbstm)[0]);
 	REGISTER size_t n = strLevelArrayZ(&pbstm->arrz);
 	REGISTER size_t i, j = n >= 1 ? n - 1 : 0;
 	
@@ -446,7 +446,7 @@ bool strBitStreamAdd(P_BITSTREAM pbstm, bool value)
 bool strBitStreamExtract(P_BITSTREAM pbstm)
 {
 	REGISTER size_t n = strLevelArrayZ(&pbstm->arrz);
-	REGISTER bool r = BOOLIZE
+	REGISTER bool   r = BOOLIZE
 	(
 		BITSTREAM_BLOCK(pbstm)[n - 1] &
 		((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - pbstm->nbil))
@@ -674,12 +674,15 @@ void * svMergeSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 			pr = pt;
 		}
 	}
+	
 	if (pl != pbase)
 	{
 		memcpy(pbase, pl, num * size);
 		pr = pl;
 	}
+	
 	free(pr);
+	
 	return pbase;
 }
 

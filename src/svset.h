@@ -110,7 +110,7 @@ P_SET_T  setCreateIntersectionT (P_SET_T pseta,  P_SET_T      psetb,  size_t    
 P_SET_T  setCreateDifferenceT   (P_SET_T pseta,  P_SET_T      psetb,  size_t       size,      CBF_COMPARE         cbfcmp);
 int      setTraverseT           (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     TvsMtd              tm);
 int      setTraverseTDispatch   (P_SET_T pset,   CBF_TRAVERSE cbftvs, size_t       param,     CBF_TRAVERSE_BYTREE cbftvsbyt);
-/* Function declarations for both hash set and tree set. */
+/* Function declarations for array set, hash set and tree set. */
 P_SET_A  setCreateAFromT        (P_SET_T ptset,  size_t       size);
 P_SET_T  setCreateTFromA        (P_SET_A paset,  size_t       size,   CBF_COMPARE  cbfcmp);
 P_SET_H  setCreateHFromT        (P_SET_T ptset,  size_t       size,   size_t       buckets,   CBF_HASH            cbfhsh,  CBF_COMPARE cbfmch);

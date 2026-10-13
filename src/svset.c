@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L0809260610L01160
+ * File ID:     0901171620L1013261633L01690
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -21,7 +21,460 @@
  *
  */
 
+#include <stdlib.h> /* Use function malloc, free. */
+#include <string.h> /* Use function memcpy. */
 #include "svset.h"
+
+/* Function name: setInitA_O
+ * Description:   Initialize an array set.
+ * Parameters:
+ *       pset Pointer to the array set you want to allocate.
+ *       size Size of each element that this set will contain.
+ * Return value:  Pointer to new allocated buffer.
+ *                NULL indicates size is zero and allocation failed.
+ * Caution:       Address of pset Must Be Allocated first.
+ * Tip:           A macro version of this function named setInitA_M is available.
+ */
+void * setInitA_O(P_SET_A pset, size_t size)
+{
+	return (pset->num = 0, 0 == size) ? (void *)(pset->pdata = NULL) : (void *)(pset->pdata = (PUCHAR) malloc(size));
+}
+
+/* Function name: setFreeA_O
+ * Description:   Retract the set which is allocated by function setInitA.
+ * Parameter:
+ *      pset Pointer to the array set you want to release.
+ * Return value:  N/A.
+ * Caution:       Address of pset Must Be Allocated first.
+ * Tip:           This function can be macro inline to use setFreeA.
+ */
+void setFreeA_O(P_SET_A pset)
+{
+	strFreeArrayZ(pset);
+}
+
+/* Function name: setCreateA
+ * Description:   Create an array set.
+ * Parameter:
+ *       size Size of each element that this set will contain.
+ * Return value:  Pointer to the new allocated array set.
+ */
+P_SET_A setCreateA(size_t size)
+{
+	REGISTER P_SET_A pset = (P_SET_A) malloc(sizeof(SET_A));
+	if (NULL != pset)
+	{
+		if (NULL == setInitA(pset, size))
+		{	/* Allocation failure. */
+			free(pset);
+			pset = NULL;
+		}
+	}
+	return pset;
+}
+
+/* Function name: setDeleteA_O
+ * Description:   Delete the array set which is allocated by function setCreateA.
+ * Parameter:
+ *      pset Pointer to the array set you want to release.
+ * Return value:  N/A.
+ * Caution:       Address of pset Must Be Allocated first.
+ * Tip:           This function can be macro inline to use setDeleteA.
+ */
+void setDeleteA_O(P_SET_A pset)
+{
+	strDeleteArrayZ(pset);
+}
+
+/* Function name: setCreateCopyA_O
+ * Description:   Make a duplication of an array set from another existing array set.
+ * Parameters:
+ *       pset Pointer to the source array set you want to copy from.
+ *       size Size of each element in the original set.
+ * Return value:  Pointer to the copy set.
+ *                NULL indicates an empty set.
+ * Tip:           A macro version of this function named setCreateCopyA_M is available.
+ */
+P_SET_A setCreateCopyA_O(P_SET_A pset, size_t size)
+{
+	return NULL == pset ? NULL : (! strLevelArrayZ(pset) ? NULL : strCreateCopyArrayZ(pset, size));
+}
+
+/* Function name: setSizeA_O
+ * Description:   Determine how many elements there are in an array set.
+ * Parameter:
+ *      pset Pointer to the set you want to test.
+ * Return value:  Number of elements.
+ * Caution:       Address of pset Must Be Allocated first.
+ * Tip:           A macro version of this function named setSizeA_M is available.
+ */
+size_t setSizeA_O(P_SET_A pset)
+{
+	return NULL == pset ? 0 : strLevelArrayZ(pset);
+}
+
+/* Function name: setIsEmptyA_O
+ * Description:   Make a judgment whether an array set is empty or not.
+ * Parameter:
+ *      pset Pointer to the array set you want to check.
+ * Return value:  true  Set is empty.
+ *                false Set is not empty.
+ * Tip:           A macro version of this function named setIsEmptyA_M is available.
+ */
+bool setIsEmptyA_O(P_SET_A pset)
+{
+	return ! setSizeA(pset);
+}
+
+/* Function name: setIsMemberA_O
+ * Description:   Check whether an element belongs to a set or not.
+ * Parameters:
+ *       pset Pointer to the set you want to check.
+ *      pitem Pointer to an element to check its belongings to a set.
+ *       size Size of each element in the set.
+ *     cbfcmp Pointer to a comparison function for the array set.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  true  Element belongs to the set.
+ *                false Element does not belong to the set.
+ * Tip:           A macro version of this function named setIsMemberA_M is available.
+ */
+bool setIsMemberA_O(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+{
+	return NULL != pitem ? (NULL != pset ? NULL != strBinarySearchArrayZ(pset, pitem, size, cbfcmp) : false) : true;
+}
+
+/* Function name: setIsSubsetA
+ * Description:   Check whether a set is a sub set of another set.
+ * Parameters:
+ *      pseta Pointer to the set you want to check.
+ *      psetb Pointer to the other set you want to check.
+ *       size Size of each element in both sets.
+ *     cbfcmp Pointer to a comparison function for the two array sets.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  true  seta belongs to setb.
+ *                false seta does not belong setb.
+ * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ */
+bool setIsSubsetA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (pseta == psetb) /* A == B. */
+		return true;
+	else if (NULL == pseta) /* An empty set is the subset of any other sets. */
+		return true;
+	else if (strLevelArrayZ(pseta) > strLevelArrayZ(psetb))
+		return false;
+	else
+	{
+		REGISTER size_t i, j;
+		
+		for (j = strLevelArrayZ(pseta), i = 0; i < j; ++i)
+			if (NULL == strBinarySearchArrayZ(psetb, strLocateItemArrayZ(pseta, size, i), size, cbfcmp))
+				return false; /* Set B does not contain the item in set A. */
+		
+		return true;
+	}
+}
+
+/* Function name: setIsEqualA
+ * Description:   Check whether a set equals to another set.
+ * Parameters:
+ *      pseta Pointer to the set you want to check.
+ *      psetb Pointer to the other set you want to check.
+ *       size Size of each element in both sets.
+ *     cbfcmp Pointer to a comparison function for the two array sets.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  true  Two sets are equal.
+ *                false Two sets are NOT equal.
+ * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ */
+bool setIsEqualA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (pseta == psetb)
+		return true;
+	else if (strLevelArrayZ(pseta) != strLevelArrayZ(psetb))
+		return false;
+	else
+	{
+		REGISTER size_t i, j;
+		
+		for (j = strLevelArrayZ(pseta), i = 0; i < j; ++i)
+			if (CBF_CMP_EQUAL != cbfcmp(strLocateItemArrayZ(pseta, size, i), strLocateItemArrayZ(psetb, size, i)))
+				return false;
+		
+		return true;
+	}
+}
+
+/* Function name: setInsertA
+ * Description:   Insert an element into a set.
+ * Parameters:
+ *       pset Pointer to the set you want to insert into.
+ *      pitem Pointer to an element to be inserted.
+ *       size Size of that element to be inserted.
+ *     cbfcmp Pointer to a comparison function for the set.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  true  Insertion succeeded.
+ *                false Insertion failed.
+ * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
+ */
+bool setInsertA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (! setIsMemberA(pset, pitem, size, cbfcmp))
+	{
+		if (NULL != pset && NULL != pitem && NULL != strResizeBufferedArrayZ(pset, size, +1))
+		{
+			if (1 == strLevelArrayZ(pset))
+				memcpy(pset->pdata, pitem, size);
+			else if (cbfcmp(pitem, pset->pdata) < CBF_CMP_EQUAL)
+				strInsertItemArrayZ(pset, pitem, size, 0); /* pitem is the smallest one. */
+			else if (cbfcmp(pitem, strLocateItemArrayZ(pset, size, strLevelArrayZ(pset) - 2)) > CBF_CMP_EQUAL)
+				strInsertItemArrayZ(pset, pitem, size, strLevelArrayZ(pset) - 1); /* pitem is the biggest one.*/
+			else
+				strInsertItemArrayZ
+				(
+					pset,
+					pitem,
+					size,
+					(size_t)svIndexOf
+					(
+						pset->pdata,
+						svBinarySearchDispatch
+						(
+							pitem,
+							pset->pdata,
+							strLevelArrayZ(pset),
+							size,
+							cbfcmp,
+							EBS_FIRST_GREATER_THAN_KEY
+						),
+						size
+					)
+				);
+			return true;
+		}
+	}
+	return false;
+}
+
+/* Function name: setRemoveA
+ * Description:   Remove an element from a set.
+ * Parameters:
+ *       pset Pointer to the set you want to operate on.
+ *      pitem Pointer to an element you want to remove.
+ *       size Size of that element to be inserted.
+ *     cbfcmp Pointer to a comparison function for the set.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  true  Removal succeeded.
+ *                false Removal failed.
+ * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
+ */
+bool setRemoveA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (! setIsEmptyA(pset))
+	{
+		REGISTER void * p = strBinarySearchArrayZ(pset, pitem, size, cbfcmp);
+		if (NULL != p)
+		{
+			if (1 == pset->num)
+				pset->num = 0;
+			else
+				strRemoveItemArrayZ(pset, size, (size_t)svIndexOf(pset->pdata, p, size), true);
+			return true;
+		}
+	}
+	return false;
+}
+
+/* Function name: setCreateUnionA
+ * Description:   Generate the union for two sets.
+ * Parameters:
+ *      pseta Pointer to a set.
+ *      psetb Pointer to the other set.
+ *       size Size of element in two sets.
+ *     cbfcmp Pointer to a comparison function for two sets.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  Pointer to a new set which is the union of two sets.
+ *                NULL would be returned if the result were an empty set or this function met an allocation failure.
+ * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ */
+P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (NULL == pseta && NULL != psetb)
+		return strCreateCopyArrayZ(psetb, size);
+	else if (NULL != pseta && NULL == psetb)
+		return strCreateCopyArrayZ(pseta, size);
+	else
+	{
+		P_SET_A prtn = strCreateArrayZ(strLevelArrayZ(pseta) + strLevelArrayZ(psetb), size);
+		
+		if (NULL != prtn)
+		{
+			REGISTER size_t i = 0, j = 0, k = 0;
+			REGISTER PUCHAR pdata = prtn->pdata;
+			
+			while (i < strLevelArrayZ(prtn))
+			{
+				if (strLevelArrayZ(psetb) == k && j < strLevelArrayZ(pseta))
+				{
+					memcpy(pdata, strLocateItemArrayZ(pseta, size, j), size);
+					++j;
+				}
+				else if (strLevelArrayZ(pseta) == j && k < strLevelArrayZ(psetb))
+				{
+					memcpy(pdata, strLocateItemArrayZ(psetb, size, k), size);
+					++k;
+				}
+				else if (j < strLevelArrayZ(pseta) && k < strLevelArrayZ(psetb))
+				{
+					REGISTER int cmpr = cbfcmp(strLocateItemArrayZ(pseta, size, j), strLocateItemArrayZ(psetb, size, k));
+					if (CBF_CMP_EQUAL == cmpr) /* a == b. */
+					{
+						memcpy(pdata, strLocateItemArrayZ(pseta, size, j), size);
+						++j;
+						++k;
+					}
+					else if (cmpr < CBF_CMP_EQUAL) /* a < b. */
+					{
+						memcpy(pdata, strLocateItemArrayZ(pseta, size, j), size);
+						++j;
+					}
+					else /* a > b. */
+					{
+						memcpy(pdata, strLocateItemArrayZ(psetb, size, k), size);
+						++k;
+					}
+				}
+				else
+					break;
+				pdata += size;
+				++i;
+			}
+			
+			if (i != strLevelArrayZ(prtn) && NULL == strResizeArrayZ(prtn, i, size))
+			{
+				strDeleteArrayZ(prtn);
+				prtn = NULL;
+			}
+		}
+		return prtn;
+	}
+}
+
+/* Function name: setCreateIntersectionA
+ * Description:   Generate the intersection between two sets.
+ * Parameters:
+ *      pseta Pointer to a set.
+ *      psetb Pointer to the other set.
+ *       size Size of element in two sets.
+ *     cbfcmp Pointer to a comparison function for two sets.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  Pointer to a new set which is the intersection between two sets.
+ *                NULL would be returned if the result were an empty set or this function met an allocation failure.
+ * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ */
+P_SET_A setCreateIntersectionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (NULL != pseta && NULL != psetb)
+	{
+		P_SET_A psml = strLevelArrayZ(pseta) < strLevelArrayZ(psetb) ? pseta : psetb;
+		P_SET_A prtn = strCreateArrayZ(strLevelArrayZ(psml), size);
+		P_SET_A pbig = psml == pseta ? psetb : pseta;
+		
+		if (NULL != prtn)
+		{
+			REGISTER PUCHAR pdata = prtn->pdata;
+			REGISTER size_t i, j;
+			REGISTER void * p;
+			
+			for (j = i = 0; i < strLevelArrayZ(psml); ++i)
+			{
+				p = strLocateItemArrayZ(psml, size, i);
+				if (NULL != strBinarySearchArrayZ(pbig, p, size, cbfcmp))
+				{
+					memcpy(pdata, p, size);
+					pdata += size;
+					++j;
+				}
+			}
+			
+			if (0 == j || (j != strLevelArrayZ(prtn) && NULL == strResizeArrayZ(prtn, j, size)))
+			{
+				strDeleteArrayZ(prtn);
+				prtn = NULL;
+			}
+		}
+		return prtn;
+	}
+	return NULL;
+}
+
+/* Function name: setCreateDifferenceA
+ * Description:   Generate the difference set of two sets.
+ * Parameters:
+ *      pseta Pointer to a set.
+ *      psetb Pointer to the other set.
+ *       size Size of element in two sets.
+ *     cbfcmp Pointer to a comparison function for two sets.
+ *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
+ * Return value:  Pointer to a new set which is the difference set of two sets.
+ *                NULL would be returned if the result were an empty set or this function met an allocation failure.
+ * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ */
+P_SET_A setCreateDifferenceA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (NULL != pseta)
+	{
+		if (NULL == psetb) /* A - 0 == A. */
+			return strCreateCopyArrayZ(pseta, size);
+		else
+		{
+			P_SET_A prtn = strCreateArrayZ(strLevelArrayZ(pseta), size);
+			
+			if (NULL != prtn)
+			{
+				REGISTER PUCHAR pdata = prtn->pdata;
+				REGISTER size_t i, j;
+				REGISTER void * p;
+				
+				for (j = i = 0; i < strLevelArrayZ(pseta); ++i)
+				{
+					p = strLocateItemArrayZ(pseta, size, i);
+					if (NULL == strBinarySearchArrayZ(psetb, p, size, cbfcmp))
+					{
+						memcpy(pdata, p, size);
+						pdata += size;
+						++j;
+					}
+				}
+				
+				if (0 == j || (j != strLevelArrayZ(prtn) && NULL == strResizeArrayZ(prtn, j, size))) /* Note that j == 0 if A - A = 0. */
+				{
+					strDeleteArrayZ(prtn);
+					prtn = NULL;
+				}
+			}
+			return prtn;
+		}
+	}
+	return NULL;
+}
+
+/* Function name: setTraverseA_O
+ * Description:   Traverse each element in an array set.
+ * Parameters:
+ *       pset Pointer to an array set that you want to traverse.
+ *       size Element size of this set.
+ *     cbftvs Pointer to a callback function.
+ *      param Parameter which can be transferred into callback function.
+ *       brev Input true  to traverse array in reverse.
+ *            Input false to traverse array by element increasingly.
+ * Return value:  The same value as callback function returns.
+ * Tip:           A macro version of this function named setTraverseA_M is available.
+ */
+int setTraverseA_O(P_SET_A pset, size_t size, CBF_TRAVERSE cbftvs, size_t param, bool brev)
+{
+	return NULL == pset ? CBF_CONTINUE : strTraverseArrayZ(pset, size, cbftvs, param, brev);
+}
 
 /* Callback function declarations for sets using hash table. */
 int _setCBFIsSubsetHPuppet     (void * pitem, size_t param);
@@ -211,7 +664,7 @@ bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbf
 }
 
 /* Function name: setIsEqualH
- * Description:   Check whether a set equal to another set.
+ * Description:   Check whether a set equals to another set.
  * Parameters:
  *      pseta Pointer to the set you want to check.
  *      psetb Pointer to the other set you want to check.
@@ -1034,11 +1487,88 @@ int setTraverseTDispatch(P_SET_T pset, CBF_TRAVERSE cbftvs, size_t param, CBF_TR
 	return cbftvsbyt(P2P_TNODE_BY(*pset), cbftvs, param);
 }
 
-/* Function definitions for both hash set and tree set. */
+/* Function definitions for array set, hash set and tree set. */
 
 /* Callback function declarations for this section. */
+int _setCBFCreateAFromTPuppet(void * pitem, size_t param);
 int _setCBFCreateHFromTPuppet(void * pitem, size_t param);
 int _setCBFCreateTFromHPuppet(void * pitem, size_t param);
+
+/* Attention:     This Is An Internal Function. No Interface for Library Users.
+ * Function name: _setCBFCreateAFromTPuppet
+ * Description:   This function is used to fill an array set from a tree set.
+ * Parameters:
+ *      pitem Pointer to each TNODE_BY in a tree set.
+ *      param Pointer to a size_t[2] array of which
+ *            size_t[0] stores the pointer to the element of the array set,
+ *            size_t[1] stores the size of each element.
+ * Return value:  Only CBF_CONTINUE will be returned.
+ */
+int _setCBFCreateAFromTPuppet(void * pitem, size_t param)
+{
+	memcpy((void *)0[(size_t *)param], P2P_TNODE_BY(pitem)->pdata, 1[(size_t *)param]);
+	0[(size_t *)param] += 1[(size_t *)param];
+	return CBF_CONTINUE;
+}
+
+/* Function name: setCreateAFromT
+ * Description:   Create an array set from a tree set.
+ * Parameters:
+ *      ptset Pointer to a tree set to be copied from.
+ *       size Size of element for both source set and returning set.
+ * Return value:  Pointer to a new array set which is equivalent to the source tree set.
+ *                NULL would be returned if the result were an empty set or in an erroneous case.
+ */
+P_SET_A setCreateAFromT(P_SET_T ptset, size_t size)
+{
+	if (NULL != ptset)
+	{
+		P_SET_A prtn = strCreateArrayZ(setSizeT(ptset), size);
+		
+		if (NULL != prtn)
+		{
+			size_t a[2];
+			
+			a[0] = (size_t)prtn->pdata;
+			a[1] = size;
+			
+			setTraverseTDispatch(ptset, _setCBFCreateAFromTPuppet, (size_t)a, treMorrisTraverseBYIn);
+		}
+		
+		return prtn;
+	}
+	return NULL;
+}
+
+/* Function name: setCreateTFromA
+ * Description:   Create a tree set from an array set.
+ * Parameters:
+ *      paset Pointer to an array set to be copied from.
+ *       size Size of element for both source set and returning set.
+ *     cbfcmp Pointer to a comparison function for the returning tree set.
+ * Return value:  Pointer to a new tree set which is equivalent to the source array set.
+ *                NULL would be returned if the result were an empty set or in an erroneous case.
+ */
+P_SET_T setCreateTFromA(P_SET_A paset, size_t size, CBF_COMPARE cbfcmp)
+{
+	if (NULL != paset)
+	{
+		REGISTER P_SET_T psetr = setCreateT();
+		REGISTER size_t i;
+		
+		for (i = 0; i < strLevelArrayZ(paset); ++i)
+		{
+			if (! setInsertT(psetr, strLocateItemArrayZ(paset, size, i), size, cbfcmp))
+			{
+				setDeleteT(psetr);
+				return NULL; /* Insertion failure. */
+			}
+		}
+		
+		return psetr;
+	}
+	return NULL;
+}
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _setCBFCreateHFromTPuppet

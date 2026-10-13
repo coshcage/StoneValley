@@ -1,5 +1,5 @@
 /*
- * Name:        svhshtbl.h
+ * Name:        svhash.h
  * Description: Hash tables interface.
  * Author:      cosh.cage#hotmail.com
  * File ID:     0901171615U0806260346L00108

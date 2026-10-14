@@ -2,7 +2,7 @@
  * Name:        svset.h
  * Description: Sets interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620T1013261639L00266
+ * File ID:     0901171620T1014261925L00260
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -120,12 +120,6 @@ P_SET_T  setCreateTFromH        (P_SET_H phset,  size_t       size,   CBF_COMPAR
 /* Macros for array represented sets. */
 #define setInitA_M(pset_M, size_M) \
 	(((pset_M)->num = 0, 0 == (size_M)) ? (void *)((pset_M)->pdata = NULL) : (void *)((pset_M)->pdata = (PUCHAR) malloc(size_M)))
-#define setFreeA_M(pset_M) do { \
-	strFreeArrayZ(pset_M); \
-} while (0)
-#define setDeleteA_M(pset_M) do { \
-	strDeleteArrayZ(pset_M); \
-} while(0)
 #define setCreateCopyA_M(pset_M, size_M) \
 	(NULL == (pset_M) ? NULL : (! strLevelArrayZ(pset_M) ? NULL : strCreateCopyArrayZ((pset_M), (size_M))))
 #define setSizeA_M(pset_M) (NULL == (pset_M) ? 0 : strLevelArrayZ(pset_M))
@@ -149,8 +143,8 @@ P_SET_T  setCreateTFromH        (P_SET_H phset,  size_t       size,   CBF_COMPAR
 	#include <stdlib.h> /* Use function malloc. */
 	/* Macros for array represented sets. */
 	#define setInitA         setInitA_M
-	#define setFreeA         setFreeA_M
-	#define setDeleteA       setDeleteA_M
+	#define setFreeA         strFreeArrayZ
+	#define setDeleteA       strDeleteArrayZ
 	#define setCreateCopyA   setCreateCopyA_M
 	#define setSizeA         setSizeA_M
 	#define setIsEmptyA      setIsEmptyA_M
@@ -178,8 +172,8 @@ P_SET_T  setCreateTFromH        (P_SET_H phset,  size_t       size,   CBF_COMPAR
 	#include <stdlib.h> /* Use function malloc. */
 	/* Macros for array represented sets. */
 	#define setInitA         setInitA_M
-	#define setFreeA         setFreeA_M
-	#define setDeleteA       setDeleteA_M
+	#define setFreeA         strFreeArrayZ
+	#define setDeleteA       strDeleteArrayZ
 	#define setCreateCopyA   setCreateCopyA_M
 	#define setSizeA         setSizeA_M
 	#define setIsEmptyA      setIsEmptyA_M
@@ -207,8 +201,8 @@ P_SET_T  setCreateTFromH        (P_SET_H phset,  size_t       size,   CBF_COMPAR
 	#include <stdlib.h> /* Use function malloc. */
 	/* Macros for array represented sets. */
 	#define setInitA         setInitA_M
-	#define setFreeA         setFreeA_M
-	#define setDeleteA       setDeleteA_M
+	#define setFreeA         strFreeArrayZ
+	#define setDeleteA       strDeleteArrayZ
 	#define setCreateCopyA   setCreateCopyA_M
 	#define setSizeA         setSizeA_M
 	#define setIsEmptyA      setIsEmptyA_M

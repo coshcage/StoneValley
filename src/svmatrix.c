@@ -1025,7 +1025,6 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				_EMARI_MAX
 			};
 			PUCHAR ptbase = malloc(size * 3);
-			PUCHAR ptmp[] = { ptbase, ptbase + size, ptbase + (size << 1) };
 			P_MATRIX pxbs = strCreateMatrix(2, i, sizeof(size_t));
 			P_MATRIX paug = strCreateMatrix(_EMARI_MAX, i, size);
 			P_MATRIX pdat = strCreateMatrix(pmtx->ln + 2, pmtx->col, size);
@@ -1037,6 +1036,7 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 			if (NULL != prtn)
 			{
 				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t));
+				PUCHAR ptmp[3] = { ptbase, ptbase + size, ptbase + (size << 1) };
 				
 				p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size);
 				

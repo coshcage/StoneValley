@@ -120,7 +120,7 @@ int main()
 			if (!bff)
 				printf("Library integrity check:\n");
 			bff = true;
-			printf("File \"%s\" Does \e[31mNot Exists.\e[m\n", SZ_SV_FILE_ALL[i]);
+			printf("File \"%s\" Does \e[31mNot Exist.\e[m\n", SZ_SV_FILE_ALL[i]);
 		}
 	}
 	

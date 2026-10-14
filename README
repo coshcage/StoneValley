@@ -37,12 +37,12 @@ iii Table of Contents
 	Table of Contents ...................................................... 32
 	Scenario ............................................................... 47
 	Naming ................................................................. 84
-	Callbacks ............................................................. 130
-	Checklist ............................................................. 135
-	Alteration Guide ...................................................... 171
-	Limitations ........................................................... 320
-	Appendix .............................................................. 333
-	GNU Free Documentation License ........................................ 517
+	Callbacks ............................................................. 132
+	Checklist ............................................................. 136
+	Alteration Guide ...................................................... 172
+	Limitations ........................................................... 321
+	Appendix .............................................................. 361
+	GNU Free Documentation License ........................................ 545
 
 iv  Scenario
 
@@ -109,7 +109,8 @@ v  The naming of library functions and types
 	|    + B-plus tree                   :BPT:        svstree.c  |
 	|    + Trie                          :TRIE_A:      ditto.    |
 	|set_________________________________|___________<svset.h>___|
-	|    + Hash table set                :SET_H:      svset.c    |
+	|    + Array set                     :SET_A:      svset.c    |
+	|    + Hash table set                :SET_H:       ditto.    |
 	|    + Binary search tree set        :SET_T:       ditto.    |
 	|queUE_______________________________|___________<svqueue.h>_|
 	|    + Array style circular queue    :QUEUE_A:    svqueue.c  |
@@ -321,17 +322,44 @@ ix  Limitations
 
 	Dependencies:
 		Despite some of the fundamental functions in StoneValley are able to run without The C Standard Library, most parts of this library need dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
+		
+		Here is a dependency list that contains items being involved in The C Standard Library. Users may take it as a reference only for version 1.3.6.0 and above.
+	____________________________________________________ [Figure 10]
+	|Header     |Function |Macro    |Type     |Variable|
+	|-----------|---------|---------|---------|--------|
+	|<stddef.h> |         |         |size_t   |        |
+	|           |         |         |ptrdiff_t|        |
+	|-----------|---------|---------|---------|--------|
+	|<stdbool.h>|         |true     |bool     |        |
+	|           |         |false    |         |        |
+	|-----------|---------|---------|---------|--------|
+	|<limits.h> |         |UCHAR_MAX|         |        |
+	|           |         |CHAR_BIT |         |        |
+	|-----------|---------|---------|---------|--------|
+	|<stdlib.h> |malloc   |         |         |        |
+	|           |calloc   |         |         |        |
+	|           |free     |         |         |        |
+	|           |realloc  |         |         |        |
+	|-----------|---------|---------|---------|--------|
+	|<string.h> |memcpy   |         |         |        |
+	|           |memmove  |         |         |        |
+	|           |memcmp   |         |         |        |
+	|           |memset   |         |         |        |
+	|-----------|---------|---------|---------|--------|
+	|<stdio.h>  |printf   |BUFSIZ   |         |stderr  |
+	|           |fprintf  |         |         |        |
+	|___________|_________|_________|_________|________|
 	
 	Conflicts:
 		Caution that to avoid any undefined behavior in library functions while inline macros, do NOT use prefix and suffix '++'/'--' operators more than once on a same variable or left value expression. Such invoking fun(a++, ++a); is strictly prohibited while programming with StoneValley.
 
 	Addressing:
-		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which is derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.
+		'size_t' which is a type of unsigned long integer is the very rudimentary data type of this library; It scales the number of entities that this library could allocate. The difference of subtraction of pointers restricted by data type 'ptrdiff_t' which was derived from "stddef.h" of C Standard Library describes results of pointer arithmetic operations.
 
-		The length of a 'size_t' integer depends on the specific machine environment that implements the C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures in StoneValley.
+		The length of a 'size_t' integer depends on the specific machine environment that implements the C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures for StoneValley.
 
 x	Give me a (*) star to support an open internet and boycott China from building the Great Fire Wall, here is the reason:
-	StoneValley builds that benefits from global netizens and the internet with the world wide web. The author do reckon the importance of an open internet that lets us freely surf without the concerning of surveillance or political segregation or ideological coercing. Feel free to support us with such a mind to further advance the computing industry. End internet totalitarian with StoneValley together right here right now. The internet belongs to individuals.
+	StoneValley is built that benefits from global netizens and the internet with the world wide web. The author do reckon the importance of an open internet that lets us freely surf without the concerning of surveillance or political segregation or ideological coercing. Feel free to support us with such a mind to further advance the computing industry. End internet totalitarian with StoneValley together right here right now. The internet belongs to individuals.
 	We ought to be liberal to use good codes and safely browse the internet, therefor:
 	Please support the Free Software Foundation (https://www.fsf.org/).
 	Support the Electronic Frontier Foundation  (https://www.eff.org/).
@@ -339,10 +367,10 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	A sub table of contents of this appendix is listed here.
 	
 	[Contents]                                                    [Line number]
-	Preamble .............................................................. 333
-	Sub Table of Contents ................................................. 339
-	Technical Information ..................................................347
-	The Story About StoneValley ........................................... 499
+	Preamble .............................................................. 361
+	Sub Table of Contents ................................................. 367
+	Technical Information ..................................................375
+	The Story About StoneValley ........................................... 527
 	
 	Technical Information
 
@@ -352,7 +380,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	By categorizing macros, we could see two types of macros, they are macros for representing data and macros for abstract expressions. It is insipid to talk about the first type. Because they are merely another form of literal data. For example, macro SV_LIB_VER is actually a string representing library version. And SV_LIB_VER_VAL converts it into an integer to let uses to calculate. For another example, macro PREV is 1 and NEXT is 0. They direct programs to index two pointers in a double linked list node. While macro LEFT is 0 and RIGHT is 1. They are used to direct programs to index in a binary tree node. As we will know, a double linked list node is a binary tree node with different indexing interpretation. Use these macros as you need and you have to refer to a specific data structure for its macros to their usages.
 
-	The second type of macros varies from usage to formation. We can see a bunch of macros in header files to inline existing functions. Except these macros, macro P2P_TNODE_BY is used to convert pointers. It is an abbreviation form of type casting expression. As we know, macros with arguments allow users to input parameters that are separate by comma. During expansion, parameters are automatically expanding to their respective positions. For instance, of macro #define fun(a_M, b_M) ((a_M)++ + (b_M)), when we use a = fun(a, ++a); in expression will cause severe side effect and compilation issue probably. So just don't repeat one variable in these macros to avoid problems.
+	The second type of macros varies from usage to formation. We can see a bunch of macros in header files to inline existing functions. Except these macros, macro P2P_TNODE_BY is used to convert pointers. It is an abbreviation form of type casting expression. As we know, macros with arguments allow users to input parameters that are separate by comma. During expansion, parameters are automatically expanding to their respective positions. For instance, of macro #define fun(a_M, b_M) ((a_M)++ + (b_M)), when we use a = fun(a, ++a); in expression will cause severe side effect and compilation issue probably. So just don't use one variable repeatedly in these macros to avoid troubles.
 
 	2) Callback Type Summary
 
@@ -403,7 +431,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	
 	Initial and create functions in StoneValley both exert heap memories. In a word, they use malloc like functions to allocate heap memory spaces. Free and delete function use function free in the standard C library to release heap memories. StoneValley had to resolve this for its architecture and thus brings users problems. If you manually set an internal pointer of a data structure to a stack memory, you cannot use initial functions or create functions to rewrite the pointer. Neither can you invoke free and delete functions to release the pointer.
 	
-	Two tips for safely manage main memories to users. First, use a create function to allot an entity, after the entity's life cycle, bring a delete function on it. Identically, use an initial function to allot memories inside an entity, after the entity's life cycle, use a delete function to deallocate to ensure no leakages could be possible. Second, if you use create functions inside a data structure, before deleting this data structure, traverse it to delete pointers inside of it one by one before you delete this data structure itself by using a delete function on it. It says if a set contains subsets, release subsets before you release the parental set.
+	Two tips for safely manage main memories to users. First, use a create function to allot an entity, after the entity's life cycle, bring a delete function onto it. Identically, use an initial function to allot memories inside an entity, after the entity's life cycle, use a delete function to deallocate to ensure no leakages could be possible. Second, if you use create functions inside a data structure, before deleting this data structure, traverse it to delete pointers inside of it one by one before you delete this data structure itself by using a delete function on it. It says if a set contains subsets, release subsets before you release the parental set.
 	
 	In conclusion, you can never free a stack initialized pointer on a heap, vice versa. And you need do life cycle management by yourself on data structure entities.
 
@@ -476,25 +504,25 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	
 	Second, your flows were intrinsically difficult, consider to use gotos to reduce complexity. In this circumstance, I cannot give you an elegant example for the reason that no examples will cover realities fitfully and the example itself will be difficult to write. To find some occurrences in StoneValley instead is my recommendation.
 	
-	Third, do not over use traversal functions instead of using loops by yourself to traverse. Looping expedient brings quite obvious benefits than using traverse functions. A traversal needs to intake a pointer to parameter of an array of data, although sometimes, such a traversal would be inlined by a compiler. In most cases, once traversal caller met traversal callback, it would expand stacks and branch into that to consume both running time and space.
+	Third, do not over use traversal functions instead of using loops by yourself to traverse. Looping expedient brings quite obvious benefits than using traversal functions. A traversal needs to intake a pointer to parameter of an array of data, although sometimes, such a traversal would be inlined by a compiler. In most cases, once traversal caller met traversal callback, it would expand stacks and branch into that to consume both running time and space.
 	
 	6) Traversal Method
 	
 	To talk about traversals, we should better categorize them by data structure types first. We can roughly classify data structures into linear ones and non linear ones. For non linear ones, we can find binary trees by inheritance complexity, generic trees are trees and graphs beside. Traversals just differ from methods on them.
 	
-	For linear data structures, caution that we must figure out what direction we used to traverse linear structures, specifically, whether we traverse them from tail to head that is reversely or from head to tail orderly. A recursive traversal function can generate a routine either reversely or orderly depending whether it recurs first or calls its callback first. A loop traverse caller needs users to specify a boolean parameter to indicate its direction so that it can traverse linear structures in bidirection too.
+	For linear data structures, caution that we must figure out what direction we used to traverse linear structures, specifically, whether we traverse them from tail to head that is reversely or from head to tail orderly. A recursive traversal function can generate a routine either reversely or orderly depending whether it recurs first or calls its callback first. A loop traversal caller needs users to specify a boolean parameter to indicate its direction so that it can traverse linear structures bidirectionally too.
 	
-	Trees differ from linear data structures. Especially for binary trees, we can perform pre-order, in-order and post-order on binary trees. We can also exert pre-order and in-order Morris traversals. Since Morris traversals traverse binary trees by manipulating child pointers rather recurring. They run a little bit faster than normal traversals. But the drawback is that we cannot traverse the same binary tree during we Morris traverse it because Morris traversals break tree nodes apart during working so badly that we cannot normally traverse a same tree in Morris traversals. As for generic trees, only level-order traversals can be performed onto.
+	Trees differ from linear data structures. Especially for binary trees, we can perform pre-order, in-order and post-order on binary trees. We can also exert pre-order and in-order Morris traversals. Since Morris traversals traverse binary trees by manipulating child pointers rather recurring. They run a little bit faster than normal traversals. But the drawback is that we cannot traverse the same binary tree during we Morris traverse it because Morris traversals break tree nodes apart during working so badly that we cannot normally traverse a same tree during Morris traversing. As for generic trees, only level-order traversals can be performed onto them.
 
 	Graph theory brings us two methods of traversal. They are breadth first traversal and depth first traversal. Both two types of traversals can be performed on either adjacent list graphs and adjacent matrix graphs.
 	
-	Traversal function callers bear recursions. It means that a tail recursive optimization might be performed by a compiler to optimize them. If you are not sure your compiler will optimize recursions, just use a looping one instead.
+	Traversal function callers bear recursions. It means that a tail recursive optimization might be performed by a compiler to optimize them. If you are not sure your compiler will optimize recursions or not, just use a looping one instead.
 	
 	7) Recursion Reduction
 	
 	Recursion brings us issues as troublesome as we were supposed to write it. The first problem is the efficiency. A recursive function would run 2 to 4 times slower than an equivalent non recursive one in practice of course without further optimization. Every time a caller calls itself, function parameters are expanded on the stack. This brings us extra time and space consuming. No need to say after calling itself, a recursive function needs to retract stacks and jumps to the starting position of itself.
 	
-	The solution to address it is to use a loop instead of recursion or use an artificial, user programmed stack to mimic recursive callings. By precisely control how many parameters we need to recur a function adding them on a stack rather than adding all possible parameters on a stack, we can not only increase execution speed but also reduce stack memory spaces as many as possible.
+	The solution to address it is to use a loop instead of recursion or use an artificial, user programmed stack to mimic recursive callings. By precisely control how many parameters we need to recur a function to add these parameters on a stack rather than adding all possible parameters on a stack, we can not only increase execution speed but also reduce stack memory spaces as many as possible.
 
 	The Story About StoneValley
 	
@@ -504,11 +532,11 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	
 	The aim was simple. It's tasks were not quite easy. How was I supposed to combine almost every algorithm and data structures under one architecture? I didn't even know at least ten percent algorithms in this world. I gotta find a fine reference. Then I found the C Plus Plus Standard Template Library also known as STL. A valuable tutorial during that time to teach users to use STL was from a Taiwanese professor JJ. Hou. He wrote a book called The Annotated STL Sources and published a serial of videos to explain STL in detail. I grabbed these materials and took them for granted that I have had absorbed perhaps the very essence of STL. Plus the books I had read about algorithms, at least I gained confidence to finish this task. Admittedly, I conceived a lot for StoneValley.
 	
-	The next thing that thwarted me to give birth to StoneValley was it's name. I have noticed STL stood for Standard Template Library. However, Common Data Structure Library is too common. Algorithm Utility is too usual. While I was reading a book called An Eclectic Prose From The World's Most Famous Thinkers. It wrote: "Poets are chanting their poems in the valley." I thought: "Formal languages are languages, poems are language distillates. Algorithms are program poems. I decide to name it StoneValley for the reason that I will chant my poems in the valley and I need exactly a collection of solid codes of algorithms, each function is as solid as a stone."
+	The next thing that thwarted me to give birth to StoneValley was it's name. I have noticed STL stood for Standard Template Library. However, Common Data Structure Library was too common. Algorithm Utility was too usual. While I was reading a book called An Eclectic Prose From The World's Most Famous Thinkers. It wrote: "Poets are chanting their poems in the valley." I thought: "Formal languages are languages, poems are language distillates. Algorithms are program poems. I decide to name it StoneValley for the reason that I will chant my poems in the valley and I need exactly a collection of solid codes of algorithms, each function is as solid as a stone."
 	
-	I quickly dropped STL and regarded it as a not so good designation. Too many concepts have been involved in STL like vector, container, comparator, allocator, functor made me not only perplexed but also sick. "What the hell are those aliens?" I thought. "They made too many concepts to glue algorithms and data structures together and eventually made it gruesome to me to learn." My purpose was steady and solid: "Algorithms are procedures to solve problems written as functions. An algorithm needs a way to manipulate data called data structure. Basically data structure is the way that data being represented in main memory. How about dividing library modules apart by data structures?" I thought. "Since it's not a viable way to categorize algorithms into modules by the way to build them, such as force enumerate, greedy, divide and conquer, prune, dynamic program and heuristic."
+	I quickly dropped STL and regarded it as a not so good designation. Too many concepts have been involved in STL like vector, container, comparator, allocator, functor made me not only perplexed but also sick. "What the hell are those aliens?" I thought. "They made too many concepts to glue algorithms and data structures together and eventually made it gruesome to me to learn." My purpose was steady and solid: "Algorithms are procedures to solve problems written as functions. An algorithm needs a way to manipulate data called data structure. Basically data structure is the way that data being represented in main memory. How about dividing library modules apart by data structures?" I thought. "Since it's not a viable way to categorize algorithms into modules by the way to build them, such as brute force, greed, divide and conquer, prune, dynamic programming and heuristic."
 	
-	So I opened a little editor, hope my mind will take me there. "Whether trees are complex, strings are simple, I'll write them here." I thought. It was true and astonishing the first ever file I made is a module for stacks. As I usually did, I achieved functions in a source file and extracted their prototypes into a header. There brought countless questions to me that how I should put stack data in memory, what kind of data I needed to store them into RAM. How could it be possible to store both a short integer and a long integer simultaneously? A short integer takes two bytes to store and a long usually takes 4 to 8 bytes depending on compiling environments. What if I interleave a short with a long? Then it makes addressing and reading difficult. Unaligned data in memory decelerate reading speed for CPUs because modern CPUs use an intricate memory management unit, furthermore, they use caches to bulk load a bunch of data in a specific size at a same time from RAM.
+	So I opened a little editor, hope my mind will take me there. "Whether trees are complex, strings are simple, I'll write them here." I thought. It was true and astonishing the first ever file I made was a module for stacks. As I usually did, I achieved functions in a source file and extracted their prototypes into a header. There brought countless questions to me that how I should put stack data in memory, what kind of data I needed to store them into RAM. How could it be possible to store both a short integer and a long integer simultaneously? A short integer takes two bytes to store and a long usually takes 4 to 8 bytes depending on compiling environments. What if I interleave a short with a long? Then it makes addressing and reading difficult. Unaligned data in memory decelerate reading speed for CPUs because modern CPUs use an intricate memory management unit, furthermore, they use caches to bulk load a bunch of data in a specific size at a same time from RAM.
 	
 	As for documentation, documents are crucial. I used to write a separate document for my software as a users' manual to let them refer to when they need. I didn't think I was able to write my doc by this way because I was writing a programming library. Yet cannot I make comments at headers in front of a function declaration. My purpose was to let users read both my comments to find the usage of a function and read the function definition for further understanding of an algorithm that could benefit StoneValley to reduce bugs and enhance its quality. As Fredrick Brooks mentioned in his masterpiece The Mythical Man Month, self-documenting was a better way. I gotta take my code itself as a document. The first step was to let the code explain itself. Then I needed to add some auxiliary comments as if I was adding thyme leaves onto a piece of finely cooked steak after I poured a little mushroom pepper sauce on it. Damn nice!
 	

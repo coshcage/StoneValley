@@ -61,7 +61,7 @@ typedef BST SET_T, * P_SET_T;
 /* Functions for array style sets. */
 void *   setInitA_O             (P_SET_A pset,   size_t       size);
 void     setFreeA_O             (P_SET_A pset);
-P_SET_A  setCreateA             (size_t size);
+P_SET_A  setCreateA             (size_t  size);
 void     setDeleteA_O           (P_SET_A pset);
 P_SET_A  setCreateCopyA_O       (P_SET_A pset,   size_t       size);
 size_t   setSizeA_O             (P_SET_A pset);

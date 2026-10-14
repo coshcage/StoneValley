@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1012262356L01821
+ * File ID:     0213191430N1013262051L01844
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -816,19 +816,19 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *            pcbfagb[EMA_CMP] stores the pointer to a function that can perform comparison.
  *            Please refer to the definition of type CBF_ALGEBRA and enumeration MatrixAlgebra.
  *       prpt Pointer to an integer to report the calculation result. Set this parameter to NULL to omit it.
- *            The value of prpt pointed can be as follows after invoking:
+ *            The value of prpt pointed integer can be as follows after invoking:
  *            0: Could not solve.
  *            1: No solution could be produced by this function.
  *            2: The corresponding data matrix had no bounded solution.
  *            3: The corresponding data matrix had one optimal solution.
  *            4: The corresponding data matrix had multiple optimal solutions and this function returned only one.
- * Return value:  This function would create and return a pointer to a matrix that represents a solution.
+ * Return value:  This function would create and return a pointer to a matrix which represents a solution.
  *                If function returned NULL, it would indicate an error.
  * Caution:       Address of pmtx and pcbfagb Must Be Allocated and set first.
- *                This function would not contaminate pmtx if it failed.
+ *                This function would not contaminate pmtx if it failed to run.
  * Tip:           A comprehensive guide:
  *                (i) Let us make a linear programming example.
- *                Suppose we have a linear equality group and a constraint of variable like these:
+ *                Suppose we have a linear equality group and a constraint on variables like these:
  *                9 * x1 +  4 * x2 <= 360;
  *                4 * x1 +  5 * x2 <= 200;
  *                3 * x1 + 10 * x2 <= 300;
@@ -958,6 +958,35 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
  *                    return 0;
  *                }
  *                The result of the above code is explained in the aforementioned text.
+ *
+ *                (v) Technical information.
+ *                This section illustrates technical details of this function.
+ *                Suppose we have the following linear equality group and a constraint on variables like these:
+ *                     x1 - 2 * x2 + 2 * x3 + x4                = 8
+ *                -2 * x1     + x2     + x3      - x5 + x6      = 4
+ *                    -x1              + x3                + x7 = 2
+ *                Solve: max(-4 * x1 - 3 * x2 - 2 * x3 - M * x6 - M * x7);
+ *                We will have a simplex data matrix during calculation like this:
+ *                   x1   x2   x3   x4   x5   x6   x7        theta costb xbs
+ *                    1   -2    2    1    0    0    0    8    4     0     4
+ *                   -2    1    1    0   -1    1    0    4    4    -M     6
+ *                   -1    0   [1]   0    0    0    1    2    2    -M     7
+ *                    4   -3   -2    0    0   -M   -M
+ *                -4+3M  3-M 2-2M    0    M    0    0  <-sigma     After 1st iteration.
+ *                    3   -2    0    1    0    0   -2    4          0     4
+ *                   -1   [1]   0    0   -1    1   -1    2    2    -M     6
+ *                   -1    0    1    0    0    0    1    2          2     3
+ *                    4   -3   -2    0    0   -M   -M
+ *                 -2+M  3-M    0    0    M    0 2M-2  <-sigma     After 2nd iteration.
+ *                    1    0    0    1   -2    0   -4    8          0     4
+ *                   -1    1    0    0   -1    1   -1    2          3     2
+ *                   -1    0    1    0    0    0    1    2          2     3
+ *                    4   -3   -2    0    0   -M   -M
+ *                    1    0    0    0    3  M-3  M+1  <-sigma     After 3rd iteration.
+ *                Result: r = _ESR_ONE_OPTIMAL = 3;
+ *                x1 x2 x3 x4 x5
+ *                 0  2  2  8  0
+ *                 0 -3 -2  0  0
  */
 P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, const void * pnbm, size_t size, CBF_ALGEBRA pcbfagb[5], int * prpt)
 {
@@ -1153,29 +1182,23 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				/* Calculate theta. */
 				for (b = true, l = paug->col, i = 0; i < paug->col; ++i)
 				{
-					REGISTER PUCHAR p2;
-					
 					p = (PUCHAR) strFetchValuePointerMatrix(paug, _EMARI_THETA, i, size);
-					memcpy(p, strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size);
+					memcpy(p, strFetchValuePointerMatrix(pdat, i, pdat->col - 1, size), size); /* theta = dat[i][dat.col - 1]; */
 					
-					p2 = strFetchValuePointerMatrix(pdat, i, k, size);
-					if (pcbfagb[EMA_CMP](p2, pnil) > CBF_CMP_EQUAL) /* dat[i][k] is positive. */
+					pcbfagb[EMA_DIV](p, strFetchValuePointerMatrix(pdat, i, k, size)); /* theta /= dat[i][k]; */
+					
+					if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL) /* Theta is positive. */
 					{
-						pcbfagb[EMA_DIV](p, strFetchValuePointerMatrix(pdat, i, k, size)); /* theta /= dat[i][k]; */
-						
-						if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL) /* Theta is positive. */
+						if (b) /* Find the minimal value. Only record positive numbers. */
 						{
-							if (b) /* Find the minimal value. */
-							{
-								memcpy(ptmp[0], p, size);
-								b = false;
-								l = i;
-							}
-							else if (pcbfagb[EMA_CMP](p, ptmp[0]) < CBF_CMP_EQUAL) 
-							{
-								memcpy(ptmp[0], p, size);
-								l = i;
-							}
+							memcpy(ptmp[0], p, size);
+							b = false;
+							l = i;
+						}
+						else if (pcbfagb[EMA_CMP](p, ptmp[0]) < CBF_CMP_EQUAL) 
+						{
+							memcpy(ptmp[0], p, size);
+							l = i;
 						}
 					}
 				}

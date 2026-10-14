@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L1013261633L01690
+ * File ID:     0901171620L1013262100L01688
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -153,7 +153,7 @@ bool setIsMemberA_O(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE c
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  true  seta belongs to setb.
  *                false seta does not belong setb.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsSubsetA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -185,7 +185,7 @@ bool setIsSubsetA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  true  Two sets are equal.
  *                false Two sets are NOT equal.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsEqualA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -215,7 +215,6 @@ bool setIsEqualA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  true  Insertion succeeded.
  *                false Insertion failed.
- * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
 bool setInsertA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -266,7 +265,6 @@ bool setInsertA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  true  Removal succeeded.
  *                false Removal failed.
- * Caution:  pset cannot be NULL. Please check the value of pset before invoking.
  */
 bool setRemoveA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -295,7 +293,7 @@ bool setRemoveA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set or this function met an allocation failure.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -370,7 +368,7 @@ P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE c
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  Pointer to a new set which is the intersection between two sets.
  *                NULL would be returned if the result were an empty set or this function met an allocation failure.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_A setCreateIntersectionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -418,7 +416,7 @@ P_SET_A setCreateIntersectionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_CO
  *            Please refer to the definition of CBF_COMPARE for detailed information about comparison function.
  * Return value:  Pointer to a new set which is the difference set of two sets.
  *                NULL would be returned if the result were an empty set or this function met an allocation failure.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_A setCreateDifferenceA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -647,7 +645,7 @@ bool setIsMemberH_O(P_SET_H pset, CBF_HASH cbfhsh, const void * pitem, CBF_COMPA
  *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  seta belongs to setb.
  *                false seta does not belong setb.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbfmch)
 {
@@ -675,7 +673,7 @@ bool setIsSubsetH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbf
  *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  true  Two sets are equal.
  *                false Two sets are NOT equal.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsEqualH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, CBF_COMPARE cbfmch)
 {
@@ -761,7 +759,7 @@ int _setCBFUnionHPuppet(void * pitem, size_t param)
  *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_H setCreateUnionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
@@ -848,7 +846,7 @@ int _setCBFIntersectionHPuppet(void * pitem, size_t param)
  *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the intersection between two sets.
  *                NULL would be returned if the result were an empty set.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_H setCreateIntersectionH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
@@ -902,7 +900,7 @@ Lbl_Empty_Set:
  *            This function returns CBF_CMP_EQUAL when data match or a non zero value when data mismatch.
  *            Please refer to svdef.h to see more details about type CBF_COMPARE.
  * Return value:  Pointer to a new set which is the difference set of two sets.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_H setCreateDifferenceH(P_SET_H pseta, P_SET_H psetb, CBF_HASH cbfhsh, size_t size, CBF_COMPARE cbfmch)
 {
@@ -1106,7 +1104,7 @@ int _setCBFIsSubsetTPuppet(void * pitem, size_t param)
  * Return value:
  *         true seta belongs to setb.
  *        false seta does not belong to setb.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 {
@@ -1137,7 +1135,7 @@ bool setIsSubsetT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
  *       size Size of element.
  * Return value:  true  Two sets are equal.
  *                false Two sets are NOT equal.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 bool setIsEqualT(P_SET_T pseta, P_SET_T psetb, CBF_COMPARE cbfcmp)
 {
@@ -1239,7 +1237,7 @@ int _setCBFInsertItemTPuppet(void * pitem, size_t param)
  *            Two sets should use the same comparison function.
  * Return value:  Pointer to a new set which is the union of two sets.
  *                NULL would be returned if the result were an empty set.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_T setCreateUnionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -1337,7 +1335,7 @@ int _setCBFIntersectionTPuppet(void * pitem, size_t param)
  *            Two sets should use the same comparison function.
  * Return value:  Pointer to a new set which is the intersection between two sets.
  *                NULL would be returned if the result were an empty set.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_T setCreateIntersectionT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -1385,7 +1383,7 @@ Lbl_Empty_Set:
  *            Two sets should use the same comparison function.
  * Return value:  Pointer to a new set which is the difference set between two sets.
  *                NULL would be returned if the result were an empty set.
- * Caution:       Elements in two sets that pseta and psetb pointed should be in the same size.
+ * Caution:       Elements in two sets that pseta and psetb pointed shall be in the same size.
  */
 P_SET_T setCreateDifferenceT(P_SET_T pseta, P_SET_T psetb, size_t size, CBF_COMPARE cbfcmp)
 {

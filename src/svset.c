@@ -312,17 +312,7 @@ P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE c
 			
 			while (i < strLevelArrayZ(prtn))
 			{
-				if (strLevelArrayZ(psetb) == k && j < strLevelArrayZ(pseta))
-				{
-					memcpy(pdata, strLocateItemArrayZ(pseta, size, j), size);
-					++j;
-				}
-				else if (strLevelArrayZ(pseta) == j && k < strLevelArrayZ(psetb))
-				{
-					memcpy(pdata, strLocateItemArrayZ(psetb, size, k), size);
-					++k;
-				}
-				else if (j < strLevelArrayZ(pseta) && k < strLevelArrayZ(psetb))
+				if (j < strLevelArrayZ(pseta) && k < strLevelArrayZ(psetb))
 				{
 					REGISTER int cmpr = cbfcmp(strLocateItemArrayZ(pseta, size, j), strLocateItemArrayZ(psetb, size, k));
 					if (CBF_CMP_EQUAL == cmpr) /* a == b. */
@@ -341,6 +331,16 @@ P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE c
 						memcpy(pdata, strLocateItemArrayZ(psetb, size, k), size);
 						++k;
 					}
+				}
+				else if (strLevelArrayZ(psetb) == k && j < strLevelArrayZ(pseta))
+				{
+					memcpy(pdata, strLocateItemArrayZ(pseta, size, j), size);
+					++j;
+				}
+				else if (strLevelArrayZ(pseta) == j && k < strLevelArrayZ(psetb))
+				{
+					memcpy(pdata, strLocateItemArrayZ(psetb, size, k), size);
+					++k;
 				}
 				else
 					break;

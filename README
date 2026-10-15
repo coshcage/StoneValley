@@ -40,9 +40,9 @@ iii Table of Contents
 	Callbacks ............................................................. 132
 	Checklist ............................................................. 136
 	Alteration Guide ...................................................... 172
-	Limitations ........................................................... 321
-	Appendix .............................................................. 361
-	GNU Free Documentation License ........................................ 545
+	Limitations ........................................................... 343
+	Addendum .............................................................. 383
+	GNU Free Documentation License ........................................ 569
 
 iv  Scenario
 
@@ -173,36 +173,49 @@ viii Library Alteration Guide
 
 	The next instruction will guide you to fix the library. This instruction has been divided into three parts, [a] [b] and [c].
 	*) Optional procedures differ from others that optional lines titled by digits and brackets such as '0)' while digits and a dot such as '0.' title other operations.
-
+	*) A wrapper function is actually an alias of another existing function with equivalent return value type and parameter list.
+	
 	a] Macro inline an existing function in the library:
-
-	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 4]
-	$ /* Name: example       $ 1.=> $ /* Name: example_O                       $
-	$  * ...                 $      $  * ...                                   $
-	$  *                     $ 2)=> $  * Tip: Macro example_M exists at xxx.h. $
-	$ int example(int param) $ 3.=> $ int example_O(int param)                 $
-	$ {                      $      $ {                                        $
-	$      return param + 1; $      $      return param + 1;                   $
-	$ }                      $      $ }                                        $
-	$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                                                                                                         [Figure 4]
+	$_BEFORE_$$$$$$$$$$$$$$$$$$$$$$      $_AFTER_$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	$ /* Name: example            $ 1.=> $ /* Name: example_O                                                     $
+	$  * ...                      $      $  * ...                                                                 $
+	$  *                          $ 2)=> $  * Tip: A macro version of this function named example_M is available. $
+	$ int example(int param)      $ 3.=> $ int example_O(int param)                                               $
+	$ {                           $      $ {                                                                      $
+	$      return param + 1;      $      $      return param + 1;                                                 $
+	$ }                           $      $ }                                                                      $
+	$                             $      $                                                                        $
+	$ /* Name: wrapper            $ 1.=> $ /* Name: wrapper_O                                                     $
+	$  * ...                      $      $  * ...                                                                 $
+	$  *                          $ 2)=> $  * Tip: This function can be macro inline to use wrapper.              $
+	$ int wrapper(int param)      $ 3.=> $ int wrapper_O(int param)                                               $
+	$ {                           $      $ {                                                                      $
+	$      return example(param); $      $      return param + 1;                                                 $
+	$ }                           $      $ }                                                                      $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		1. Append an '_O' sign to the tail of the original function name in the comments above its declaration.
 		2) Write a tip in the comments above the function declaration to notify users what name the macro is and where the macro is located. (Optional)
 		3. Append an '_O' sign to the tail of the original function name in the declaration.
 
-	$BEFORE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 5]
+	$_BEFORE_$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $_AFTER_$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 5]
 	$ int example(int param);                  $ 4.=> $ int example_O(int param);                  $
 	$ int example_O(int param) {               $ 5.=> $ #define example_M(param_M) ((param_M) + 1) $
 	$      return param + 1;                   $ 6.   $                                            $
 	$ }                                        $ 7.   $                                            $
 	$ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE $      $ #if   SV_OPTIMIZATION == SV_OPT_MINISIZE   $
 	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$     #define wrapper wrapper_O            $ 9)=> $     #define wrapper example                $
 	$ #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED $      $ #elif SV_OPTIMIZATION == SV_OPT_MAXSPEED   $
 	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$     #define wrapper wrapper_O            $ 9)=> $     #define wrapper example                $
 	$ #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM $      $ #elif SV_OPTIMIZATION == SV_OPT_FULLOPTM   $
 	$     #define example example_O            $ 8)=> $     #define example example_M              $
+	$     #define wrapper wrapper_O            $ 9)=> $     #define wrapper example                $
 	$ #else                                    $      $ #else                                      $
 	$     #define example example_O            $      $     #define example example_O              $
+	$     #define wrapper wrapper_O            $ 9)=> $     #define wrapper example                $
 	$ #endif                                   $      $ #endif                                     $
 	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -211,13 +224,14 @@ viii Library Alteration Guide
 		6. Cut types off and add "#define" in the beginning of the declaration.
 		7. Alter '_O' sign in function name into '_M'. Append an '_M' sign to each parameter in declaration to prevent arguments from confusing the preprocessor. Please cross reference section [b] [Figure 6] and [Figure 7] for more details about inline.
 		8) Write the original function name and its macro name into a block that is used to optimize the library as needed. (Optional) Notice that if a function name were written in any branches of preprocessor directives, the function should appear in other branches simultaneously.
-		9. Finish.
+		9) Assign the wrapper with the name of its' original function. Thus when users call wrappers they call originals.
+		10. Finish.
 
 	b] Altering an existing function in the library:
 		1. Alter a function and check whether it has a macro version.
 		2. If the function you amended has an '_O' sign at the tail of its name, then also alter its macro version in the proper header file. See section [a] [Figure 4] and [Figure 5] for altering macros in detail.
 
-	$BEFORE$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
+	$_BEFORE_$$$$$$$$$$$$$$$$$      $_AFTER_$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 6]
 	$ void svInit(int * p) { $ 3.=> $ #define svInit_M(p_M) do { \ $
 	$      *p = 0;           $      $     *(p_M) = 0; \            $
 	$ }                      $      $ } while(0)                   $
@@ -225,18 +239,26 @@ viii Library Alteration Guide
 
 		3. If the original function has NO return value and it is simple, write its macro version and use '{}' to brace it in multiple lines.
 
-	$BEFORE$$$$$$$$$$$$$$$$$$$$$$      $AFTER$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 7]
+	$_BEFORE_$$$$$$$$$$$$$$$$$$$$      $_AFTER_$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ [Figure 7]
 	$ int svAdd(int a, int b) { $ 4.=> $ #define svAdd_M(a_M, b_M) ((a_M) + (b_M)) $
 	$      return a + b;        $      $                                           $
 	$ }                         $      $                                           $
 	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		4. If the original function HAS a return value and it is brief, write its macro version in one line and use '()' to brace it.
-		5. Altering done.
+
+	$_BEFORE_$$$$$$$$$$$$$$$$$$      $_AFTER_$$$$$$$$$$$$$$$$$ [Figure 8]
+	$ int svWrap_M(int * p) { $ 5.=> $ #define svWrap svInit $
+	$     svInit(p);          $      $                       $
+	$ }                       $      $                       $
+	$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$
+
+		5. If the original function is a wrapper, when using macros to inline this wrapper, write it's original name to supersede it by these macros.
+		6. Altering done.
 
 	c] Adding a function that does not exist into the library:
 
-	An example of headers:                        [Figure 8]
+	An example of headers:                        [Figure 9]
 	$header.h$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	$ /* Comments.                                         $ + Comment file here.
 	$  */                                                  $ *
@@ -267,7 +289,7 @@ viii Library Alteration Guide
 	$ #endif                                               $ *
 	$                                                      $
 	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-	An example of source files:                   [Figure 9]
+	An example of source files:                  [Figure 10]
 	$source.c$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	$  /* Comments.                                        $ + Comment file here.
 	$   */                                                 $ *
@@ -324,8 +346,8 @@ ix  Limitations
 		Despite some of the fundamental functions in StoneValley are able to run without The C Standard Library, most parts of this library need dynamic memory allocation functions like 'malloc' and 'realloc' of The C Standard Library.
 		
 		Here is a dependency list that contains items being involved in The C Standard Library. Users may take it as a reference only for version 1.3.6.0 and above.
-	____________________________________________________ [Figure 10]
-	|Header     |Function |Macro    |Type     |Variable|
+	____________________________________________________
+	|Header     |Function |Macro    |Type     |Variable| [Figure 11]
 	|-----------|---------|---------|---------|--------|
 	|<stddef.h> |         |         |size_t   |        |
 	|           |         |         |ptrdiff_t|        |
@@ -359,19 +381,21 @@ ix  Limitations
 		The length of a 'size_t' integer depends on the specific machine environment that implements the C programming language, and then the length of a 'size_t' integer limits the addressing capability of most data structures for StoneValley.
 
 x	Give me a (*) star to support an open internet and boycott China from building the Great Fire Wall, here is the reason:
+
 	StoneValley is built that benefits from global netizens and the internet with the world wide web. The author do reckon the importance of an open internet that lets us freely surf without the concerning of surveillance or political segregation or ideological coercing. Feel free to support us with such a mind to further advance the computing industry. End internet totalitarian with StoneValley together right here right now. The internet belongs to individuals.
+
 	We ought to be liberal to use good codes and safely browse the internet, therefor:
 	Please support the Free Software Foundation (https://www.fsf.org/).
-	Support the Electronic Frontier Foundation  (https://www.eff.org/).
-	
-	A sub table of contents of this appendix is listed here.
-	
+	Support the  Electronic Frontier Foundation (https://www.eff.org/).
+
+	A sub table of contents of this addendum is listed here.
+
 	[Contents]                                                    [Line number]
-	Preamble .............................................................. 361
-	Sub Table of Contents ................................................. 367
-	Technical Information ..................................................375
-	The Story About StoneValley ........................................... 527
-	
+	Preamble .............................................................. 383
+	Sub Table of Contents ................................................. 391
+	Technical Information ..................................................399
+	The Story About StoneValley ........................................... 551
+
 	Technical Information
 
 	The purpose of this article is to give users some kinds of library CULTURAL perspective guidance rather than the data of performance when they are engaging in developing. It is said cultural guidance because the guidance itself is a reference but not a standard to let users to follow. The guidance gives you a possible way to build library up. It is never an ultimate way to write from.

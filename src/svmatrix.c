@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1014262319L01844
+ * File ID:     0213191430N1015261000L01840
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -425,16 +425,16 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
 }
 
 /* Function name: strMathMatrix
- * Description:   Do calculation on each element in a matrix with the value that pval pointed.
+ * Description:   Do calculation on each element in a matrix with the scalar value that pval pointed.
  * Parameters:
  *       pmtx Pointer to a matrix.
  *       pval Pointer to the value that you want to operate onto the matrix.
  *       size Size of each element in the matrix.
- *     cbfagb Pointer to a callback function that uses to handle calculations on elements.
+ *     cbfagb Pointer to a callback function that is used to handle calculations on elements.
  *            The left pointer of cbfagb points to any element in the matrix,
- *            and the right pointer of cbfagb always holds a same value as pval.
+ *            and the right pointer of cbfagb always holds the same value as pval.
  *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depended on function cbfagb.
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           Users could use this function to multiply a number with a matrix like this way:
  *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
@@ -450,8 +450,7 @@ int strMathMatrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbf
 }
 
 /* Function name: strMatrixMatrix
- * Description:   Do calculation between two matrices,
- *                and store the result into the matrix that pmtxa pointed.
+ * Description:   Do calculation between two matrices and store the result into the matrix that pmtxa pointed.
  * Parameters:
  *      pmtxa Pointer to a matrix.
  *      pmtxb Pointer to another matrix.
@@ -460,8 +459,9 @@ int strMathMatrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbf
  *            The left pointer of cbfagb points to any element in pmtxa,
  *            and the right pointer of cbfagb points to the corresponding value in pmtxb.
  *            Please refer to the definition of type CBF_ALGEBRA.
- * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will return depended on function cbfagb.
+ * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depended on function cbfagb.
  * Caution:       Address of pmtxa and pmtxb Have to Be Allocated first.
+ *                Matrix A must has a same dimension to matrix B.
  * Tip:           Users could use this function to add a matrix with another like this way:
  *                int plus(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
  *                strMatrixMatrix(pmtxa, pmtxb, sizeof(float), plus);
@@ -479,17 +479,17 @@ int strMatrixMatrix(P_MATRIX pmtxa, P_MATRIX pmtxb, size_t size, CBF_ALGEBRA cbf
 	return CBF_TERMINATE;
 }
 
-/* An enumeration describes index of matrices during multiplication. */
+/* An enumeration describes indices of matrices during multiplication. */
 typedef enum _en_MatrixMultiplication { _EMM_C, _EMM_A, _EMM_B } _MatrixMultiplication;
 
-/* Macros used to fetch line number and column number and data pointers of matrices. */
+/* These macros are used to fetch row number, column number and data pointers of matrices. */
 #define MAT_LN(index)   ((const size_t)ppmtx[index]->ln)
 #define MAT_COL(index)  ((const size_t)ppmtx[index]->col)
 #define MAT_DATA(index) (ppmtx[index]->arrz.pdata)
 
 /* Function name: strMultiplyMatrix
  * Description:   Do multiplication between two matrices A and B, and store the result into matrix C.
- *                Thus, C := A * B. Notice that A * B != B * A.
+ *                Thus, C := A * B. Note that A * B != B * A.
  * Parameters:
  *   ppmtx[3] ppmtx[0] stores a pointer to matrix C.
  *            (*) Lines of matrix C shall equal to lines of matrix A,
@@ -589,7 +589,7 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.
  *            pcbfagb[EMA_SUB] stores the pointer to a function that can perform subtraction.
  *            pcbfagb[EMA_DIV] stores the pointer to a function that can perform division.
- *            pcbfagb[EMA_CMP] stores the pointer to a function that can perform comparison.
+ *            pcbfagb[EMA_MCH] stores the pointer to a function that can match elements.
  *            Please refer to the definition of type CBF_ALGEBRA and enumeration MatrixAlgebra.
  * Return value:  true indicates calculation succeeded. false indicates calculation failed.
  * Caution:       Address of ppmtx Must Be Allocated first.
@@ -610,10 +610,6 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *                        printf("\n");
  *                    }
  *                }
- *                int cbfadd(const void * px, const void * py) {
- *                    *(MYTYPE *)px += *(MYTYPE *)py;
- *                    return CBF_CONTINUE;
- *                }
  *                int cbfmul(const void * px, const void * py) {
  *                    *(MYTYPE *)px *= *(MYTYPE *)py;
  *                    return CBF_CONTINUE;
@@ -626,12 +622,12 @@ bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA
  *                    *(MYTYPE *)px /= *(MYTYPE *)py;
  *                    return CBF_CONTINUE;
  *                }
- *                int cbfcmp(const void * px, const void * py) {
+ *                int cbfmch(const void * px, const void * py) {
  *                    if (*(MYTYPE *)px == *(MYTYPE *)py) return CBF_CMP_EQUAL;
  *                    return ! CBF_CMP_EQUAL;
  *                }
  *                int main() {
- *                    CBF_ALGEBRA pcbfagb[5] = {cbfadd, cbfmul, cbfsub, cbfdiv, cbfcmp};
+ *                    CBF_ALGEBRA pcbfagb[5] = {NULL, cbfmul, cbfsub, cbfdiv, cbfmch};
  *                    MYTYPE data[] = { 1.0f, 1.0f, 3.0f, 3.0f, 6.0f, 4.0f, 2.0f, 4.0f, 3.0f };
  *                    MYTYPE zero = 0.0f, unit = 1.0f;
  *                    MATRIX mm, mc, ma, mb;
@@ -801,13 +797,13 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 }
 
 /* Function name: strStandardMaxSimplexMatrix
- * Description:   This function is to solve linear programming problem by using simplex method.
+ * Description:   This function is used to solve linear programming problem by using simplex method.
  *                This function only accepts standard maximum constraint simplex and big M method.
  * Parameters:
  *       pmtx Pointer to a data matrix.
  *       pnil Pointer to a zero element.
  *       pidt Pointer to an identity or unit element.
- *       pnbm Pointer to a very small negative number whose abstract value is very big called M.
+ *       pnbm Pointer to a very small negative number whose abstract value is very big called Negative Big M.
  *       size Size of each element you used.
  * pcbfagb[5] pcbfagb[EMA_ADD] stores the pointer to a function that can perform addition.
  *            pcbfagb[EMA_MUL] stores the pointer to a function that can perform multiplication.

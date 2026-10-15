@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1012262345L00548
+ * File ID:     0306170921Y1015261000L00550
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -121,7 +121,8 @@ typedef enum en_MatrixAlgebra {
 	EMA_MUL,
 	EMA_SUB,
 	EMA_DIV,
-	EMA_CMP
+	EMA_CMP,
+	EMA_MCH = EMA_CMP
 } MatrixAlgebra;
 
 /* Definition of bit matrix structure. */
@@ -524,7 +525,8 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
  * bm(2,x) 0 0 1 0 0 | bm(2,x) 0 0 6 0 0
  * bm(3,x) 0.0 0 1 0 | bm(3,x) 0 0 0 8 0
  *         0 0 0 0.. |
- * Matrix data list: 2->4->6->8->NULL;
+ * Matrix data list: 2->4->6->8->NULL
+ *
  * # The above sparse matrix in memory is:
  * +_SPAMAT______________________
  * |BITMAT_______________|ARRAY_Z|

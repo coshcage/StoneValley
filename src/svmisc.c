@@ -2,7 +2,7 @@
  * Name:        svmisc.c
  * Description: Miscellaneous data structures.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948D0909260246L01074
+ * File ID:     0306170948D1015261015L01070
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -87,7 +87,7 @@ void svSwap(void * pleft, void * ptemp, void * pright, size_t size)
  *         py Pointer to another size_t integer.
  * Return value:  The same value as callback comparison function returns.
  *                Please refer to the prototype of CBF_COMPARE at svdef.h.
- * Tip:           svCBFCompareSizeTInteger is provided as one of a sort of comparison functions for this library.  
+ * Tip:           This function is provided as one of a sort of comparison functions for this library.  
  */
 int svCBFCompareSizeTInteger(const void * px, const void * py)
 {
@@ -783,7 +783,7 @@ void * svHeapSort(void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
  * Return value:  A pointer to an entry in the array that matches the searching key.
  *                If this function cannot find key, it will return NULL.
- * Caution:       Binary search must be performed on an ordered array usually sorted increasingly.
+ * Caution:       Binary search must be performed on an ordered array that is sorted increasingly.
  */
 void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp)
 {
@@ -834,28 +834,28 @@ void * svBinarySearch(const void * pkey, const void * pbase, size_t num, size_t 
  * Return value:  A pointer to an entry in the array that matches the searching key.
  *                If the value of parameter method does not belong to BSearch
  *                or function cannot find the key, function will return NULL.
- * Caution:       Binary search must be performed on an ordered array usually sorted increasingly.
- * Tip:           Here is a way to get index:
+ * Caution:       Binary search must be performed on an ordered array that is sorted increasingly.
+ * Usage:         <test.c>
  *                #include <stdio.h>
  *                #include "svstring.h"
  *                int cmp(const void * px, const void * py) { return *(int *)px - *(int *)py; }
  *                int main() {
- *                void * p; int k = 5; int a[] = {1,2,3,5,5,5,8,9};
- *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 3.
- *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 2.
- *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 6.
- *                p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
- *                k = 7; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
- *                k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 7.
- *                k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
- *                if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Can not find 10.
- *                return 0;
+ *                    void * p; int k = 5; int a[] = {1,2,3,5,5,5,8,9};
+ *                    p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 3.
+ *                    p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 2.
+ *                    p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 6.
+ *                    p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
+ *                    k = 7; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 5.
+ *                    k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Prints 7.
+ *                    k = 10; p = svBinarySearchDispatch(&k, a, sizeof a / sizeof k, sizeof k, cmp, EBS_FIRST_GREATER_THAN_KEY);
+ *                    if (NULL != p) printf("%zd\n", svIndexOf(a, p, sizeof k)); else printf("Can not find %d.\n", k); // Can not find 10.
+ *                    return 0;
  *                }
  */
 void * svBinarySearchDispatch(const void * pkey, const void * pbase, size_t num, size_t size, CBF_COMPARE cbfcmp, BSearch method)
@@ -954,7 +954,7 @@ ptrdiff_t svIndexOf_O(const void * pbase, const void * pitem, size_t size)
  * Return value:  The same value as callback function cbftvs returned.
  * Caution:       This function would return CBF_TERMINATE if it encountered allocation failures and errors.
  * Tip:           This function is a partially specialized version for character string matching comparing to strKMPSearchArrayZ and strZSearchArrayZ.
- *                The latter two are generalized versions for string matching which give you a probably worse performance to character strings.
+ *                The latter two are generalized versions for string matching who give you a probably worse performance to character strings.
  *                This function provides users a more efficient way to match character strings.
  * Usage:         <test.c>
  *                #include <stdio.h>
@@ -1009,9 +1009,7 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 		{
 			while (j >= 0 && needle[i - 1] != needle[j])
 				j = border[j];
-			
-			++j;
-			border[i] = j;
+			border[i] = ++j;
 		}
 		
 		j = border[m];
@@ -1048,7 +1046,6 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 				{
 					if (rawstk1 != suffix)
 						free(suffix);
-					
 					return CBF_TERMINATE;
 				}
 				/* Move the past current match to find the next occurrence. */
@@ -1061,7 +1058,6 @@ int svB5SSearchCharacterString(const char * haystack, size_t hlen, const char * 
 				pos += x >= y ? x : y - 1; /* Use the maximum shift which is the most efficient way. */
 			}
 		}
-		
 		if (rawstk1 != suffix)
 			free(suffix);
 		return CBF_CONTINUE;

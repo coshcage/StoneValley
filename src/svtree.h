@@ -217,8 +217,8 @@ bool            treInsertTrieA         (P_TRIE_A        ptrie,   const void * ps
 bool            treRemoveTrieA         (P_TRIE_A        ptrie,   const void * pstr,   size_t        num,     size_t       size,    CBF_COMPARE  cbfcmp);
 /* Functions for Huffman coding trees. */
 P_ARRAY_Z       treCreateHuffmanTable  (const char *    str,     size_t       num);
-P_BITSTREAM     treHuffmanEncoding     (P_ARRAY_Z       ptable,  const char * str,    size_t        num);
-P_ARRAY_Z       treHuffmanDecoding     (P_ARRAY_Z       ptable,  P_BITSTREAM  pbstm);
+P_BITSTREAM     treHuffmanEncode       (P_ARRAY_Z       ptable,  const char * str,    size_t        num);
+P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pbstm);
 
 /* Macros for function inline to accelerate execution speed. */
 /* Functions in svbtree.c. */

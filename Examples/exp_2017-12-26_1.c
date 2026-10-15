@@ -37,13 +37,13 @@ int main(void)
 		fprintf(stderr, "Error! Can not create symbol table.\n");
 		return __LINE__;
 	}
-	if (NULL == (pbsin = treHuffmanEncoding(ptbl, SZ_STR, sizeof(SZ_STR))))
+	if (NULL == (pbsin = treHuffmanEncode(ptbl, SZ_STR, sizeof(SZ_STR))))
 	{
 		fprintf(stderr, "Error! Can not encode.\n");
 		return __LINE__;
 	}
 	printf("%zd/%zd bits.\n", BITSTREAM_BLOCK_BIT * (strLevelArrayZ(&pbsin->arrz) - 1) + pbsin->nbil, CHAR_BIT * sizeof(SZ_STR));
-	if (NULL == (pout = treHuffmanDecoding(ptbl, pbsin)))
+	if (NULL == (pout = treHuffmanDecode(ptbl, pbsin)))
 	{
 		strDeleteBitStream(pbsin);
 		strDeleteArrayZ(ptbl);

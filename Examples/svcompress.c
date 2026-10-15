@@ -89,7 +89,7 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 		goto Lbl_Compress_Error;
 	
 	/* Compress data. */
-	if (NULL == (pbstm = treHuffmanEncoding(parrTable, (const char *)arrInBuffer.pdata, i)))
+	if (NULL == (pbstm = treHuffmanEncode(parrTable, (const char *)arrInBuffer.pdata, i)))
 		goto Lbl_Compress_Error;
 	
 	/* Free in-buffer array. */
@@ -98,7 +98,7 @@ SVCERROR svcCompressFile(FILE * fpout, FILE * fpin)
 	/* // In testing case, print decoded text out to show correctness.
 	{
 		P_ARRAY_Z pout;
-		pout = treHuffmanDecoding(parrTable, pbstm);
+		pout = treHuffmanDecode(parrTable, pbstm);
 		strDeleteArrayZ(pout);
 	}
 	*/
@@ -222,7 +222,7 @@ SVCERROR svcDecompressFile(FILE * fpout, FILE * fpin)
 	}
 	
 	/* Decompress. */
-	if (NULL == (parro = treHuffmanDecoding(parrTable, &bsin)))
+	if (NULL == (parro = treHuffmanDecode(parrTable, &bsin)))
 	{
 		strFreeArrayZ(&bsin.arrz);
 		strDeleteArrayZ(parrTable);

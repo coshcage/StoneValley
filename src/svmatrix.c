@@ -117,7 +117,7 @@ void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
 		pdest->col = psrc->col;
 		
 		if (pdest->arrz.pdata != psrc->arrz.pdata)
-			return strMoveArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
+			return strCopyArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
 		else
 			return (void *)pdest->arrz.pdata; /* Two matrices share a same buffer. */
 	}
@@ -138,7 +138,7 @@ void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
 				pdest->ln  = psrc->ln;
 				pdest->col = psrc->col;
 				
-				return strMoveArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
+				return strCopyArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
 			}
 			/* Resize failed. The original buffer of pdest will be kept. */
 		}
@@ -1614,7 +1614,7 @@ P_SPAMAT strCopySparseMatrix(P_SPAMAT pdest, P_SPAMAT psrc, size_t size)
 		/* Copy embedded Fenwick tree in the first step. */
 		if (0 != strLevelArrayZ(&psrc->bita) && 0 != strLevelArrayZ(&pdest->bita))
 		{
-			if (NULL == strMoveArrayZ(&pdest->bita, &psrc->bita, sizeof(size_t)))
+			if (NULL == strCopyArrayZ(&pdest->bita, &psrc->bita, sizeof(size_t)))
 				return NULL;
 		}
 		else

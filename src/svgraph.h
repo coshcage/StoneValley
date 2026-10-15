@@ -115,8 +115,8 @@ P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);
 /* Functions in svgraph.c. */
 /* Macros for adjacent matrix graphs. */
 #define grpCopyM_M(pdest_M, psrc_M) (NULL != strCopyMatrix((pdest_M), (psrc_M), sizeof(size_t)))
-#define grpCreateCopyM_M(psrc_M) (strCreateCopyMatrix((psrc_M), sizeof(size_t)))
-#define grpGetDimensionM_M(pgrp_M)  ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
+#define grpCreateCopyM_M(psrc_M) strCreateCopyMatrix((psrc_M), sizeof(size_t))
+#define grpGetDimensionM_M(pgrp_M) ((pgrp_M)->ln != (pgrp_M)->col ? 0 : (pgrp_M)->ln)
 #define grpAreAdjacentVerticesM_M(pgrp_M, vidx_M, vidy_M) (0 != grpGetEdgeWeightM((pgrp_M), NULL, (vidx_M), (vidy_M)))
 
 /* Library optimal switch. */

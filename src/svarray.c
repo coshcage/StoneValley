@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B1015260737L00903
+ * File ID:     0306170948B1015261150L00884
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -143,37 +143,18 @@ int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t 
 /* Function name: strCopyArrayZ_O
  * Description:   Copy data in sized array psrc to sized array pdest.
  * Parameters:
- *      pdest Pointer to the destination array where the content is to be copied.
+ *      pdest Pointer to the destination array to copy to.
  *       psrc Pointer to the source of array to be copied.
- *       size Size of element in both two arrays and they must have the same value.
- * Return value:  pdest->pdata
- * Caution:       Size of element in both two arrays must have the same value.
- *                Number of two arrays shall equal to each other.
+ *       size Size of each element in both two arrays and they must have the same value.
+ * Return value:  The pointer to the buffer of pdest that is the same value as pdest->pdata.
+ * Caution:       Size of each element in both two arrays must have the same value.
+ *                Element number of pdest should equal to the element number of psrc.
  *                Address of pdest and psrc Must Be Allocated first.
- *                Destination and source shall not overlap.
  * Tip:           A macro version of this function named strCopyArrayZ_M is available.
  */
 void * strCopyArrayZ_O(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size)
 {
-	return memcpy(pdest->pdata, psrc->pdata, strLevelArrayZ(psrc) * size);
-}
-
-/* Function name: strMoveArrayZ_O
- * Description:   Copy data in sized array psrc to sized array pdest.
- * Parameters:
- *      pdest Pointer to the destination array where the content is to be copied.
- *       psrc Pointer to the source of array to be copied.
- *       size Size of element in both two arrays must have the same value.
- * Return value:  pdest->pdata
- * Caution:       Size of element in both two arrays must have the same value.
- *                Number of two arrays shall equal to each other.
- *                Address of pdest and psrc Must Be Allocated first.
- * Tip:           Function allows the destination and source to overlap.
- *                A macro version of this function named strMoveArrayZ_M is available.
- */
-void * strMoveArrayZ_O(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size)
-{
-	return memmove(pdest->pdata, psrc->pdata, strLevelArrayZ(pdest) * size);
+	return memmove(pdest->pdata, psrc->pdata, (pdest->num >= psrc->num ? psrc->num : pdest->num) * size);
 }
 
 /* Function name: strCreateCopyArrayZ

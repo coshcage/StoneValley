@@ -99,7 +99,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	(pquel_M)->pfront = (pquel_M)->prear = NULL; \
 } while (0)
 #define queIsEmptyL_M(pquel_M) (NULL == (pquel_M)->pfront)
-#define queUsageL_M(pquel_M) (strLevelLinkedListSC((pquel_M)->pfront))
+#define queUsageL_M(pquel_M) strLevelLinkedListSC((pquel_M)->pfront)
 #define queHeadL_M(pitem_M, size_M, pquel_M) (NULL != (pquel_M)->pfront ? (memcpy((pitem_M), (pquel_M)->pfront->pdata, (size_M)), true) : false)
 #define queTailL_M(pitem_M, size_M, pquel_M) (NULL != (pquel_M)->prear ? (memcpy((pitem_M), (pquel_M)->prear->pdata, (size_M)), true) : false)
 /* Macros for doubly linked list queues. */
@@ -107,7 +107,7 @@ P_NODE_D   queEjectDL       (void *     pitem,  size_t       size,  P_DEQUE_DL p
 	(pdeque_M)->pfirst = (pdeque_M)->plast = NULL; \
 } while (0)
 #define queIsEmptyDL_M(pdeque_M) (!(pdeque_M)->pfirst)
-#define queUsageDL_M(pdeque_M) (strLevelLinkedListDC((pdeque_M)->pfirst, false))
+#define queUsageDL_M(pdeque_M) strLevelLinkedListDC((pdeque_M)->pfirst, false)
 #define queFirstDL_M(pitem_M, size_M, pdeque_M) (NULL != (pdeque_M)->pfirst ? (memcpy((pitem_M), (pdeque_M)->pfirst->pdata, (size_M)), true) : false)
 #define queLastDL_M(pitem_M, size_M, pdeque_M) (NULL != (pdeque_M)->plast ? (memcpy((pitem_M), (pdeque_M)->plast->pdata, (size_M)), true) : false)
 

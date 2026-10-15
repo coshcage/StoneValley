@@ -343,10 +343,10 @@ P_NODE_S strCopyLinkedListSC(LIST_S psrc, size_t size)
  *     cbfcmp Pointer to a function that compares two elements in NODE_S structures.
  *            Comparison takes two pointers as arguments, the first one is always the pdata of listx
  *            and the second one points to the pdata of listy. Both of them are type cast to (const void *).
- * Return value:  CBF_CMP_GT:    listx is greater than listy. (>).
- *                CBF_CMP_EQUAL: listx equal to listy.        (=).
- *                CBF_CMP_LT:    listx is less than listy.    (<).
- *                The following table shows characteristics about this function:
+ * Return value:  CBF_CMP_GT:    listx is greater than listy. (>) CBF_CMP_GT.
+ *                CBF_CMP_EQUAL: listx is equal to listy.     (=) CBF_CMP_EQUAL.
+ *                CBF_CMP_LT:    listx is less than listy.    (<) CBF_CMP_LT.
+ *                The following table shows the characteristics of this function:
  *                listx  listy result
  *                abcde  abdef (<) CBF_CMP_LT
  *                bcdef  abcde (>) CBF_CMP_GT

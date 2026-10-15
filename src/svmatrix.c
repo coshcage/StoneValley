@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1013262051L01844
+ * File ID:     0213191430N1014262319L01844
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -1010,33 +1010,30 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 		if (pcbfagb[EMA_CMP](pnbm, pnil) >= CBF_CMP_EQUAL)
 			return NULL; /* The value of pnbm is not negative. */
 		
-		/* Count big Ms. */
+		/* Count the number of big M. */
 		for (j = 0, i = pmtx->col - 2; i > 0; --i)
 			if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](strFetchValuePointerMatrix(pmtx, pmtx->ln - 1, i, size), pnbm))
 				++j;
 		
 		i = pmtx->ln - 1;
 		
-		if (j < pmtx->col - 1) /* If the number of big M variables is less than pmtx->col - 1, then pmtx is invalid. */
+		if (j < pmtx->col - 1) /* If only big M variables exist, then pmtx is invalid. */
 		{
 			enum _en_MAT_AUG_ROW_IDX {
 				_EMARI_THETA,
 				_EMARI_COSTB,
 				_EMARI_MAX
 			};
-			PUCHAR ptbase = malloc(size * 3);
-			P_MATRIX pxbs = strCreateMatrix(2, i, sizeof(size_t));
-			P_MATRIX paug = strCreateMatrix(_EMARI_MAX, i, size);
-			P_MATRIX pdat = strCreateMatrix(pmtx->ln + 2, pmtx->col, size);
-			P_MATRIX prtn = strCreateMatrix(2, pmtx->col - j - 1, size);
+			PUCHAR ptmpbf = malloc(size * 3); /* Temporary buffer. */
+			P_MATRIX paug = strCreateMatrix(_EMARI_MAX, i, size); /* Auxiliary matrix. */
+			P_MATRIX pxbs = strCreateMatrix(2, i, sizeof(size_t)); /* Base variables indices. */
+			P_MATRIX pdat = strCreateMatrix(pmtx->ln + 2, pmtx->col, size); /* Main simplex table. */
+			P_MATRIX prtn = strCreateMatrix(2, pmtx->col - j - 1, size); /* Solution matrix. */
 			
-			if (NULL == ptbase || NULL == pxbs || NULL == paug || NULL == pdat)
-				goto Lbl_Simplex_Done; /* Allocation failure. */
-			
-			if (NULL != prtn)
+			if (NULL != ptmpbf && NULL != paug && NULL != pxbs && NULL != pdat && NULL != prtn)
 			{
 				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t));
-				PUCHAR ptmp[3] = { ptbase, ptbase + size, ptbase + (size << 1) };
+				PUCHAR ptmp[3] = { ptmpbf, ptmpbf + size, ptmpbf + (size << 1) };
 				
 				p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size);
 				
@@ -1062,9 +1059,8 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 								*(size_t *)strFetchValuePointerMatrix(pmi, k, j, sizeof(size_t)) = (size_t)false;
 							else if (CBF_CMP_EQUAL == pcbfagb[EMA_CMP](p, pidt))
 								*(size_t *)strFetchValuePointerMatrix(pmi, k, j, sizeof(size_t)) = (size_t)true;
-							else
-								if (b)
-									b = false;
+							else if (b)
+								b = false;
 						}
 						if (b)
 							*(size_t *)strFetchValuePointerMatrix(pmi, k, j, sizeof(size_t)) = i; /* i starts from 1. */
@@ -1072,18 +1068,19 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 							++k;
 					}
 					
+					/* Make pmi to an identity matrix by sorting rows increasingly. */
 					svQuickSort(pmi->arrz.pdata, pmtx->ln - 1, pmtx->ln * sizeof(size_t), svCBFCompareSizeTInteger);
 					
 					/* Choose base variables to fill pxbs. */
 					for (i = 0; i < pxbs->col; ++i)
 					{
-						k =
+						k = /* Draw base variable indices from pmi to pxbs and eventually into k. */
 						*(size_t *)strFetchValuePointerMatrix(pxbs, 0, i, sizeof(size_t)) =
 						*(size_t *)strFetchValuePointerMatrix(pmi, pmi->ln - i - 1, pmi->ln, sizeof(size_t));
 						
 						if (k > 0) /* Fill cost b according to pxbs. */
 							memcpy(strFetchValuePointerMatrix(paug, _EMARI_COSTB, i, size), strFetchValuePointerMatrix(pdat, pdat->ln - 3, k - 1, size), size);
-						else
+						else /* Base variable is not valid. */
 						{
 							b = false;
 							goto Lbl_No_Base;
@@ -1110,20 +1107,21 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 						goto Lbl_Simplex_Done;
 				}
 				else
-					goto Lbl_Simplex_Done;
+					goto Lbl_Simplex_Done; /* Allocation failure. */
 				
 			Lbl_Tally_Sigma:
-				/* Calculate sigma and test if it is optimal. */
+				/* Make a base variable list duplication and sort it for further binary search. */
 				memcpy(strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), strFetchValuePointerMatrix(pxbs, 0, 0, sizeof(size_t)), sizeof(size_t) * pxbs->col);
 				svQuickSort(strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger);
 				
+				/* Calculate sigma by using cost coefficients and non base variable corresponded columns of coefficients. */
 				for (i = 0; i < pdat->col - 1; ++i)
 				{
 					size_t d = i + 1;
 					
 					if (NULL != svBinarySearch(&d, strFetchValuePointerMatrix(pxbs, 1, 0, sizeof(size_t)), pxbs->col, sizeof(size_t), svCBFCompareSizeTInteger))
 						memcpy(strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size), pnil, size); /* dat[dat.ln - 2][i] = 0; */
-					else /* Only calculate non base variables. */
+					else /* Only calculate non base variables and left base behind because base corresponded sigma is always zero. */
 					{
 						/* t[0] = 0; */
 						memcpy(ptmp[0], pnil, size);
@@ -1147,13 +1145,13 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 					}
 				}
 				
-				/* t[0] = dat[dat.ln - 2][0]; */
-				memcpy(ptmp[0], strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size), size);
+				/* Test sigma to find a maximum in all positive values to pin down column number to k. */
+				memcpy(ptmp[0], strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size), size); /* t[0] = dat[dat.ln - 2][0]; */
 				for (k = 0, b = true, i = 0; i < pdat->col - 1; ++i)
 				{
 					p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, i, size);
 					
-					if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL)
+					if (pcbfagb[EMA_CMP](p, pnil) > CBF_CMP_EQUAL) /* The current sigma is greater than zero. */
 					{
 						if (b)
 							b = false; /* Positive number exists. */
@@ -1176,10 +1174,10 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 					}
 				}
 				
-				if (b) /* Found optimal result. */
+				if (b) /* Find optimal result when all sigma values were less than or equal to zero. */
 					goto Lbl_Output_Result;
 				
-				/* Calculate theta. */
+				/* Calculate theta also known as testing ratio which is used to determine which base should be chosen. */
 				for (b = true, l = paug->col, i = 0; i < paug->col; ++i)
 				{
 					p = (PUCHAR) strFetchValuePointerMatrix(paug, _EMARI_THETA, i, size);
@@ -1193,24 +1191,24 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 						{
 							memcpy(ptmp[0], p, size);
 							b = false;
-							l = i;
+							l = i; /* Get row index according to the first positive theta to l. */
 						}
 						else if (pcbfagb[EMA_CMP](p, ptmp[0]) < CBF_CMP_EQUAL) 
 						{
 							memcpy(ptmp[0], p, size);
-							l = i;
+							l = i; /* Get row index according to the minimal positive theta to l. */
 						}
 					}
 				}
 				
 				if (l == paug->col) /* No valid theta can be calculated. */
-					goto Lbl_Output_Result;
+					goto Lbl_Simplex_Done;
 				
 				/* Choose a variable to get out of base corresponding to theta and change the cost coefficient of base. */
 				*(size_t *)strFetchValuePointerMatrix(pxbs, 0, l, sizeof(size_t)) = k + 1;
 				memcpy(strFetchValuePointerMatrix(paug, _EMARI_COSTB, l, size), strFetchValuePointerMatrix(pdat, pdat->ln - 3, k, size), size);
 				
-				/* Do elementary row transformation on pdat to get the next table. */
+				/* Do elementary row transformation on pdat to get the next table based on the central value dat[l][k]. */
 				memcpy(ptmp[0], strFetchValuePointerMatrix(pdat, l, k, size), size);
 				for (i = 0; i < pdat->col; ++i)
 					pcbfagb[EMA_DIV](strFetchValuePointerMatrix(pdat, l, i, size), ptmp[0]);
@@ -1230,6 +1228,8 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				
 				goto Lbl_Tally_Sigma;
 			}
+			else
+				goto Lbl_Simplex_Done; /* Allocation failure. */
 			
 		Lbl_Output_Result:
 			irpt = _ESR_ONE_OPTIMAL; /* One optimal solution. */
@@ -1273,17 +1273,17 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				prtn = NULL;
 			}
 			
-			if (NULL != prpt)
+			if (NULL != prpt) /* Assign prpt if possible. */
 				*prpt = irpt;
 			
-			if (NULL != ptbase)
-				free(ptbase);
-			
-			if (NULL != pxbs)
-				strDeleteMatrix(pxbs);
+			if (NULL != ptmpbf)
+				free(ptmpbf);
 			
 			if (NULL != paug)
 				strDeleteMatrix(paug);
+			
+			if (NULL != pxbs)
+				strDeleteMatrix(pxbs);
 			
 			if (NULL != pdat)
 				strDeleteMatrix(pdat);

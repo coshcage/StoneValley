@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1012262345L00549
+ * File ID:     0306170921Y1012262345L00548
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -328,11 +328,10 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 #define strLevelArrayZ_M(parrz_M) ((const size_t) ((parrz_M)->num))
 #define strCopyArrayZ_M(pdest_M, psrc_M, size_M) (memcpy((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
 #define strMoveArrayZ_M(pdest_M, psrc_M, size_M) (memmove((pdest_M)->pdata, (psrc_M)->pdata, (pdest_M)->num * (size_M)))
-#define strLocateItemArrayZ_M(parrz_M, size_M, index_M) (&(parrz_M)->pdata[(index_M) * (size_M)])
+#define strLocateItemArrayZ_M(parrz_M, size_M, index_M) ((void *)&(parrz_M)->pdata[(index_M) * (size_M)])
 #define strIndexOfArrayZ_M(parrz_M, pitem, size) ( \
 	((size_t) (pitem_M) >= (size_t) (parrz_M)->pdata && (size_t) (pitem_M) <= (size_t)&(parrz_M)->pdata[(size_M) * (strLevelArrayZ(parrz_M) - 1)]) ? \
-	svIndexOf((parrz_M)->pdata, (pitem_M), (size_M)) : \
-	-1 \
+	svIndexOf((parrz_M)->pdata, (pitem_M), (size_M)) : -1 \
 )
 #define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) (svBinarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)))
 /* Functions in svlist.c */

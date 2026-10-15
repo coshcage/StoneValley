@@ -191,7 +191,7 @@ viii Library Alteration Guide
 	$  *                          $ 2)=> $  * Tip: This function can be macro inline to use wrapper.              $
 	$ int wrapper(int param)      $ 3.=> $ int wrapper_O(int param)                                               $
 	$ {                           $      $ {                                                                      $
-	$      return example(param); $      $      return param + 1;                                                 $
+	$      return example(param); $      $      return example(param);                                            $
 	$ }                           $      $ }                                                                      $
 	$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 

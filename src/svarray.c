@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B0914261626L00897
+ * File ID:     0306170948B1015260737L00903
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -208,7 +208,7 @@ P_ARRAY_Z strCreateCopyArrayZ(P_ARRAY_Z psrc, size_t size)
  */
 void * strLocateItemArrayZ_O(P_ARRAY_Z parrz, size_t size, size_t index)
 {
-	return SV_ASSERT(index < strLevelArrayZ(parrz)) ? &parrz->pdata[index * size] : NULL;
+	return SV_ASSERT(index < strLevelArrayZ(parrz)) ? (void *)&parrz->pdata[index * size] : NULL;
 }
 
 /* Function name: strLinearSearchArrayZ
@@ -252,15 +252,21 @@ size_t strLinearSearchArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, C
  * Parameters:
  *      parrz Pointer to a sized array.
  *      pitem Pointer to an element that to be inserting.
- *       size Size of each element in the array. Size equaled the size of the item that pitem points.
+ *       size Size of each element in the array.
+ *            Size also equaled the size of the item that pitem points.
  *      index Index of the item you want to insert into the array.
  *            Index starts from 0 and ends with parrz->num.
  * Return value:  The address of new inserted item in the array.
  * Caution:       Address of parrz Must Be Allocated first.
- * Tip:           Users may call function strResizeArrayZ first to increase the size of the parrz pointed array.
- *                This following text shows how this function works:
- *                Before insertion, the array could be: 1 2 3 4 5
- *                After inserting value 9 onto index 2: 1 2 9 3 4 5
+ * Tip:           Users should increase the size of the parrz pointed array by 1 first before inserting.
+ *                if (NULL != strResizeArrayZ(parrz, strLevelArrayZ(parrz) + 1, size))
+ *                    strInsertItemArrayZ(parrz, pitem, size, index);
+ *                if (NULL != strResizeBufferedArrayZ(parrz, size, +1))
+ *                    strInsertItemArrayZ(parrz, pitem, size, index);
+ *                The following text shows how this function works:
+ *                                               index: [0] [1] [2] [3] [4] [5]
+ *                Before insertion, the array could be:  1   2   3   4   5
+ *                After inserting value 9 onto index 2:  1   2   9   3   4   5
  */
 void * strInsertItemArrayZ(P_ARRAY_Z parrz, const void * pitem, size_t size, size_t index)
 {
@@ -456,7 +462,7 @@ void * strBinarySearchArrayZ_O(P_ARRAY_Z parrz, const void * pkey, size_t size, 
  *       size Size of each element in the array.
  * Return value:  N/A.
  * Caution:       Address of parrz Must Be Allocated first.
- *                Users shall manage the buffer that ptemp points at.
+ *                Users shall manage the buffer of which ptemp points at.
  *                The size of the buffer of ptemp shall equal to each parameter size of the array.
  */
 void strReverseArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size)
@@ -672,7 +678,7 @@ Lbl_End_Combination:
  * Caution:       Address of parrz Must Be Allocated first.
  *                Users shall manage the buffer that ptemp points at.
  *                The size of the buffer of ptemp pointed shall equal to parameter size.
- * Tip:           This function uses Fisher-Yates algorithm.
+ * Tip:           This function adapts Fisher-Yates algorithm.
  */
 void strShuffleArrayZ(P_ARRAY_Z parrz, void * ptemp, size_t size, size_t (*nxtrnd)(void))
 {

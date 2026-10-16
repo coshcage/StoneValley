@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G0805261805L00747
+ * File ID:     0809171737G1016260950L00743
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -221,37 +221,31 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  * Return value:  If any callback function returned CBF_TERMINATE during traversal,
  *                treTraverseBYArray would return CBF_TERMINATE, otherwise CBF_CONTINUE would be returned.
  * Tip:           Here is a comprehensive guide to use treTraverseBYArray to print a binary tree on console.
+ *                <test.c>
  *                #include <stdio.h>
  *                #include "svtree.h"
- *                #include "svstack.h"
  *                void PrintBinaryTree(P_TNODE_BY pnode, size_t space) {
- *                    if (NULL == pnode) return;
- *                    ++space;
+ *                    if (NULL == pnode) return; ++space;
  *                    PrintBinaryTree(pnode->ppnode[RIGHT], space); // Process right child first.
  *                    for (size_t i = 1; i < space; ++i) printf("\t");
  *                    printf("%zd\n", *(size_t *)pnode->pdata); // Print current node after space count.
  *                    PrintBinaryTree(pnode->ppnode[LEFT], space);
  *                }
  *                int tvs1(void * pitem, size_t param) {
- *                    P_STACK_A ps = (P_STACK_A)param; DISUSE(pitem);
- *                    stkPushA(ps, NULL, sizeof(size_t)); return CBF_CONTINUE;
+ *                    ++*(size_t *)param; DISUSE(pitem); return CBF_CONTINUE; // Push stack.
  *                }
  *                int tvs2(void * pitem, size_t param) {
- *                    size_t i; P_STACK_A ps = (P_STACK_A)param;
- *                    for (i = 1; i < stkLevelA(ps); ++i) printf("\t");
- *                    printf("%zd\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
- *                    stkPopA(NULL, sizeof(size_t), ps); stkPushA(ps, NULL, sizeof(size_t)); // Push after pop.
+ *                    size_t i;
+ *                    for (i = 1; i < *(size_t *)param; ++i) printf("\t"); // Count stack level.
+ *                        printf("%zd\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
  *                    return CBF_CONTINUE;
  *                }
  *                int tvs3(void * pitem, size_t param) {
- *                    P_STACK_A ps = (P_STACK_A)param;
- *                    stkPopA(NULL, sizeof(size_t), ps); // Eject stack unconditionally.
- *                    DISUSE(pitem); return CBF_CONTINUE;
+ *                    --*(size_t *)param; DISUSE(pitem); return CBF_CONTINUE; // Pop stack.
  *                }
  *                #define MAX_TREE_HEIGHT 4
  *                int main() {
- *                    size_t i; P_NODE_D proot; STACK_A stk;
- *                    stkInitA(&stk, MAX_TREE_HEIGHT, sizeof(size_t));
+ *                    size_t i; size_t stk = 0; P_NODE_D proot;
  *                    i = 1; proot = strCreateNodeD(&i, sizeof i);
  *                    i = 2; proot->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
  *                    i = 3; proot->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
@@ -260,10 +254,12 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                    i = 6; proot->ppnode[RIGHT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
  *                    i = 7; proot->ppnode[RIGHT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
  *                    i = 8; proot->ppnode[LEFT]->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    // Use a size_t integer to mimic a stack.
  *                    treTraverseBYArray("RDL", proot, tvs1, tvs2, tvs3, (size_t)&stk); // So does PrintBinaryTree printing the same tree.
  *                    printf("-------------------------\n"); // Delimiter.
  *                    PrintBinaryTree(proot, 0); // Equivalent to use treTraverseBYArray by RDL order.
- *                    stkFreeA(&stk); treFreeBY(&proot); return 0;
+ *                    treFreeBY(&proot);
+ *                    return 0;
  *                }
  */
 int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CBF_TRAVERSE cbftvs2, CBF_TRAVERSE cbftvs3, size_t param)

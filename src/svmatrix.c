@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1015261000L01840
+ * File ID:     0213191430N1016260606L01840
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -172,7 +172,7 @@ P_MATRIX strCreateCopyMatrix(P_MATRIX psrc, size_t size)
  *         ln New number of rows of the matrix.
  *        col New number of columns of the matrix.
  *       size Size of each element in the matrix.
- * Return value:  pmtx->arrz.pdata
+ * Return value:  pmtx->arrz.pdata cast to (void *).
  * Caution:       (*) Function altered row and column number after calling.
  *                If the new column were shorter than the elder one, lines in the matrix would be truncated.
  *                If the new column were larger than the elder one, lines in the matrix would be appended to new position,
@@ -437,8 +437,8 @@ bool strProjectMatrix(P_MATRIX pdest, size_t dln, size_t dcol, P_MATRIX psrc, si
  * Return value:  Either CBF_CONTINUE or CBF_TERMINATE will be returned depended on function cbfagb.
  * Caution:       Address of pmtx Must Be Allocated first.
  * Tip:           Users could use this function to multiply a number with a matrix like this way:
- *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
- *                float f = 2.0f; strMathMatrix(pmtx, &f, sizeof(float), mul);
+ *                int cbfmul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
+ *                float f = 2.0f; strMathMatrix(pmtx, &f, sizeof(float), cbfmul);
  */
 int strMathMatrix(P_MATRIX pmtx, const void * pval, size_t size, CBF_ALGEBRA cbfagb)
 {
@@ -507,44 +507,44 @@ typedef enum _en_MatrixMultiplication { _EMM_C, _EMM_A, _EMM_B } _MatrixMultipli
  * Caution:       Address of ppmtx[0], ppmtx[1] and ppmtx[2] Must Be Allocated first.
  * Tip:           Users could use this function to multiply a matrix with another like this way:
  *                <test.c>
+ *                #include <stdio.h>
  *                #include <string.h>
  *                #include "svstring.h"
- *                void Print(P_MATRIX p) {
+ *                void PrintMatrix(P_MATRIX p) {
  *                    size_t i, j;
  *                    for (i = 0; i < p->ln; ++i) {
  *                        for (j = 0; j < p->col; ++j)
- *                            printf("%0.0f ", *(float *)strGetValueMatrix(NULL, p, i, j, sizeof(float)));
+ *                            printf("%g ", *(float *)strGetValueMatrix(NULL, p, i, j, sizeof(float)));
  *                        printf("\n");
  *                    }
+ *                    printf("\n");
  *                }
- *                int add(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
- *                int mul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
+ *                int cbfadd(const void * pa, const void * pb) { *(float *)pa += *(float *)pb; return CBF_CONTINUE; }
+ *                int cbfmul(const void * pa, const void * pb) { *(float *)pa *= *(float *)pb; return CBF_CONTINUE; }
  *                int main() {
- *                    MATRIX mc, ma, mb;
- *                    float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, tmp = 0.0f;
+ *                    float a[] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }, t = 0.0f;
  *                    float b[] = { 3.0f, 2.0f, 1.0f, 6.0f, 5.0f, 4.0f };
- *                    CBF_ALGEBRA alg[2]; P_MATRIX pm[3];
- *                    alg[EMA_ADD] = add; alg[EMA_MUL] = mul;
- *                    pm[0] = &mc; pm[1] = &ma; pm[2] = &mb;
- *                    strInitMatrix(&ma, 2, 3, sizeof(float));
- *                    strInitMatrix(&mb, 3, 2, sizeof(float));
- *                    strInitMatrix(&mc, 2, 2, sizeof(float));
- *                    strSetMatrix(&mc, &tmp, sizeof(float));
- *                    memcpy(ma.arrz.pdata, a, sizeof a);
- *                    memcpy(mb.arrz.pdata, b, sizeof b);
- *                    strMultiplyMatrix(pm, &tmp, sizeof(float), alg); Print(&mc);
- *                    strFreeMatrix(&mc); strFreeMatrix(&ma); strFreeMatrix(&mb);
+ *                    CBF_ALGEBRA alg[2] = { cbfadd, cbfmul }; P_MATRIX pm[3];
+ *                    pm[1] = strCreateMatrix(2, 3, sizeof(float));
+ *                    pm[2] = strCreateMatrix(3, 2, sizeof(float));
+ *                    pm[0] = strCreateMatrix(pm[1]->ln, pm[2]->col, sizeof(float));
+ *                    strSetMatrix(pm[0], &t, sizeof(float));
+ *                    memcpy(pm[1]->arrz.pdata, a, sizeof a);
+ *                    memcpy(pm[2]->arrz.pdata, b, sizeof b);
+ *                    PrintMatrix(pm[1]); PrintMatrix(pm[2]);
+ *                    strMultiplyMatrix(pm, &t, sizeof(float), alg); PrintMatrix(pm[0]);
+ *                    strDeleteMatrix(pm[0]); strDeleteMatrix(pm[1]); strDeleteMatrix(pm[2]);
  *                    return 0;
  *                }
  *                Result and explanation:
  *                | 1 2 3 |   | 3 2 |   | 20 26 |
  *                | 4 5 6 | * | 1 6 | = | 47 62 |
  *                            | 5 4 |
- *                  __      _n_
- *                 /  \     \  |
- *                |      ==  >   a  b
- *                 \__/ij   /__|  ik kj
- *                          k:=1
+ *                      _n_.
+ *                      \  '
+ *                C   =  }  A  * B
+ *                 ij   /__. ik   kj
+ *                      k=1
  */
 bool strMultiplyMatrix(P_MATRIX ppmtx[3], void * ptemp, size_t size, CBF_ALGEBRA pcbfagb[2])
 {
@@ -798,7 +798,7 @@ bool strInvertMatrix(P_MATRIX pmtx, const void * pnil, const void * pidt, size_t
 
 /* Function name: strStandardMaxSimplexMatrix
  * Description:   This function is used to solve linear programming problem by using simplex method.
- *                This function only accepts standard maximum constraint simplex and big M method.
+ *                Note that this function only accepts standard maximum constraint simplex and big M method.
  * Parameters:
  *       pmtx Pointer to a data matrix.
  *       pnil Pointer to a zero element.

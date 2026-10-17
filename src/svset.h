@@ -43,8 +43,8 @@ typedef HSHTBL_C SET_H, * P_SET_H;
 typedef BST SET_T, * P_SET_T;
 
 /* Define macros to switch set between trees. */
-#define SET_TREE_AA     0x1
-#define SET_TREE_AVL    0x2
+#define SET_TREE_AA     0x0
+#define SET_TREE_AVL    0x1
 
 /* Tree set method switch. Alter the following one macro to alter set implementation. */
 #define SET_TREE_USING (SET_TREE_AA)

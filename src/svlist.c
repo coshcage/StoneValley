@@ -64,8 +64,8 @@ int _strCBFNodesCounter(void * pitem, size_t param)
 {
 	++*(size_t *)param;
 	DISUSE(pitem);
-	/* Add this above sentence to prevent function from producing a
-	 * unreferenced formal parameter warning for pitem.
+	/* Use DISUSE(param); to prevent compilers from producing a
+	 * unreferenced formal parameter warning for param.
 	 */
 	return CBF_CONTINUE;
 }

@@ -71,7 +71,7 @@ int _treCBFGNodeEnqueue(void * pitem, size_t param)
  * Return value:  CBF_CONTINUE only.
  */
 int _treCBFFreeTNodeG(void * pitem, size_t param)
-{	/* Add this following sentence to prevent function from producing a
+{	/* Use DISUSE(param); to prevent compilers from producing a
 	 * unreferenced formal parameter warning for param.
 	 */
 	DISUSE(param);

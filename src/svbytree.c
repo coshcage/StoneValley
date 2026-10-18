@@ -229,7 +229,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                    PrintBinaryTree(pnode->ppnode[RIGHT], space); // Process right child first.
  *                    for (size_t i = 1; i < space; ++i) printf("\t");
  *                    printf("%zd\n", *(size_t *)pnode->pdata); // Print current node after space count.
- *                    PrintBinaryTree(pnode->ppnode[LEFT], space);
+ *                    PrintBinaryTree(pnode->ppnode[LEFT], space); // Recur to process the left child.
  *                }
  *                int tvs1(void * pitem, size_t param) {
  *                    ++*(size_t *)param; DISUSE(pitem); return CBF_CONTINUE; // Push stack.
@@ -247,11 +247,11 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                int main() {
  *                    size_t i; size_t stk = 0; P_NODE_D proot;
  *                    i = 1; proot = strCreateNodeD(&i, sizeof i);
- *                    i = 2; proot->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 2; proot->ppnode[LEFT]  = strCreateNodeD(&i, sizeof i);
  *                    i = 3; proot->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
- *                    i = 4; proot->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
- *                    i = 5; proot->ppnode[LEFT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
- *                    i = 6; proot->ppnode[RIGHT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
+ *                    i = 4; proot->ppnode[LEFT]->ppnode[LEFT]   = strCreateNodeD(&i, sizeof i);
+ *                    i = 5; proot->ppnode[LEFT]->ppnode[RIGHT]  = strCreateNodeD(&i, sizeof i);
+ *                    i = 6; proot->ppnode[RIGHT]->ppnode[LEFT]  = strCreateNodeD(&i, sizeof i);
  *                    i = 7; proot->ppnode[RIGHT]->ppnode[RIGHT] = strCreateNodeD(&i, sizeof i);
  *                    i = 8; proot->ppnode[LEFT]->ppnode[LEFT]->ppnode[LEFT] = strCreateNodeD(&i, sizeof i);
  *                    // Use a size_t integer to mimic a stack.
@@ -266,7 +266,7 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CB
 {
 	if (NULL != pnode)
 	{
-		REGISTER size_t i;
+		size_t i;
 		if (NULL != cbftvs1 && CBF_CONTINUE != cbftvs1(pnode, param))
 			return CBF_TERMINATE;
 		for (i = 0; i < 3; ++i)
@@ -305,7 +305,7 @@ int treTraverseBYArray(char order[3], P_TNODE_BY pnode, CBF_TRAVERSE cbftvs1, CB
  *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       You can NOT break the traversal procedure until it works through a whole tree
- *                when you return CBF_TERMINATE in callback function.
+ *                when you are trying to return CBF_TERMINATE in callback function.
  */
 int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {
@@ -358,7 +358,7 @@ int treMorrisTraverseBYPre(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *      param Parameter which can be transferred into the callback function.
  * Return value:  The same value as callback function returns.
  * Caution:       You can NOT break the traversal procedure until it works through a whole tree
- *                when you return CBF_TERMINATE in callback function.
+ *                when you are trying to return CBF_TERMINATE in callback function.
  */
 int treMorrisTraverseBYIn(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
 {

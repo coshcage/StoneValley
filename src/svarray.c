@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B1015261150L00884
+ * File ID:     0306170948B1018262240L00915
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -151,10 +151,41 @@ int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t 
  *                Element number of pdest should equal to the element number of psrc.
  *                Address of pdest and psrc Must Be Allocated first.
  * Tip:           A macro version of this function named strCopyArrayZ_M is available.
+ *                Four cases are listed below.
+ *                Case 1 and 2 are non overlapping cases.
+ *                Case 3 and 4 are overlapping cases.
+ *                (1)================
+ *                a        b
+ *                |________|
+ *                         ^--------^
+ *                         c        d
+ *                b <= c;
+ *                (2)================
+ *                         a        b
+ *                         |________|
+ *                ^--------^
+ *                c        d
+ *                a >= d;
+ *                (3)================
+ *                         a        b
+ *                         |________|
+ *                    ^--------^
+ *                    c        d
+ *                a >= c && a < d;
+ *                (4)================
+ *                 a        b
+ *                 |________|
+ *                       ^--------^
+ *                       c        d
+ *                c >= a && b <=d;
+ *                a = pdest->pdata; b = pdest->pdata + pdest->num;
+ *                c = psrc->pdata;  d = psrc->pdata  + psrc->num;
  */
 void * strCopyArrayZ_O(P_ARRAY_Z pdest, P_ARRAY_Z psrc, size_t size)
 {
-	return memmove(pdest->pdata, psrc->pdata, (pdest->num >= psrc->num ? psrc->num : pdest->num) * size);
+	return pdest->pdata + (pdest->num * size) <= psrc->pdata || pdest->pdata >= psrc->pdata + (psrc->num * size) ?
+		memcpy(pdest->pdata, psrc->pdata, (pdest->num >= psrc->num ? psrc->num : pdest->num) * size) :
+		memmove(pdest->pdata, psrc->pdata, (pdest->num >= psrc->num ? psrc->num : pdest->num) * size);
 }
 
 /* Function name: strCreateCopyArrayZ

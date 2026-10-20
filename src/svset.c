@@ -2,7 +2,7 @@
  * Name:        svset.c
  * Description: Sets.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171620L1013262100L01688
+ * File ID:     0901171620L1020261041L01692
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -161,7 +161,7 @@ bool setIsSubsetA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 		return true;
 	else if (NULL == pseta) /* An empty set is the subset of any other sets. */
 		return true;
-	else if (strLevelArrayZ(pseta) > strLevelArrayZ(psetb))
+	else if (setSizeA(pseta) > setSizeA(psetb))
 		return false;
 	else
 	{
@@ -191,8 +191,10 @@ bool setIsEqualA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE cbfcmp)
 {
 	if (pseta == psetb)
 		return true;
-	else if (strLevelArrayZ(pseta) != strLevelArrayZ(psetb))
+	else if (setSizeA(pseta) != setSizeA(psetb))
 		return false;
+	else if (setIsEmptyA(pseta))
+		return true;
 	else
 	{
 		REGISTER size_t i, j;
@@ -301,6 +303,8 @@ P_SET_A setCreateUnionA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMPARE c
 		return strCreateCopyArrayZ(psetb, size);
 	else if (NULL != pseta && NULL == psetb)
 		return strCreateCopyArrayZ(pseta, size);
+	else if (NULL == pseta && NULL == psetb)
+		return NULL;
 	else
 	{
 		P_SET_A prtn = strCreateArrayZ(strLevelArrayZ(pseta) + strLevelArrayZ(psetb), size);
@@ -422,7 +426,7 @@ P_SET_A setCreateDifferenceA(P_SET_A pseta, P_SET_A psetb, size_t size, CBF_COMP
 {
 	if (NULL != pseta)
 	{
-		if (NULL == psetb) /* A - 0 == A. */
+		if (setIsEmptyA(psetb)) /* A - 0 == A. */
 			return strCreateCopyArrayZ(pseta, size);
 		else
 		{

@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G1016260950L00743
+ * File ID:     0809171737G1016260950L00742
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -243,7 +243,6 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                int tvs3(void * pitem, size_t param) {
  *                    --*(size_t *)param; DISUSE(pitem); return CBF_CONTINUE; // Pop stack.
  *                }
- *                #define MAX_TREE_HEIGHT 4
  *                int main() {
  *                    size_t i; size_t stk = 0; P_NODE_D proot;
  *                    i = 1; proot = strCreateNodeD(&i, sizeof i);

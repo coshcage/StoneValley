@@ -1121,7 +1121,7 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 					{
 						/* t[0] = 0; */
 						memcpy(ptmp[0], pnil, size);
-						/* t[3] = dat[dat.ln - 3][i]; */
+						/* t[2] = dat[dat.ln - 3][i]; */
 						memcpy(ptmp[2], strFetchValuePointerMatrix(pdat, pdat->ln - 3, i, size), size);
 						
 						for (j = 0; j < paug->col; ++j)

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1029262228L01822
+ * File ID:     0213191430N1030260324L01826
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -1737,7 +1737,7 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, const void 
 			if(BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.quot] >> (a + i))))
 				++s;
 		
-		if (strGetBitBMap(&pmtx->bmask, ln, col))
+		if (BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? a : 0))))
 		{	/* Item exists. */
 			if (NULL != (pnode = strLocateItemSC(pmtx->datlst, s)))
 			{
@@ -1809,12 +1809,16 @@ bool strFillSparseMatrix(P_MATRIX pdest, P_SPAMAT psrc, size_t size)
 	{
 		REGISTER P_NODE_S pnode = psrc->datlst;
 		REGISTER size_t i, j;
+		
 		/* Clean destination. */
 		memset(pdest->arrz.pdata, 0, strLevelArrayZ(&pdest->arrz) * size);
+		
+		/* Fill destination. */
 		for (i = 0; i < psrc->bmask.ln; ++i)
 			for (j = 0; j < psrc->bmask.col; ++j)
 				if (strGetBitBMap(&psrc->bmask, i, j))
 					strSetValueMatrix(pdest, i, j, pnode->pdata, size), pnode = pnode->pnode;
+		
 		return true;
 	}
 	return false;

@@ -477,7 +477,7 @@ bool strBitStreamLocate(P_BITSTREAM pbstm, size_t index)
 {
 	if (SV_ASSERT(index < (strLevelArrayZ(&pbstm->arrz) - 1) * BITSTREAM_BLOCK_BIT + pbstm->nbil))
 	{
-		REGISTER stdiv_t st = stdiv(index, BITSTREAM_BLOCK_BIT);
+		stdiv_t st = stdiv(index, BITSTREAM_BLOCK_BIT);
 		return BOOLIZE(BITSTREAM_BLOCK(pbstm)[st.quot] & ((bitstream_block_t) 0x1 << (BITSTREAM_BLOCK_BIT - st.rem - 1)));
 	}
 	return false;

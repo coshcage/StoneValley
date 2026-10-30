@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1018262339L00547
+ * File ID:     0306170921Y1029262228L00547
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -290,7 +290,7 @@ void        strDeleteSparseMatrix          (P_SPAMAT     pmtx);
 P_SPAMAT    strCopySparseMatrix            (P_SPAMAT     pdest,    P_SPAMAT     psrc,    size_t       size);
 P_SPAMAT    strCreateCopySparseMatrix      (P_SPAMAT     psrc,     size_t       size);
 void *      strGetValueSparseMatrix        (void *       pval,     P_SPAMAT     pmtx,    size_t       ln,      size_t       col,    size_t      size);
-void *      strSetValueSparseMatrix        (P_SPAMAT     pmtx,     size_t       ln,      size_t       col,     void *       pval,   size_t      size);
+void *      strSetValueSparseMatrix        (P_SPAMAT     pmtx,     size_t       ln,      size_t       col,     const void * pval,   size_t      size);
 bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     psrc,    size_t       size);
 
 /* Macros for function inline to accelerate execution speed. */
@@ -530,11 +530,11 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
  * |_____________|ARRAY_Z|___bita|
  * |size_t|size_t|__bmask|size_t_|
  * |____ln|___col|size_t_|____num|
- * |_____4|_____5|____num|______4|
- * |LIST_S_______|______3|PUCHAR_|  # Here we have the memory buffer of a Fenwick tree
+ * |_____4|_____5|____num|______3|
+ * |LIST_S_______|______1|PUCHAR_|  # Here we have the memory buffer of a Fenwick tree
  * |______ datlst|PUCHAR_|__pdata|  # that resides in the structure of a sparse matrix.
- * |*____________|__pdata|______*->[0x00000000][0x00000002][0x00000003][0x00000001]
- *  |            |______*->[0x82][0x08][0x20] # This is the memory buffer of the bit map.
+ * |*____________|__pdata|______*->[0x00000001][0x00000002][0x00000001]
+ *  |            |______*->[0x82082000] # This is the memory buffer of the bit map mask.
  *  |
  *  +_NODE_S_  +-+_NODE_S_  +-+_NODE_S_  +-+_NODE_S_
  *  |P_NODE_S| | |P_NODE_S| | |P_NODE_S| | |P_NODE_S|

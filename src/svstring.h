@@ -335,7 +335,7 @@ bool        strFillSparseMatrix            (P_MATRIX     pdest,    P_SPAMAT     
 	((size_t) (pitem_M) >= (size_t) (parrz_M)->pdata && (size_t) (pitem_M) <= (size_t)&(parrz_M)->pdata[(size_M) * (strLevelArrayZ(parrz_M) - 1)]) ? \
 	svIndexOf((parrz_M)->pdata, (pitem_M), (size_M)) : -1 \
 )
-#define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) (svBpdest->inarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)))
+#define strBinarySearchArrayZ_M(parrz_M, pkey_M, size_M, cbfcmp_M) (svBinarySearch((pkey_M), (parrz_M)->pdata, (parrz_M)->num, (size_M), (cbfcmp_M)))
 /* Functions in svlist.c */
 #define strInitLinkedListSC_M(plist_M) do { \
 	*(plist_M) = NULL; \

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1030260324L01826
+ * File ID:     0213191430N1031260317L01834
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -1685,15 +1685,19 @@ void * strGetValueSparseMatrix(void * pval, P_SPAMAT pmtx, size_t ln, size_t col
 		
 		if (BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? a : 0))))
 		{	/* Item exists. */
-			REGISTER size_t i, s = 0;
+			REGISTER size_t i, j, k = dr.quot, s = 0;
 			REGISTER P_NODE_S pnode;
 			
-			if (dr.quot > 0 && ln > 1) /* More than 1 block needs to be counted. */
+			if (dr.quot > 0 && ln > 0) /* More than 1 block needs to be counted. */
+			{
 				s = _strBITSum(ln - 1, &pmtx->bita); /* Count leading items. */
+				if (dr.rem)
+					k = dr.quot + 1;
+			}
 			
 			/* Count the rest of items. */
-			for (i = 1; i < dr.rem; ++i)
-				if(BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.quot] >> (a + i))))
+			for (i = 1, j = dr.rem ? dr.rem : BMAP_BLOCK_BIT; i < j; ++i)
+				if(BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[k] >> (a + i))))
 					++s;
 			
 			/* Fetch item's data. */
@@ -1726,15 +1730,19 @@ void * strSetValueSparseMatrix(P_SPAMAT pmtx, size_t ln, size_t col, const void 
 	if (SV_ASSERT(ln < pmtx->bmask.ln && col < pmtx->bmask.col))
 	{
 		stdiv_t dr = stdiv(ln * pmtx->bmask.col + col + 1, BMAP_BLOCK_BIT);
-		REGISTER size_t i, s = 0, a = BMAP_BLOCK_BIT - dr.rem;
+		REGISTER size_t i, j, k = dr.quot, s = 0, a = BMAP_BLOCK_BIT - dr.rem;
 		REGISTER P_NODE_S pnode = NULL;
 		
-		if (dr.quot > 0 && ln > 1) /* More than 1 block needs to be counted. */
+		if (dr.quot > 0 && ln > 0) /* More than 1 block needs to be counted. */
+		{
 			s = _strBITSum(ln - 1, &pmtx->bita); /* Count leading items. */
+			if (dr.rem)
+				k = dr.quot + 1;
+		}
 		
 		/* Count the rest of items. */
-		for (i = 1; i < dr.rem; ++i)
-			if(BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.quot] >> (a + i))))
+		for (i = 1, j = dr.rem ? dr.rem : BMAP_BLOCK_BIT; i < j; ++i)
+			if(BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[k] >> (a + i))))
 				++s;
 		
 		if (BOOLIZE(0x1 & (BMAP_BLOCK(&pmtx->bmask)[dr.rem ? dr.quot : dr.quot - 1] >> (dr.rem ? a : 0))))

@@ -823,7 +823,7 @@ int _setCBFIntersectionHPuppet(void * pitem, size_t param)
 		BOOLIZE(4[(size_t *)param]) ==
 		setIsMemberH
 		(
-			(P_SET_H)    3[(size_t *)param],
+			(P_SET_H)3[(size_t *)param],
 			cbfhsh,
 			pitem,
 			cbfmch

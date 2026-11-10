@@ -322,7 +322,7 @@ void treFreeNodeHeapD_O(P_TNODE_HD pnode)
 	}
 }
 
-/* Function name: treCreateBSTNode
+/* Function name: treCreateNodeHeapD
  * Description:   Dynamically allocate a node of a linked binary heap tree.
  * Parameters:
  *       pval Pointer to an element.

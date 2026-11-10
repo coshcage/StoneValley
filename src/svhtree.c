@@ -2,7 +2,7 @@
  * Name:        svhtree.c
  * Description: Heap tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737E1110260822L00717
+ * File ID:     0809171737E1110261041L00717
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -279,7 +279,7 @@ int _treCBFFreeHeapNodeD(void * pitem, size_t param);
  *       size Size of the element.
  *     parent Pointer to the parent node of the node that pnode pointed out.
  *     degree Signifies the number of nodes in the tree that rooted with pnode.
- *     height Height of the current node.
+ *     height Height of the current node. The height of a leaf node is 0.
  *            The height of a root node is its number of longest path of nodes from the root's child to a leaf.
  * Return value:  knot.pdata pointer of a TNODE_HD structure.
  *                If function could not initialize a node, it would return NULL.
@@ -329,7 +329,7 @@ void treFreeNodeHeapD_O(P_TNODE_HD pnode)
  *       size Size of the element.
  *     parent Pointer to the parent node of the node that pnode pointed out.
  *     degree Signifies the number of nodes in the tree that rooted with pnode.
- *     height Height of the current node.
+ *     height Height of the current node. The height of a leaf node is 0.
  *            The height of a root node is its number of longest path of nodes from the root's child to a leaf.
  * Return value:  Pointer to a new allocated node.
  *                If function could not create a node, it would return NULL.

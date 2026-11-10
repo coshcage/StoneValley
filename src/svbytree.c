@@ -2,7 +2,7 @@
  * Name:        svbytree.c
  * Description: Binary trees.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737G1016260950L00742
+ * File ID:     0809171737G1110261047L00744
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -532,9 +532,11 @@ size_t treArityBY(P_TNODE_BY pnode)
  * Description:   Test the height of a node in a binary tree recursively.
  * Parameter:
  *     pnode Pointer to a node of a binary tree.
+ *           Setting pnode to NULL would let this function return 0.
+ *           If pnode points a leaf node, this function will return 1.
  * Return value:  The height of a node.
  * Tip:           If pnode were the root node of a binary tree,
- *                the height of that tree would return.
+ *                the height of that tree would be returned.
  */
 size_t treHeightBY(P_TNODE_BY pnode)
 {

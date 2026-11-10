@@ -77,7 +77,7 @@ void treFreeBSTNode_O(P_BSTNODE pnode)
  *      pitem Pointer to an element.
  *       size Size of the element.
  *      param Additional information of the current node.
- * Return value:  Pointer to the new allocated node.
+ * Return value:  Pointer to a new allocated node.
  *                If function could not create a node, it would return NULL.
  */
 P_BSTNODE treCreateBSTNode(const void * pitem, size_t size, size_t param)

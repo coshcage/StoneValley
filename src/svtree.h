@@ -2,7 +2,7 @@
  * Name:        svtree.h
  * Description: Trees interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737V0822261309L00548
+ * File ID:     0809171737V1110260832L00616
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -75,6 +75,20 @@ typedef struct st_HEAP_A {
 	ARRAY_Z hdarr; /* Heap data array. */
 	size_t  irear; /* Index of the last element. */
 } HEAP_A, * P_HEAP_A;
+
+/* Types for doubly linked heap tree nodes. */
+typedef struct st_TNODE_HD {
+	TNODE_BY knot; /* A knot is actually a binary tree node. */
+	struct st_TNODE_HD * parent; /* Parent to the current node. */
+	size_t degree; /* Number of nodes in the following sub tree. */
+	size_t height; /* Height of the current heap tree node. */
+} TNODE_HD, * P_TNODE_HD;
+
+/* Types for binary heap trees that use double pointer nodes. */
+typedef P_TNODE_HD   HEAP_D;   /* Binary heap tree. */
+typedef P_TNODE_HD * P_HEAP_D; /* Pointer to a binary heap tree. */
+
+#define P2P_TNODE_HD(ptr) ((P_TNODE_HD) (ptr)) /* Cast a pointer to P_TNODE_HD. */
 
 /* Types for in-memory B-plus trees. */
 typedef NODE_D     BPTNODE;
@@ -165,6 +179,19 @@ void            treMakeEmptyHeapA_O    (P_HEAP_A        pheap);
 bool            treInsertHeapA         (P_HEAP_A        pheap,    const void * pitem,  void *       ptemp,   size_t       size,    CBF_COMPARE  cbfcmp,  bool        bmax);
 bool            treRemoveHeapA         (void *          pitem,    void *       ptemp,  size_t       size,    P_HEAP_A     pheap,   CBF_COMPARE  cbfcmp,  bool        bmax);
 bool            trePeepHeapA           (void *          pitem,    size_t       size,   P_HEAP_A     pheap);
+void *          treInitNodeHeapD       (P_TNODE_HD      pnode,    const void * pval,   size_t       size,    P_TNODE_HD   parent,  size_t       degree,  size_t      height);
+void            treFreeNodeHeapD_O     (P_TNODE_HD      pnode);
+P_TNODE_HD      treCreateNodeHeapD     (const void *    pval,     size_t       size,   P_TNODE_HD   parent,  size_t       degree,  size_t       height);
+void            treDeleteNodeHeapD_O   (P_TNODE_HD      pnode);
+void            treInitHeapD_O         (P_HEAP_D        pheap);
+void            treFreeHeapD           (P_HEAP_D        pheap);
+P_HEAP_D        treCreateHeapD         (void);
+void            treDeleteHeapD_O       (P_HEAP_D        pheap);
+bool            treIsEmptyHeapD_O      (P_HEAP_D        pheap);
+bool            treIsFullHeapD_O       (P_TNODE_HD      pnode);
+P_TNODE_HD      treInsertHeapD         (P_HEAP_D        pheap,    const void * pitem,  size_t       size,    CBF_COMPARE  cbfcmp,  bool         bmax);
+bool            treRemoveHeapD         (void *          pitem,    size_t       size,   P_HEAP_D     pheap,   CBF_COMPARE  cbfcmp,  bool         bmax);
+bool            trePeepHeapD           (void *          pitem,    size_t       size,   P_HEAP_D     pheap);
 /* Functions for binary search trees(BSTs). */
 void *          treInitBSTNode         (P_BSTNODE       pnode,    const void * pitem,  size_t       size,    size_t       param);
 void            treFreeBSTNode_O       (P_BSTNODE       pnode);
@@ -239,6 +266,23 @@ P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 #define treMakeEmptyHeapA_M(pheap_M) do { \
 	(pheap_M)->irear = 0; \
 } while (0)
+#define treFreeNodeHeapD_M(pnode_M) do { \
+	free((pnode_M)->knot.pdata); \
+	(pnode_M)->knot.pdata = NULL; \
+} while(0)
+#define treDeleteNodeHeapD_M(pnode_M) do { \
+	treFreeNodeHeapD_M(pnode_M); \
+	free(pnode_M); \
+} while (0)
+#define treInitHeapD_M(pheap_M) do { \
+	*(pheap_M) = NULL; \
+} while (0)
+#define treDeleteHeapD_M(pheap_M) do { \
+	treFreeHeapD(pheap_M); \
+	free(pheap_M); \
+} while (0)
+#define treIsEmptyHeapD_M(pheap_M) (NULL != *(pheap_M) ? true : false)
+#define treIsFullHeapD_M(pnode_M) ((2 << (pnode_M)->height) - 1U == (pnode_M)->degree ? true : false)
 /* Functions in svstree.c. */
 #define treFreeBSTNode_M(pnode_M) do { \
 	strFreeNodeD(&(pnode_M)->knot); \
@@ -313,6 +357,12 @@ P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
+	#define treFreeNodeHeapD     treFreeNodeHeapD_O
+	#define treDeleteNodeHeapD   treDeleteNodeHeapD_O
+	#define treInitHeapD         treInitHeapD_M
+	#define treDeleteHeapD       treDeleteHeapD_O
+	#define treIsEmptyHeapD      treIsEmptyHeapD_M
+	#define treIsFullHeapD       treIsFullHeapD_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_R
 	#define treFreeBSTNode       treFreeBSTNode_O
@@ -346,6 +396,12 @@ P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
+	#define treFreeNodeHeapD     treFreeNodeHeapD_M
+	#define treDeleteNodeHeapD   treDeleteNodeHeapD_M
+	#define treInitHeapD         treInitHeapD_M
+	#define treDeleteHeapD       treDeleteHeapD_M
+	#define treIsEmptyHeapD      treIsEmptyHeapD_M
+	#define treIsFullHeapD       treIsFullHeapD_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_N
 	#define treFreeBSTNode       treFreeBSTNode_M
@@ -378,6 +434,12 @@ P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treIsEmptyHeapA      treIsEmptyHeapA_M
 	#define treIsFullHeapA       treIsFullHeapA_M
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_M
+	#define treFreeNodeHeapD     treFreeNodeHeapD_O
+	#define treDeleteNodeHeapD   treDeleteNodeHeapD_O
+	#define treInitHeapD         treInitHeapD_M
+	#define treDeleteHeapD       treDeleteHeapD_O
+	#define treIsEmptyHeapD      treIsEmptyHeapD_M
+	#define treIsFullHeapD       treIsFullHeapD_M
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_N
 	#define treFreeBSTNode       treFreeBSTNode_O
@@ -410,6 +472,12 @@ P_ARRAY_Z       treHuffmanDecode       (P_ARRAY_Z       ptable,  P_BITSTREAM  pb
 	#define treIsEmptyHeapA      treIsEmptyHeapA_O
 	#define treIsFullHeapA       treIsFullHeapA_O
 	#define treMakeEmptyHeapA    treMakeEmptyHeapA_O
+	#define treFreeNodeHeapD     treFreeNodeHeapD_O
+	#define treDeleteNodeHeapD   treDeleteNodeHeapD_O
+	#define treInitHeapD         treInitHeapD_O
+	#define treDeleteHeapD       treDeleteHeapD_O
+	#define treIsEmptyHeapD      treIsEmptyHeapD_O
+	#define treIsFullHeapD       treIsFullHeapD_O
 	/* Functions in svstree.c. */
 	#define treBSTFindData_X     treBSTFindData_R
 	#define treFreeBSTNode       treFreeBSTNode_O

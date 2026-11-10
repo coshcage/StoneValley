@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1031260317L01834
+ * File ID:     0213191430N1110260136L01838
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -1020,7 +1020,7 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 				_EMARI_COSTB,
 				_EMARI_MAX
 			};
-			PUCHAR ptmpbf = malloc(size * 3); /* Temporary buffer. */
+			PUCHAR ptmpbf = (PUCHAR) malloc(size * 3); /* Temporary buffer. */
 			P_MATRIX paug = strCreateMatrix(_EMARI_MAX, i, size); /* Auxiliary matrix. */
 			P_MATRIX pxbs = strCreateMatrix(2, i, sizeof(size_t)); /* Base variables indices. */
 			P_MATRIX pdat = strCreateMatrix(pmtx->ln + 2, pmtx->col, size); /* Main simplex table. */
@@ -1029,7 +1029,11 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 			if (NULL != ptmpbf && NULL != paug && NULL != pxbs && NULL != pdat && NULL != prtn)
 			{
 				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t));
-				PUCHAR ptmp[3] = { ptmpbf, ptmpbf + size, ptmpbf + (size << 1) };
+				PUCHAR ptmp[3];
+
+				ptmp[0] = ptmpbf;
+				ptmp[1] = ptmpbf + size;
+				ptmp[2] = ptmpbf + (size << 1);
 				
 				p = (PUCHAR) strFetchValuePointerMatrix(pdat, pdat->ln - 2, 0, size);
 				

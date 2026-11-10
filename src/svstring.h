@@ -161,19 +161,19 @@ ptrdiff_t   svIndexOf_O                    (const void * pbase,    const void * 
 int         svB5SSearchCharacterString     (const char * haystack, size_t       hlen,      const char * needle,  size_t       nlen,   bool        bovlp,  CBF_TRAVERSE cbftvs,     size_t   param);
 /* Atomic element function declarations here. */
 void *      strInitArrayZ                  (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
+void        strFreeArrayZ_O                (P_ARRAY_Z    parrz);
 P_ARRAY_Z   strCreateArrayZ                (size_t       num,      size_t       size);
+void        strDeleteArrayZ_O              (P_ARRAY_Z    parrz);
 void        strSetArrayZ                   (P_ARRAY_Z    parrz,    const void * pval,      size_t       size);
 void *      strResizeArrayZ                (P_ARRAY_Z    parrz,    size_t       num,       size_t       size);
 void *      strResizeBufferedArrayZ        (P_ARRAY_Z    parrz,    size_t       size,      ptrdiff_t    incl);
-void        strFreeArrayZ_O                (P_ARRAY_Z    parrz);
-void        strDeleteArrayZ_O              (P_ARRAY_Z    parrz);
 void *      strInitNodeS                   (P_NODE_S     pnode,    const void * pval,      size_t       size);
-P_NODE_S    strCreateNodeS                 (const void * pval,     size_t       size);
 void        strFreeNodeS_O                 (P_NODE_S     pnode);
+P_NODE_S    strCreateNodeS                 (const void * pval,     size_t       size);
 void        strDeleteNodeS_O               (P_NODE_S     pnode);
 void *      strInitNodeD                   (P_NODE_D     pnode,    const void * pval,      size_t       size);
-P_NODE_D    strCreateNodeD                 (const void * pval,     size_t       size);
 void        strFreeNodeD_O                 (P_NODE_D     pnode);
+P_NODE_D    strCreateNodeD                 (const void * pval,     size_t       size);
 void        strDeleteNodeD_O               (P_NODE_D     pnode);
 /* Functions for sized arrays. */
 char *      strInitCharacterStringArrayZ   (P_ARRAY_Z    parrz,    const char * pstr);

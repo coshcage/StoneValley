@@ -51,6 +51,24 @@ void * strInitArrayZ(P_ARRAY_Z parrz, size_t num, size_t size)
 	}
 }
 
+/* Function name: strFreeArrayZ_O
+ * Description:   Retract an array which is allocated by function strInitArrayZ.
+ * Parameter:
+ *     parrz Pointer to the sized array you want to delete.
+ * Return value:  N/A.
+ * Caution:       Address of parrz Must Be Allocated first.
+ * Tip:           A macro version of this function named strFreeArrayZ_M is available.
+ */
+void strFreeArrayZ_O(P_ARRAY_Z parrz)
+{
+	if (SV_ASSERT(NULL != parrz->pdata)) /* Circumvent freeing a NULL pointer. */
+	{
+		free(parrz->pdata);
+		parrz->pdata = NULL;
+	}
+	parrz->num = 0;
+}
+
 /* Function name: strCreateArrayZ
  * Description:   Create a sized array.
  * Parameters:
@@ -75,6 +93,20 @@ P_ARRAY_Z strCreateArrayZ(size_t num, size_t size)
 		}
 	}
 	return parrz;
+}
+
+/* Function name: strDeleteArrayZ_O
+ * Description:   Delete an array which is allocated by function strCreateArrayZ.
+ * Parameter:
+ *     parrz Pointer to the sized array you want to delete.
+ * Return value:  N/A.
+ * Caution:       Address of parrz Must Be Allocated first.
+ * Tip:           A macro version of this function named strDeleteArrayZ_M is available.
+ */
+void strDeleteArrayZ_O(P_ARRAY_Z parrz)
+{
+	strFreeArrayZ(parrz);
+	free(parrz);
 }
 
 /* Function name: strSetArrayZ
@@ -182,38 +214,6 @@ void * strResizeBufferedArrayZ(P_ARRAY_Z parrz, size_t size, ptrdiff_t incl)
 	}
 }
 
-/* Function name: strFreeArrayZ_O
- * Description:   Retract an array which is allocated by function strInitArrayZ.
- * Parameter:
- *     parrz Pointer to the sized array you want to delete.
- * Return value:  N/A.
- * Caution:       Address of parrz Must Be Allocated first.
- * Tip:           A macro version of this function named strFreeArrayZ_M is available.
- */
-void strFreeArrayZ_O(P_ARRAY_Z parrz)
-{
-	if (SV_ASSERT(NULL != parrz->pdata)) /* Circumvent freeing a NULL pointer. */
-	{
-		free(parrz->pdata);
-		parrz->pdata = NULL;
-	}
-	parrz->num = 0;
-}
-
-/* Function name: strDeleteArrayZ_O
- * Description:   Delete an array which is allocated by function strCreateArrayZ.
- * Parameter:
- *     parrz Pointer to the sized array you want to delete.
- * Return value:  N/A.
- * Caution:       Address of parrz Must Be Allocated first.
- * Tip:           A macro version of this function named strDeleteArrayZ_M is available.
- */
-void strDeleteArrayZ_O(P_ARRAY_Z parrz)
-{
-	strFreeArrayZ(parrz);
-	free(parrz);
-}
-
 /* Function name: strInitNodeS
  * Description:   Initiate a node which has a single pointer.
  * Parameters:
@@ -241,6 +241,23 @@ void * strInitNodeS(P_NODE_S pnode, const void * pval, size_t size)
 	return NULL;
 }
 
+/* Function name: strFreeNodeS_O
+ * Description:   Retract a NODE_S which is allocated by function strInitNodeS.
+ * Parameter:
+ *     pnode Pointer to the node you want to release.
+ * Return value:  N/A.
+ * Caution:       Address of pnode Must Be Allocated first.
+ * Tip:           A macro version of this function named strFreeNodeS_M is available.
+ */
+void strFreeNodeS_O(P_NODE_S pnode)
+{
+	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
+	{
+		free(pnode->pdata);
+		pnode->pdata = NULL;
+	}
+}
+
 /* Function name: strCreateNodeS
  * Description:   Dynamically allocate a node which is with a single pointer.
  * Parameters:
@@ -262,23 +279,6 @@ P_NODE_S strCreateNodeS(const void * pval, size_t size)
 		}
 	}
 	return pnode;
-}
-
-/* Function name: strFreeNodeS_O
- * Description:   Retract a NODE_S which is allocated by function strInitNodeS.
- * Parameter:
- *     pnode Pointer to the node you want to release.
- * Return value:  N/A.
- * Caution:       Address of pnode Must Be Allocated first.
- * Tip:           A macro version of this function named strFreeNodeS_M is available.
- */
-void strFreeNodeS_O(P_NODE_S pnode)
-{
-	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent freeing a NULL pointer. */
-	{
-		free(pnode->pdata);
-		pnode->pdata = NULL;
-	}
 }
 
 /* Function name: strDeleteNodeS_O
@@ -322,6 +322,23 @@ void * strInitNodeD(P_NODE_D pnode, const void * pval, size_t size)
 	return NULL;
 }
 
+/* Function name: strFreeNodeD_O
+ * Description:   Retract a NODE_D which is allocated by function strCreateNodeD.
+ * Parameter:
+ *     pnode Pointer to the node you want to release.
+ * Return value:  N/A.
+ * Caution:       Address of pnode Must Be Allocated first.
+ * Tip:           A macro version of this function named strFreeNodeD_M is available.
+ */
+void strFreeNodeD_O(P_NODE_D pnode)
+{
+	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent NULL pointer freedom. */
+	{
+		free(pnode->pdata);
+		pnode->pdata = NULL;
+	}
+}
+
 /* Function name: strCreateNodeD
  * Description:   Dynamically allocate a node which has two directive pointers.
  * Parameters:
@@ -343,23 +360,6 @@ P_NODE_D strCreateNodeD(const void * pval, size_t size)
 		}
 	}
 	return pnode;
-}
-
-/* Function name: strFreeNodeD_O
- * Description:   Retract a NODE_D which is allocated by function strCreateNodeD.
- * Parameter:
- *     pnode Pointer to the node you want to release.
- * Return value:  N/A.
- * Caution:       Address of pnode Must Be Allocated first.
- * Tip:           A macro version of this function named strFreeNodeD_M is available.
- */
-void strFreeNodeD_O(P_NODE_D pnode)
-{
-	if (SV_ASSERT(NULL != pnode->pdata)) /* Circumvent NULL pointer freedom. */
-	{
-		free(pnode->pdata);
-		pnode->pdata = NULL;
-	}
 }
 
 /* Function name: strDeleteNodeD_O

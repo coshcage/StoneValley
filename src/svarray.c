@@ -2,7 +2,7 @@
  * Name:        svarray.c
  * Description: Sized array.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170948B1018262240L00915
+ * File ID:     0306170948B1110261140L00904
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -152,32 +152,21 @@ int strTraverseArrayZ(P_ARRAY_Z parrz, size_t size, CBF_TRAVERSE cbftvs, size_t 
  *                Address of pdest and psrc Must Be Allocated first.
  * Tip:           A macro version of this function named strCopyArrayZ_M is available.
  *                Four cases are listed below.
- *                Case 1 and 2 are non overlapping cases.
- *                Case 3 and 4 are overlapping cases.
- *                (1)================
- *                a        b
- *                |________|
- *                         ^--------^
- *                         c        d
- *                b <= c;
- *                (2)================
- *                         a        b
- *                         |________|
- *                ^--------^
- *                c        d
- *                a >= d;
- *                (3)================
- *                         a        b
- *                         |________|
- *                    ^--------^
- *                    c        d
- *                a >= c && a < d;
- *                (4)================
- *                 a        b
- *                 |________|
- *                       ^--------^
- *                       c        d
- *                c >= a && b <=d;
+ *                Case (1) and (2) are non overlapping cases.
+ *                Case (3) and (4) are overlapping cases.
+ *                (1)================ | (2)================
+ *                a        b          |          a        b
+ *                |________|          |          |________|
+ *                         ^--------^ | ^--------^
+ *                         c        d | c        d
+ *                b <= c;             | a >= d;
+ *                (3)================ | (4)================
+ *                         a        b | a        b
+ *                         |________| | |________|
+ *                    ^--------^      |      ^--------^
+ *                    c        d      |      c        d
+ *                a >= c && a < d;    | c >= a && b <=d;
+ *                =========================================
  *                a = pdest->pdata; b = pdest->pdata + pdest->num;
  *                c = psrc->pdata;  d = psrc->pdata  + psrc->num;
  */

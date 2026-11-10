@@ -55,7 +55,7 @@ void PrintMatrixInMat(P_MATRIX pmtx)
 	printf("  ");
 	for (i = 0; i < pmtx->col; ++i)
 		putc(i + 'a', stdout);
-	printf("  Move: %zd.\n +", gCtrMove);
+	printf("  Move: %zu.\n +", gCtrMove);
 	for (i = 0; i < pmtx->col; ++i)
 		putc('-', stdout);
 	printf("+\n");
@@ -88,7 +88,7 @@ bool ValidateMatrix(P_MATRIX pmtx)
 	{	/* Only the last square in the puzzle is a space can indicate that the puzzle might be solved. */
 		if (0 == memcmp(pAnswer + 1, pmtx->arrz.pdata, strLevelArrayZ(&pmtx->arrz) - 1))
 		{	/* Good job. */
-			printf(":) CONGRATULATIONS! You win the game in %zd movement%c!\n\n", gCtrMove, (char) (gCtrMove > 1 ? 's' : '!'));
+			printf(":) CONGRATULATIONS! You win the game in %zu movement%c!\n\n", gCtrMove, (char) (gCtrMove > 1 ? 's' : '!'));
 			return true;
 		}
 	}

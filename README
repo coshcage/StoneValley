@@ -42,7 +42,7 @@ iii Table of Contents
 	Alteration Guide ...................................................... 173
 	Limitations ........................................................... 344
 	Addendum .............................................................. 384
-	GNU Free Documentation License ........................................ 570
+	GNU Free Documentation License ........................................ 577
 
 iv  Scenario
 
@@ -386,16 +386,23 @@ x	Give me a (*) star to support an open internet and boycott China from building
 	StoneValley is built that benefits from global netizens and the internet with the world wide web. The author does reckon the importance of an open internet that lets us freely surf without the concerning of surveillance or political segregation or ideological coercing. Feel free to support us with such a mind to further advance the computing industry. End internet totalitarian with StoneValley together right here right now. The internet belongs to individuals.
 
 	We ought to be liberal to use good codes and safely browse the internet, therefor:
-	Please support the Free Software Foundation (https://www.fsf.org/).
-	Support the  Electronic Frontier Foundation (https://www.eff.org/).
+	Please support the Free Software Foundation. (https://www.fsf.org/)
+	Support the Electronic Frontier Foundation.  (https://www.eff.org/)
 
 	A sub table of contents of this addendum is listed here.
 
 	[Contents]                                                    [Line number]
-	Preamble .............................................................. 383
-	Sub Table of Contents ................................................. 391
-	Technical Information ..................................................399
-	The Story About StoneValley ........................................... 551
+	Preamble .............................................................. 384
+	Sub Table of Contents ................................................. 392
+	Technical Information ..................................................400
+	Macro Guidance ........................................................ 411
+	Callback Type Summary ................................................. 417
+	Memory Allocation ..................................................... 460
+	Assertion Usage ....................................................... 470
+	Control Flow Manipulation ............................................. 474
+	Traversal Method ...................................................... 541
+	Recursion Reduction ................................................... 553
+	The Story About StoneValley ........................................... 559
 
 	Technical Information
 
@@ -405,7 +412,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	By categorizing macros, we could see two types of macros, they are macros for representing data and macros for abstract expressions. It is insipid to talk about the first type. Because they are merely another form of literal data. For example, macro SV_LIB_VER is actually a string representing library version. And SV_LIB_VER_VAL converts it into an integer to let uses to calculate. For another example, macro PREV is 1 and NEXT is 0. They direct programs to index two pointers in a double linked list node. While macro LEFT is 0 and RIGHT is 1. They are used to direct programs to index in a binary tree node. As we will know, a double linked list node is a binary tree node with different indexing interpretation. Use these macros as you need and you have to refer to a specific data structure for its macros to their usages.
 
-	The second type of macros varies from usage to formation. We can see a bunch of macros in header files to inline existing functions. Except these macros, macro P2P_TNODE_BY is used to convert pointers. It is an abbreviation form of type casting expression. As we know, macros with arguments allow users to input parameters that are separate by comma. During expansion, parameters are automatically expanding to their respective positions. For instance, of macro #define fun(a_M, b_M) ((a_M)++ + (b_M)), when we use a = fun(a, ++a); in expression will cause severe side effect and compilation issue probably. So just don't use one variable repeatedly in these macros to avoid troubles.
+	The second type of macros varies from usage to formation. We can see a bunch of macros in header files to inline existing functions. Except these macros, macro P2P_TNODE_BY is used to convert pointers. It is an abbreviation form of type casting expression. As we know, macros with arguments allow users to input parameters that are separate by comma. During expansion, parameters are automatically expanding to their respective positions. For instance, of macro #define fun(a_M, b_M) ((a_M)++ + (b_M)), when we use a = fun(a, ++a); in expression will probably cause a severe side effect and compilation issue. So just don't use one variable repeatedly in these macros to avoid troubles.
 
 	2) Callback Type Summary
 
@@ -559,7 +566,7 @@ x	Give me a (*) star to support an open internet and boycott China from building
 
 	The next thing that thwarted me to give birth to StoneValley was its name. I have noticed STL stood for Standard Template Library. However, Common Data Structure Library was too common. Algorithm Utility was too usual. While I was reading a book called An Eclectic Prose From The World's Most Famous Thinkers. It wrote: "Poets are chanting their poems in the valley." I thought: "Formal languages are languages, poems are language distillates. Algorithms are program poems. I decide to name it StoneValley for the reason that I will chant my poems in the valley and I need exactly a collection of solid codes of algorithms, each function is as solid as a stone."
 
-	I quickly dropped STL and regarded it as a not so good design. Too many concepts have been involved in STL like vector, container, comparator, allocator, functor made me not only perplexed but also sick. "What the hell are those aliens?" I thought. "They made too many concepts to glue algorithms and data structures together and eventually made it gruesome to me to learn." My purpose was steady and solid: "Algorithms are procedures to solve problems written as functions. An algorithm needs a way to manipulate data called data structure. Basically, data structure is the way that data being represented in main memory. How about dividing library modules apart by data structures?" I thought. "Since it's not a viable way to categorize algorithms into modules by the way to build them, such as brute force, greed, divide and conquer, prune, dynamic programming and heuristic."
+	I quickly dropped STL and regarded it as a not so good design. Too many concepts have been involved in STL like vector, container, comparator, allocator, iterator, functor made me not only perplexed but also sick. "What the hell are those aliens?" I thought. "They made too many concepts to glue algorithms and data structures together and eventually made it gruesome to me to learn." My purpose was steady and solid: "Algorithms are procedures to solve problems written as functions. An algorithm needs a way to manipulate data called data structure. Basically, data structure is the way that data being represented in main memory. How about dividing library modules apart by data structures?" I thought. "Since it's not a viable way to categorize algorithms into modules by the way to build them, such as brute force, greed, divide and conquer, prune, dynamic programming and heuristic."
 
 	So I opened a little editor, hope my mind will take me there. "Whether trees are complex, strings are simple, I'll write them here." I thought. It was true and astonishing the first ever file I made was a module for stacks. As I usually did, I achieved functions in a source file and extracted their prototypes into a header. There brought countless questions to me that how I should put stack data in memory, what kind of data I needed to store them into RAM. How could it be possible to store both a short integer and a long integer simultaneously? A short integer takes two bytes to store and a long usually takes 4 to 8 bytes depending on compiling environments. What if I interleave a short with a long? Then it makes addressing and reading difficult. Unaligned data in memory decelerate reading speed for CPUs because modern CPUs use an intricate memory management unit, furthermore, they use caches to bulk load a bunch of data in a specific size at a same time from RAM.
 

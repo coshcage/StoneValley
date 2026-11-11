@@ -263,7 +263,7 @@ viii Library Alteration Guide
 	$header.h$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	$ /* Comments.                                         $ + Comment file here.
 	$  */                                                  $ *
-	$ #ifndef _HEADER_H_                                   $ + Write preprocessors directives here to include header once.
+	$ #ifndef _HEADER_H_                                   $ + Write preprocessor directives here to include header once.
 	$ #define _HEADER_H_                                   $ |
 	$                                                      $ |
 	$ #include <svdef.h>                                   $ | + Include common headers here.

@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1110260136L01838
+ * File ID:     0213191430N1110262255L01839
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -139,8 +139,7 @@ void * strCopyMatrix(P_MATRIX pdest, P_MATRIX psrc, size_t size)
 				pdest->col = psrc->col;
 				
 				return strCopyArrayZ(&pdest->arrz, &psrc->arrz, size); /* In case buffers overlapped together. */
-			}
-			/* Resize failed. The original buffer of pdest will be kept. */
+			} /* Failed to resize. The original buffer of pdest will be kept. */
 		}
 		else /* Two matrices share a same buffer with different sizes of element. */
 			return (void *)pdest->arrz.pdata; /* Leave this circumstance alone. */
@@ -993,8 +992,12 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 		_ESR_ONE_OPTIMAL  = 3,
 		_ESR_MULTIPAL     = 4
 	};
+	
 	if (NULL != prpt)
-		*prpt = _ESR_CANNOT_SOLVE; /* Preset and signify a bad solution. */
+		*prpt = _ESR_CANNOT_SOLVE; /* Preset and designate a bad solution. */
+	
+	if (pcbfagb[EMA_CMP](pnbm, pnil) >= CBF_CMP_EQUAL)
+		return NULL; /* The value of pnbm is not negative. */
 	
 	if (SV_ASSERT(pmtx->ln >= 2 && pmtx->col >= 2 && pmtx->ln <= pmtx->col))
 	{
@@ -1002,9 +1005,6 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 		REGISTER size_t i, j, k, l;
 		REGISTER PUCHAR p;
 		REGISTER bool b;
-		
-		if (pcbfagb[EMA_CMP](pnbm, pnil) >= CBF_CMP_EQUAL)
-			return NULL; /* The value of pnbm is not negative. */
 		
 		/* Count the number of big M. */
 		for (j = 0, i = pmtx->col - 2; i > 0; --i)
@@ -1028,8 +1028,8 @@ P_MATRIX strStandardMaxSimplexMatrix(P_MATRIX pmtx, const void * pnil, const voi
 			
 			if (NULL != ptmpbf && NULL != paug && NULL != pxbs && NULL != pdat && NULL != prtn)
 			{
-				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t));
-				PUCHAR ptmp[3];
+				P_MATRIX pmi = strCreateMatrix(i, i + 1, sizeof(size_t)); /* Base variable identity matrix. */
+				PUCHAR ptmp[3]; /* Pointers to temporary buffers. */
 
 				ptmp[0] = ptmpbf;
 				ptmp[1] = ptmpbf + size;

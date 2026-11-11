@@ -225,10 +225,10 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                #include <stdio.h>
  *                #include "svtree.h"
  *                void PrintBinaryTree(P_TNODE_BY pnode, size_t space) {
- *                    if (NULL == pnode) return; ++space;
+ *                    size_t i; if (NULL == pnode) { return; } ++space;
  *                    PrintBinaryTree(pnode->ppnode[RIGHT], space); // Process right child first.
- *                    for (size_t i = 1; i < space; ++i) printf("\t");
- *                    printf("%zd\n", *(size_t *)pnode->pdata); // Print current node after space count.
+ *                    for (i = 1; i < space; ++i) printf("\t");
+ *                    printf("%zu\n", *(size_t *)pnode->pdata); // Print current node after space count.
  *                    PrintBinaryTree(pnode->ppnode[LEFT], space); // Recur to process the left child.
  *                }
  *                int tvs1(void * pitem, size_t param) {
@@ -237,7 +237,7 @@ int treTraverseBYLevel(P_TNODE_BY pnode, CBF_TRAVERSE cbftvs, size_t param)
  *                int tvs2(void * pitem, size_t param) {
  *                    size_t i;
  *                    for (i = 1; i < *(size_t *)param; ++i) printf("\t"); // Count stack level.
- *                        printf("%zd\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
+ *                        printf("%zu\n", *(size_t *)P2P_TNODE_BY(pitem)->pdata);
  *                    return CBF_CONTINUE;
  *                }
  *                int tvs3(void * pitem, size_t param) {

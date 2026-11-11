@@ -2,7 +2,7 @@
  * Name:        svhtree.c
  * Description: Heap tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0809171737E1110261041L00717
+ * File ID:     0809171737E1110261933L00720
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -257,7 +257,7 @@ bool treRemoveHeapA(void * pitem, void * ptemp, size_t size, P_HEAP_A pheap, CBF
  */
 bool trePeepHeapA(void * pitem, size_t size, P_HEAP_A pheap)
 {
-	if (SV_ASSERT(! treIsEmptyHeapA(pheap)))
+	if (! treIsEmptyHeapA(pheap))
 	{
 		if (NULL != pitem)
 		{
@@ -478,15 +478,16 @@ bool treIsFullHeapD_O(P_TNODE_HD pnode)
 P_TNODE_HD treInsertHeapD(P_HEAP_D pheap, const void * pitem, size_t size, CBF_COMPARE cbfcmp, bool bmax)
 {
 	if (NULL == *pheap)
-	{
+	{	/* Create a node for one node heap. */
 		*pheap = treCreateNodeHeapD(pitem, size, NULL, 1, 0);
 		return *pheap;
 	}
-	else /* Find heap tail's parent to pp. */
+	else
 	{
 		REGISTER P_TNODE_HD pn = *pheap, pp = pn, pt, pb = NULL;
 		REGISTER bool bcmp;
 		
+		/* Find heap tail's parent to pp. */
 		while (NULL != pn)
 		{
 			REGISTER P_TNODE_HD pl, pr;
@@ -514,8 +515,10 @@ P_TNODE_HD treInsertHeapD(P_HEAP_D pheap, const void * pitem, size_t size, CBF_C
 			}
 		}
 		
+		/* Create a new node for data insertion. */
 		pn = treCreateNodeHeapD(pitem, size, pp, 1, 0);
 		
+		/* Find an exact position to insert new created node. */
 		pt = pb = NULL == pp->knot.ppnode[LEFT] ?
 			P2P_TNODE_HD(pp->knot.ppnode[LEFT] = P2P_TNODE_BY(pn)) :
 			P2P_TNODE_HD(pp->knot.ppnode[RIGHT] = P2P_TNODE_BY(pn));
@@ -532,10 +535,10 @@ P_TNODE_HD treInsertHeapD(P_HEAP_D pheap, const void * pitem, size_t size, CBF_C
 					svSwap(&pt->knot.pdata, &t, &pn->knot.pdata, sizeof(PUCHAR));
 					pt = pn;
 				}
-				else
-					bcmp = false;
+				else bcmp = false; /* Can not bubble up anymore. */
 			}
 			
+			/* If pb is its parent's left child, increase its parent's height. */
 			if (pn->knot.ppnode[LEFT] == P2P_TNODE_BY(pb))
 			{
 				++pn->height;
@@ -569,7 +572,8 @@ bool treRemoveHeapD(void * pitem, size_t size, P_HEAP_D pheap, CBF_COMPARE cbfcm
 {
 	REGISTER P_TNODE_HD pn = *pheap, pp = NULL;
 	REGISTER P_TNODE_HD pl, pr;
-
+	
+	/* Find heap tail's parent to pp. */
 	while (NULL != pn)
 	{
 		if (treIsFullHeapD(pn))
@@ -603,12 +607,11 @@ bool treRemoveHeapD(void * pitem, size_t size, P_HEAP_D pheap, CBF_COMPARE cbfcm
 	
 	if (NULL != pp)
 	{
-		PUCHAR t;
 		REGISTER P_TNODE_HD pt = P2P_TNODE_HD(*pheap);
 		REGISTER P_TNODE_HD pb = pp, px;
-
-		/* Output data if possible. */
-		if (NULL != pitem)
+		PUCHAR   t;
+		
+		if (NULL != pitem) /* Output data if possible. */
 			memcpy(pitem, pt->knot.pdata, size);
 
 		if (pb == pt && NULL == pt->knot.ppnode[LEFT]) /* Meet an one node heap. */
@@ -651,10 +654,10 @@ bool treRemoveHeapD(void * pitem, size_t size, P_HEAP_D pheap, CBF_COMPARE cbfcm
 							px = pr;
 					}
 				}
-				/*   3
+				/* In this situation, root equals its children, we escape from loop immediately.
+				 *   3
 				 *  / \
 				 * 3   3
-				 * In this situation, root equals its children, we escape from loop immediately.
 				 */
 				if (px == pn)
 					break;

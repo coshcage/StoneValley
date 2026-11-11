@@ -2,7 +2,7 @@
  * Name:        svgraph.c
  * Description: Graphs.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0905171125M0915260252L02959
+ * File ID:     0905171125M1111260530L02959
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -47,10 +47,10 @@ typedef struct _st_DATINF {
 typedef struct _st_SPTREC {
 	size_t vid;  /* Vertex ID. */
 	size_t pvid; /* Previous vertex ID. */
-	union {      /* Here we need an anonymous union to include a distance integer for both signed and unsigned types. */
+	union {      /* An union includes a distance integer for both signed and unsigned types. */
 		ptrdiff_t udistance; /* Unsigned distance. */
 		size_t    sdistance; /* Signed distance. */
-	};
+	} u;
 } _SPTREC, * _P_SPTREC;
 
 /* Edge record for generating minimal spanning tree. */
@@ -201,7 +201,7 @@ int _grpCBFFindEdgeInList(void * pitem, size_t param)
 	{
 		if (pd->bweight) /* Weighted edge. */
 		{
-			if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight == pd->vertex.weight)
+			if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->u.weight == pd->vertex.u.weight)
 				goto Lbl_Found;
 			else
 				return CBF_CONTINUE;
@@ -225,7 +225,7 @@ int _grpCBFFindEdgeInListReturnsWeight(void * pitem, size_t param)
 {
 	REGISTER _P_FIEDG pd = (_P_FIEDG)param;
 	if (((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid == pd->vertex.vid)
-		return pd->cbftvs(&((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight, param);
+		return pd->cbftvs(&((P_EDGE) ((P_NODE_S)pitem)->pdata)->u.weight, param);
 	return CBF_CONTINUE;
 }
 
@@ -502,12 +502,12 @@ bool grpAreAdjacentVerticesL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, bool bwei
 	if (NULL != pvtx)
 	{
 		_FIEDG fd;
-		fd.bweight       = bweight;
-		fd.pnode         = NULL;
-		fd.vertex.vid    = vidy;
-		fd.vertex.weight = weight;
-		fd.cbftvs        = NULL;
-		fd.param         = 0;
+		fd.bweight         = bweight;
+		fd.pnode           = NULL;
+		fd.vertex.vid      = vidy;
+		fd.vertex.u.weight = weight;
+		fd.cbftvs          = NULL;
+		fd.param           = 0;
 		if (CBF_TERMINATE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return true; /* Edge already exists. */
 	}
@@ -532,12 +532,12 @@ int grpTraverseEdgesWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, CBF_TRAVER
 	if (NULL != pvtx)
 	{
 		_FIEDG fd;
-		fd.bweight       = true;
-		fd.pnode         = NULL;
-		fd.vertex.vid    = vidy;
-		fd.vertex.weight = 0;
-		fd.cbftvs        = cbftvs;
-		fd.param         = param;
+		fd.bweight         = true;
+		fd.pnode           = NULL;
+		fd.vertex.vid      = vidy;
+		fd.vertex.u.weight = 0;
+		fd.cbftvs          = cbftvs;
+		fd.param           = param;
 		return strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInListReturnsWeight, (size_t)&fd);
 	}
 	return CBF_CONTINUE; /* Cannot find vertex vidx. */
@@ -622,8 +622,8 @@ bool grpInsertEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 	{
 		REGISTER P_NODE_S pnew;
 		EDGE nedg;
-		nedg.vid    = vidy;
-		nedg.weight = weight;
+		nedg.vid      = vidy;
+		nedg.u.weight = weight;
 		if (NULL == (pnew = strCreateNodeS(&nedg, sizeof(EDGE))))
 			return false; /* Edge node allocation failure. */
 		else
@@ -693,12 +693,12 @@ bool grpRemoveEdgeL(P_GRAPH_L pgrp, size_t vidx, size_t vidy, size_t weight)
 	else
 	{
 		_FIEDG fd;
-		fd.bweight       = true;
-		fd.pnode         = NULL;
-		fd.vertex.vid    = vidy;
-		fd.vertex.weight = weight;
-		fd.cbftvs        = NULL;
-		fd.param         = 0;
+		fd.bweight         = true;
+		fd.pnode           = NULL;
+		fd.vertex.vid      = vidy;
+		fd.vertex.u.weight = weight;
+		fd.cbftvs          = NULL;
+		fd.param           = 0;
 		if (CBF_CONTINUE == strTraverseLinkedListSC_X(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
 			return false; /* Edge doesn't exist. */
 		else
@@ -734,7 +734,7 @@ int _grpCBFCopyVertices(void * pitem, size_t param)
  */
 int _grpCBFCopyEdgesPuppet(void * pitem, size_t param)
 {
-	return grpInsertEdgeL((P_GRAPH_L)1[(size_t *)param], 0[(size_t *)param], ((P_EDGE)pitem)->vid, ((P_EDGE)pitem)->weight) ? CBF_CONTINUE : CBF_TERMINATE;
+	return grpInsertEdgeL((P_GRAPH_L)1[(size_t *)param], 0[(size_t *)param], ((P_EDGE)pitem)->vid, ((P_EDGE)pitem)->u.weight) ? CBF_CONTINUE : CBF_TERMINATE;
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -931,7 +931,7 @@ int _grpCBFSPLFillVertices(void * pitem, size_t param)
  */
 int _grpCBFSPLInitVtxrecArray(void * pitem, size_t param)
 {
-	((P_VTXREC)pitem)->sdistance = (ptrdiff_t)param;
+	((P_VTXREC)pitem)->u.sdistance = (ptrdiff_t)param;
 	return CBF_CONTINUE;
 }
 
@@ -959,9 +959,9 @@ bool _grpSPLInitArray(P_GRAPH_L pgrp, P_ARRAY_Z parrz, size_t vidx, bool barrd)
 	if (NULL != prec)
 	{
 		if (barrd)
-			prec->sdistance = 0;
+			prec->u.sdistance = 0;
 		else
-			prec->flag = true;
+			prec->u.flag = true;
 	}
 	else
 		return false;
@@ -993,20 +993,20 @@ int _grpCBFSPLTraverseVertexEdgesPuppet(void * pitem, size_t param)
 	
 	if (SV_ASSERT(NULL != pvru && NULL != pvrv))
 	{
-		if (pvrv->sdistance > pvru->sdistance + ((P_EDGE)pitem)->sweight)
+		if (pvrv->u.sdistance > pvru->u.sdistance + ((P_EDGE)pitem)->u.sweight)
 		{
 			REGISTER P_VTXREC prec;
-			pvrv->sdistance = pvru->sdistance + ((P_EDGE)pitem)->sweight;
+			pvrv->u.sdistance = pvru->u.sdistance + ((P_EDGE)pitem)->u.sweight;
 			prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &v, sizeof(VTXREC), _grpCBFCompareInteger);
 			if (NULL != prec)
 			{
 				/* Check if vertex v is in queue or not.
 				 * If not then push it into the queue.
 				 */
-				if (! prec->flag)
+				if (! prec->u.flag)
 				{
 					queInsertL(pq, &v, sizeof(size_t));
-					prec->flag = true;
+					prec->u.flag = true;
 				}
 			}
 			else
@@ -1062,7 +1062,7 @@ P_ARRAY_Z grpShortestPathFastL(P_GRAPH_L pgrp, size_t vidx)
 		queRemoveL(&vidx, sizeof(size_t), &q);
 		prec = (P_VTXREC)strBinarySearchArrayZ(parrq, &vidx, sizeof(VTXREC), _grpCBFCompareInteger);
 		if (NULL != prec)
-			prec->flag = false; /* Out of the queue. */
+			prec->u.flag = false; /* Out of the queue. */
 		else
 			goto Lbl_Bad_Result;
 
@@ -1140,7 +1140,7 @@ int _grpCBFDijkstraFillVb(void * pitem, size_t param)
  */
 int _grpCBFCompareRecordDistance(const void * px, const void * py)
 {	/* Compare two unsigned integers rather than signed two for Dijkstra use. */
-	return _grpCBFCompareInteger(&((_P_SPTREC)px)->udistance, &((_P_SPTREC)py)->udistance);
+	return _grpCBFCompareInteger(&((_P_SPTREC)px)->u.udistance, &((_P_SPTREC)py)->u.udistance);
 }
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
@@ -1169,7 +1169,7 @@ int _grpCBFDijkstraFindEdgesToVbPuppet(void * pitem, size_t param)
 		rec.vid = pedg->vid;
 		
 		if (NULL != pnode)
-			rec.udistance = pedg->uweight + ((_P_SPTREC)pnode->knot.pdata)->udistance;
+			rec.u.udistance = pedg->u.uweight + ((_P_SPTREC)pnode->knot.pdata)->u.udistance;
 		else
 			return CBF_TERMINATE;
 		
@@ -1227,7 +1227,7 @@ int _grpCBFDijkstraFindEdgesToVb(void * pitem, size_t param)
  *                int cbftvsprint(void * pitem, size_t param) {
  *                	P_VTXREC p = (P_VTXREC) ((P_NODE_D)pitem)->pdata;
  *                	DISUSE(param);
- *                	printf("vid = %zd, udistance = %zd\n", p->vid, p->udistance);
+ *                	printf("vid = %zd, udistance = %zd\n", p->vid, p->u.udistance);
  *                	return CBF_CONTINUE;
  *                }
  *                
@@ -1259,9 +1259,9 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	if (CBF_CONTINUE != grpTraverseVerticesL(pgrp, _grpCBFDijkstraFillVb, (size_t)a, ETM_INORDER_MORRIS))
 		goto Lbl_Cleanup; /* Allocation failure. Cleanup. */
 
-	rec.vid       = vids;
-	rec.pvid      = vids;
-	rec.udistance = 0;
+	rec.vid         = vids;
+	rec.pvid        = vids;
+	rec.u.udistance = 0;
 	
 	a[0] = (size_t)pgrp;
 	a[2] = (size_t)&h;
@@ -1294,8 +1294,8 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 	}
 	while (! setIsEmptyT(&vb));
 	
-	vr.vid       = rec.vid;
-	vr.udistance = rec.udistance;
+	vr.vid         = rec.vid;
+	vr.u.udistance = rec.u.udistance;
 	
 	/* Insert vide into a doubly linked list. */
 	*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), true);
@@ -1311,16 +1311,16 @@ P_LIST_D grpDijkstraShortestPathL(P_GRAPH_L pgrp, size_t vids, size_t vide)
 			
 			if (NULL != pbstn)
 			{
-				pvid         = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
-				vr.vid       = ((_P_SPTREC)pbstn->knot.pdata)->vid;
-				vr.udistance = ((_P_SPTREC)pbstn->knot.pdata)->udistance;
+				pvid           = ((_P_SPTREC)pbstn->knot.pdata)->pvid;
+				vr.vid         = ((_P_SPTREC)pbstn->knot.pdata)->vid;
+				vr.u.udistance = ((_P_SPTREC)pbstn->knot.pdata)->u.udistance;
 				
 				*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 			}
 		}
 		
-		vr.vid       = pvid;
-		vr.udistance = 0;
+		vr.vid         = pvid;
+		vr.u.udistance = 0;
 		/* Insert the beginning vide into the returning doubly linked list. */
 		*prl = strInsertItemLinkedListDC(*prl, strCreateNodeD(&vr, sizeof(VTXREC)), false);
 	}
@@ -1359,7 +1359,7 @@ int _grpCBFMSTInsertEdges(void * pitem, size_t param)
 	(*pprec)->flag    = false;
 	(*pprec)->vids[0] = 1[(size_t *)param];
 	(*pprec)->vids[1] = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->vid;
-	(*pprec)->weight  = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->weight;
+	(*pprec)->weight  = ((P_EDGE) ((P_NODE_S)pitem)->pdata)->u.weight;
 	
 	++(*pprec);
 	return CBF_CONTINUE;
@@ -1606,7 +1606,7 @@ int _grpCBFTSFillVertexArray(void * pitem, size_t param)
 {
 	REGISTER P_VTXREC * pprec = (P_VTXREC *)0[(size_t *)param];
 	REGISTER P_GRAPH_L  pgrp  = (P_GRAPH_L) 1[(size_t *)param];
-	(*pprec)->uindegree = grpIndegreeVertexL(pgrp, (*pprec)->vid = ((P_VERTEX_L)pitem)->vid);
+	(*pprec)->u.uindegree = grpIndegreeVertexL(pgrp, (*pprec)->vid = ((P_VERTEX_L)pitem)->vid);
 	++(*pprec);
 	return CBF_CONTINUE;
 }
@@ -1624,7 +1624,7 @@ int _grpCBFTSFillVertexArray(void * pitem, size_t param)
  */
 int _grpCBFTSInitQ(void * pitem, size_t param)
 {
-	if (0 == ((P_VTXREC)pitem)->uindegree)
+	if (0 == ((P_VTXREC)pitem)->u.uindegree)
 	{
 		REGISTER P_QUEUE_L pq   = (P_QUEUE_L)1[(size_t *)param];
 		REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
@@ -1660,7 +1660,7 @@ int _grpCBFTSReduceIndegree(void * pitem, size_t param)
 	);
 	if (NULL != prec)
 	{
-		if (0 == --prec->uindegree)
+		if (0 == --prec->u.uindegree)
 		{
 			REGISTER P_ARRAY_Z prtn = (P_ARRAY_Z)2[(size_t *)param];
 			queInsertL(pq, &(((P_EDGE)pitem)->vid), sizeof(size_t));
@@ -1753,16 +1753,16 @@ size_t * _grpGetFirstWeightL(P_GRAPH_L pgrp, size_t vidx, size_t vidy)
 	REGISTER P_VERTEX_L pvtx;
 	_FIEDG fd;
 	
-	fd.bweight       = false;
-	fd.pnode         = NULL;
-	fd.vertex.vid    = vidy;
-	fd.vertex.weight = 0;
-	fd.cbftvs        = NULL;
-	fd.param         = 0;
+	fd.bweight         = false;
+	fd.pnode           = NULL;
+	fd.vertex.vid      = vidy;
+	fd.vertex.u.weight = 0;
+	fd.cbftvs          = NULL;
+	fd.param           = 0;
 	
 	pvtx = grpGetVertexByID(pgrp, vidx);
 	if (NULL != pvtx && CBF_TERMINATE == strTraverseLinkedListSC_N(pvtx->adjlist, NULL, _grpCBFFindEdgeInList, (size_t)&fd))
-		return &((P_EDGE)fd.pnode->pdata)->weight;
+		return &((P_EDGE)fd.pnode->pdata)->u.weight;
 	
 	return NULL;
 }
@@ -2258,8 +2258,8 @@ int _grpCBFWPCVLFillArray(void * pitem, size_t param)
 	REGISTER P_VTXREC  prec    = (P_VTXREC)strLocateItemArrayZ(parr, sizeof(VTXREC), 3[(size_t *)param]);
 	_VTXCOLOR co;
 	
-	prec->vid   = co.vid   = ((P_VERTEX_L)pitem)->vid;
-	prec->color = co.color = 0;
+	prec->vid     = co.vid   = ((P_VERTEX_L)pitem)->vid;
+	prec->u.color = co.color = 0;
 	co.degree = grpIndegreeVertexL(pgrp, co.vid) + grpOutdegreeVertexL(pgrp, co.vid);
 	
 	if (! queInsertL(pqcolor, &co, sizeof(_VTXCOLOR)))
@@ -2347,7 +2347,7 @@ P_ARRAY_Z grpWelshPowellColorL(P_GRAPH_L pgrp)
 			set = _setInsertBST(set, &co.vid, sizeof(size_t), _grpCBFCompareInteger);
 			
 			/* Color the current vertex in returning array. */
-			((P_VTXREC)strBinarySearchArrayZ(parr, &co.vid, sizeof(VTXREC), _grpCBFCompareInteger))->color = color;
+			((P_VTXREC)strBinarySearchArrayZ(parr, &co.vid, sizeof(VTXREC), _grpCBFCompareInteger))->u.color = color;
 			
 			/* Traverse the color queue. */
 			for (pnode = qcolor.pfront; NULL != pnode;)
@@ -2367,7 +2367,7 @@ P_ARRAY_Z grpWelshPowellColorL(P_GRAPH_L pgrp)
 					strDeleteNodeS(strRemoveItemLinkedListSC(&qcolor.pfront, pnode));
 					
 					/* Color the current vertex in returning array. */
-					((P_VTXREC)strBinarySearchArrayZ(parr, &a[3], sizeof(VTXREC), _grpCBFCompareInteger))->color = color;
+					((P_VTXREC)strBinarySearchArrayZ(parr, &a[3], sizeof(VTXREC), _grpCBFCompareInteger))->u.color = color;
 					
 					/* Insert the colored vertex into the set of a same color vertices. */
 					set = _setInsertBST(set, &a[3], sizeof(size_t), _grpCBFCompareInteger);
@@ -2889,7 +2889,7 @@ int _grpCBFTraverseEdgesAndFillMPuppet(void * pitem, size_t param)
 		(P_GRAPH_M)0[(size_t *)param], 
 		(size_t)(p1 - (size_t *) ((P_ARRAY_Z)1[(size_t *)param])->pdata),
 		(size_t)(p2 - (size_t *) ((P_ARRAY_Z)1[(size_t *)param])->pdata),
-		((P_EDGE)pitem)->weight
+		((P_EDGE)pitem)->u.weight
 	);
 	return CBF_CONTINUE;
 }

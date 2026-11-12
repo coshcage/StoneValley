@@ -84,8 +84,8 @@ typedef enum _en_FFMFLParamID {
 	_EGID_5_VIDS,
 	_EGID_6_VIDE,
 	_EGID_7_VIDT,
-	_EGID_8_BOOL_VIDE,     /* true: Found end vertex.  */
-	_EGID_9_BOOL_NVTX,     /* true: Found new vertex.  */
+	_EGID_8_BOOL_VIDE,     /* true: Found end vertex. */
+	_EGID_9_BOOL_NVTX,     /* true: Found new vertex. */
 	_EGID_10_BOOL_ERR,     /* true: An error occurred. */
 	_EGID_11_MAX
 } _FFMFLParamID;
@@ -819,7 +819,7 @@ int _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param
 	return CBF_CONTINUE;
 }
 
-/* Function name: grpDFSL
+/* Function name: grpDepthFirstSearchL
  * Description:   Depth first search an adjacency list represented graph.
  * Parameters:
  *        pgrp Pointer to a graph.
@@ -830,7 +830,7 @@ int _grpDFSLPuppet(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-int grpDFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+int grpDepthFirstSearchL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	REGISTER int rtn;
 	SET_T vstset; /* Visited vertex set. */
@@ -842,7 +842,7 @@ int grpDFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 
 /* Attention:     This Is An Internal Function. No Interface for Library Users.
  * Function name: _grpCBFOutputVertexByID
- * Description:   This function is used to cooperate with grpBFSL to gather vertex ID in edges of a vertex into a queue.
+ * Description:   This function is used to cooperate with grpBreadthFirstSearchL to gather vertex ID in edges of a vertex into a queue.
  * Parameters:
  *      pitem Pointer to each NODE_S in the edge list.
  *      param Pointer to a queue.
@@ -854,7 +854,7 @@ int _grpCBFQueueInsertVertex(void * pitem, size_t param)
 	return CBF_CONTINUE;
 }
 
-/* Function name: grpBFSL
+/* Function name: grpBreadthFirstSearchL
  * Description:   Breadth first search an adjacency list represented graph.
  * Parameters:
  *       pgrp Pointer to a graph.
@@ -865,7 +865,7 @@ int _grpCBFQueueInsertVertex(void * pitem, size_t param)
  * Return value:  The same value as callback function returns.
  * Caution:       Address of pgrp Must Be Allocated first.
  */
-int grpBFSL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+int grpBreadthFirstSearchL(P_GRAPH_L pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	int rtn = CBF_CONTINUE;
 	QUEUE_L vtxque; /* Vertex queue. */
@@ -2669,7 +2669,7 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
 	return k;
 }
 
-/* Function name: grpDFSM
+/* Function name: grpDepthFirstSearchM
  * Description:   Depth first search an adjacent matrix represented graph.
  * Parameters:
  *        pgrp Pointer to a graph.
@@ -2681,7 +2681,7 @@ size_t grpOutdegreeVertexM(P_GRAPH_M pgrp, size_t vid)
  * Caution:       Address of pgrp Must Be Allocated first.
  *                This function would return CBF_TERMINATE if it encountered allocation errors or received wrong parameters.
  */
-int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+int grpDepthFirstSearchM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	if (SV_ASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col))
 	{
@@ -2731,7 +2731,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 	return CBF_TERMINATE;
 }
 
-/* Function name: grpBFSM
+/* Function name: grpBreadthFirstSearchM
  * Description:   Breadth first search an adjacent matrix represented graph.
  * Parameters:
  *       pgrp Pointer to a graph.
@@ -2743,7 +2743,7 @@ int grpDFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
  * Caution:       Address of pgrp Must Be Allocated first.
  *                This function would return CBF_TERMINATE if it encountered allocation errors or received wrong parameters.
  */
-int grpBFSM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
+int grpBreadthFirstSearchM(P_GRAPH_M pgrp, size_t vid, CBF_TRAVERSE cbftvs, size_t param)
 {
 	if (SV_ASSERT(0 != pgrp->arrz.num && pgrp->ln == pgrp->col)) /* The adjacent matrix is valid. */
 	{

@@ -2,7 +2,7 @@
  * Name:        svgraph.h
  * Description: Graphs interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0901171625S1111260533L00236
+ * File ID:     0901171625S1111262227L00236
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -81,8 +81,8 @@ bool       grpInsertEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    si
 bool       grpRemoveVertexL         (P_GRAPH_L pgrp,    size_t       vid);
 bool       grpRemoveEdgeL           (P_GRAPH_L pgrp,    size_t       vidx,    size_t       vidy,   size_t       weight);
 P_GRAPH_L  grpCreateCopyL           (P_GRAPH_L pgrp);
-int        grpDFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
-int        grpBFSL                  (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+int        grpDepthFirstSearchL     (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
+int        grpBreadthFirstSearchL   (P_GRAPH_L pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs, size_t       param);
 P_ARRAY_Z  grpShortestPathFastL     (P_GRAPH_L pgrp,    size_t       vidx);
 P_LIST_D   grpDijkstraShortestPathL (P_GRAPH_L pgrp,    size_t       vids,    size_t       vide);
 bool       grpMinimalSpanningTreeL  (P_GRAPH_L pgrp);
@@ -105,8 +105,8 @@ bool       grpAreAdjacentVerticesM_O(P_GRAPH_M pgrp,    size_t       vidx,    si
 size_t     grpEdgesCountM           (P_GRAPH_M pgrp);
 size_t     grpIndegreeVertexM       (P_GRAPH_M pgrp,    size_t       vid);
 size_t     grpOutdegreeVertexM      (P_GRAPH_M pgrp,    size_t       vid);
-int        grpDFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
-int        grpBFSM                  (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpDepthFirstSearchM     (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
+int        grpBreadthFirstSearchM   (P_GRAPH_M pgrp,    size_t       vid,     CBF_TRAVERSE cbftvs,  size_t       param);
 /* Functions for both adjacent matrix representation of graphs and adjacency list representation of graphs. */
 P_GRAPH_L  grpCreateLFromM          (P_GRAPH_M pgrpm);
 P_GRAPH_M  grpCreateMFromL          (P_GRAPH_L pgrpl);

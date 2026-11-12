@@ -1489,7 +1489,7 @@ bool _grpDisjointSetInsert(P_ARRAY_Z parrz, size_t x, size_t y)
 				pvarr = (ix - 1)[(P_ARRAY_Z *)parrz->pdata];
 				x = y;
 			}
-			i = (size_t)svIndexOf(pvarr->pdata, svBinarySearchDispatch(&x, pvarr->pdata, strLevelArrayZ(pvarr), sizeof(size_t), _grpCBFCompareInteger, EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY), sizeof(size_t)) + 1;
+			i = (size_t)svIndexOf(pvarr->pdata, svBinarySearchDispatch(&x, pvarr->pdata, strLevelArrayZ(pvarr), sizeof(size_t), _grpCBFCompareInteger, EBS_LST_LE), sizeof(size_t)) + 1;
 			if (NULL == strResizeArrayZ(pvarr, strLevelArrayZ(pvarr) + 1, sizeof(P_ARRAY_Z)))
 				return false; /* Allocation failure. */
 			strInsertItemArrayZ(pvarr, &x, sizeof(size_t), i);

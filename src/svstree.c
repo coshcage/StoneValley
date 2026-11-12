@@ -2411,7 +2411,7 @@ bool treInsertTrieA(P_TRIE_A ptrie, const void * pstr, size_t num, size_t size, 
 					strLevelArrayZ(*ptrie),
 					_ELESIZ(size),
 					cbfcmp,
-					EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+					EBS_LST_LE
 				);
 				REGISTER size_t i = NULL == p ? 0 : (size_t)svIndexOf((*ptrie)->pdata, p, _ELESIZ(size)) + 1;
 				if (NULL == strResizeArrayZ(*ptrie, strLevelArrayZ(*ptrie) + 1, _ELESIZ(size)))

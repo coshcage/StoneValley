@@ -2,7 +2,7 @@
  * Name:        svstring.h
  * Description: Strings interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0306170921Y1029262228L00547
+ * File ID:     0306170921Y1112260852L00539
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -35,18 +35,10 @@
  * Choose a rational constant as you wish when you are invoking svBinarySearchDispatch.
  */
 typedef enum en_BSearch {
-	EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
-		EBS_1ST_GE = /* First value that is great than or equal to key. */
-			EBS_FIRST_GREATER_THAN_OR_EQUAL_TO_KEY,
-	EBS_LAST_LESS_THAN_KEY,
-		EBS_LST_LT = /* Last value that is less than key. */
-			EBS_LAST_LESS_THAN_KEY,
-	EBS_FIRST_GREATER_THAN_KEY,
-		EBS_1ST_GT = /* First value that is great than key. */
-			EBS_FIRST_GREATER_THAN_KEY,
-	EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY,
-		EBS_LST_LE = /* Last value that is less than or equal to key. */
-			EBS_LAST_LESS_THAN_OR_EQUAL_TO_KEY
+	EBS_1ST_GE, /* First value that is great than or equal to key. */
+	EBS_LST_LT, /* Last value that is less than key. */
+	EBS_1ST_GT, /* First value that is great than key. */
+	EBS_LST_LE  /* Last value that is less than or equal to key. */
 } BSearch;
 
 /* Sized array. */

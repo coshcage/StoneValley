@@ -246,7 +246,7 @@ bool setInsertA(P_SET_A pset, const void * pitem, size_t size, CBF_COMPARE cbfcm
 							strLevelArrayZ(pset),
 							size,
 							cbfcmp,
-							EBS_FIRST_GREATER_THAN_KEY
+							EBS_1ST_GT
 						),
 						size
 					)

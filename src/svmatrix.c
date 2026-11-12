@@ -2,7 +2,7 @@
  * Name:        svmatrix.c
  * Description: Matrices.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0213191430N1110262255L01839
+ * File ID:     0213191430N1110262255L01840
  * License:     LGPLv3
  * Copyright (C) 2019-2026 John Cage
  *
@@ -332,7 +332,9 @@ void * strSetValueMatrix_O(P_MATRIX pmtx, size_t ln, size_t col, const void * pv
  */
 bool strTransposeMatrix(P_MATRIX pmtx, P_MATRIX ptmp, size_t size)
 {
-	MATRIX mtxt = { 0 };
+	MATRIX mtxt;
+	
+	memset(&mtxt, 0, sizeof(MATRIX));
 	
 	if (NULL == ptmp)
 		ptmp = &mtxt;

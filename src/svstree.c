@@ -489,12 +489,12 @@ ptrdiff_t _treBSTReadBalanceFactorAVL_O(P_BSTNODE pnode)
  */
 P_BSTNODE _treBSTRotateAVL(P_BSTNODE pnode, bool bright)
 {
-	P_BSTNODE pnodex = pbstchild(pnode) [! bright];
-	P_BSTNODE pnodey = pbstchild(pnodex)[bright];
+	P_BSTNODE pnodex = pbstchild(pnode) [(size_t) ! bright];
+	P_BSTNODE pnodey = pbstchild(pnodex)[(size_t) bright];
 
 	/* Adjust pointers. */
-	pbstchild(pbstchild(pnode)[! bright])[bright] = pnode;
-	pbstchild(pnode)[! bright] = pnodey;
+	pbstchild(pbstchild(pnode)[(size_t) ! bright])[(size_t) bright] = pnode;
+	pbstchild(pnode)[(size_t) ! bright] = pnodey;
 
 	/* Recalculating Balance Factors */
 	_NODE_PARAM(pnode, ptrdiff_t) = _ABF_HEAVY_LT +
@@ -899,25 +899,25 @@ void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bright)
 {
 	REGISTER P_RBTNODE y;
 	
-	y = prbtchild(x)[! bright];
+	y = prbtchild(x)[(size_t) ! bright];
 	
 	if (NULL != y)
 	{
-		prbtchild(x)[! bright] = prbtchild(y)[bright];
+		prbtchild(x)[(size_t) ! bright] = prbtchild(y)[(size_t) bright];
 		
-		if (NULL != prbtchild(y)[bright])
-			prbtparent(prbtchild(y)[bright]) = x;
+		if (NULL != prbtchild(y)[(size_t) bright])
+			prbtparent(prbtchild(y)[(size_t) bright]) = x;
 		
 		prbtparent(y) = prbtparent(x);
 		
 		if (NULL == prbtparent(x))
 			*prbt = y;
-		else if (x == prbtchild(prbtparent(x))[bright])
-			prbtchild(prbtparent(x))[bright] = y;
+		else if (x == prbtchild(prbtparent(x))[(size_t) bright])
+			prbtchild(prbtparent(x))[(size_t) bright] = y;
 		else
-			prbtchild(prbtparent(x))[! bright] = y;
+			prbtchild(prbtparent(x))[(size_t) ! bright] = y;
 		
-		prbtchild(y)[bright] = x;
+		prbtchild(y)[(size_t) bright] = x;
 		prbtparent(x) = y;
 	}
 }
@@ -933,7 +933,7 @@ void _treRBRotate(P_RBT prbt, P_RBTNODE x, bool bright)
  */
 void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool bright)
 {
-	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[bright];
+	REGISTER P_RBTNODE y = prbtchild(prbtparent(prbtparent(z)))[(size_t) bright];
 			
 	if (NULL != y && RED == _NODE_COLOR(y, const RBTColor))
 	{	/* Case 1. */
@@ -944,7 +944,7 @@ void _treRBInsertFixupPuppet(P_RBT prbt, P_RBTNODE z, bool bright)
 	}
 	else
 	{
-		if (z == prbtchild(prbtparent(z))[bright])
+		if (z == prbtchild(prbtparent(z))[(size_t) bright])
 		{	/* Case 2. */
 			z = prbtparent(z);
 			_treRBRotate(prbt, z, ! bright);
@@ -1056,7 +1056,7 @@ void _treRBDeleteFixup(P_RBT prbt, P_RBTNODE x)
 	while (NULL != x && x != *prbt && BLACK == _NODE_COLOR(x, const RBTColor))
 	{
 		REGISTER P_RBTNODE w;
-		REGISTER bool dir = x != prbtchild(prbtparent(x))[LEFT];
+		REGISTER size_t dir = BOOLIZE(x != prbtchild(prbtparent(x))[LEFT]);
 		
 		w = prbtchild(prbtparent(x))[! dir];
 		

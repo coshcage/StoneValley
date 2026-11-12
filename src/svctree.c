@@ -2,7 +2,7 @@
  * Name:        svctree.c
  * Description: Huffman coding tree.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0914171200J0908260118L00480
+ * File ID:     0914171200J1112261031L00484
  * License:     LGPLv3
  * Copyright (C) 2017-2026 John Cage
  *
@@ -22,6 +22,7 @@
  */
 
 #include <stdio.h>  /* Use macro BUFSIZ. */
+#include <string.h> /* Use function memset. */
 #include "svtree.h"
 
 /* A macro that defines the maximum symbol table length. */
@@ -115,9 +116,10 @@ P_TNODE_BY _treHFMBuildHuffmanTree(P_ARRAY_Z stbl)
 {
 	REGISTER size_t i;
 	HEAP_A heap;
+	_HFMNOD hfmnode;
 	P_TNODE_BY pnode;
-	_HFMNOD hfmnode = { 0 };
-
+	
+	memset(&hfmnode, 0, sizeof(_HFMNOD));
 	treInitHeapA(&heap, _SMB_TBL_LEN, sizeof(P_TNODE_BY));
 
 	/* Create leaf nodes and push them into heap. */
@@ -367,11 +369,13 @@ P_BITSTREAM treHuffmanEncode(P_ARRAY_Z ptable, const char * str, size_t num)
  */
 P_TNODE_BY _treHFMRebuildHuffmanTree(P_ARRAY_Z stbl)
 {
+	_HFMNOD hfmnode;
 	P_TNODE_BY proot;
-	_HFMNOD hfmnode = { 0 };
 	REGISTER size_t i, j, k;
 	REGISTER P_HFM_SYMBOL psmb;
 	REGISTER P_TNODE_BY pnode, pnew;
+	
+	memset(&hfmnode, 0, sizeof(_HFMNOD));
 
 	/* Create a root node. */
 	if (NULL == (pnode = proot = strCreateNodeD(&hfmnode, sizeof(_HFMNOD))))

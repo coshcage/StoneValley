@@ -310,7 +310,7 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrin
 	}
 }
 
-/* Function name: strSortArrayZ
+/* Function name: strSortArrayZ_O
  * Description:   Sort an array as fast as possible.
  * Parameters:
  *      parrz Pointer to a sized array.
@@ -322,13 +322,13 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrin
  * Return value:  If sorting succeeded, this function would return a pointer to the first element to the array,
  *                otherwise, this function would return value NULL.
  * Caution:       Address of parrz Must Be Allocated first.
+ * Tip:           A macro version of this function named strSortArrayZ_M is available.
  */
-void * strSortArrayZ(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bstable)
+void * strSortArrayZ_O(P_ARRAY_Z parrz, size_t size, CBF_COMPARE cbfcmp, bool bstable)
 {
-	if (bstable)
-		return svMergeSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
-	else
-		return svQuickSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
+	return bstable ?
+		svMergeSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp) :
+		svQuickSort(parrz->pdata, strLevelArrayZ(parrz), size, cbfcmp);
 }
 
 /* Function name: strMergeSortedArrayZ

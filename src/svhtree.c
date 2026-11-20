@@ -592,7 +592,7 @@ bool treRemoveHeapD(void * pitem, size_t size, P_HEAP_D pheap, CBF_COMPARE cbfcm
 			pr = P2P_TNODE_HD(pn->knot.ppnode[RIGHT]);
 			
 			/* Adhere to the principle of binary heap to find the tail. */
-			if (pl == NULL && NULL != pr)
+			if (NULL == pl && NULL != pr)
 				return false; /* Bad heap tree. */
 			else if (NULL != pl)
 			{

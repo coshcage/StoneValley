@@ -317,8 +317,8 @@ void strRemoveItemArrayZ(P_ARRAY_Z parrz, size_t size, size_t index, bool bshrin
  *       size Size of each element in the array.
  *     cbfcmp Pointer to a function that compares two elements.
  *            Please refer to the type definition CBF_COMPARE in svdef.h.
- *    bstable Input [true]  to sort an array by using stable   sort algorithm.
- *            Input [false] to sort an array by using unstable sort algorithm.
+ *    bstable Input [true]  to sort an array by using a  stable   sort algorithm.
+ *            Input [false] to sort an array by using an unstable sort algorithm.
  * Return value:  If sorting succeeded, this function would return a pointer to the first element to the array,
  *                otherwise, this function would return value NULL.
  * Caution:       Address of parrz Must Be Allocated first.

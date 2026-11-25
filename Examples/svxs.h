@@ -2,7 +2,7 @@
  * Name:        svxs.h
  * Description: External Sort Interface.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642B0709251630L00085
+ * File ID:     0415251642B0709251630L00084
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -25,8 +25,7 @@
 
 #include "svdef.h"
 
-typedef enum en_XSortError
-{
+typedef enum en_XSortError {
 	XSE_NONE,            /* Sorting succeeded. */
 	XSE_BAD_ARGUMENT,    /* Parameter len or num or size equals to 0. */
 	XSE_OPEN_INPUT_FILE, /* Can not open input file. */

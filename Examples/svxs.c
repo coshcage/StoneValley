@@ -2,7 +2,7 @@
  * Name:        svxs.c
  * Description: EXternal sort.
  * Author:      cosh.cage#hotmail.com
- * File ID:     0415251642A0721260725L00238
+ * File ID:     0415251642A0721260725L00237
  * License:     LGPLv3
  * Copyright (C) 2025-2026 John Cage
  *
@@ -33,8 +33,7 @@
 void _svxsDestroyMFileArrayZ(P_ARRAY_Z parrChunkFile, size_t uChunkCount);
 
 /* A structure to store file name and pointer. */
-typedef struct _st_MFILE
-{
+typedef struct _st_MFILE {
 	char * fname; /* File name. */
 	FILE * fp;    /* File pointer. */
 } MFILE, * P_MFILE;

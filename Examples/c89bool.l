@@ -1,17 +1,10 @@
 /*
- * c89bool.l
- * This lex program is used to convert StoneValley library relevant files to comply with C89 standard boolean type.
- * Please put this file into StoneValley/src/ folder and use flex to compile it first.
- * Then use a C compiler to compile lex.yy.c which should appear after using flex.
- * Use the final executable file to convert C source files and header files that involve boolean type.
- * Here is a compound command line that can produce an executable file on Unix|GNU/Linux:
- * $ flex c89bool.l; cc lex.yy.c -o c89bool; rm lex.yy.c; ./c89bool *.c *.h;
- * Notice that flex is required on your operating system before you use the above command line.
- *
- * Created by cosh.cage#hotmail.com on Nov/25/2026.
- * License:  LGPLv3
- * Platform: Unix|GNU/Linux
- * Copyright (C) 2018-2026 John Cage
+ * Name:        c89bool.l
+ * Description: C89 standard boolean type compliance tool.
+ * Author:      cosh.cage#hotmail.com
+ * File ID:     1126260909A1127261844L00179
+ * License:     LGPLv3
+ * Copyright (C) 2025-2026 John Cage
  *
  * This file is part of StoneValley.
  *
@@ -26,6 +19,14 @@
  * You should have received a copy of the GNU Lesser General Public License along with StoneValley.
  * If not, see <https://www.gnu.org/licenses/>.
  *
+ * This lex program is used to convert StoneValley library relevant files to comply with C89 standard boolean type.
+ * Please put this file into StoneValley/src/ folder and use flex to compile it first.
+ * Then use a C compiler to compile lex.yy.c which should appear after using flex.
+ * Use the final executable file to convert C source files and header files that involve boolean type.
+ * Here is a compound command line that can produce an executable file on Unix|GNU/Linux:
+ * $ flex c89bool.l; cc lex.yy.c -o c89bool; rm lex.yy.c; ./c89bool *.c *.h;
+ * Notice that flex is required on your operating system before you use the above command line.
+ *
  */
 %option noyywrap
 %x SVDEFH
@@ -36,6 +37,8 @@ SYMBOL [\!-\?\[-\^\{-\~]
 %{
 #include <stdio.h>
 #include <string.h>
+
+#define COMPATIBLE_BOOL "BOOL"
 
 FILE * fptmp = NULL;
 
@@ -48,8 +51,8 @@ char * ConvertStringBoolean(char * str);
 	fprintf
 	(
 		fptmp,
-		"%s",
-"/* Boolean type and constants are used to replace stdbool including for C89 compliance. */\ntypedef unsigned int BOOL;\n#define true  1\n#define false 0"
+"/* Boolean type and constants are used to replace stdbool including for C89 compliance. */\ntypedef unsigned int %s;\n#define true  1\n#define false 0",
+		COMPATIBLE_BOOL
 	);
 }
 ^"bool"({SPACE}|{SYMBOL})+ { fprintf(fptmp, "%s", ConvertStringBoolean(yytext)); }
@@ -59,6 +62,8 @@ char * ConvertStringBoolean(char * str);
 . { fprintf(fptmp, "%s", yytext); }
 
 %%
+
+#define FILE_FOUND(strfnam) (! strcmp(strlen(argv[i]) > strlen(strfnam) ? argv[i] + strlen(argv[i]) - strlen(strfnam) : argv[i], (strfnam)))
 
 char strname[L_tmpnam];
 char strbuff[BUFSIZ];
@@ -70,7 +75,7 @@ char * ConvertStringBoolean(char * str)
 	p = strstr(str, "bool");
 	
 	if (NULL != p)
-		memcpy(p, "BOOL", 4);
+		memcpy(p, COMPATIBLE_BOOL, 4);
 	
 	return str;
 }
@@ -78,12 +83,16 @@ char * ConvertStringBoolean(char * str)
 int main(int argc, char * argv[])
 {
 	FILE * fp;
-	register int i, c;
+	register int c, i;
+	register size_t j;
 	
 	tmpnam(strname);
 
 	for (i = 1; i < argc; ++i)
 	{
+		if (FILE_FOUND("lex.yy.c"))
+			continue;
+		
 		fptmp = NULL == fptmp ? fopen(strname, "w") : freopen(strname, "w", fptmp);
 		
 		if (NULL == fptmp)
@@ -94,12 +103,12 @@ int main(int argc, char * argv[])
 		
 		yyout = fptmp;
 		
-		fp = fopen(argv[i], "r"); /* Copy library file to temporary file. */
+		fp = fopen(argv[i], "r"); /* Convert and copy library file to temporary file. */
 		
 		if (NULL != fp)
 		{
 			BEGIN INITIAL;
-			if (! strcmp(strlen(argv[i]) > strlen("svdef.h") ? argv[i] + strlen(argv[i]) - strlen("svdef.h") : argv[i], "svdef.h"))
+			if (FILE_FOUND("svdef.h"))
 				BEGIN SVDEFH;
 			yyrestart(fp);
 			yylex();
@@ -122,7 +131,7 @@ int main(int argc, char * argv[])
 
 			if (NULL != fp)
 			{
-				register size_t j = 0;
+				j = 0;
 				while (! feof(fptmp))
 				{
 					c = fgetc(fptmp);
